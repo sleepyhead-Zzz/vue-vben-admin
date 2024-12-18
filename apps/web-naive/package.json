@@ -26,6 +26,7 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@types/node": "^22.10.2",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -41,8 +42,16 @@
     "@vben/types": "workspace:*",
     "@vben/utils": "workspace:*",
     "@vueuse/core": "catalog:",
+    "autoprefixer": "^10.4.20",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "catalog:",
+    "lucide-vue-next": "^0.468.0",
     "naive-ui": "catalog:",
     "pinia": "catalog:",
+    "radix-vue": "^1.9.11",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7",
     "vue": "catalog:",
     "vue-router": "catalog:"
   }

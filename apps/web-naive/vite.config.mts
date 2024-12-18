@@ -1,7 +1,15 @@
+import { fileURLToPath, URL } from 'node:url';
+import autoprefixer from 'autoprefixer';
+import tailwind from 'tailwindcss';
 import { defineConfig } from '@vben/vite-config';
 
 export default defineConfig(async () => {
   return {
+    css: {
+      postcss: {
+        plugins: [tailwind(), autoprefixer()],
+      },
+    },
     application: {},
     vite: {
       server: {
@@ -14,6 +22,11 @@ export default defineConfig(async () => {
             ws: true,
           },
         },
+      },
+    },
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
   };
