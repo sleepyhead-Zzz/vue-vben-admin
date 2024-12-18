@@ -18,6 +18,7 @@ export async function comments(): Promise<Linter.Config[]> {
         'eslint-comments/no-duplicate-disable': 'error',
         'eslint-comments/no-unlimited-disable': 'error',
         'eslint-comments/no-unused-enable': 'error',
+        'vue/require-default-prop': 'off',
       },
     },
   ];
