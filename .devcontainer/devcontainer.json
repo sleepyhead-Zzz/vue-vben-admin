@@ -5,17 +5,18 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "octref.vetur", // Vue - Official - Vue 官方插件
-        "bradlc.vscode-tailwindcss", // Tailwind CSS - Tailwindcss 提示插件
-        "mariusmanciu.css-variable-autocomplete", // CSS Variable Autocomplete
-        "iconify.iconify", // Iconify IntelliSense - 图标插件
-        "angelleo.i18n-ally", // i18n Ally - i18n 插件
-        "dbaeumer.vscode-eslint", // ESLint - 脚本代码检查
-        "esbenp.prettier-vscode", // Prettier - 代码格式化
-        "stylelint.vscode-stylelint", // Stylelint - css 格式化
-        "streetsidesoftware.code-spell-checker", // Code Spell Checker - 单词语法检查
-        "mikestead.dotenv", // DotENV - .env 文件 高亮
-        "vscode-icons-team.vscode-icons" // vscode-icons 图标插件
+        "octref.vetur",
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "streetsidesoftware.code-spell-checker",
+        "mikestead.dotenv",
+        "vscode-icons-team.vscode-icons",
+        "lokalise.i18n-ally",
+        "antfu.iconify",
+        "vunguyentuan.vscode-css-variables",
+        "rvest.vs-code-prettier-eslint",
+        "Daosro.stylelint"
       ],
       "settings": {
         "editor.stickyScroll.scrollWithEditor": true,
@@ -27,7 +28,7 @@
     }
   },
   "mounts": [
-    "source=/home/sleepyhead/.cache/pnpm-store,target=/root/.pnpm-store,type=bind" // 挂载主机缓存目录到容器
+    "source=/home/sleepyhead/.cache/pnpm-store,target=/root/.pnpm-store,type=bind"
   ],
   "postCreateCommand": "npm config set registry https://registry.npmmirror.com && corepack enable && pnpm config set store-dir /root/.pnpm-store",
   "remoteUser": "root"
