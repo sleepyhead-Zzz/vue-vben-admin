@@ -18,6 +18,10 @@ import {
   zhCN,
 } from 'naive-ui';
 
+import './utils/axios';
+
+import './assets/index.css';
+
 defineOptions({ name: 'App' });
 
 const { commonTokens } = useNaiveDesignTokens();

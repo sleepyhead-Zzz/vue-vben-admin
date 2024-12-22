@@ -1,4 +1,4 @@
-import type { Recordable, UserInfo } from '@vben/types';
+import type { Recordable } from '@vben/types';
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
@@ -8,9 +8,8 @@ import { resetAllStores, useAccessStore, useUserStore } from '@vben/stores';
 
 import { defineStore } from 'pinia';
 
-import { notification } from '#/adapter/naive';
-import { getAccessCodesApi, getUserInfoApi, loginApi, logoutApi } from '#/api';
-import { $t } from '#/locales';
+import { logoutApi } from '#/api';
+import { ApiService, type CurrentLoginUserDTO, type UserDTO } from '#/apis';
 
 export const useAuthStore = defineStore('auth', () => {
   const accessStore = useAccessStore();
@@ -29,24 +28,23 @@ export const useAuthStore = defineStore('auth', () => {
     onSuccess?: () => Promise<void> | void,
   ) {
     // 异步处理用户登录操作并获取 accessToken
-    let userInfo: null | UserInfo = null;
+    let userInfo: CurrentLoginUserDTO | null | undefined = null;
+
     try {
       loginLoading.value = true;
-      const { accessToken } = await loginApi(params);
-
+      const response = await ApiService.login(params);
+      const accessToken = response.data?.token;
       // 如果成功获取到 accessToken
       if (accessToken) {
         // 将 accessToken 存储到 accessStore 中
         accessStore.setAccessToken(accessToken);
-
         // 获取用户信息并存储到 accessStore 中
-        const [fetchUserInfoResult, accessCodes] = await Promise.all([
-          fetchUserInfo(),
-          getAccessCodesApi(),
-        ]);
-
-        userInfo = fetchUserInfoResult;
-
+        // const [fetchUserInfoResult, accessCodes] = await Promise.all([
+        //   fetchUserInfo(),
+        //   getAccessCodesApi(),
+        // ]);
+        userInfo = response.data?.currentUser;
+        const accessCodes = response.data?.currentUser?.permissions ?? [];
         userStore.setUserInfo(userInfo);
         accessStore.setAccessCodes(accessCodes);
 
@@ -55,16 +53,16 @@ export const useAuthStore = defineStore('auth', () => {
         } else {
           onSuccess
             ? await onSuccess?.()
-            : await router.push(userInfo.homePath || DEFAULT_HOME_PATH);
+            : await router.push(DEFAULT_HOME_PATH);
         }
 
-        if (userInfo?.realName) {
-          notification.success({
-            content: $t('authentication.loginSuccess'),
-            description: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
-            duration: 3000,
-          });
-        }
+        // if (userInfo?.realName) {
+        //   notification.success({
+        //     content: $t('authentication.loginSuccess'),
+        //     description: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
+        //     duration: 3000,
+        //   });
+        // }
       }
     } finally {
       loginLoading.value = false;
@@ -96,8 +94,9 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function fetchUserInfo() {
-    let userInfo: null | UserInfo = null;
-    userInfo = await getUserInfoApi();
+    let userInfo: null | undefined | UserDTO = null;
+    const response = await ApiService.getLoginUserInfo();
+    userInfo = response.data?.userInfo;
     userStore.setUserInfo(userInfo);
     return userInfo;
   }
