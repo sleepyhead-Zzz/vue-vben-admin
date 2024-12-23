@@ -13,11 +13,8 @@ interface Menu {
   parentId: number;
   children?: Menu[];
 }
-
-// 使用 ref 来存储数据
 const data = ref<Menu[]>([]);
 
-// 将数据的获取放在 async setup 中
 const fetchData = async () => {
   const response = await ApiService.dropdownList();
   data.value = response.data;

@@ -1,22 +1,24 @@
 {
   "name": "VueTemplate",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
   "workspaceFolder": "/workspaces/vue-vben-admin",
   "customizations": {
     "vscode": {
       "extensions": [
-        "octref.vetur",
-        "bradlc.vscode-tailwindcss",
+        "Vue.volar",
         "dbaeumer.vscode-eslint",
+        "stylelint.vscode-stylelint",
         "esbenp.prettier-vscode",
-        "streetsidesoftware.code-spell-checker",
         "mikestead.dotenv",
-        "vscode-icons-team.vscode-icons",
-        "lokalise.i18n-ally",
+        "streetsidesoftware.code-spell-checker",
+        "bradlc.vscode-tailwindcss",
         "antfu.iconify",
+        "Lokalise.i18n-ally",
         "vunguyentuan.vscode-css-variables",
-        "rvest.vs-code-prettier-eslint",
-        "Daosro.stylelint"
+        "antfu.pnpm-catalog-lens",
+        "formulahendry.auto-close-tag",
+        "christian-kohler.path-intellisense",
+        "lihuiwang.vue-alias-skip"
       ],
       "settings": {
         "editor.stickyScroll.scrollWithEditor": true,
