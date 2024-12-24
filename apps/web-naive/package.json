@@ -41,6 +41,7 @@
     "@vben/styles": "workspace:*",
     "@vben/types": "workspace:*",
     "@vben/utils": "workspace:*",
+    "@vee-validate/zod": "^4.15.0",
     "@vueuse/core": "catalog:",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
@@ -54,7 +55,9 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
+    "vee-validate": "^4.15.0",
     "vue": "catalog:",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "zod": "^3.24.1"
   }
 }
