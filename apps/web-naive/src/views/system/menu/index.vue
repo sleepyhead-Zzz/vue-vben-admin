@@ -26,7 +26,7 @@ interface Menu {
   children?: Menu[];
 }
 const data = ref<Menu[]>([]);
-const showModal = ref(true);
+const showModal = ref(false);
 const selectedMenu = ref<MenuDetailDTO | null>(null);
 const fetchData = async () => {
   const response = await ApiService.dropdownList();
