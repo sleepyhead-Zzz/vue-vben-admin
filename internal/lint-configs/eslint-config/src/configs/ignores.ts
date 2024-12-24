@@ -47,6 +47,7 @@ export async function ignores(): Promise<Linter.Config[]> {
         '**/*.ttf',
         '**/*.woff',
         '**/src/apis',
+        '**/src/components/ui',
       ],
     },
   ];
