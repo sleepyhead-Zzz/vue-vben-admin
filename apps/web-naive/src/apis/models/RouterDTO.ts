@@ -2,13 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MetaDTO } from './MetaDTO';
+import type { RouterMeta } from './RouterMeta';
 export type RouterDTO = {
   name?: string;
   path?: string;
   redirect?: string;
   component?: string;
-  rank?: number;
-  meta?: MetaDTO;
+  meta?: RouterMeta;
   children?: Array<RouterDTO>;
 };

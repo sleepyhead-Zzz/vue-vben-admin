@@ -5,15 +5,14 @@
 export type MenuDTO = {
   id?: number;
   parentId?: number;
-  menuName?: string;
-  routerName?: string;
-  path?: string;
-  rank?: number;
+  name?: string;
   menuType?: number;
-  menuTypeStr?: string;
-  isButton?: boolean;
-  status?: number;
-  statusStr?: string;
-  createTime?: string;
+  component?: string;
+  path?: string;
+  redirect?: string;
+  order?: number;
   icon?: string;
+  remark?: string;
+  createTime?: string;
+  status?: number;
 };

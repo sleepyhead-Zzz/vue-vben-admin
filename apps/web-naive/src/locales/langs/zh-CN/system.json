@@ -3,6 +3,27 @@
   "menu": {
     "title": "菜单管理",
     "name": "菜单名称",
-    "edit": "修改菜单"
+    "edit": "修改菜单",
+    "add": "新增菜单",
+    "input_menu_name": "请输入菜单名称",
+    "input_router_name": "请输入路由名称",
+    "input_component": "请输入组件名，不能有重复",
+    "input_redirect": "请输入首页",
+    "input_path": "请输入路径",
+    "input_permission": "请输入权限",
+    "input_title": "请输入菜单标题,使用国际化",
+
+    "router_name": "路由名称",
+    "type": "菜单类型",
+    "select": "请选择",
+    "component": "组件名",
+    "path": "路径",
+    "redirect": "首页",
+    "permission": "权限",
+    "remark": "备注",
+    "status": "状态",
+    "icon": "图标",
+    "menu_title": "标题",
+    "active": "是否启用"
   }
 }

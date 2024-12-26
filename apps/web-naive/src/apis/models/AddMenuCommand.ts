@@ -2,15 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MetaDTO } from './MetaDTO';
+import type { RouterMeta } from './RouterMeta';
 export type AddMenuCommand = {
   parentId?: number;
   menuName: string;
-  routerName?: string;
-  path?: string;
-  status?: number;
   menuType?: number;
-  isButton?: boolean;
+  component?: string;
+  path?: string;
+  redirect?: string;
+  meta?: RouterMeta;
   permission?: string;
-  meta?: MetaDTO;
+  remark?: string;
+  status?: number;
 };
