@@ -12,7 +12,9 @@
     "input_path": "请输入路径",
     "input_permission": "请输入权限",
     "input_title": "请输入菜单标题,使用国际化",
-
+    "input_iframe_url": "请输入iFrame链接",
+    "input_link": "跳转链接URL",
+    "keepAlive": "是否开启缓存",
     "router_name": "路由名称",
     "type": "菜单类型",
     "select": "请选择",
@@ -24,6 +26,8 @@
     "status": "状态",
     "icon": "图标",
     "menu_title": "标题",
-    "active": "是否启用"
+    "active": "菜单是否启用",
+    "iframe": "iframe",
+    "link": "外链跳转路径"
   }
 }

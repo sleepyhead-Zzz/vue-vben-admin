@@ -5,6 +5,7 @@ import { $t } from '@vben/locales';
 import { useVbenForm } from '#/adapter/form';
 import {
   type AddMenuCommand,
+  ApiService,
   type MenuDetailDTO,
   type RouterMeta,
 } from '#/apis';
@@ -92,6 +93,44 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'switch',
       label: $t('system.menu.active'),
+    },
+    {
+      component: 'Switch',
+      componentProps: {
+        class: 'w-auto',
+      },
+      fieldName: 'keepAlive',
+      label: $t('system.menu.keepAlive'),
+    },
+    {
+      component: 'Input',
+      componentProps: {
+        placeholder: $t('system.menu.input_iframe_url'),
+      },
+      dependencies: {
+        if(values) {
+          return values.menuType === 3;
+        },
+        triggerFields: ['menuType'],
+      },
+      fieldName: 'iframeSrc',
+      label: $t('system.menu.iframe'),
+      // rules: 'required',
+    },
+    {
+      component: 'Input',
+      componentProps: {
+        placeholder: $t('system.menu.input_link'),
+      },
+      dependencies: {
+        if(values) {
+          return values.menuType === 4;
+        },
+        triggerFields: ['menuType'],
+      },
+      fieldName: 'link',
+      label: $t('system.menu.link'),
+      // rules: 'required',
     },
     {
       component: 'Input',
