@@ -3,7 +3,7 @@ import { useAccessStore } from '@vben/stores';
 
 import axios from 'axios';
 
-import { message } from '#/adapter/naive';
+import { message as message2 } from '#/adapter/naive';
 import { refreshTokenApi } from '#/api/core';
 import { useAuthStore } from '#/store';
 
@@ -57,7 +57,7 @@ async function doRefreshToken() {
 axios.interceptors.response.use(
   (response) => {
     const { data: responseData, status } = response;
-    const { code } = responseData;
+    const { code, message } = responseData;
     if (status >= 200 && status < 400 && code === 0) {
       return response;
     }
@@ -73,10 +73,12 @@ axios.interceptors.response.use(
         });
       } else {
         doReAuthenticate();
+        message2.error(message);
         return Promise.reject(new Error('Unauthorized: Code 108'));
       }
     }
-    return Promise.reject(new Error('Unexpected response'));
+    message2.error(message);
+    return Promise.reject(new Error(message || 'Unknown error'));
   },
   (error) => {
     // 其他非 200-400 范围的错误处理
@@ -84,7 +86,7 @@ axios.interceptors.response.use(
       error?.response?.data?.error ||
       error?.response?.data?.message ||
       'Something went wrong';
-    message.error(errorMessage); // 提示错误信息
+    message2.error(errorMessage); // 提示错误信息
     return Promise.reject(new Error(errorMessage));
   },
 );

@@ -2,6 +2,8 @@
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
+import { useMessage } from 'naive-ui';
+
 import { useVbenForm } from '#/adapter/form';
 import {
   type AddMenuCommand,
@@ -14,6 +16,11 @@ async function onSubmit(values: Record<string, any>) {
   const metaData: RouterMeta = {
     icon: values.icon,
     title: values.title,
+    order: values.order,
+    affixTab: values.affixTab,
+    iframeSrc: values.iframeSrc,
+    keepAlive: values.keepAlive,
+    link: values.link,
   };
   const formData: AddMenuCommand = {
     parentId: values.parentId,
@@ -48,6 +55,12 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('system.menu.input_router_name'),
       },
+      dependencies: {
+        if(values) {
+          return values.menuType !== 5;
+        },
+        triggerFields: ['menuType'],
+      },
       fieldName: 'menuName',
       label: $t('system.menu.router_name'),
       rules: 'required',
@@ -57,6 +70,12 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('system.menu.input_component'),
       },
+      dependencies: {
+        if(values) {
+          return values.menuType !== 5;
+        },
+        triggerFields: ['menuType'],
+      },
       fieldName: 'component',
       label: $t('system.menu.component'),
       rules: 'required',
@@ -65,6 +84,12 @@ const [Form, formApi] = useVbenForm({
       component: 'Input',
       componentProps: {
         placeholder: $t('system.menu.input_path'),
+      },
+      dependencies: {
+        if(values) {
+          return values.menuType !== 5;
+        },
+        triggerFields: ['menuType'],
       },
       fieldName: 'path',
       label: $t('system.menu.path'),
@@ -91,7 +116,8 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         class: 'w-auto',
       },
-      fieldName: 'switch',
+      defaultValue: true,
+      fieldName: 'status',
       label: $t('system.menu.active'),
     },
     {
@@ -99,8 +125,58 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         class: 'w-auto',
       },
+      dependencies: {
+        if(values) {
+          return values.menuType !== 5 || values.menuType !== 1;
+        },
+        triggerFields: ['menuType'],
+      },
       fieldName: 'keepAlive',
       label: $t('system.menu.keepAlive'),
+    },
+    {
+      component: 'Switch',
+      componentProps: {
+        class: 'w-auto',
+      },
+      dependencies: {
+        if(values) {
+          return values.menuType === 1 || values.menuType === 2;
+        },
+        triggerFields: ['menuType'],
+      },
+      fieldName: 'affixTab',
+      label: $t('system.menu.affixTab'),
+    },
+    {
+      component: 'Input',
+      componentProps: {
+        placeholder: $t('system.menu.input_iframe_url'),
+      },
+      dependencies: {
+        if(values) {
+          return values.menuType === 3;
+        },
+        triggerFields: ['menuType'],
+      },
+      fieldName: 'iframeSrc',
+      label: $t('system.menu.iframe'),
+      // rules: 'required',
+    },
+    {
+      component: 'Input',
+      componentProps: {
+        placeholder: $t('system.menu.input_order'),
+      },
+      dependencies: {
+        if(values) {
+          return values.menuType === 1;
+        },
+        triggerFields: ['menuType'],
+      },
+      fieldName: 'order',
+      label: $t('system.menu.order'),
+      // rules: 'required',
     },
     {
       component: 'Input',
@@ -168,6 +244,12 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('system.menu.input_title'),
       },
+      dependencies: {
+        if(values) {
+          return values.menuType !== 5;
+        },
+        triggerFields: ['menuType'],
+      },
       fieldName: 'title',
       label: $t('system.menu.menu_title'),
       rules: 'required',
@@ -191,16 +273,21 @@ const [Form, formApi] = useVbenForm({
   ],
   showDefaultActions: false,
 });
-
+const message = useMessage();
 const [Modal, modalApi] = useVbenModal({
   fullscreenButton: false,
   onCancel() {
     modalApi.close();
   },
   onConfirm: async () => {
-    await formApi.validateAndSubmitForm();
-    // modalApi.close();
+    const { valid } = await formApi.validate();
+    if (!valid) {
+      message.error('数据格式有误');
+      return;
+    }
+    await formApi.submitForm();
   },
+
   onOpenChange(isOpen: boolean) {
     if (isOpen) {
       const menuData = modalApi.getData<Record<string, MenuDetailDTO>>();
