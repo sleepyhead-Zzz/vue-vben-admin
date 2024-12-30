@@ -5,10 +5,11 @@ import { h, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { NButton, NDataTable } from 'naive-ui';
+import { NButton, NDataTable, NPopconfirm } from 'naive-ui';
 
 import { ApiService, type MenuDetailDTO } from '#/apis';
 import { Button } from '#/components/ui/button';
+import { $t } from '#/locales';
 
 import MenuForm from './menu-form.vue';
 
@@ -27,10 +28,13 @@ const fetchData = async () => {
 
 fetchData(); // 调用异步函数
 
-function createColumns(edit: (row: Menu) => void): DataTableColumns<Menu> {
+function createColumns(
+  edit: (row: Menu) => void,
+  remove: (row: Menu) => void,
+): DataTableColumns<Menu> {
   return [
     {
-      title: 'label',
+      title: $t('system.menu.name'),
       key: 'label',
     },
     {
@@ -38,35 +42,75 @@ function createColumns(edit: (row: Menu) => void): DataTableColumns<Menu> {
       key: 'menuId',
     },
     {
-      title: 'Action',
+      title: $t('common.table.action'),
       key: 'actions',
       render(row: Menu) {
-        return h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            onClick: () => {
-              edit(row);
+        return h('div', [
+          h(
+            NButton,
+            {
+              strong: true,
+              tertiary: true,
+              size: 'small',
+              onClick: () => {
+                edit(row);
+              },
             },
-          },
-          { default: () => '编辑' },
-        );
+            { default: () => $t('common.table.edit') },
+          ),
+          h(
+            NPopconfirm,
+            {
+              positiveButtonProps: {},
+              negativeButtonProps: {},
+              onPositiveClick: () => {
+                remove(row);
+              },
+              negativeText: $t('common.table.cancel'),
+              positiveText: $t('common.table.delete'),
+            },
+            {
+              trigger: () => {
+                return h(
+                  NButton,
+                  {
+                    type: 'error',
+                    strong: true,
+                    tertiary: true,
+                    size: 'small',
+                  },
+                  { default: () => $t('common.table.delete') },
+                );
+              },
+              default: () => {
+                return $t('common.table.contrim_delete');
+              },
+            },
+          ),
+        ]);
       },
     },
   ];
 }
 const [Modal, modalApi] = useVbenModal({
   connectedComponent: MenuForm,
+  onClosed: () => {
+    fetchData();
+  },
 });
-const columns = createColumns(async (row: Menu) => {
-  const response = await ApiService.menuInfo(row.menuId);
-  selectedMenu.value = response.data ?? null;
-  // 打开修改菜单窗口
-  modalApi.setData(selectedMenu);
-  modalApi.open();
-});
+const columns = createColumns(
+  async (row: Menu) => {
+    const response = await ApiService.menuInfo(row.menuId);
+    selectedMenu.value = response.data ?? null;
+    // 打开修改菜单窗口
+    modalApi.setData({ menuData: selectedMenu });
+    modalApi.open();
+  },
+  async (row: Menu) => {
+    await ApiService.remove3(row.menuId);
+    await fetchData();
+  },
+);
 
 function addNewMenu() {
   selectedMenu.value = null;

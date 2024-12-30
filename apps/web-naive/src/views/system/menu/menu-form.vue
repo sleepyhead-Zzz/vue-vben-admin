@@ -12,6 +12,7 @@ import {
   ApiService,
   type MenuDetailDTO,
   type RouterMeta,
+  type UpdateMenuCommand,
 } from '#/apis';
 
 const allMenu = ref();
@@ -25,25 +26,50 @@ async function onSubmit(values: Record<string, any>) {
     keepAlive: values.keepAlive,
     link: values.link,
   };
-  const formData: AddMenuCommand = {
-    parentId: values.parentId,
-    remark: values.remark,
-    menuName: values.menuName,
-    menuType: values.menuType,
-    component: values.component,
-    path: values.path,
-    redirect: values.redirect,
-    permission: values.permission,
-    status: values.status,
-    meta: metaData,
-  };
-
-  await ApiService.add3(formData);
+  if (values.id) {
+    const formData: UpdateMenuCommand = {
+      menuId: values.id,
+      parentId: values.parentId,
+      remark: values.remark,
+      menuName: values.name,
+      menuType: values.menuType,
+      component: values.component,
+      path: values.path,
+      redirect: values.redirect,
+      permission: values.permission,
+      status: values.status,
+      meta: metaData,
+    };
+    await ApiService.edit3(formData.menuId, formData);
+  } else {
+    const formData: AddMenuCommand = {
+      parentId: values.parentId,
+      remark: values.remark,
+      menuName: values.name,
+      menuType: values.menuType,
+      component: values.component,
+      path: values.path,
+      redirect: values.redirect,
+      permission: values.permission,
+      status: values.status,
+      meta: metaData,
+    };
+    await ApiService.add3(formData);
+  }
 }
 
 const [Form, formApi] = useVbenForm({
   handleSubmit: onSubmit,
   schema: [
+    {
+      component: 'InputNumber',
+      dependencies: {
+        disabled: true,
+        triggerFields: ['keepAlive'],
+      },
+      fieldName: 'id',
+      label: $t('system.menu.id'),
+    },
     {
       component: 'Input',
       componentProps: {
@@ -57,9 +83,7 @@ const [Form, formApi] = useVbenForm({
       component: 'TreeSelectCustomize',
       fieldName: 'parentId',
       label: $t('system.menu.parent'),
-      rules: 'required',
     },
-
     {
       component: 'Input',
       componentProps: {
@@ -71,7 +95,7 @@ const [Form, formApi] = useVbenForm({
         },
         triggerFields: ['menuType'],
       },
-      fieldName: 'menuName',
+      fieldName: 'name',
       label: $t('system.menu.router_name'),
       rules: 'required',
     },
@@ -137,7 +161,7 @@ const [Form, formApi] = useVbenForm({
       },
       dependencies: {
         if(values) {
-          return values.menuType !== 5 || values.menuType !== 1;
+          return values.menuType === 1 || values.menuType === 2;
         },
         triggerFields: ['menuType'],
       },
@@ -151,7 +175,7 @@ const [Form, formApi] = useVbenForm({
       },
       dependencies: {
         if(values) {
-          return values.menuType === 1 || values.menuType === 2;
+          return values.menuType === 1;
         },
         triggerFields: ['menuType'],
       },
@@ -180,7 +204,7 @@ const [Form, formApi] = useVbenForm({
       },
       dependencies: {
         if(values) {
-          return values.menuType === 1;
+          return values.menuType === 1 || values.menuType === 2;
         },
         triggerFields: ['menuType'],
       },
@@ -247,7 +271,7 @@ const [Form, formApi] = useVbenForm({
 
       fieldName: 'icon',
       label: $t('system.menu.icon'),
-      rules: 'required',
+      // rules: 'required',
     },
     {
       component: 'Input',
@@ -280,6 +304,7 @@ const [Modal, modalApi] = useVbenModal({
       return;
     }
     await formApi.submitForm();
+    message.info('提交成功');
     modalApi.close();
   },
 
@@ -287,13 +312,15 @@ const [Modal, modalApi] = useVbenModal({
     if (isOpen) {
       const { data } = await ApiService.dropdownList();
       allMenu.value = data;
-      const menuData = modalApi.getData<Record<string, MenuDetailDTO>>();
+      const menuData =
+        modalApi.getData<Record<string, MenuDetailDTO>>().menuData;
       if (menuData) {
         formApi.setValues(menuData.value);
       }
+      const title = menuData ? $t('system.menu.edit') : $t('system.menu.add');
+      modalApi.setState({ title });
     }
   },
-  title: $t('system.menu.add'),
 });
 </script>
 <template>

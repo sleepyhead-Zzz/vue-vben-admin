@@ -27,7 +27,8 @@ async function generateAccess(options: GenerateMenuAndRoutesOptions) {
       message.loading(`${$t('common.loadingMenu')}...`, {
         duration: 1.5,
       });
-      return await ApiService.getRouters();
+      const { data } = await ApiService.getRouters();
+      return data;
     },
     // 可以指定没有权限跳转403页面
     forbiddenComponent,

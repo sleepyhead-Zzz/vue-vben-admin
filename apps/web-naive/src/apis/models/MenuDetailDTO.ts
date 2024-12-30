@@ -16,6 +16,8 @@ export type MenuDetailDTO = {
   remark?: string;
   createTime?: string;
   status?: boolean;
+  keepAlive?: boolean;
   permission?: string;
   meta?: RouterMeta;
+  title?: string;
 };
