@@ -34,5 +34,8 @@
     "iframe": "iframe",
     "link": "外链跳转路径",
     "parent": "父节点"
+  },
+  "user": {
+    "title": "用户管理"
   }
 }
