@@ -5,6 +5,7 @@ import { NButton, NCard, useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
 import { getAllMenusApi } from '#/api';
+import { ApiService } from '#/apis';
 
 const message = useMessage();
 const [Form, formApi] = useVbenForm({
@@ -46,11 +47,12 @@ const [Form, formApi] = useVbenForm({
       // 对应组件的参数
       componentProps: {
         // 菜单接口
-        api: getAllMenusApi,
+        api: () => ApiService.dropdownList(),
+
         childrenField: 'children',
         // 菜单接口转options格式
-        labelField: 'name',
-        valueField: 'path',
+        labelField: 'label',
+        valueField: 'menuId',
       },
       // 字段名
       fieldName: 'apiTree',

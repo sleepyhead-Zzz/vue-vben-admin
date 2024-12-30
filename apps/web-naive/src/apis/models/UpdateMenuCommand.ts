@@ -13,6 +13,6 @@ export type UpdateMenuCommand = {
   meta?: RouterMeta;
   permission?: string;
   remark?: string;
-  status?: number;
+  status?: boolean;
   menuId: number;
 };

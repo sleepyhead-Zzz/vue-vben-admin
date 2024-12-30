@@ -1,8 +1,10 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
+
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { useMessage } from 'naive-ui';
+import { NTreeSelect, useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
 import {
@@ -12,6 +14,7 @@ import {
   type RouterMeta,
 } from '#/apis';
 
+const allMenu = ref();
 async function onSubmit(values: Record<string, any>) {
   const metaData: RouterMeta = {
     icon: values.icon,
@@ -50,6 +53,13 @@ const [Form, formApi] = useVbenForm({
       label: $t('system.menu.name'),
       rules: 'required',
     },
+    {
+      component: 'TreeSelectCustomize',
+      fieldName: 'parentId',
+      label: $t('system.menu.parent'),
+      rules: 'required',
+    },
+
     {
       component: 'Input',
       componentProps: {
@@ -254,22 +264,6 @@ const [Form, formApi] = useVbenForm({
       label: $t('system.menu.menu_title'),
       rules: 'required',
     },
-    // {
-    //   component: 'ApiTreeSelect',
-    //   // 对应组件的参数
-    //   componentProps: {
-    //     // 菜单接口
-    //     api: getAllMenusApi,
-    //     childrenField: 'children',
-    //     // 菜单接口转options格式
-    //     labelField: 'name',
-    //     valueField: 'path',
-    //   },
-    //   // 字段名
-    //   fieldName: 'apiTree',
-    //   // 界面显示的label
-    //   label: 'ApiTreeSelect',
-    // },
   ],
   showDefaultActions: false,
 });
@@ -286,10 +280,13 @@ const [Modal, modalApi] = useVbenModal({
       return;
     }
     await formApi.submitForm();
+    modalApi.close();
   },
 
-  onOpenChange(isOpen: boolean) {
+  async onOpenChange(isOpen: boolean) {
     if (isOpen) {
+      const { data } = await ApiService.dropdownList();
+      allMenu.value = data;
       const menuData = modalApi.getData<Record<string, MenuDetailDTO>>();
       if (menuData) {
         formApi.setValues(menuData.value);
@@ -301,6 +298,16 @@ const [Modal, modalApi] = useVbenModal({
 </script>
 <template>
   <Modal>
-    <Form />
+    <Form>
+      <template #parentId="parentId">
+        <NTreeSelect
+          v-bind="parentId"
+          :options="allMenu"
+          children-field="children"
+          key-field="menuId"
+          label-field="label"
+        />
+      </template>
+    </Form>
   </Modal>
 </template>

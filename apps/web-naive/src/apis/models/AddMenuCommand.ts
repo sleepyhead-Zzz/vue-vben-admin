@@ -13,5 +13,5 @@ export type AddMenuCommand = {
   meta?: RouterMeta;
   permission?: string;
   remark?: string;
-  status?: number;
+  status?: boolean;
 };

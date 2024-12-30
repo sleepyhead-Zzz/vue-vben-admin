@@ -69,7 +69,8 @@ const columns = createColumns(async (row: Menu) => {
 });
 
 function addNewMenu() {
-  // 打开新增菜单窗口
+  selectedMenu.value = null;
+  modalApi.setData(selectedMenu);
   modalApi.open();
 }
 

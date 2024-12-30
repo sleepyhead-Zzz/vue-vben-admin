@@ -7,7 +7,7 @@
     "add": "新增菜单",
     "input_menu_name": "请输入菜单名称",
     "input_router_name": "请输入路由名称",
-    "input_component": "请输入组件名，不能有重复",
+    "input_component": "请输入组件路径",
     "input_redirect": "请输入首页",
     "input_path": "请输入路径",
     "input_permission": "请输入权限",
@@ -31,6 +31,7 @@
     "menu_title": "标题",
     "active": "菜单是否启用",
     "iframe": "iframe",
-    "link": "外链跳转路径"
+    "link": "外链跳转路径",
+    "parent": "父节点"
   }
 }

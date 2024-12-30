@@ -14,5 +14,5 @@ export type MenuDTO = {
   icon?: string;
   remark?: string;
   createTime?: string;
-  status?: number;
+  status?: boolean;
 };

@@ -163,6 +163,7 @@ async function initComponentAdapter() {
     TimePicker: NTimePicker,
     TreeSelect: withDefaultPlaceholder(NTreeSelect, 'select'),
     Upload: NUpload,
+    TreeSelectCustomize: NTreeSelect,
   };
 
   // 将组件注册到全局共享状态中
