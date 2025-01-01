@@ -19,11 +19,12 @@ interface Menu {
   parentId: number;
   children?: Menu[];
 }
-const data = ref<Menu[]>([]);
+const allMenu = ref<Menu[]>([]);
 const selectedMenu = ref<MenuDetailDTO | null>(null);
 const fetchData = async () => {
-  const response = await ApiService.dropdownList();
-  data.value = response.data;
+  // @ts-ignore
+  const { data }: { data: Menu[] } = await ApiService.dropdownList();
+  allMenu.value = data;
 };
 
 fetchData(); // 调用异步函数
@@ -100,9 +101,7 @@ const [Modal, modalApi] = useVbenModal({
 });
 const columns = createColumns(
   async (row: Menu) => {
-    const response = await ApiService.menuInfo(row.menuId);
-    selectedMenu.value = response.data ?? null;
-    // 打开修改菜单窗口
+    const { data: selectedMenu } = await ApiService.menuInfo(row.menuId);
     modalApi.setData({ menuData: selectedMenu });
     modalApi.open();
   },
@@ -128,7 +127,7 @@ const rowKey = (row: Menu) => row.menuId;
     </div>
     <NDataTable
       :columns="columns"
-      :data="data"
+      :data="allMenu"
       :row-key="rowKey"
       default-expand-all
     />

@@ -4,6 +4,12 @@
 /* eslint-disable */
 import type { PostDTO } from './PostDTO';
 export type PageDTOPostDTO = {
+  /**
+   * 总记录数
+   */
   total?: number;
+  /**
+   * 列表数据
+   */
   rows?: Array<PostDTO>;
 };

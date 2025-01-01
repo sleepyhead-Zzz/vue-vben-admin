@@ -1,17 +1,46 @@
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
-import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type {
+  VxeGridListeners,
+  VxeTableGridOptions,
+} from '#/adapter/vxe-table';
 
-import { Page } from '@vben/common-ui';
+import { reactive, toRaw } from 'vue';
+
+import { Page, useVbenModal } from '@vben/common-ui';
 
 import { NButton, useMessage } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { ApiService, type UserDTO } from '#/apis';
+import {
+  ApiService,
+  type SearchUserQuerySearchUserDO,
+  type UserDTO,
+} from '#/apis';
+import { $t } from '#/locales';
 
+import UserForm from './user-form.vue';
+
+const searchFormParams = reactive<SearchUserQuerySearchUserDO>({
+  deptId: undefined,
+  phoneNumber: undefined,
+  status: undefined,
+  username: undefined,
+  timeRangeColumn: 'createTime',
+});
 const formOptions: VbenFormProps = {
   collapsed: false,
-  schema: [],
+  schema: [
+    {
+      component: 'Input',
+      componentProps: {
+        placeholder: $t('system.user.input_name'),
+      },
+      defaultValue: '',
+      fieldName: 'name',
+      label: $t('system.user.name'),
+    },
+  ],
   showCollapseButton: true,
   submitOnChange: true,
   submitOnEnter: false,
@@ -52,9 +81,11 @@ const gridOptions: VxeTableGridOptions<UserDTO> = {
   pagerConfig: {},
   proxyConfig: {
     ajax: {
-      query: async (formValues) => {
-        message.success(`Query params: ${JSON.stringify(formValues)}`);
-        return await ApiService.userList({});
+      query: async ({ page }, formValues) => {
+        searchFormParams.pageNum = page.currentPage;
+        searchFormParams.pageSize = page.pageSize;
+        searchFormParams.username = formValues.name;
+        return await ApiService.userList(toRaw(searchFormParams));
       },
     },
   },
@@ -73,13 +104,26 @@ const gridOptions: VxeTableGridOptions<UserDTO> = {
     zoom: true,
   },
 };
-function addUser() {}
+const [Modal, modalApi] = useVbenModal({
+  connectedComponent: UserForm,
+});
+function addUser() {
+  modalApi.open();
+}
 function deleteUsers() {}
+
+async function editUser(user: number) {
+  message.success(`编辑用户ID: ${user}`);
+  const { data: selectUser } = await ApiService.getUserDetailInfo(user);
+  modalApi.setData({ userData: selectUser });
+  modalApi.open();
+}
+
 const gridEvents: VxeGridListeners = {
   toolbarToolClick(params) {
-    if (params === del) {
+    if (params.code === 'add') {
       addUser();
-    } else if (params === add) {
+    } else if (params.code === 'del') {
       deleteUsers();
     }
   },
@@ -92,11 +136,14 @@ const [Grid] = useVbenVxeGrid({
 </script>
 
 <template>
-  <Page auto-content-height>
-    <Grid v-on="gridEvents">
-      <template #action>
-        <NButton type="primary">编辑</NButton>
-      </template>
-    </Grid>
-  </Page>
+  <div>
+    <Page auto-content-height>
+      <Grid v-on="gridEvents">
+        <template #action="{ row }">
+          <NButton type="primary" @click="editUser(row.userId)">编辑</NButton>
+        </template>
+      </Grid>
+    </Page>
+    <Modal />
+  </div>
 </template>

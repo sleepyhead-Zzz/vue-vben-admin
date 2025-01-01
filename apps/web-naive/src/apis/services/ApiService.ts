@@ -456,59 +456,6 @@ export class ApiService {
     });
   }
   /**
-   * 用户列表
-   * @param query
-   * @param userId 用户ID
-   * @param username 用户名
-   * @param status 用户状态
-   * @param phoneNumber 手机号
-   * @param deptId 部门ID
-   * @param pageNum 页码
-   * @param pageSize 每页条数
-   * @param orderColumn 排序字段
-   * @param orderDirection 排序方向
-   * @param timeRangeColumn 时间范围字段名
-   * @param beginTime 开始时间
-   * @param endTime 结束时间
-   * @returns ResponseDTOPageDTOUserDTO OK
-   * @throws ApiError
-   */
-  public static userList(
-    query: SearchUserQuerySearchUserDO,
-    userId?: number,
-    username?: string,
-    status?: number,
-    phoneNumber?: string,
-    deptId?: number,
-    pageNum: number = 1,
-    pageSize: number = 10,
-    orderColumn?: string,
-    orderDirection?: string,
-    timeRangeColumn?: string,
-    beginTime?: string,
-    endTime?: string,
-  ): CancelablePromise<ResponseDTOPageDTOUserDTO> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/system/users',
-      query: {
-        query: query,
-        userId: userId,
-        username: username,
-        status: status,
-        phoneNumber: phoneNumber,
-        deptId: deptId,
-        pageNum: pageNum,
-        pageSize: pageSize,
-        orderColumn: orderColumn,
-        orderDirection: orderDirection,
-        timeRangeColumn: timeRangeColumn,
-        beginTime: beginTime,
-        endTime: endTime,
-      },
-    });
-  }
-  /**
    * 新增用户
    * @param requestBody
    * @returns ResponseDTOVoid OK
@@ -520,6 +467,22 @@ export class ApiService {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/system/users',
+      body: requestBody,
+      mediaType: 'application/json',
+    });
+  }
+  /**
+   * 用户列表
+   * @param requestBody
+   * @returns ResponseDTOPageDTOUserDTO OK
+   * @throws ApiError
+   */
+  public static userList(
+    requestBody: SearchUserQuerySearchUserDO,
+  ): CancelablePromise<ResponseDTOPageDTOUserDTO> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/system/users/query',
       body: requestBody,
       mediaType: 'application/json',
     });

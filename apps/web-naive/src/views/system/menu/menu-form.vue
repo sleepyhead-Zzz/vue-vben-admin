@@ -315,7 +315,7 @@ const [Modal, modalApi] = useVbenModal({
       const menuData =
         modalApi.getData<Record<string, MenuDetailDTO>>().menuData;
       if (menuData) {
-        formApi.setValues(menuData.value);
+        formApi.setValues(menuData);
       }
       const title = menuData ? $t('system.menu.edit') : $t('system.menu.add');
       modalApi.setState({ title });
