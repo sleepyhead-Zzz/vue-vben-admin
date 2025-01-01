@@ -215,21 +215,6 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Input',
       componentProps: {
-        placeholder: $t('system.menu.input_iframe_url'),
-      },
-      dependencies: {
-        if(values) {
-          return values.menuType === 3;
-        },
-        triggerFields: ['menuType'],
-      },
-      fieldName: 'iframeSrc',
-      label: $t('system.menu.iframe'),
-      // rules: 'required',
-    },
-    {
-      component: 'Input',
-      componentProps: {
         placeholder: $t('system.menu.input_link'),
       },
       dependencies: {

@@ -41,12 +41,20 @@
     "nickname": "昵称",
     "email": "邮箱",
     "phone_number": "手机号码",
-
+    "id": "用户ID",
     "input_phone_number": "请输入手机号码",
     "input_email": "请输入邮箱",
     "input_nickname": "请输入昵称",
     "input_name": "请输入用户名",
     "add": "新增用户",
     "edit": "修改用户"
+  },
+  "dept": {
+    "title": "部门管理",
+    "name": "部门名",
+    "id": "部门ID",
+    "input_name": "请输入部门名",
+    "add": "新增部门",
+    "edit": "修改部门"
   }
 }

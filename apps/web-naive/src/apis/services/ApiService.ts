@@ -74,16 +74,21 @@ export class ApiService {
   }
   /**
    * 修改用户
+   * @param userId
    * @param requestBody
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
   public static edit(
+    userId: number,
     requestBody: UpdateUserCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'PUT',
       url: '/system/users/{userId}',
+      path: {
+        userId: userId,
+      },
       body: requestBody,
       mediaType: 'application/json',
     });

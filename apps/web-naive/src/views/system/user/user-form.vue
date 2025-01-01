@@ -5,13 +5,61 @@ import { $t } from '@vben/locales';
 import { useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
-import { type UserDetailDTO } from '#/apis';
+import {
+  type AddUserCommand,
+  ApiService,
+  type UpdateUserCommand,
+  type UserDetailDTO,
+} from '#/apis';
 
-async function onSubmit() {}
+async function onSubmit(values: Record<string, any>) {
+  if (values.user.userId) {
+    const formData: UpdateUserCommand = {
+      deptId: values.deptId,
+      username: values.user.username,
+      nickname: values.user.nickname,
+      email: values.user.email,
+      phoneNumber: values.user.phoneNumber,
+      sex: values.user.sex,
+      avatar: values.user.avatar,
+      password: values.user.password,
+      status: values.user.status,
+      roleId: values.roleId,
+      postId: values.postId,
+      remark: values.user.remark,
+    };
+    await ApiService.edit(values.user.userId, formData);
+  } else {
+    const formData: AddUserCommand = {
+      deptId: values.deptId,
+      username: values.user.username,
+      nickname: values.user.nickname,
+      email: values.user.email,
+      phoneNumber: values.user.phoneNumber,
+      sex: values.user.sex,
+      avatar: values.user.avatar,
+      password: values.user.password,
+      status: values.user.status,
+      roleId: values.roleId,
+      postId: values.postId,
+      remark: values.user.remark,
+    };
+    await ApiService.add(formData);
+  }
+}
 
 const [Form, formApi] = useVbenForm({
   handleSubmit: onSubmit,
   schema: [
+    {
+      component: 'InputNumber',
+      dependencies: {
+        disabled: true,
+        triggerFields: ['keepAlive'],
+      },
+      fieldName: 'user.userId',
+      label: $t('system.user.id'),
+    },
     {
       component: 'Input',
       componentProps: {
@@ -26,7 +74,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('system.user.input_nickname'),
       },
-      fieldName: 'nickname',
+      fieldName: 'user.nickname',
       label: $t('system.user.nickname'),
       rules: 'required',
     },
@@ -35,7 +83,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('system.user.input_email'),
       },
-      fieldName: 'email',
+      fieldName: 'user.email',
       label: $t('system.user.email'),
       rules: 'required',
     },
@@ -44,7 +92,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('system.user.input_phone_number'),
       },
-      fieldName: 'phoneNumber',
+      fieldName: 'user.phoneNumber',
       label: $t('system.user.phone_number'),
       rules: 'required',
     },
@@ -53,7 +101,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('common.form.input_remark'),
       },
-      fieldName: 'remark',
+      fieldName: 'user.remark',
       label: $t('common.form.remark'),
     },
   ],
