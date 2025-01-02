@@ -54,7 +54,13 @@
     "name": "部门名",
     "id": "部门ID",
     "input_name": "请输入部门名",
+    "input_leader_name": "请输入领导名",
+    "input_phone": "请输入部门电话",
+    "phone": "部门电话",
     "add": "新增部门",
-    "edit": "修改部门"
+    "edit": "修改部门",
+    "leader_name": "领导",
+    "parent": "上级部门",
+    "order_num": "排序"
   }
 }

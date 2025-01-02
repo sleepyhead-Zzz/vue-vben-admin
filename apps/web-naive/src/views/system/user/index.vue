@@ -5,7 +5,7 @@ import type {
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
 
-import { reactive, toRaw } from 'vue';
+import { reactive, ref, toRaw } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 
@@ -108,6 +108,7 @@ const [Modal, modalApi] = useVbenModal({
   connectedComponent: UserForm,
 });
 function addUser() {
+  modalApi.setData(ref(null));
   modalApi.open();
 }
 function deleteUsers() {}
