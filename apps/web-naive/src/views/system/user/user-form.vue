@@ -79,6 +79,31 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
     {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        filterOption: true,
+        options: [
+          {
+            label: $t('system.user.man'),
+            value: 0,
+          },
+          {
+            label: $t('system.user.woman'),
+            value: 1,
+          },
+          {
+            label: $t('common.form.unknown'),
+            value: 2,
+          },
+        ],
+        placeholder: $t('common.form.please_select'),
+        showSearch: true,
+      },
+      fieldName: 'user.sex',
+      label: $t('system.user.sex'),
+    },
+    {
       component: 'Input',
       componentProps: {
         placeholder: $t('system.user.input_email'),

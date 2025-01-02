@@ -40,6 +40,9 @@
     "name": "用户名",
     "nickname": "昵称",
     "email": "邮箱",
+    "sex": "性别",
+    "man": "男",
+    "woman": "女",
     "phone_number": "手机号码",
     "id": "用户ID",
     "input_phone_number": "请输入手机号码",
@@ -61,6 +64,34 @@
     "edit": "修改部门",
     "leader_name": "领导",
     "parent": "上级部门",
+    "order_num": "排序"
+  },
+  "role": {
+    "title": "角色管理",
+    "name": "角色名",
+    "id": "角色ID",
+    "input_name": "请输入角色名",
+    "input_leader_name": "请输入领导名",
+    "input_phone": "请输入角色电话",
+    "phone": "角色电话",
+    "add": "新增角色",
+    "edit": "修改角色",
+    "leader_name": "领导",
+    "parent": "上级角色",
+    "order_num": "排序"
+  },
+  "post": {
+    "title": "职位管理",
+    "name": "职位名",
+    "id": "职位ID",
+    "input_name": "请输入职位名",
+    "input_leader_name": "请输入领导名",
+    "input_phone": "请输入职位电话",
+    "phone": "职位电话",
+    "add": "新增职位",
+    "edit": "修改职位",
+    "leader_name": "领导",
+    "parent": "上级职位",
     "order_num": "排序"
   }
 }

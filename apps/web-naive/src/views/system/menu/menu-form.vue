@@ -274,11 +274,13 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
   ],
+  wrapperClass: 'grid-cols-1 md:grid-cols-2',
   showDefaultActions: false,
 });
 const message = useMessage();
 const [Modal, modalApi] = useVbenModal({
   fullscreenButton: false,
+  class: 'custom-modal-size',
   onCancel() {
     modalApi.close();
   },
@@ -323,3 +325,17 @@ const [Modal, modalApi] = useVbenModal({
     </Form>
   </Modal>
 </template>
+<style lang="css">
+.custom-modal-size {
+  width: 70% !important; /* 设置宽度为 70% */
+  max-width: 900px !important; /* 设置最大宽度 */
+  height: 80% !important; /* 设置高度为 80% */
+  max-height: 80vh; /* 设置最大高度为 视口高度的 80% */
+  margin: auto; /* 居中显示 */
+}
+
+/* 确保对话框内部内容的高度也是填充满的 */
+.custom-modal-size .vben-modal-content {
+  height: 100%;
+}
+</style>

@@ -9,7 +9,7 @@ import { reactive, ref, toRaw } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 
-import { NButton, useMessage } from 'naive-ui';
+import { NButton, NPopconfirm, NTag, useMessage } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
@@ -53,26 +53,27 @@ const gridOptions: VxeTableGridOptions<UserDTO> = {
   },
 
   columns: [
-    { field: 'userId', title: '用户ID' },
-    { field: 'postId', title: '职位ID' },
+    { field: 'avatar', title: '头像' },
+    { field: 'userId', title: '用户ID', visible: false },
+    { field: 'postId', title: '职位ID', visible: false },
     { field: 'postName', title: '职位名称' },
-    { field: 'roleId', title: '角色ID' },
+    { field: 'roleId', title: '角色ID', visible: false },
     { field: 'roleName', title: '角色名称' },
-    { field: 'deptId', title: '部门ID' },
+    { field: 'deptId', title: '部门ID', visible: false },
     { field: 'deptName', title: '部门名称' },
     { field: 'username', title: '用户名' },
     { field: 'nickname', title: '昵称' },
     { field: 'userType', title: '用户类型' },
     { field: 'email', title: '邮箱' },
     { field: 'photoNumber', title: '电话号码' },
-    { field: 'sex', title: '性别' },
-    { field: 'avatar', title: '头像' },
+    { field: 'sex', title: '性别', slots: { default: 'sex' } },
+
     {
       field: 'action',
       fixed: 'right',
       slots: { default: 'action' },
       title: '操作',
-      width: 120,
+      width: 230,
     },
   ],
   exportConfig: {},
@@ -120,6 +121,13 @@ async function editUser(user: number) {
   modalApi.open();
 }
 
+async function infoUser(user: number) {
+  message.success(`编辑用户ID: ${user}`);
+}
+async function deleteUser(user: number) {
+  message.success(`删除用户ID: ${user}`);
+}
+
 const gridEvents: VxeGridListeners = {
   toolbarToolClick(params) {
     if (params.code === 'add') {
@@ -140,8 +148,31 @@ const [Grid] = useVbenVxeGrid({
   <div>
     <Page auto-content-height>
       <Grid v-on="gridEvents">
+        <template #sex="{ row }">
+          <NTag
+            :bordered="false"
+            :type="
+              row.sex === 0 ? 'primary' : row.sex === 1 ? 'error' : 'warning'
+            "
+          >
+            {{ row.sex === 0 ? '男' : row.sex === 1 ? '女' : '未知' }}
+          </NTag>
+        </template>
         <template #action="{ row }">
-          <NButton type="primary" @click="editUser(row.userId)">编辑</NButton>
+          <NButton quaternary type="primary" @click="editUser(row.userId)">
+            {{ $t('common.table.edit') }}
+          </NButton>
+          <NButton quaternary type="info" @click="infoUser(row.userId)">
+            {{ $t('common.table.info') }}
+          </NButton>
+          <NPopconfirm @positive-click="deleteUser(row.userId)">
+            <template #trigger>
+              <NButton quaternary type="error">
+                {{ $t('common.table.delete') }}
+              </NButton>
+            </template>
+            {{ $t('common.table.contrim_delete') }}
+          </NPopconfirm>
         </template>
       </Grid>
     </Page>
