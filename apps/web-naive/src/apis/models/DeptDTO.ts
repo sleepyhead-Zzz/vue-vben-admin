@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type DeptDTO = {
-  id?: number;
+  deptId?: number;
   parentId?: number;
   deptName?: string;
   orderNum?: number;

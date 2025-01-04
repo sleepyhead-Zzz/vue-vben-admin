@@ -179,35 +179,56 @@ export class ApiService {
     });
   }
   /**
+   * 角色详情
+   * @param roleId
+   * @returns ResponseDTORoleDTO OK
+   * @throws ApiError
+   */
+  public static getInfo(roleId: number): CancelablePromise<ResponseDTORoleDTO> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/system/role/{roleId}',
+      path: {
+        roleId: roleId,
+      },
+    });
+  }
+  /**
    * 修改角色
+   * @param roleId
    * @param requestBody
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
   public static edit1(
+    roleId: number,
     requestBody: UpdateRoleCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/system/role',
+      url: '/system/role/{roleId}',
+      path: {
+        roleId: roleId,
+      },
       body: requestBody,
       mediaType: 'application/json',
     });
   }
   /**
-   * 添加角色
-   * @param requestBody
+   * 删除角色
+   * @param roleId
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static add1(
-    requestBody: AddRoleCommand,
+  public static remove1(
+    roleId: Array<number>,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/system/role',
-      body: requestBody,
-      mediaType: 'application/json',
+      method: 'DELETE',
+      url: '/system/role/{roleId}',
+      path: {
+        roleId: roleId,
+      },
     });
   }
   /**
@@ -493,6 +514,22 @@ export class ApiService {
     });
   }
   /**
+   * 添加角色
+   * @param requestBody
+   * @returns ResponseDTOVoid OK
+   * @throws ApiError
+   */
+  public static add1(
+    requestBody: AddRoleCommand,
+  ): CancelablePromise<ResponseDTOVoid> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/system/role',
+      body: requestBody,
+      mediaType: 'application/json',
+    });
+  }
+  /**
    * 批量添加用户和角色关联
    * @param roleId
    * @param userIds
@@ -510,6 +547,22 @@ export class ApiService {
         roleId: roleId,
         userIds: userIds,
       },
+    });
+  }
+  /**
+   * 角色列表
+   * @param requestBody
+   * @returns ResponseDTOPageDTORoleDTO OK
+   * @throws ApiError
+   */
+  public static list(
+    requestBody: RoleQuery,
+  ): CancelablePromise<ResponseDTOPageDTORoleDTO> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/system/role/list',
+      body: requestBody,
+      mediaType: 'application/json',
     });
   }
   /**
@@ -610,38 +663,6 @@ export class ApiService {
     });
   }
   /**
-   * 角色详情
-   * @param roleId
-   * @returns ResponseDTORoleDTO OK
-   * @throws ApiError
-   */
-  public static getInfo(roleId: number): CancelablePromise<ResponseDTORoleDTO> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/system/role/{roleId}',
-      path: {
-        roleId: roleId,
-      },
-    });
-  }
-  /**
-   * 删除角色
-   * @param roleId
-   * @returns ResponseDTOVoid OK
-   * @throws ApiError
-   */
-  public static remove1(
-    roleId: Array<number>,
-  ): CancelablePromise<ResponseDTOVoid> {
-    return __request(OpenAPI, {
-      method: 'DELETE',
-      url: '/system/role/{roleId}',
-      path: {
-        roleId: roleId,
-      },
-    });
-  }
-  /**
    * 未关联该角色的用户列表
    * @param roleId
    * @param query
@@ -680,23 +701,6 @@ export class ApiService {
       path: {
         roleId: roleId,
       },
-      query: {
-        query: query,
-      },
-    });
-  }
-  /**
-   * 角色列表
-   * @param query
-   * @returns ResponseDTOPageDTORoleDTO OK
-   * @throws ApiError
-   */
-  public static list(
-    query: RoleQuery,
-  ): CancelablePromise<ResponseDTOPageDTORoleDTO> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/system/role/list',
       query: {
         query: query,
       },

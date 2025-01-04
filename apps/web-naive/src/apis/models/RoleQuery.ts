@@ -10,7 +10,16 @@ export type RoleQuery = {
   endTime?: string;
   pageNum?: number;
   pageSize?: number;
+  /**
+   * 角色名称
+   */
   roleName?: string;
+  /**
+   * 角色权限字符串
+   */
   roleKey?: string;
+  /**
+   * 角色状态
+   */
   status?: string;
 };

@@ -10,9 +10,12 @@
     "contrim_delete": "确认删除？"
   },
   "form": {
+    "activate": "正常",
+    "disabled": "禁用",
     "please_select": "请选择",
     "input_remark": "请输入备注",
     "remark": "备注",
+    "status": "状态",
     "unknown": "未知"
   }
 }

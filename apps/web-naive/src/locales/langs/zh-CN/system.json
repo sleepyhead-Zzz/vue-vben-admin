@@ -73,12 +73,12 @@
     "input_name": "请输入角色名",
     "input_leader_name": "请输入领导名",
     "input_phone": "请输入角色电话",
+    "input_roleKey": "请输入角色权限字符串",
     "phone": "角色电话",
     "add": "新增角色",
     "edit": "修改角色",
     "leader_name": "领导",
-    "parent": "上级角色",
-    "order_num": "排序"
+    "roleKey": "角色权限字符串"
   },
   "post": {
     "title": "职位管理",
