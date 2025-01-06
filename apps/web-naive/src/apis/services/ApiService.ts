@@ -274,52 +274,41 @@ export class ApiService {
     });
   }
   /**
+   * 职位详情
+   * @param postId
+   * @returns ResponseDTOPostDTO OK
+   * @throws ApiError
+   */
+  public static getInfo1(
+    postId: number,
+  ): CancelablePromise<ResponseDTOPostDTO> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/system/post/{postId}',
+      path: {
+        postId: postId,
+      },
+    });
+  }
+  /**
    * 修改职位
+   * @param postId
    * @param requestBody
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
   public static edit2(
+    postId: number,
     requestBody: UpdatePostCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/system/post',
-      body: requestBody,
-      mediaType: 'application/json',
-    });
-  }
-  /**
-   * 添加职位
-   * @param requestBody
-   * @returns ResponseDTOVoid OK
-   * @throws ApiError
-   */
-  public static add2(
-    requestBody: AddPostCommand,
-  ): CancelablePromise<ResponseDTOVoid> {
-    return __request(OpenAPI, {
-      method: 'POST',
-      url: '/system/post',
-      body: requestBody,
-      mediaType: 'application/json',
-    });
-  }
-  /**
-   * 删除职位
-   * @param ids
-   * @returns ResponseDTOVoid OK
-   * @throws ApiError
-   */
-  public static remove2(
-    ids: Array<number>,
-  ): CancelablePromise<ResponseDTOVoid> {
-    return __request(OpenAPI, {
-      method: 'DELETE',
-      url: '/system/post',
-      query: {
-        ids: ids,
+      url: '/system/post/{postId}',
+      path: {
+        postId: postId,
       },
+      body: requestBody,
+      mediaType: 'application/json',
     });
   }
   /**
@@ -566,6 +555,55 @@ export class ApiService {
     });
   }
   /**
+   * 添加职位
+   * @param requestBody
+   * @returns ResponseDTOVoid OK
+   * @throws ApiError
+   */
+  public static add2(
+    requestBody: AddPostCommand,
+  ): CancelablePromise<ResponseDTOVoid> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/system/post',
+      body: requestBody,
+      mediaType: 'application/json',
+    });
+  }
+  /**
+   * 删除职位
+   * @param ids
+   * @returns ResponseDTOVoid OK
+   * @throws ApiError
+   */
+  public static remove2(
+    ids: Array<number>,
+  ): CancelablePromise<ResponseDTOVoid> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: '/system/post',
+      query: {
+        ids: ids,
+      },
+    });
+  }
+  /**
+   * 职位列表
+   * @param requestBody
+   * @returns ResponseDTOPageDTOPostDTO OK
+   * @throws ApiError
+   */
+  public static list1(
+    requestBody: PostQuery,
+  ): CancelablePromise<ResponseDTOPageDTOPostDTO> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/system/post/list',
+      body: requestBody,
+      mediaType: 'application/json',
+    });
+  }
+  /**
    * 菜单列表
    * @param menuQuery
    * @returns ResponseDTOListMenuDTO OK
@@ -701,40 +739,6 @@ export class ApiService {
       path: {
         roleId: roleId,
       },
-      query: {
-        query: query,
-      },
-    });
-  }
-  /**
-   * 职位详情
-   * @param postId
-   * @returns ResponseDTOPostDTO OK
-   * @throws ApiError
-   */
-  public static getInfo1(
-    postId: number,
-  ): CancelablePromise<ResponseDTOPostDTO> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/system/post/{postId}',
-      path: {
-        postId: postId,
-      },
-    });
-  }
-  /**
-   * 职位列表
-   * @param query
-   * @returns ResponseDTOPageDTOPostDTO OK
-   * @throws ApiError
-   */
-  public static list1(
-    query: PostQuery,
-  ): CancelablePromise<ResponseDTOPageDTOPostDTO> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/system/post/list',
       query: {
         query: query,
       },

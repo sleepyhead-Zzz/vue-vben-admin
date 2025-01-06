@@ -7,7 +7,10 @@
     "edit": "编辑",
     "delete": "删除",
     "info": "详细信息",
-    "contrim_delete": "确认删除？"
+    "contrim_delete": "确认删除？",
+    "status": "状态",
+    "create_time": "创建时间",
+    "sort": "显示顺序"
   },
   "form": {
     "activate": "正常",
@@ -16,6 +19,8 @@
     "input_remark": "请输入备注",
     "remark": "备注",
     "status": "状态",
-    "unknown": "未知"
+    "unknown": "未知",
+    "sort": "显示顺序",
+    "input_sort": "请输入显示顺序"
   }
 }

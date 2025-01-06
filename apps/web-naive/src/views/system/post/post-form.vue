@@ -24,20 +24,29 @@ const [Form, formApi] = useVbenForm({
     {
       component: 'Input',
       componentProps: {
+        placeholder: $t('system.post.input_code'),
+      },
+      fieldName: 'postCode',
+      label: $t('system.post.code'),
+      rules: 'required',
+    },
+    {
+      component: 'Input',
+      componentProps: {
         placeholder: $t('system.post.input_name'),
       },
-      fieldName: 'postname',
+      fieldName: 'postName',
       label: $t('system.post.name'),
       rules: 'required',
     },
     {
       component: 'Input',
       componentProps: {
-        placeholder: $t('system.post.input_postKey'),
+        placeholder: $t('common.form.input_sort'),
       },
-      fieldName: 'postKey',
-      label: $t('system.post.postKey'),
-      rules: 'required',
+      fieldName: 'postSort',
+      label: $t('common.form.sort'),
+      // rules: 'required',
     },
     {
       component: 'Select',
@@ -67,7 +76,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('common.form.input_remark'),
       },
-      fieldName: 'post.remark',
+      fieldName: 'remark',
       label: $t('common.form.remark'),
     },
   ],

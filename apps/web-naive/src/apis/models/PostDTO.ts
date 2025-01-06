@@ -2,6 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+/**
+ * 列表数据
+ */
 export type PostDTO = {
   /**
    * 岗位ID

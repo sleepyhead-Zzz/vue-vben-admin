@@ -46,11 +46,12 @@ const gridOptions: VxeTableGridOptions<PostDTO> = {
   },
 
   columns: [
-    { field: 'postId', title: '角色ID', visible: false },
-    { field: 'postName', title: '角色名称' },
-    { field: 'postKey', title: '角色权限字符串' },
-    { field: 'postSort', title: '显示顺序' },
-    { field: 'status', title: '角色状态' },
+    { field: 'postId', title: $t('system.post.id'), visible: false },
+    { field: 'postCode', title: $t('system.post.code') },
+    { field: 'postName', title: $t('system.post.name') },
+    { field: 'statusStr', title: $t('common.table.status') },
+    { field: 'postSort', title: $t('common.table.sort'), visible: false },
+    { field: 'createTime', title: $t('common.table.create_time') },
     {
       field: 'action',
       fixed: 'right',
@@ -98,7 +99,7 @@ function addPost() {
 function deletePosts() {}
 
 async function editPost(post: number) {
-  const { data: selectPost } = await ApiService.getInfo(post);
+  const { data: selectPost } = await ApiService.getInfo1(post);
   modalApi.setData({ postData: selectPost });
   modalApi.open();
 }

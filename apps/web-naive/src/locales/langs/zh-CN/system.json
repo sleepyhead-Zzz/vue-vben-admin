@@ -87,6 +87,8 @@
     "input_name": "请输入职位名",
     "input_leader_name": "请输入领导名",
     "input_phone": "请输入职位电话",
+    "input_code": "请输入职位代码",
+    "code": "职位代码",
     "phone": "职位电话",
     "add": "新增职位",
     "edit": "修改职位",
