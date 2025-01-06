@@ -8,11 +8,18 @@
     "delete": "删除",
     "info": "详细信息",
     "contrim_delete": "确认删除？",
+    "delete_success": "删除成功",
     "status": "状态",
     "create_time": "创建时间",
     "sort": "显示顺序"
   },
   "form": {
+    "required": "该字段必填",
+    "email_valid_error": "输入的邮箱格式不正确",
+    "phone_max_length": "电话号码最大长度为20位",
+    "invalid_phone": "输入的电话号码格式有误",
+    "success": "提交成功",
+    "valid_error": "数据格式有误",
     "activate": "正常",
     "disabled": "禁用",
     "please_select": "请选择",

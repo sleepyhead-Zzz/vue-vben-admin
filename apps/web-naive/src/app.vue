@@ -20,8 +20,6 @@ import {
 
 import './utils/axios';
 
-import './assets/index.css';
-
 defineOptions({ name: 'App' });
 
 const { commonTokens } = useNaiveDesignTokens();

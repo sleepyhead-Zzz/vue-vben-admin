@@ -64,7 +64,8 @@
     "edit": "修改部门",
     "leader_name": "领导",
     "parent": "上级部门",
-    "order_num": "排序"
+    "email": "部门邮箱",
+    "input_email": "请输入部门邮箱"
   },
   "role": {
     "title": "角色管理",
@@ -93,7 +94,6 @@
     "add": "新增职位",
     "edit": "修改职位",
     "leader_name": "领导",
-    "parent": "上级职位",
-    "order_num": "排序"
+    "parent": "上级职位"
   }
 }

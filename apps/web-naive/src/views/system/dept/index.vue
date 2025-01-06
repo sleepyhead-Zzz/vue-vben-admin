@@ -5,7 +5,7 @@ import { h, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 
-import { NButton, NDataTable, NPopconfirm } from 'naive-ui';
+import { NButton, NDataTable, NPopconfirm, useMessage } from 'naive-ui';
 
 import { ApiService, type DeptDTO } from '#/apis';
 import { Button } from '#/components/ui/button';
@@ -99,6 +99,7 @@ const [Modal, modalApi] = useVbenModal({
     fetchData();
   },
 });
+const message = useMessage();
 const columns = createColumns(
   async (row: Dept) => {
     const { data: selectedDept } = await ApiService.getInfo2(row.deptId);
@@ -106,7 +107,8 @@ const columns = createColumns(
     modalApi.open();
   },
   async (row: Dept) => {
-    await ApiService.remove3(row.deptId);
+    await ApiService.remove4(row.deptId);
+    message.info($t('common.table.delete_success'));
     await fetchData();
   },
 );
