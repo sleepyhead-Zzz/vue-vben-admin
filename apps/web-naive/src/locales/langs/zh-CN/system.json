@@ -55,6 +55,7 @@
   "dept": {
     "title": "部门管理",
     "name": "部门名",
+    "name_max_length": "部门名称长度不能超过30个字符",
     "id": "部门ID",
     "input_name": "请输入部门名",
     "input_leader_name": "请输入领导名",
@@ -63,6 +64,7 @@
     "add": "新增部门",
     "edit": "修改部门",
     "leader_name": "领导",
+    "leader_name_max_length": "领导名称长度不能超过30个字符",
     "parent": "上级部门",
     "email": "部门邮箱",
     "input_email": "请输入部门邮箱"

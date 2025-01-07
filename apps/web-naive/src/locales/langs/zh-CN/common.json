@@ -16,7 +16,7 @@
   "form": {
     "required": "该字段必填",
     "email_valid_error": "输入的邮箱格式不正确",
-    "phone_max_length": "电话号码最大长度为20位",
+    "phone_max_length": "电话号码最大长度为13位",
     "invalid_phone": "输入的电话号码格式有误",
     "success": "提交成功",
     "valid_error": "数据格式有误",
@@ -28,6 +28,7 @@
     "status": "状态",
     "unknown": "未知",
     "sort": "显示顺序",
-    "input_sort": "请输入显示顺序"
+    "input_sort": "请输入显示顺序",
+    "error_sort": "显示顺序必须是正整数"
   }
 }

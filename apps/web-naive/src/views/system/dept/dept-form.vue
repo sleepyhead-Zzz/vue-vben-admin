@@ -62,7 +62,9 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'deptName',
       label: $t('system.dept.name'),
-      rules: 'required',
+      rules: zod
+        .string()
+        .max(30, { message: $t('system.dept.name_max_length') }),
     },
     {
       component: 'TreeSelectCustomize',
@@ -76,7 +78,7 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'orderNum',
       label: $t('common.form.sort'),
-      // rules: 'required',
+      rules: zod.number().int().min(0, $t('common.form.error_sort')),
     },
     {
       component: 'Input',
@@ -85,7 +87,9 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'leaderName',
       label: $t('system.dept.leader_name'),
-      rules: 'required',
+      rules: zod
+        .string()
+        .max(30, { message: $t('system.dept.leader_name_max_length') }),
     },
     {
       component: 'Select',
@@ -118,8 +122,7 @@ const [Form, formApi] = useVbenForm({
       label: $t('system.dept.phone'),
       rules: zod
         .string()
-        .min(1, { message: $t('common.form.required') })
-        .max(20, { message: $t('common.form.phone_max_length') }),
+        .max(13, { message: $t('common.form.phone_max_length') }),
     },
 
     {
@@ -131,7 +134,6 @@ const [Form, formApi] = useVbenForm({
       label: $t('system.dept.email'),
       rules: zod
         .string()
-        .min(1, { message: $t('common.form.required') })
         .email({ message: $t('common.form.email_valid_error') }),
     },
   ],
@@ -141,21 +143,27 @@ const message = useMessage();
 const [Modal, modalApi] = useVbenModal({
   fullscreenButton: false,
   onCancel() {
+    modalApi.setState({ loading: false });
     modalApi.close();
   },
   onConfirm: async () => {
+    modalApi.setState({ loading: true });
+
     const { valid } = await formApi.validate();
     if (!valid) {
       message.error($t('common.form.valid_error'));
+      modalApi.setState({ loading: false });
       return;
     }
     await formApi.submitForm();
     message.info($t('common.form.success'));
+    modalApi.setState({ loading: false });
     modalApi.close();
   },
 
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
+      modalApi.setState({ loading: true });
       const { data } = await ApiService.dropdownList1();
       allDept.value = data;
       const deptData = modalApi.getData<Record<string, DeptDTO>>().deptData;
@@ -164,6 +172,7 @@ const [Modal, modalApi] = useVbenModal({
       }
       const title = deptData ? $t('system.dept.edit') : $t('system.dept.add');
       modalApi.setState({ title });
+      modalApi.setState({ loading: false });
     }
   },
 });
