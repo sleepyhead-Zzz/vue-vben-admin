@@ -7,7 +7,7 @@ import type {
 
 import { reactive, ref, toRaw } from 'vue';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 
 import { NButton, NPopconfirm, useMessage } from 'naive-ui';
 
@@ -16,6 +16,7 @@ import { ApiService, type PostDTO, type PostQuery } from '#/apis';
 import { $t } from '#/locales';
 
 import PostForm from './post-form.vue';
+import PostInfo from './post-info.vue';
 
 const searchFormParams = reactive<PostQuery>({
   postName: undefined,
@@ -104,8 +105,14 @@ async function editPost(post: number) {
   modalApi.open();
 }
 
+const [Drawer, drawerApi] = useVbenDrawer({
+  connectedComponent: PostInfo,
+});
 async function infoPost(post: number) {
-  message.success(`编辑角色ID: ${post}`);
+  drawerApi.setData({
+    postId: post,
+  });
+  drawerApi.open();
 }
 async function deletePost(post: number) {
   message.success(`删除角色ID: ${post}`);
@@ -150,6 +157,7 @@ const [Grid] = useVbenVxeGrid({
       </Grid>
     </Page>
     <Modal />
+    <Drawer />
   </div>
 </template>
 
