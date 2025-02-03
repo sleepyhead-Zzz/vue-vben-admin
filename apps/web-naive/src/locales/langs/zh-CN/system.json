@@ -73,6 +73,7 @@
     "title": "角色管理",
     "name": "角色名",
     "id": "角色ID",
+    "info": "角色详情",
     "input_name": "请输入角色名",
     "input_leader_name": "请输入领导名",
     "input_phone": "请输入角色电话",
@@ -81,7 +82,7 @@
     "add": "新增角色",
     "edit": "修改角色",
     "leader_name": "领导",
-    "roleKey": "角色权限字符串"
+    "roleKey": "权限字符串"
   },
   "post": {
     "title": "职位管理",
@@ -97,6 +98,10 @@
     "edit": "修改职位",
     "leader_name": "领导",
     "parent": "上级职位",
-    "info": "职位详情"
+    "info": "职位详情",
+    "sort": "排序",
+    "remark": "备注",
+    "status": "状态",
+    "create_time": "创建时间"
   }
 }

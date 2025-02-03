@@ -297,6 +297,7 @@ const [Modal, modalApi] = useVbenModal({
 
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
+      modalApi.setState({ loading: true });
       const { data } = await ApiService.dropdownList();
       allMenu.value = data;
       const menuData =
@@ -306,6 +307,7 @@ const [Modal, modalApi] = useVbenModal({
       }
       const title = menuData ? $t('system.menu.edit') : $t('system.menu.add');
       modalApi.setState({ title });
+      modalApi.setState({ loading: false });
     }
   },
 });

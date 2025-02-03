@@ -7,7 +7,7 @@ import type {
 
 import { reactive, ref, toRaw } from 'vue';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 
 import { NButton, NPopconfirm, useMessage } from 'naive-ui';
 
@@ -16,6 +16,7 @@ import { ApiService, type RoleDTO, type RoleQuery } from '#/apis';
 import { $t } from '#/locales';
 
 import RoleForm from './role-form.vue';
+import RoleInfo from './role-info.vue';
 
 const searchFormParams = reactive<RoleQuery>({
   roleName: undefined,
@@ -70,6 +71,7 @@ const gridOptions: VxeTableGridOptions<RoleDTO> = {
         searchFormParams.pageNum = page.currentPage;
         searchFormParams.pageSize = page.pageSize;
         searchFormParams.roleName = formValues.name;
+        await new Promise((resolve) => setTimeout(resolve, 500));
         return await ApiService.list(toRaw(searchFormParams));
       },
     },
@@ -103,8 +105,14 @@ async function editRole(role: number) {
   modalApi.setData({ roleData: selectRole });
   modalApi.open();
 }
-
+const [Drawer, drawerApi] = useVbenDrawer({
+  connectedComponent: RoleInfo,
+});
 async function infoRole(role: number) {
+  drawerApi.setData({
+    roleId: role,
+  });
+  drawerApi.open();
   message.success(`编辑角色ID: ${role}`);
 }
 async function deleteRole(role: number) {
@@ -150,5 +158,6 @@ const [Grid] = useVbenVxeGrid({
       </Grid>
     </Page>
     <Modal />
+    <Drawer />
   </div>
 </template>

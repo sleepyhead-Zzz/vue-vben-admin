@@ -71,6 +71,7 @@ const gridOptions: VxeTableGridOptions<PostDTO> = {
         searchFormParams.pageNum = page.currentPage;
         searchFormParams.pageSize = page.pageSize;
         searchFormParams.postName = formValues.name;
+        await new Promise((resolve) => setTimeout(resolve, 500));
         return await ApiService.list1(toRaw(searchFormParams));
       },
     },
