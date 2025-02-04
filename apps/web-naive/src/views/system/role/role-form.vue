@@ -2,7 +2,7 @@
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { useMessage } from 'naive-ui';
+import { NTreeSelect, useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
 import {
@@ -13,7 +13,7 @@ import {
 } from '#/apis';
 
 async function onSubmit(values: Record<string, any>) {
-  if (values.role.roleId) {
+  if (values.roleId) {
     const formData: UpdateRoleCommand = {
       roleId: values.roleId,
       roleName: values.roleName,
@@ -22,9 +22,9 @@ async function onSubmit(values: Record<string, any>) {
       status: values.status,
       dataScope: values.dataScope,
       menuIds: values.menuIds,
-      remark: values.role.remark,
+      remark: values.remark,
     };
-    await ApiService.edit1(values.role.roleId, formData);
+    await ApiService.edit1(values.roleId, formData);
   } else {
     const formData: AddRoleCommand = {
       roleName: values.roleName,
@@ -33,7 +33,7 @@ async function onSubmit(values: Record<string, any>) {
       status: values.status,
       dataScope: values.dataScope,
       menuIds: values.menuIds,
-      remark: values.role.remark,
+      remark: values.remark,
     };
     await ApiService.add1(formData);
   }
@@ -56,7 +56,7 @@ const [Form, formApi] = useVbenForm({
       componentProps: {
         placeholder: $t('system.role.input_name'),
       },
-      fieldName: 'rolename',
+      fieldName: 'roleName',
       label: $t('system.role.name'),
       rules: 'required',
     },
@@ -67,6 +67,15 @@ const [Form, formApi] = useVbenForm({
       },
       fieldName: 'roleKey',
       label: $t('system.role.roleKey'),
+      rules: 'required',
+    },
+    {
+      component: 'Input',
+      componentProps: {
+        placeholder: $t('system.role.input_sort'),
+      },
+      fieldName: 'roleSort',
+      label: $t('system.role.sort'),
       rules: 'required',
     },
     {
@@ -91,18 +100,31 @@ const [Form, formApi] = useVbenForm({
       fieldName: 'status',
       label: $t('common.form.status'),
     },
-
+    {
+      component: 'Input',
+      fieldName: 'menuIds',
+      label: '菜单权限',
+      rules: 'required',
+    },
     {
       component: 'Input',
       componentProps: {
         placeholder: $t('common.form.input_remark'),
       },
-      fieldName: 'role.remark',
+      fieldName: 'remark',
       label: $t('common.form.remark'),
     },
   ],
   showDefaultActions: false,
 });
+interface Menu {
+  label: string;
+  menuId: number;
+  parentId: number;
+  children?: Menu[];
+}
+
+let options: Menu[] = [];
 const message = useMessage();
 const [Modal, modalApi] = useVbenModal({
   fullscreenButton: false,
@@ -126,6 +148,9 @@ const [Modal, modalApi] = useVbenModal({
       if (roleData) {
         formApi.setValues(roleData);
       }
+      // @ts-ignore
+      const { data }: { data: Menu[] } = await ApiService.dropdownList();
+      options = data;
       const title = roleData ? $t('system.role.edit') : $t('system.role.add');
       modalApi.setState({ title });
     }
@@ -134,6 +159,20 @@ const [Modal, modalApi] = useVbenModal({
 </script>
 <template>
   <Modal>
-    <Form />
+    <Form>
+      <template #menuIds="slotProps">
+        <NTreeSelect
+          v-bind="slotProps"
+          :options="options"
+          cascade
+          check-strategy="all"
+          checkable
+          children-field="children"
+          key-field="menuId"
+          label-field="label"
+          multiple
+        />
+      </template>
+    </Form>
   </Modal>
 </template>
