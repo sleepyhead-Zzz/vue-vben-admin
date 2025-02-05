@@ -1,15 +1,12 @@
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
-import type {
-  VxeGridListeners,
-  VxeTableGridOptions,
-} from '#/adapter/vxe-table';
+import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
 
-import { reactive, ref, toRaw } from 'vue';
+import { h, reactive, ref, toRaw } from 'vue';
 
 import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 
-import { NButton, NPopconfirm, useMessage } from 'naive-ui';
+import { NButton, NPopconfirm, NTag, useDialog, useMessage } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { ApiService, type RoleDTO, type RoleQuery } from '#/apis';
@@ -41,18 +38,38 @@ const formOptions: VbenFormProps = {
   submitOnEnter: false,
 };
 const message = useMessage();
-const gridOptions: VxeTableGridOptions<RoleDTO> = {
+const gridOptions: VxeGridProps<RoleDTO> = {
   checkboxConfig: {
     highlight: true,
     labelField: 'name',
   },
 
   columns: [
+    {
+      type: 'checkbox',
+      title: '选择',
+    },
     { field: 'roleId', title: '角色ID', visible: false },
     { field: 'roleName', title: '角色名称' },
     { field: 'roleKey', title: '角色权限字符串' },
     { field: 'roleSort', title: '显示顺序' },
-    { field: 'status', title: '角色状态' },
+    {
+      field: 'status',
+      title: '角色状态',
+      slots: {
+        default: ({ row }) => {
+          return h(
+            NTag,
+            {
+              type: row.status === 1 ? 'success' : 'error',
+            },
+            {
+              default: () => (row.status === 1 ? '正常' : '禁用'),
+            },
+          );
+        },
+      },
+    },
     {
       field: 'action',
       fixed: 'right',
@@ -79,14 +96,15 @@ const gridOptions: VxeTableGridOptions<RoleDTO> = {
 
   toolbarConfig: {
     tools: [
-      { name: '新增', code: 'add', status: 'primary' },
-      { name: '删除', code: 'del', status: 'error' },
+      { name: $t('common.table.add'), code: 'add', status: 'primary' },
+      { name: $t('common.table.delete'), code: 'del', status: 'error' },
     ],
 
     custom: true,
     export: true,
     refresh: true,
     resizable: true,
+    // @ts-ignore 正式环境时有完整的类型声明
     search: true,
     zoom: true,
   },
@@ -98,7 +116,6 @@ function addRole() {
   modalApi.setData(ref(null));
   modalApi.open();
 }
-function deleteRoles() {}
 
 async function editRole(role: number) {
   const { data: selectRole } = await ApiService.getInfo(role);
@@ -113,26 +130,47 @@ async function infoRole(role: number) {
     roleId: role,
   });
   drawerApi.open();
-  message.success(`编辑角色ID: ${role}`);
 }
-async function deleteRole(role: number) {
-  message.success(`删除角色ID: ${role}`);
-}
-
+const dialog = useDialog();
 const gridEvents: VxeGridListeners = {
   toolbarToolClick(params) {
     if (params.code === 'add') {
       addRole();
     } else if (params.code === 'del') {
-      deleteRoles();
+      dialog.warning({
+        title: '警告',
+        content: '你确定？',
+        positiveText: '确定',
+        negativeText: '不确定',
+        onPositiveClick: () => {
+          deleteRoles([]);
+        },
+        onNegativeClick: () => {},
+      });
     }
   },
 };
-const [Grid] = useVbenVxeGrid({
+const [Grid, gridApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
   gridEvents,
 });
+async function deleteRoles(role: number[]) {
+  if (role.length > 0) {
+    await ApiService.remove1(role);
+    gridApi.reload();
+  } else {
+    const selectedRoles = gridApi.grid.getCheckboxRecords();
+    if (selectedRoles.length === 0) {
+      message.warning('请先选择要删除的角色');
+      return;
+    }
+    const roleIds = selectedRoles.map((role) => role.roleId); // 提取出选中的角色ID
+    await ApiService.remove1(roleIds);
+    message.success('删除成功');
+    gridApi.reload();
+  }
+}
 </script>
 
 <template>
@@ -146,7 +184,7 @@ const [Grid] = useVbenVxeGrid({
           <NButton quaternary type="info" @click="infoRole(row.roleId)">
             {{ $t('common.table.info') }}
           </NButton>
-          <NPopconfirm @positive-click="deleteRole(row.roleId)">
+          <NPopconfirm @positive-click="deleteRoles([row.roleId])">
             <template #trigger>
               <NButton quaternary type="error">
                 {{ $t('common.table.delete') }}

@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { useVbenDrawer } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { NDescriptions, NDescriptionsItem, NSpin } from 'naive-ui';
+import { NDescriptions, NDescriptionsItem, NSpin, NTag } from 'naive-ui';
 
 import { ApiService, type RoleDTO } from '#/apis';
 
@@ -53,6 +53,39 @@ const [Drawer, drawerApi] = useVbenDrawer({
         >
           <NDescriptionsItem :label="$t('system.role.id')">
             {{ roleInfo.roleId }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.name')">
+            {{ roleInfo.roleName }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.key')">
+            {{ roleInfo.roleKey }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.sort')">
+            {{ roleInfo.roleSort }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.status')">
+            <NTag :type="roleInfo.status === 1 ? 'success' : 'error'">
+              {{
+                roleInfo.status === 1
+                  ? $t('system.role.statusNormal')
+                  : $t('system.role.statusDisabled')
+              }}
+            </NTag>
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.remark')">
+            {{ roleInfo.remark || $t('common.none') }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.createTime')">
+            {{ roleInfo.createTime }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.dataScope')">
+            {{ roleInfo.dataScope }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.selectedMenuList')">
+            {{ roleInfo.selectedMenuList?.join(', ') || $t('common.none') }}
+          </NDescriptionsItem>
+          <NDescriptionsItem :label="$t('system.role.selectedDeptList')">
+            {{ roleInfo.selectedDeptList?.join(', ') || $t('common.none') }}
           </NDescriptionsItem>
         </NDescriptions>
       </NSpin>

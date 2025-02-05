@@ -21,7 +21,7 @@ async function onSubmit(values: Record<string, any>) {
       roleSort: values.roleSort,
       status: values.status,
       dataScope: values.dataScope,
-      menuIds: values.menuIds,
+      menuIds: values.selectedMenuList,
       remark: values.remark,
     };
     await ApiService.edit1(values.roleId, formData);
@@ -32,7 +32,7 @@ async function onSubmit(values: Record<string, any>) {
       roleSort: values.roleSort,
       status: values.status,
       dataScope: values.dataScope,
-      menuIds: values.menuIds,
+      menuIds: values.selectedMenuList,
       remark: values.remark,
     };
     await ApiService.add1(formData);
@@ -70,7 +70,7 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
     {
-      component: 'Input',
+      component: 'InputNumber',
       componentProps: {
         placeholder: $t('system.role.input_sort'),
       },
@@ -102,7 +102,7 @@ const [Form, formApi] = useVbenForm({
     },
     {
       component: 'Input',
-      fieldName: 'menuIds',
+      fieldName: 'selectedMenuList',
       label: '菜单权限',
       rules: 'required',
     },
@@ -145,6 +145,7 @@ const [Modal, modalApi] = useVbenModal({
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       const roleData = modalApi.getData<Record<string, RoleDTO>>().roleData;
+
       if (roleData) {
         formApi.setValues(roleData);
       }
@@ -160,7 +161,7 @@ const [Modal, modalApi] = useVbenModal({
 <template>
   <Modal>
     <Form>
-      <template #menuIds="slotProps">
+      <template #selectedMenuList="slotProps">
         <NTreeSelect
           v-bind="slotProps"
           :options="options"

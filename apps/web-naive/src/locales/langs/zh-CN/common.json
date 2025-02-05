@@ -1,9 +1,12 @@
 {
+  "none": "无",
+
   "table": {
     "submit": "提交",
     "cancel": "取消",
     "refresh": "刷新",
     "action": "操作",
+    "add": "新增",
     "edit": "编辑",
     "delete": "删除",
     "info": "详细信息",
