@@ -10,10 +10,7 @@ import type { AddRoleCommand } from '../models/AddRoleCommand';
 import type { AddUserCommand } from '../models/AddUserCommand';
 import type { AllocatedRoleQuery } from '../models/AllocatedRoleQuery';
 import type { ChangeStatusCommand } from '../models/ChangeStatusCommand';
-import type { DeptQuery } from '../models/DeptQuery';
 import type { LoginCommand } from '../models/LoginCommand';
-import type { LoginLogQuery } from '../models/LoginLogQuery';
-import type { MenuQuery } from '../models/MenuQuery';
 import type { OperationLogQuery } from '../models/OperationLogQuery';
 import type { PostQuery } from '../models/PostQuery';
 import type { RepairQuery } from '../models/RepairQuery';
@@ -66,7 +63,7 @@ export class ApiService {
   ): CancelablePromise<ResponseDTOUserDetailDTO> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/system/users/{userId}',
+      url: '/system/user/{userId}',
       path: {
         userId: userId,
       },
@@ -79,13 +76,13 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static edit(
+  public static editUser(
     userId: number,
     requestBody: UpdateUserCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/system/users/{userId}',
+      url: '/system/user/{userId}',
       path: {
         userId: userId,
       },
@@ -100,13 +97,13 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static changeStatus(
+  public static changeUserStatus(
     userId: number,
     requestBody: ChangeStatusCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/system/users/{userId}/status',
+      url: '/system/user/{userId}/status',
       path: {
         userId: userId,
       },
@@ -127,7 +124,7 @@ export class ApiService {
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/system/users/{userId}/password',
+      url: '/system/user/{userId}/password',
       path: {
         userId: userId,
       },
@@ -184,7 +181,9 @@ export class ApiService {
    * @returns ResponseDTORoleDTO OK
    * @throws ApiError
    */
-  public static getInfo(roleId: number): CancelablePromise<ResponseDTORoleDTO> {
+  public static getRoleInfo(
+    roleId: number,
+  ): CancelablePromise<ResponseDTORoleDTO> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/system/role/{roleId}',
@@ -200,7 +199,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static edit1(
+  public static editRole(
     roleId: number,
     requestBody: UpdateRoleCommand,
   ): CancelablePromise<ResponseDTOVoid> {
@@ -220,7 +219,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static remove1(
+  public static removeRole(
     roleId: Array<number>,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
@@ -238,7 +237,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static changeStatus1(
+  public static changeRoleStatus(
     roleId: number,
     requestBody: UpdateStatusCommand,
   ): CancelablePromise<ResponseDTOVoid> {
@@ -279,7 +278,7 @@ export class ApiService {
    * @returns ResponseDTOPostDTO OK
    * @throws ApiError
    */
-  public static getInfo1(
+  public static getPostInfo(
     postId: number,
   ): CancelablePromise<ResponseDTOPostDTO> {
     return __request(OpenAPI, {
@@ -297,7 +296,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static edit2(
+  public static editPost(
     postId: number,
     requestBody: UpdatePostCommand,
   ): CancelablePromise<ResponseDTOVoid> {
@@ -322,7 +321,7 @@ export class ApiService {
   ): CancelablePromise<ResponseDTOMenuDetailDTO> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/system/menus/{menuId}',
+      url: '/system/menu/{menuId}',
       path: {
         menuId: menuId,
       },
@@ -335,13 +334,13 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static edit3(
+  public static editMenu(
     menuId: number,
     requestBody: UpdateMenuCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'PUT',
-      url: '/system/menus/{menuId}',
+      url: '/system/menu/{menuId}',
       path: {
         menuId: menuId,
       },
@@ -355,10 +354,10 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static remove3(menuId: number): CancelablePromise<ResponseDTOVoid> {
+  public static removeMenu(menuId: number): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'DELETE',
-      url: '/system/menus/{menuId}',
+      url: '/system/menu/{menuId}',
       path: {
         menuId: menuId,
       },
@@ -370,7 +369,7 @@ export class ApiService {
    * @returns ResponseDTODeptDTO OK
    * @throws ApiError
    */
-  public static getInfo2(
+  public static getDeptInfo(
     deptId: number,
   ): CancelablePromise<ResponseDTODeptDTO> {
     return __request(OpenAPI, {
@@ -388,7 +387,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static edit4(
+  public static editDept(
     deptId: number,
     requestBody: UpdateDeptCommand,
   ): CancelablePromise<ResponseDTOVoid> {
@@ -408,7 +407,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static remove4(deptId: number): CancelablePromise<ResponseDTOVoid> {
+  public static removeDept(deptId: number): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'DELETE',
       url: '/system/dept/{deptId}',
@@ -423,7 +422,7 @@ export class ApiService {
    * @returns ResponseDTORepairDTO OK
    * @throws ApiError
    */
-  public static getInfo3(
+  public static getInfo(
     repairId: number,
   ): CancelablePromise<ResponseDTORepairDTO> {
     return __request(OpenAPI, {
@@ -441,7 +440,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static edit5(
+  public static edit(
     repairId: number,
     requestBody: UpdateRepairCommand,
   ): CancelablePromise<ResponseDTOVoid> {
@@ -461,7 +460,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static remove5(repairId: number): CancelablePromise<ResponseDTOVoid> {
+  public static remove(repairId: number): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'DELETE',
       url: '/repair/{repairId}',
@@ -476,12 +475,12 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static add(
+  public static addUser(
     requestBody: AddUserCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/system/users',
+      url: '/system/user',
       body: requestBody,
       mediaType: 'application/json',
     });
@@ -492,12 +491,12 @@ export class ApiService {
    * @returns ResponseDTOPageDTOUserDTO OK
    * @throws ApiError
    */
-  public static userList(
+  public static getPagedUser(
     requestBody: SearchUserQuerySearchUserDO,
   ): CancelablePromise<ResponseDTOPageDTOUserDTO> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/system/users/query',
+      url: '/system/user/page',
       body: requestBody,
       mediaType: 'application/json',
     });
@@ -508,7 +507,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static add1(
+  public static addRole(
     requestBody: AddRoleCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
@@ -544,7 +543,7 @@ export class ApiService {
    * @returns ResponseDTOPageDTORoleDTO OK
    * @throws ApiError
    */
-  public static list(
+  public static getPagedRole(
     requestBody: RoleQuery,
   ): CancelablePromise<ResponseDTOPageDTORoleDTO> {
     return __request(OpenAPI, {
@@ -560,7 +559,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static add2(
+  public static addPost(
     requestBody: AddPostCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
@@ -576,7 +575,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static remove2(
+  public static removePost(
     ids: Array<number>,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
@@ -593,7 +592,7 @@ export class ApiService {
    * @returns ResponseDTOPageDTOPostDTO OK
    * @throws ApiError
    */
-  public static list1(
+  public static getPagedPost(
     requestBody: PostQuery,
   ): CancelablePromise<ResponseDTOPageDTOPostDTO> {
     return __request(OpenAPI, {
@@ -604,36 +603,51 @@ export class ApiService {
     });
   }
   /**
-   * 菜单列表
-   * @param menuQuery
-   * @returns ResponseDTOListMenuDTO OK
-   * @throws ApiError
-   */
-  public static menuList(
-    menuQuery: MenuQuery,
-  ): CancelablePromise<ResponseDTOListMenuDTO> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/system/menus',
-      query: {
-        menuQuery: menuQuery,
-      },
-    });
-  }
-  /**
    * 添加菜单
    * @param requestBody
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static add3(
+  public static addMenu(
     requestBody: AddMenuCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/system/menus',
+      url: '/system/menu',
       body: requestBody,
       mediaType: 'application/json',
+    });
+  }
+  /**
+   * 菜单列表
+   * @param isButton
+   * @param orderColumn 排序字段
+   * @param orderDirection 排序方向
+   * @param timeRangeColumn 时间范围字段名
+   * @param beginTime 开始时间
+   * @param endTime 结束时间
+   * @returns ResponseDTOListMenuDTO OK
+   * @throws ApiError
+   */
+  public static listMenu(
+    isButton?: boolean,
+    orderColumn?: string,
+    orderDirection?: string,
+    timeRangeColumn?: string,
+    beginTime?: string,
+    endTime?: string,
+  ): CancelablePromise<ResponseDTOListMenuDTO> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/system/menu/list',
+      query: {
+        isButton: isButton,
+        orderColumn: orderColumn,
+        orderDirection: orderDirection,
+        timeRangeColumn: timeRangeColumn,
+        beginTime: beginTime,
+        endTime: endTime,
+      },
     });
   }
   /**
@@ -642,12 +656,12 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static add4(
+  public static addDept(
     requestBody: AddDeptCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/system/dept',
+      url: '/system/dept/',
       body: requestBody,
       mediaType: 'application/json',
     });
@@ -658,7 +672,7 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static add5(
+  public static add(
     requestBody: AddRepairCommand,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
@@ -750,7 +764,7 @@ export class ApiService {
    * @returns any OK
    * @throws ApiError
    */
-  public static export(query: PostQuery): CancelablePromise<any> {
+  public static exportPost(query: PostQuery): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/system/post/excel',
@@ -765,26 +779,44 @@ export class ApiService {
    * @returns ResponseDTOListTreeLong OK
    * @throws ApiError
    */
-  public static dropdownList(): CancelablePromise<ResponseDTOListTreeLong> {
+  public static dropdownMenuList(): CancelablePromise<ResponseDTOListTreeLong> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/system/menus/dropdown',
+      url: '/system/menu/dropdown',
     });
   }
   /**
    * 部门列表
-   * @param query
+   * @param deptId
+   * @param parentId
+   * @param orderColumn 排序字段
+   * @param orderDirection 排序方向
+   * @param timeRangeColumn 时间范围字段名
+   * @param beginTime 开始时间
+   * @param endTime 结束时间
    * @returns ResponseDTOListDeptDTO OK
    * @throws ApiError
    */
-  public static list2(
-    query: DeptQuery,
+  public static listDept(
+    deptId?: number,
+    parentId?: number,
+    orderColumn?: string,
+    orderDirection?: string,
+    timeRangeColumn?: string,
+    beginTime?: string,
+    endTime?: string,
   ): CancelablePromise<ResponseDTOListDeptDTO> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/system/depts',
+      url: '/system/dept/list',
       query: {
-        query: query,
+        deptId: deptId,
+        parentId: parentId,
+        orderColumn: orderColumn,
+        orderDirection: orderDirection,
+        timeRangeColumn: timeRangeColumn,
+        beginTime: beginTime,
+        endTime: endTime,
       },
     });
   }
@@ -793,10 +825,10 @@ export class ApiService {
    * @returns ResponseDTOListTreeLong OK
    * @throws ApiError
    */
-  public static dropdownList1(): CancelablePromise<ResponseDTOListTreeLong> {
+  public static dropdownDeptList(): CancelablePromise<ResponseDTOListTreeLong> {
     return __request(OpenAPI, {
       method: 'GET',
-      url: '/system/depts/dropdown',
+      url: '/system/dept/dropdown',
     });
   }
   /**
@@ -805,7 +837,7 @@ export class ApiService {
    * @returns ResponseDTOListRepairDTO OK
    * @throws ApiError
    */
-  public static list3(
+  public static list(
     query: RepairQuery,
   ): CancelablePromise<ResponseDTOListRepairDTO> {
     return __request(OpenAPI, {
@@ -813,6 +845,50 @@ export class ApiService {
       url: '/repairs',
       query: {
         query: query,
+      },
+    });
+  }
+  /**
+   * 登录日志列表
+   * @param ipAddress
+   * @param status
+   * @param username
+   * @param pageNum
+   * @param pageSize
+   * @param orderColumn 排序字段
+   * @param orderDirection 排序方向
+   * @param timeRangeColumn 时间范围字段名
+   * @param beginTime 开始时间
+   * @param endTime 结束时间
+   * @returns ResponseDTOPageDTOLoginLogDTO OK
+   * @throws ApiError
+   */
+  public static getPagedLoginInfo(
+    ipAddress?: string,
+    status?: string,
+    username?: string,
+    pageNum?: number,
+    pageSize?: number,
+    orderColumn?: string,
+    orderDirection?: string,
+    timeRangeColumn?: string,
+    beginTime?: string,
+    endTime?: string,
+  ): CancelablePromise<ResponseDTOPageDTOLoginLogDTO> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/logs/page',
+      query: {
+        ipAddress: ipAddress,
+        status: status,
+        username: username,
+        pageNum: pageNum,
+        pageSize: pageSize,
+        orderColumn: orderColumn,
+        orderDirection: orderDirection,
+        timeRangeColumn: timeRangeColumn,
+        beginTime: beginTime,
+        endTime: endTime,
       },
     });
   }
@@ -851,40 +927,6 @@ export class ApiService {
     });
   }
   /**
-   * 登录日志列表
-   * @param query
-   * @returns ResponseDTOPageDTOLoginLogDTO OK
-   * @throws ApiError
-   */
-  public static loginInfoList(
-    query: LoginLogQuery,
-  ): CancelablePromise<ResponseDTOPageDTOLoginLogDTO> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/logs/loginLogs',
-      query: {
-        query: query,
-      },
-    });
-  }
-  /**
-   * 删除登录日志
-   * @param ids
-   * @returns ResponseDTOVoid OK
-   * @throws ApiError
-   */
-  public static removeLoginInfos(
-    ids: Array<number>,
-  ): CancelablePromise<ResponseDTOVoid> {
-    return __request(OpenAPI, {
-      method: 'DELETE',
-      url: '/logs/loginLogs',
-      query: {
-        ids: ids,
-      },
-    });
-  }
-  /**
    * 获取用户对应的菜单路由
    * 用于动态生成路由
    * @returns ResponseDTOListRouterDTO OK
@@ -913,12 +955,12 @@ export class ApiService {
    * @returns ResponseDTOVoid OK
    * @throws ApiError
    */
-  public static remove(
+  public static removeUser(
     userIds: Array<number>,
   ): CancelablePromise<ResponseDTOVoid> {
     return __request(OpenAPI, {
       method: 'DELETE',
-      url: '/system/users/{userIds}',
+      url: '/system/user/{userIds}',
       path: {
         userIds: userIds,
       },
@@ -938,6 +980,23 @@ export class ApiService {
       url: '/system/role/users/{userIds}/grant/bulk',
       path: {
         userIds: userIds,
+      },
+    });
+  }
+  /**
+   * 删除登录日志
+   * @param ids
+   * @returns ResponseDTOVoid OK
+   * @throws ApiError
+   */
+  public static removeLoginInfos(
+    ids: Array<number>,
+  ): CancelablePromise<ResponseDTOVoid> {
+    return __request(OpenAPI, {
+      method: 'DELETE',
+      url: '/logs/loginLogs',
+      query: {
+        ids: ids,
       },
     });
   }
