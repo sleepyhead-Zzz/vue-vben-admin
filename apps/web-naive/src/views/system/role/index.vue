@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
+import type { RoleDTO, RoleQuery } from '#/apis';
 
 import { h, reactive, ref, toRaw } from 'vue';
 
@@ -9,7 +10,7 @@ import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { NButton, NPopconfirm, NTag, useDialog, useMessage } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { ApiService, type RoleDTO, type RoleQuery } from '#/apis';
+import { ApiService } from '#/apis';
 import { $t } from '#/locales';
 
 import RoleForm from './role-form.vue';
@@ -89,7 +90,7 @@ const gridOptions: VxeGridProps<RoleDTO> = {
         searchFormParams.pageSize = page.pageSize;
         searchFormParams.roleName = formValues.name;
         await new Promise((resolve) => setTimeout(resolve, 500));
-        return await ApiService.list(toRaw(searchFormParams));
+        return await ApiService.getPagedRole(toRaw(searchFormParams));
       },
     },
   },
@@ -118,7 +119,7 @@ function addRole() {
 }
 
 async function editRole(role: number) {
-  const { data: selectRole } = await ApiService.getInfo(role);
+  const { data: selectRole } = await ApiService.getRoleInfo(role);
   modalApi.setData({ roleData: selectRole });
   modalApi.open();
 }
@@ -157,7 +158,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 });
 async function deleteRoles(role: number[]) {
   if (role.length > 0) {
-    await ApiService.remove1(role);
+    await ApiService.removeRole(role);
     gridApi.reload();
   } else {
     const selectedRoles = gridApi.grid.getCheckboxRecords();
@@ -166,7 +167,7 @@ async function deleteRoles(role: number[]) {
       return;
     }
     const roleIds = selectedRoles.map((role) => role.roleId); // 提取出选中的角色ID
-    await ApiService.remove1(roleIds);
+    await ApiService.removeRole(roleIds);
     message.success('删除成功');
     gridApi.reload();
   }

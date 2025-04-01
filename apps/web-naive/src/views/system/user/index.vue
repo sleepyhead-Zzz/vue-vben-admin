@@ -4,6 +4,7 @@ import type {
   VxeGridListeners,
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
+import type { SearchUserQuerySearchUserDO, UserDTO } from '#/apis';
 
 import { reactive, ref, toRaw } from 'vue';
 
@@ -12,11 +13,7 @@ import { Page, useVbenModal } from '@vben/common-ui';
 import { NButton, NPopconfirm, NTag, useMessage } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import {
-  ApiService,
-  type SearchUserQuerySearchUserDO,
-  type UserDTO,
-} from '#/apis';
+import { ApiService } from '#/apis';
 import { $t } from '#/locales';
 
 import UserForm from './user-form.vue';
@@ -86,7 +83,7 @@ const gridOptions: VxeTableGridOptions<UserDTO> = {
         searchFormParams.pageNum = page.currentPage;
         searchFormParams.pageSize = page.pageSize;
         searchFormParams.username = formValues.name;
-        return await ApiService.userList(toRaw(searchFormParams));
+        return await ApiService.getPagedUser(toRaw(searchFormParams));
       },
     },
   },

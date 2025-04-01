@@ -1,11 +1,12 @@
 <script lang="ts" setup>
+import type { PostDTO } from '#/apis';
+
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
-import { type PostDTO } from '#/apis';
 
 async function onSubmit() {}
 

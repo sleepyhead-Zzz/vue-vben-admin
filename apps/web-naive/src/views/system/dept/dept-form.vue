@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { AddDeptCommand, DeptDTO, UpdateDeptCommand } from '#/apis';
+
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
@@ -8,12 +10,7 @@ import { NTreeSelect, useMessage } from 'naive-ui';
 import * as zod from 'zod';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  type AddDeptCommand,
-  ApiService,
-  type DeptDTO,
-  type UpdateDeptCommand,
-} from '#/apis';
+import { ApiService } from '#/apis';
 
 const allDept = ref();
 async function onSubmit(values: Record<string, any>) {
@@ -28,7 +25,7 @@ async function onSubmit(values: Record<string, any>) {
       email: values.email,
       status: values.status,
     };
-    await ApiService.edit4(formData.deptId, formData);
+    await ApiService.editDept(formData.deptId, formData);
   } else {
     const formData: AddDeptCommand = {
       parentId: values.parentId,
@@ -39,7 +36,7 @@ async function onSubmit(values: Record<string, any>) {
       email: values.email,
       status: values.status,
     };
-    await ApiService.add4(formData);
+    await ApiService.addDept(formData);
   }
 }
 
@@ -164,7 +161,7 @@ const [Modal, modalApi] = useVbenModal({
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       modalApi.setState({ loading: true });
-      const { data } = await ApiService.dropdownList1();
+      const { data } = await ApiService.dropdownDeptList();
       allDept.value = data;
       const deptData = modalApi.getData<Record<string, DeptDTO>>().deptData;
       if (deptData) {

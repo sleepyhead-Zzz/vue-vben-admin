@@ -1,16 +1,13 @@
 <script lang="ts" setup>
+import type { AddUserCommand, UpdateUserCommand, UserDetailDTO } from '#/apis';
+
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  type AddUserCommand,
-  ApiService,
-  type UpdateUserCommand,
-  type UserDetailDTO,
-} from '#/apis';
+import { ApiService } from '#/apis';
 
 async function onSubmit(values: Record<string, any>) {
   if (values.user.userId) {
@@ -28,7 +25,7 @@ async function onSubmit(values: Record<string, any>) {
       postId: values.postId,
       remark: values.user.remark,
     };
-    await ApiService.edit(values.user.userId, formData);
+    await ApiService.editUser(values.user.userId, formData);
   } else {
     const formData: AddUserCommand = {
       deptId: values.deptId,
@@ -44,7 +41,7 @@ async function onSubmit(values: Record<string, any>) {
       postId: values.postId,
       remark: values.user.remark,
     };
-    await ApiService.add(formData);
+    await ApiService.addUser(formData);
   }
 }
 

@@ -1,16 +1,13 @@
 <script lang="ts" setup>
+import type { AddRoleCommand, RoleDTO, UpdateRoleCommand } from '#/apis';
+
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
 import { NTreeSelect, useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  type AddRoleCommand,
-  ApiService,
-  type RoleDTO,
-  type UpdateRoleCommand,
-} from '#/apis';
+import { ApiService } from '#/apis';
 
 async function onSubmit(values: Record<string, any>) {
   if (values.roleId) {
@@ -24,7 +21,7 @@ async function onSubmit(values: Record<string, any>) {
       menuIds: values.selectedMenuList,
       remark: values.remark,
     };
-    await ApiService.edit1(values.roleId, formData);
+    await ApiService.editRole(values.roleId, formData);
   } else {
     const formData: AddRoleCommand = {
       roleName: values.roleName,
@@ -35,7 +32,7 @@ async function onSubmit(values: Record<string, any>) {
       menuIds: values.selectedMenuList,
       remark: values.remark,
     };
-    await ApiService.add1(formData);
+    await ApiService.addRole(formData);
   }
 }
 

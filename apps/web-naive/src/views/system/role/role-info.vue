@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { RoleDTO } from '#/apis';
+
 import { ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -6,7 +8,7 @@ import { $t } from '@vben/locales';
 
 import { NDescriptions, NDescriptionsItem, NSpin, NTag } from 'naive-ui';
 
-import { ApiService, type RoleDTO } from '#/apis';
+import { ApiService } from '#/apis';
 
 const roleInfo = ref<RoleDTO>({});
 const loading = ref(false);
@@ -21,7 +23,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
       loading.value = true;
       try {
         const roleId = drawerApi.getData<Record<string, any>>().roleId;
-        const { data } = await ApiService.getInfo(roleId);
+        const { data } = await ApiService.getRoleInfo(roleId);
 
         if (data) {
           roleInfo.value = data;

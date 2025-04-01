@@ -1,0 +1,11 @@
+services:
+  vue-template:
+    image: mcr.microsoft.com/devcontainers/typescript-node:${NODE_VERSION}-bookworm
+    volumes:
+      - ${PNPM_STORE_PATH}/.cache/pnpm-store:/root/.pnpm-store:cached
+      - ../:/workspace
+    env_file:
+      - .env
+
+    stdin_open: true
+    tty: true

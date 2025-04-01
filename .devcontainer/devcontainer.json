@@ -1,7 +1,8 @@
 {
   "name": "VueTemplate",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:22-bookworm",
-  "workspaceFolder": "/workspaces/vue-vben-admin",
+  "workspaceFolder": "/workspace",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "vue-template",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -25,13 +26,17 @@
         "workbench.tree.enableStickyScroll": true,
         "files.autoSave": "onFocusChange",
         "editor.formatOnPaste": true,
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "streetsidesoftware.code-spell-checker",
+        "[jsonc]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "always"
+        }
       }
     }
   },
-  "mounts": [
-    "source=/home/sleepyhead/.cache/pnpm-store,target=/root/.pnpm-store,type=bind"
-  ],
-  "postCreateCommand": "npm config set registry https://registry.npmmirror.com && corepack enable && pnpm config set store-dir /root/.pnpm-store",
+  "postCreateCommand": "bash .devcontainer/init.sh",
   "remoteUser": "root"
 }

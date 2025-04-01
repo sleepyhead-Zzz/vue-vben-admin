@@ -4,6 +4,7 @@ import type {
   VxeGridListeners,
   VxeTableGridOptions,
 } from '#/adapter/vxe-table';
+import type { PostDTO, PostQuery } from '#/apis';
 
 import { reactive, ref, toRaw } from 'vue';
 
@@ -12,7 +13,7 @@ import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { NButton, NPopconfirm, useMessage } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { ApiService, type PostDTO, type PostQuery } from '#/apis';
+import { ApiService } from '#/apis';
 import { $t } from '#/locales';
 
 import PostForm from './post-form.vue';
@@ -72,15 +73,15 @@ const gridOptions: VxeTableGridOptions<PostDTO> = {
         searchFormParams.pageSize = page.pageSize;
         searchFormParams.postName = formValues.name;
         await new Promise((resolve) => setTimeout(resolve, 500));
-        return await ApiService.list1(toRaw(searchFormParams));
+        return await ApiService.getPagedPost(toRaw(searchFormParams));
       },
     },
   },
 
   toolbarConfig: {
     tools: [
-      { name: '新增', code: 'add', status: 'primary' },
-      { name: '删除', code: 'del', status: 'error' },
+      { name: $t('common.table.add'), code: 'add', status: 'primary' },
+      { name: $t('common.table.delete'), code: 'del', status: 'error' },
     ],
 
     custom: true,
@@ -101,7 +102,7 @@ function addPost() {
 function deletePosts() {}
 
 async function editPost(post: number) {
-  const { data: selectPost } = await ApiService.getInfo1(post);
+  const { data: selectPost } = await ApiService.getPostInfo(post);
   modalApi.setData({ postData: selectPost });
   modalApi.open();
 }
@@ -152,7 +153,7 @@ const [Grid] = useVbenVxeGrid({
                 {{ $t('common.table.delete') }}
               </NButton>
             </template>
-            {{ $t('common.table.contrim_delete') }}
+            {{ $t('common.table.confirm_delete') }}
           </NPopconfirm>
         </template>
       </Grid>

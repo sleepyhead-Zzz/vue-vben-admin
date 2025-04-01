@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { PostDTO } from '#/apis';
+
 import { ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -6,7 +8,7 @@ import { $t } from '@vben/locales';
 
 import { NDescriptions, NDescriptionsItem, NSpin } from 'naive-ui';
 
-import { ApiService, type PostDTO } from '#/apis';
+import { ApiService } from '#/apis';
 
 const postInfo = ref<PostDTO>({});
 const loading = ref(false);
@@ -21,7 +23,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
       loading.value = true;
       try {
         const postId = drawerApi.getData<Record<string, any>>().postId;
-        const { data } = await ApiService.getInfo1(postId);
+        const { data } = await ApiService.getPostInfo(postId);
 
         if (data) {
           postInfo.value = data;

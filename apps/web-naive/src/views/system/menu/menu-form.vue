@@ -1,4 +1,11 @@
 <script lang="ts" setup>
+import type {
+  AddMenuCommand,
+  MenuDetailDTO,
+  RouterMeta,
+  UpdateMenuCommand,
+} from '#/apis';
+
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
@@ -7,57 +14,9 @@ import { $t } from '@vben/locales';
 import { NTreeSelect, useMessage } from 'naive-ui';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  type AddMenuCommand,
-  ApiService,
-  type MenuDetailDTO,
-  type RouterMeta,
-  type UpdateMenuCommand,
-} from '#/apis';
+import { ApiService } from '#/apis';
 
 const allMenu = ref();
-async function onSubmit(values: Record<string, any>) {
-  const metaData: RouterMeta = {
-    icon: values.icon,
-    title: values.title,
-    order: values.order,
-    affixTab: values.affixTab,
-    iframeSrc: values.iframeSrc,
-    keepAlive: values.keepAlive,
-    link: values.link,
-  };
-  if (values.id) {
-    const formData: UpdateMenuCommand = {
-      menuId: values.id,
-      parentId: values.parentId,
-      remark: values.remark,
-      menuName: values.name,
-      menuType: values.menuType,
-      component: values.component,
-      path: values.path,
-      redirect: values.redirect,
-      permission: values.permission,
-      status: values.status,
-      meta: metaData,
-    };
-    await ApiService.edit3(formData.menuId, formData);
-  } else {
-    const formData: AddMenuCommand = {
-      parentId: values.parentId,
-      remark: values.remark,
-      menuName: values.name,
-      menuType: values.menuType,
-      component: values.component,
-      path: values.path,
-      redirect: values.redirect,
-      permission: values.permission,
-      status: values.status,
-      meta: metaData,
-    };
-    await ApiService.add3(formData);
-  }
-}
-
 const [Form, formApi] = useVbenForm({
   handleSubmit: onSubmit,
   schema: [
@@ -274,13 +233,13 @@ const [Form, formApi] = useVbenForm({
       rules: 'required',
     },
   ],
-  wrapperClass: 'grid-cols-1 md:grid-cols-2',
+  wrapperClass: 'grid grid-cols-1 gap-4 md:grid-cols-2',
   showDefaultActions: false,
 });
 const message = useMessage();
 const [Modal, modalApi] = useVbenModal({
   fullscreenButton: false,
-  class: 'custom-modal-size',
+  class: 'modal-wrapper mx-auto h-4/5 max-h-[90vh] w-4/5',
   onCancel() {
     modalApi.close();
   },
@@ -298,7 +257,7 @@ const [Modal, modalApi] = useVbenModal({
   async onOpenChange(isOpen: boolean) {
     if (isOpen) {
       modalApi.setState({ loading: true });
-      const { data } = await ApiService.dropdownList();
+      const { data } = await ApiService.dropdownMenuList();
       allMenu.value = data;
       const menuData =
         modalApi.getData<Record<string, MenuDetailDTO>>().menuData;
@@ -311,7 +270,49 @@ const [Modal, modalApi] = useVbenModal({
     }
   },
 });
+async function onSubmit(values: Record<string, any>) {
+  const metaData: RouterMeta = {
+    icon: values.icon,
+    title: values.title,
+    order: values.order,
+    affixTab: values.affixTab,
+    iframeSrc: values.iframeSrc,
+    keepAlive: values.keepAlive,
+    link: values.link,
+  };
+  if (values.id) {
+    const formData: UpdateMenuCommand = {
+      menuId: values.id,
+      parentId: values.parentId,
+      remark: values.remark,
+      menuName: values.name,
+      menuType: values.menuType,
+      component: values.component,
+      path: values.path,
+      redirect: values.redirect,
+      permission: values.permission,
+      status: values.status,
+      meta: metaData,
+    };
+    await ApiService.editMenu(formData.menuId, formData);
+  } else {
+    const formData: AddMenuCommand = {
+      parentId: values.parentId,
+      remark: values.remark,
+      menuName: values.name,
+      menuType: values.menuType,
+      component: values.component,
+      path: values.path,
+      redirect: values.redirect,
+      permission: values.permission,
+      status: values.status,
+      meta: metaData,
+    };
+    await ApiService.addMenu(formData);
+  }
+}
 </script>
+
 <template>
   <Modal>
     <Form>
@@ -327,17 +328,3 @@ const [Modal, modalApi] = useVbenModal({
     </Form>
   </Modal>
 </template>
-<style lang="css">
-.custom-modal-size {
-  width: 70% !important; /* 设置宽度为 70% */
-  max-width: 900px !important; /* 设置最大宽度 */
-  height: 80% !important; /* 设置高度为 80% */
-  max-height: 80vh; /* 设置最大高度为 视口高度的 80% */
-  margin: auto; /* 居中显示 */
-}
-
-/* 确保对话框内部内容的高度也是填充满的 */
-.custom-modal-size .vben-modal-content {
-  height: 100%;
-}
-</style>
