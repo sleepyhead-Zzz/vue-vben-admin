@@ -1,39 +1,43 @@
-/**
- * 该文件可自行根据业务逻辑进行调整
- */
-import type { RequestClientOptions } from '@vben/request';
+import type {
+  AxiosRequestConfig,
+  HttpResponse,
+  RequestClientOptions,
+} from '@vben/request';
+
+import { ref } from 'vue';
 
 import { useAppConfig } from '@vben/hooks';
+import { $t } from '@vben/locales';
 import { preferences } from '@vben/preferences';
 import {
   authenticateResponseInterceptor,
-  defaultResponseInterceptor,
   errorMessageResponseInterceptor,
   RequestClient,
 } from '@vben/request';
 import { useAccessStore } from '@vben/stores';
 
-import { message } from '#/adapter/naive';
+import { message as notify } from '#/adapter/naive';
 import { useAuthStore } from '#/store';
 
 import { refreshTokenApi } from './core';
 
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
+// 使用 useRef 等管理状态
+const isLogoutProcessing = ref(false);
+
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
-  const client = new RequestClient({
-    ...options,
-    baseURL,
-  });
+  const client = new RequestClient({ ...options, baseURL });
 
   /**
    * 重新认证逻辑
    */
-  async function doReAuthenticate() {
-    console.warn('Access token or refresh token is invalid or expired. ');
+  const doReAuthenticate = async () => {
+    console.warn('Access token or refresh token is invalid or expired.');
     const accessStore = useAccessStore();
     const authStore = useAuthStore();
     accessStore.setAccessToken(null);
+
     if (
       preferences.app.loginExpiredMode === 'modal' &&
       accessStore.isAccessChecked
@@ -42,42 +46,97 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     } else {
       await authStore.logout();
     }
-  }
+  };
 
   /**
    * 刷新token逻辑
    */
-  async function doRefreshToken() {
+  const doRefreshToken = async () => {
     const accessStore = useAccessStore();
     const resp = await refreshTokenApi();
     const newToken = resp.data;
     accessStore.setAccessToken(newToken);
     return newToken;
-  }
+  };
 
-  function formatToken(token: null | string) {
-    return token ? `Bearer ${token}` : null;
-  }
+  const formatToken = (token: null | string) =>
+    token ? `Bearer ${token}` : null;
 
   // 请求头处理
   client.addRequestInterceptor({
     fulfilled: async (config) => {
       const accessStore = useAccessStore();
 
+      // 添加token
       config.headers.Authorization = formatToken(accessStore.accessToken);
-      config.headers['Accept-Language'] = preferences.app.locale;
+
+      /**
+       * locale跟后台不一致 需要转换
+       */
+      const language = preferences.app.locale.replace('-', '_');
+      config.headers['Accept-Language'] = language;
+      config.headers['Content-Language'] = language;
       return config;
     },
   });
 
-  // 处理返回的响应数据格式
+  // 通用的错误处理
   client.addResponseInterceptor(
-    defaultResponseInterceptor({
-      codeField: 'code',
-      dataField: 'data',
-      successCode: 0,
+    errorMessageResponseInterceptor((message: string) => {
+      notify.create(message);
     }),
   );
+
+  // 响应拦截器
+  client.addResponseInterceptor<HttpResponse>({
+    fulfilled: async (response) => {
+      const axiosResponseData = response.data;
+
+      if (!axiosResponseData) throw new Error($t('http.apiRequestFailed'));
+
+      const { code, message } = axiosResponseData;
+
+      const hasSuccess =
+        response.status >= 200 && response.status < 400 && code === 200;
+
+      if (hasSuccess) {
+        const successMsg = message;
+        notify.create(successMsg);
+
+        // 分页情况下为code msg rows total 并没有data字段
+        // 如果有data 直接返回data 没有data将剩余参数(...other)封装为data返回
+        // 需要考虑data为null的情况(比如查询为空) 所以这里直接判断undefined
+        // 没有data 将其他参数包装为data
+        return axiosResponseData;
+      }
+
+      let timeoutMsg = '';
+
+      if (code === 107 || code === 108 || code === 106) {
+        if (isLogoutProcessing.value) {
+          timeoutMsg = $t('http.loginTimeout'); // 这里给timeoutMsg赋值
+          throw new Error(timeoutMsg);
+        }
+        isLogoutProcessing.value = true;
+
+        const _msg = $t('http.loginTimeout');
+        const userStore = useAuthStore();
+
+        // 注销后处理
+        userStore.logout().finally(() => {
+          isLogoutProcessing.value = false; // 正确地设置为false
+        });
+
+        // 不再执行下面逻辑
+        throw new Error(_msg);
+      }
+
+      // 如果没有成功的情况，根据业务处理
+      // 可以在这里添加其他的错误处理逻辑
+      const errorMsg = message || $t('http.apiRequestFailed');
+      throw new Error(errorMsg);
+    },
+  });
 
   // token过期的处理
   client.addResponseInterceptor(
@@ -90,18 +149,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
     }),
   );
 
-  // 通用的错误处理,如果没有进入上面的错误处理逻辑，就会进入这里
-  client.addResponseInterceptor(
-    errorMessageResponseInterceptor((msg: string, error) => {
-      // 这里可以根据业务进行定制,你可以拿到 error 内的信息进行定制化处理，根据不同的 code 做不同的提示，而不是直接使用 message.error 提示 msg
-      // 当前mock接口返回的错误字段是 error 或者 message
-      const responseData = error?.response?.data ?? {};
-      const errorMessage = responseData?.error ?? responseData?.message ?? '';
-      // 如果没有错误信息，则会根据状态码进行提示
-      message.error(errorMessage || msg);
-    }),
-  );
-
   return client;
 }
 
@@ -109,4 +156,11 @@ export const requestClient = createRequestClient(apiURL, {
   responseReturn: 'data',
 });
 
+const request = async <T = any>(
+  url: string,
+  options: AxiosRequestConfig & { requestType?: 'form' | 'json' } = {},
+) => {
+  return await requestClient.request<T>(url, options);
+};
 export const baseRequestClient = new RequestClient({ baseURL: apiURL });
+export default request;

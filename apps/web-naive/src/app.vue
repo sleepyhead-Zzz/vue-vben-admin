@@ -19,8 +19,6 @@ import {
   zhCN,
 } from 'naive-ui';
 
-import './utils/axios';
-
 defineOptions({ name: 'App' });
 
 const { commonTokens } = useNaiveDesignTokens();

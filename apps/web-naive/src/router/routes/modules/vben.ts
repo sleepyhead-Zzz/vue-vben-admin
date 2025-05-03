@@ -1,13 +1,12 @@
 import type { RouteRecordRaw } from 'vue-router';
 
 import {
-  VBEN_ANT_PREVIEW_URL,
   VBEN_DOC_URL,
   VBEN_ELE_PREVIEW_URL,
   VBEN_GITHUB_URL,
   VBEN_LOGO_URL,
+  VBEN_NAIVE_PREVIEW_URL,
 } from '@vben/constants';
-import { SvgAntdvLogoIcon } from '@vben/icons';
 
 import { IFrameView } from '#/layouts';
 import { $t } from '#/locales';
@@ -24,11 +23,20 @@ const routes: RouteRecordRaw[] = [
     path: '/vben-admin',
     children: [
       {
+        name: 'VbenAbout',
+        path: '/vben-admin/about',
+        component: () => import('#/views/_core/about/index.vue'),
+        meta: {
+          icon: 'lucide:copyright|offline',
+          title: $t('demos.vben.about'),
+        },
+      },
+      {
         name: 'VbenDocument',
         path: '/vben-admin/document',
         component: IFrameView,
         meta: {
-          icon: 'lucide:book-open-text',
+          icon: 'lucide:book-open-text|offline',
           link: VBEN_DOC_URL,
           title: $t('demos.vben.document'),
         },
@@ -44,14 +52,14 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        name: 'VbenAntd',
-        path: '/vben-admin/antd',
+        name: 'VbenNaive',
+        path: '/vben-admin/naive',
         component: IFrameView,
         meta: {
           badgeType: 'dot',
-          icon: SvgAntdvLogoIcon,
-          link: VBEN_ANT_PREVIEW_URL,
-          title: $t('demos.vben.antdv'),
+          icon: 'logos:naiveui',
+          link: VBEN_NAIVE_PREVIEW_URL,
+          title: $t('demos.vben.naive-ui'),
         },
       },
       {

@@ -16,7 +16,6 @@ import {
   useMessage,
 } from 'naive-ui';
 
-import { ApiService } from '#/apis';
 import { Button } from '#/components/ui/button';
 import { $t } from '#/locales';
 
