@@ -1,194 +1,196 @@
 <script setup lang="ts">
-import type { DataTableColumns } from 'naive-ui';
+import type { VbenFormProps } from '@vben/common-ui';
 
-import type { MenuDTO } from '#/apis';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { computed, h, ref } from 'vue';
+import { computed } from 'vue';
 
-import { useVbenModal } from '@vben/common-ui';
+import { useAccess } from '@vben/access';
+import { Fallback, Page, useVbenDrawer } from '@vben/common-ui';
+import { eachTree, getVxePopupContainer } from '@vben/utils';
 
-import {
-  NButton,
-  NCard,
-  NDataTable,
-  NInput,
-  NPopconfirm,
-  useMessage,
-} from 'naive-ui';
+import { NButton, NPopconfirm, NSpace } from 'naive-ui';
 
-import { Button } from '#/components/ui/button';
-import { $t } from '#/locales';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { listMenu, removeMenu } from '#/api/system/api/caidanApi';
+import { GhostButton } from '#/components/global/button';
 
-import MenuForm from './menu-form.vue';
+import { columns, querySchema } from './data';
+import menuDrawer from './menu-drawer.vue';
 
-interface MenuDTOTree extends MenuDTO {
-  children?: MenuDTOTree[];
-}
+/**
+ * 不要问为什么有两个根节点 v-if会控制只会渲染一个
+ */
 
-const allMenu = ref<MenuDTOTree[]>([]);
-const selectedMenu = ref<MenuDTO | null>(null);
-const searchQuery = ref('');
-
-const buildMenuTree = (data: MenuDTO[]): MenuDTOTree[] => {
-  const map = new Map<number, MenuDTOTree>();
-  const tree: MenuDTOTree[] = [];
-  data.forEach((menu) => {
-    if (menu.id !== undefined) {
-      map.set(menu.id, { ...menu, children: [] });
-    }
-  });
-  data.forEach((menu) => {
-    const node = menu.id === undefined ? undefined : map.get(menu.id);
-    if (!node) return;
-    const parentId = menu.parentId ?? 0;
-    if (parentId !== 0 && map.get(parentId)?.children) {
-      // @ts-ignore
-      map.get(parentId)!.children.push(node);
-    } else {
-      tree.push(node);
-    }
-  });
-  return tree;
-};
-
-const filterTree = (nodes: MenuDTOTree[], query: string): MenuDTOTree[] => {
-  if (!query) return nodes;
-  const lowerQuery = query.toLowerCase();
-  const result: MenuDTOTree[] = [];
-  nodes.forEach((node) => {
-    const children = node.children ? filterTree(node.children, query) : [];
-    if (node.name?.toLowerCase().includes(lowerQuery) || children.length > 0) {
-      result.push({ ...node, children });
-    }
-  });
-  return result;
-};
-
-const fetchData = async () => {
-  try {
-    const { data } = await ApiService.listMenu();
-    allMenu.value = buildMenuTree(data ?? []);
-  } catch (error) {
-    console.error($t('common.table.error'), error);
-  }
-};
-
-fetchData();
-
-const [Modal, modalApi] = useVbenModal({
-  connectedComponent: MenuForm,
-  onClosed: fetchData,
-});
-
-const message = useMessage();
-
-const handleEdit = async (row: MenuDTO) => {
-  try {
-    if (row.id === undefined) {
-      return;
-    }
-    const { data: selectedMenu } = await ApiService.menuInfo(row.id);
-    modalApi.setData({ menuData: selectedMenu });
-    modalApi.open();
-  } catch (error) {
-    console.error($t('common.table.error'), error);
-  }
-};
-
-const handleDelete = async (row: MenuDTO) => {
-  try {
-    if (row.id === undefined) {
-      return;
-    }
-    await ApiService.removeMenu(row.id);
-    message.info($t('common.table.delete_success'));
-    await fetchData();
-  } catch (error) {
-    console.error($t('common.table.delete_error'), error);
-  }
-};
-
-const columns: DataTableColumns<MenuDTOTree> = [
-  { title: $t('system.menu.name'), key: 'name' },
-  { title: $t('system.menu.id'), key: 'id' },
-  { title: $t('system.menu.remark'), key: 'remark' },
-  {
-    title: $t('common.table.action'),
-    key: 'actions',
-    render(row: MenuDTOTree) {
-      return h('div', { class: 'flex gap-2' }, [
-        h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            onClick: () => handleEdit(row),
-          },
-          { default: () => $t('common.table.edit') },
-        ),
-        h(
-          NPopconfirm,
-          {
-            positiveButtonProps: {},
-            negativeButtonProps: {},
-            onPositiveClick: () => handleDelete(row),
-            negativeText: $t('common.table.cancel'),
-            positiveText: $t('common.table.delete'),
-          },
-          {
-            trigger: () =>
-              h(
-                NButton,
-                { type: 'error', strong: true, tertiary: true, size: 'small' },
-                { default: () => $t('common.table.delete') },
-              ),
-            default: () => $t('common.table.confirm_delete'),
-          },
-        ),
-      ]);
+const formOptions: VbenFormProps = {
+  commonConfig: {
+    labelWidth: 80,
+    componentProps: {
+      allowClear: true,
     },
   },
-];
-
-const addNewMenu = () => {
-  selectedMenu.value = null;
-  modalApi.setData(selectedMenu);
-  modalApi.open();
+  schema: querySchema(),
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
 };
 
-const rowKey = (row: MenuDTO) => row.id ?? 0;
-const filteredMenu = computed(() =>
-  filterTree(allMenu.value, searchQuery.value),
-);
+const gridOptions: VxeGridProps = {
+  columns,
+  height: 'auto',
+  keepSource: true,
+  pagerConfig: {
+    enabled: false,
+  },
+
+  proxyConfig: {
+    ajax: {
+      query: async (_, formValues = {}) => {
+        const resp = await listMenu({
+          ...formValues,
+        });
+
+        return resp.data;
+      },
+    },
+  },
+  rowConfig: {
+    keyField: 'menuId',
+  },
+  /**
+   * 开启虚拟滚动
+   * 数据量小可以选择关闭
+   * 如果遇到样式问题(空白、错位 滚动等)可以选择关闭虚拟滚动
+   */
+  scrollY: {
+    enabled: true,
+    gt: 0,
+  },
+  treeConfig: {
+    transform: true,
+    rowField: 'menuId',
+    parentField: 'parentId',
+  },
+  id: 'system-menu-index',
+};
+
+const [BasicTable, tableApi] = useVbenVxeGrid({
+  formOptions,
+  gridOptions,
+  gridEvents: {
+    cellDblclick: (e) => {
+      const { row = {} } = e;
+      if (!row?.children) {
+        return;
+      }
+      const isExpanded = row?.expand;
+      tableApi.grid.setTreeExpand(row, !isExpanded);
+      row.expand = !isExpanded;
+    },
+    // 需要监听使用箭头展开的情况 否则展开/折叠的数据不一致
+    toggleTreeExpand: (e) => {
+      const { row = {}, expanded } = e;
+      row.expand = expanded;
+    },
+  },
+});
+const [MenuDrawer, drawerApi] = useVbenDrawer({
+  connectedComponent: menuDrawer,
+});
+
+function handleAdd() {
+  drawerApi.setData({});
+  drawerApi.open();
+}
+
+function handleSubAdd(row: API.SysMenuDTO) {
+  const { menuId } = row;
+  drawerApi.setData({ id: menuId, update: false });
+  drawerApi.open();
+}
+
+async function handleEdit(record: API.SysMenuDTO) {
+  drawerApi.setData({ id: record.menuId, update: true });
+  drawerApi.open();
+}
+
+async function handleDelete(row: API.SysMenuDTO) {
+  await removeMenu({ menuId: row.menuId });
+  await tableApi.query();
+}
+
+/**
+ * 全部展开/折叠
+ * @param expand 是否展开
+ */
+function setExpandOrCollapse(expand: boolean) {
+  eachTree(tableApi.grid.getData(), (item) => (item.expand = expand));
+  tableApi.grid?.setAllTreeExpand(expand);
+}
+
+/**
+ * 与后台逻辑相同
+ * 只有租户管理和超级管理能访问菜单管理
+ */
+const { hasAccessByRoles } = useAccess();
+const isAdmin = computed(() => {
+  return hasAccessByRoles(['admin', 'superadmin']);
+});
 </script>
 
 <template>
-  <div
-    class="flex h-full w-full flex-col rounded-lg bg-gray-50 shadow-lg dark:bg-black"
-  >
-    <NCard class="h-full w-full">
-      <div
-        class="mb-4 h-auto rounded-md bg-gray-100 p-4 shadow-sm dark:bg-gray-800"
-      >
-        <div class="flex justify-between gap-4">
-          <NInput
-            v-model:value="searchQuery"
-            :placeholder="$t('system.menu.search_placeholder')"
-            clearable
-            autosize
-            style="min-width: 30%"
-          />
-          <Button @click="addNewMenu">{{ $t('system.menu.add') }}</Button>
-        </div>
-      </div>
-      <NDataTable
-        :columns="columns"
-        :data="filteredMenu"
-        :row-key="rowKey"
-        default-expand-all
-      />
-    </NCard>
-    <Modal />
-  </div>
+  <Page v-if="isAdmin" :auto-content-height="true">
+    <BasicTable table-title="菜单列表" table-title-help="双击展开/收起子菜单">
+      <template #toolbar-tools>
+        <NSpace>
+          <NButton @click="setExpandOrCollapse(false)">
+            {{ $t('pages.common.collapse') }}
+          </NButton>
+          <NButton @click="setExpandOrCollapse(true)">
+            {{ $t('pages.common.expand') }}
+          </NButton>
+          <NButton
+            type="primary"
+            v-access:code="['system:menu:add']"
+            @click="handleAdd"
+          >
+            {{ $t('pages.common.add') }}
+          </NButton>
+        </NSpace>
+      </template>
+      <template #action="{ row }">
+        <NSpace>
+          <GhostButton
+            v-access:code="['system:menu:edit']"
+            @click="handleEdit(row)"
+          >
+            {{ $t('pages.common.edit') }}
+          </GhostButton>
+          <!-- '按钮类型'无法再添加子菜单 -->
+          <GhostButton
+            v-if="row.menuType !== 'F'"
+            class="btn-success"
+            v-access:code="['system:menu:add']"
+            @click="handleSubAdd(row)"
+          >
+            {{ $t('pages.common.add') }}
+          </GhostButton>
+          <NPopconfirm
+            :get-popup-container="getVxePopupContainer"
+            placement="left"
+            title="确认删除？"
+            @confirm="handleDelete(row)"
+          >
+            <GhostButton
+              danger
+              v-access:code="['system:menu:remove']"
+              @click.stop=""
+            >
+              {{ $t('pages.common.delete') }}
+            </GhostButton>
+          </NPopconfirm>
+        </NSpace>
+      </template>
+    </BasicTable>
+    <MenuDrawer @reload="tableApi.query()" />
+  </Page>
+  <Fallback v-else description="您没有菜单管理的访问权限" status="403" />
 </template>
