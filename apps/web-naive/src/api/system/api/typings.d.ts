@@ -1,53 +1,53 @@
 declare namespace API {
   type AddDeptCommand = {
-    deptName?: string;
-    email?: string;
-    leaderId?: number;
-    orderNum: number;
     parentId: number;
+    deptName?: string;
+    orderNum: number;
+    leaderId?: number;
     phone?: string;
+    email?: string;
     status?: number;
   };
 
   type AddMenuCommand = {
-    component?: string;
-    icon?: string;
-    isCache?: string;
-    isFrame?: string;
-    menuName?: string;
-    menuType?: string;
-    orderNum: number;
     parentId?: number;
+    menuName?: string;
+    orderNum: number;
     path?: string;
-    perms?: string;
+    component?: string;
     queryParam?: string;
-    remark?: string;
-    status?: string;
+    isFrame?: string;
+    isCache?: string;
+    menuType?: string;
     visible?: string;
+    status?: string;
+    perms?: string;
+    icon?: string;
+    remark?: string;
   };
 
   type AddPostCommand = {
-    belongDeptId?: number;
     deptId: number;
-    postCategory?: string;
+    belongDeptId?: number;
     postCode?: string;
     postName?: string;
+    postCategory?: string;
     postSort: number;
-    remark?: string;
     status?: string;
+    remark?: string;
   };
 
   type AddRoleCommand = {
-    dataScope?: string;
-    deptCheckStrictly?: boolean;
-    deptIds?: number[];
-    menuCheckStrictly?: boolean;
-    menuIds?: number[];
-    remark?: string;
-    roleKey?: string;
     roleName?: string;
+    roleKey?: string;
     roleSort: number;
+    dataScope?: string;
+    menuCheckStrictly?: boolean;
+    deptCheckStrictly?: boolean;
     status?: string;
+    remark?: string;
+    menuIds?: number[];
+    deptIds?: number[];
   };
 
   type addRoleForUserByBulkParams = {
@@ -56,40 +56,36 @@ declare namespace API {
   };
 
   type AddUserCommand = {
-    avatar?: string;
     deptId?: number;
-    email?: string;
+    username?: string;
     nickname?: string;
-    password?: string;
+    email?: string;
     phoneNumber?: string;
+    sex?: number;
+    avatar?: string;
+    password?: string;
+    status?: number;
+    roleId?: number;
     postId?: number;
     remark?: string;
-    roleId?: number;
-    sex?: number;
-    status?: number;
-    username?: string;
   };
 
   type AllocatedRoleQuery = {
-    beginTime?: string;
-    endTime?: string;
     orderColumn?: string;
     orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
     pageNum?: number;
     pageSize?: number;
-    phoneNumber?: string;
     roleId?: number;
-    timeRangeColumn?: string;
     username?: string;
+    phoneNumber?: string;
   };
 
   type allocatedUserListParams = {
-    query: AllocatedRoleQuery;
     roleId: number;
-  };
-
-  type callbackParams = {
-    code: string;
+    query: AllocatedRoleQuery;
   };
 
   type changeRoleStatusParams = {
@@ -97,26 +93,16 @@ declare namespace API {
   };
 
   type ChangeStatusCommand = {
-    status?: string;
     userId?: number;
+    status?: string;
   };
 
   type changeUserStatusParams = {
     userId: number;
   };
 
-  type CurrentLoginUserDTO = {
-    permissions?: string[];
-    roles?: string[];
-    user?: UserDTO;
-  };
-
   type dataScopeParams = {
     roleId: number;
-  };
-
-  type deleteFileParams = {
-    fileName: string;
   };
 
   type deleteRoleOfUserByBulkParams = {
@@ -124,20 +110,30 @@ declare namespace API {
   };
 
   type DeptDTO = {
-    ancestors?: string;
-    children?: DeptDTO[];
-    createTime?: string;
-    deptCategory?: string;
     deptId?: number;
     deptName?: string;
-    email?: string;
-    leaderId?: number;
-    leaderName?: string;
-    orderNum?: number;
     parentId?: number;
     parentName?: string;
+    ancestors?: string;
+    deptCategory?: string;
+    orderNum?: number;
+    leaderId?: number;
+    leaderName?: string;
     phone?: string;
+    email?: string;
     status?: string;
+    createTime?: string;
+    children?: DeptDTO[];
+  };
+
+  type DeptQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+    deptId?: number;
+    parentId?: number;
   };
 
   type DeptTreeSelectDTO = {
@@ -145,24 +141,24 @@ declare namespace API {
     deptIds?: TreeLong[];
   };
 
-  type downloadFileParams = {
-    fileName: string;
+  type dropdownDeptListParams = {
+    query: DeptQuery;
   };
 
   type dropdownMenuParams = {
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
     menuName?: string;
+    visible?: string;
+    status?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
     orderDirection?: string;
-    status?: string;
     /** 时间范围字段名 */
     timeRangeColumn?: string;
-    visible?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type editDeptParams = {
@@ -193,22 +189,8 @@ declare namespace API {
     query: SearchUserQuerySearchUserDO;
   };
 
-  type FileMetadataDTO = {
-    createTime?: string;
-    creatorId?: number;
-    fileExtension?: string;
-    fileName?: string;
-    filePath?: string;
-    fileSize?: number;
-    fileType?: string;
-  };
-
   type getDeptInfoParams = {
     deptId: number;
-  };
-
-  type getFileUrlParams = {
-    filePath: string;
   };
 
   type getMenuInfoParams = {
@@ -216,21 +198,21 @@ declare namespace API {
   };
 
   type getPagedLoginInfoParams = {
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
     ipAddress?: string;
+    status?: string;
+    username?: string;
+    pageNum?: number;
+    pageSize?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
     orderDirection?: string;
-    pageNum?: number;
-    pageSize?: number;
-    status?: string;
     /** 时间范围字段名 */
     timeRangeColumn?: string;
-    username?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type getPostInfoParams = {
@@ -250,145 +232,112 @@ declare namespace API {
   };
 
   type listDeptParams = {
-    /** 开始时间 */
-    beginTime?: Date;
     deptId?: number;
-    /** 结束时间 */
-    endTime?: Date;
+    parentId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
     orderDirection?: string;
-    parentId?: number;
     /** 时间范围字段名 */
     timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type listMenuParams = {
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
     menuName?: string;
+    visible?: string;
+    status?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
     orderDirection?: string;
-    status?: string;
     /** 时间范围字段名 */
     timeRangeColumn?: string;
-    visible?: string;
-  };
-
-  type LoginCommand = {
-    captchaCode?: string;
-    captchaCodeKey?: string;
-    password?: string;
-    username?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type LoginLogDTO = {
-    /** 浏览器 */
-    browser?: string;
-    /** ip地址 */
-    ipAddress?: string;
     /** ID */
     logId?: string;
+    /** 用户名 */
+    username?: string;
+    /** ip地址 */
+    ipAddress?: string;
     /** 登录地点 */
     loginLocation?: string;
-    /** 登录时间 */
-    loginTime?: string;
-    /** 描述 */
-    msg?: string;
     /** 操作系统 */
     operationSystem?: string;
+    /** 浏览器 */
+    browser?: string;
     status?: number;
     /** 状态 */
     statusStr?: string;
-    /** 用户名 */
-    username?: string;
-  };
-
-  type MenuDetailDTO = {
-    children?: SysMenuDTO[];
-    component?: string;
-    createDept?: number;
-    createTime?: string;
-    icon?: string;
-    isCache?: string;
-    isFrame?: string;
-    keepAlive?: boolean;
-    menuId?: number;
-    menuName?: string;
-    menuType?: string;
-    meta?: RouterMeta;
-    order?: number;
-    orderNum?: number;
-    parentId?: number;
-    path?: string;
-    permission?: string;
-    perms?: string;
-    queryParam?: string;
-    remark?: string;
-    status?: string;
-    title?: string;
-    visible?: string;
+    /** 描述 */
+    msg?: string;
+    /** 登录时间 */
+    loginTime?: string;
   };
 
   type OperationLogDTO = {
+    /** ID */
+    operationId?: number;
     businessType?: number;
     /** 操作类型 */
     businessTypeStr?: string;
-    /** 操作类型 */
-    calledMethod?: string;
-    /** 部门ID */
-    deptId?: number;
-    /** 部门 */
-    deptName?: string;
-    /** 错误堆栈 */
-    errorStack?: string;
-    /** ID */
-    operationId?: number;
-    /** 操作参数 */
-    operationParam?: string;
-    /** 操作结果 */
-    operationResult?: string;
-    /** 操作时间 */
-    operationTime?: string;
-    /** ip地址 */
-    operatorIp?: string;
-    /** ip地点 */
-    operatorLocation?: string;
-    operatorType?: number;
-    /** 操作人类型 */
-    operatorTypeStr?: string;
     /** 操作类型 */
     requestMethod?: string;
     /** 操作类型 */
     requestModule?: string;
     /** 操作类型 */
     requestUrl?: string;
-    status?: number;
-    /** 状态 */
-    statusStr?: string;
+    /** 操作类型 */
+    calledMethod?: string;
+    operatorType?: number;
+    /** 操作人类型 */
+    operatorTypeStr?: string;
     /** 用户ID */
     userId?: number;
     /** 用户名 */
     username?: string;
+    /** ip地址 */
+    operatorIp?: string;
+    /** ip地点 */
+    operatorLocation?: string;
+    /** 部门ID */
+    deptId?: number;
+    /** 部门 */
+    deptName?: string;
+    /** 操作参数 */
+    operationParam?: string;
+    /** 操作结果 */
+    operationResult?: string;
+    status?: number;
+    /** 状态 */
+    statusStr?: string;
+    /** 错误堆栈 */
+    errorStack?: string;
+    /** 操作时间 */
+    operationTime?: string;
   };
 
   type OperationLogQuery = {
-    beginTime?: string;
-    businessType?: string;
-    endTime?: string;
     orderColumn?: string;
     orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
     pageNum?: number;
     pageSize?: number;
-    requestModule?: string;
+    businessType?: string;
     status?: string;
-    timeRangeColumn?: string;
     username?: string;
+    requestModule?: string;
   };
 
   type operationLogsParams = {
@@ -400,46 +349,45 @@ declare namespace API {
   };
 
   type PageDTOLoginLogDTO = {
-    /** 列表数据 */
-    rows?: LoginLogDTO[];
     /** 总记录数 */
     total?: number;
+    /** 列表数据 */
+    rows?: LoginLogDTO[];
   };
 
   type PageDTOOperationLogDTO = {
-    /** 列表数据 */
-    rows?: OperationLogDTO[];
     /** 总记录数 */
     total?: number;
+    /** 列表数据 */
+    rows?: OperationLogDTO[];
   };
 
   type PageDTOPostDTO = {
-    /** 列表数据 */
-    rows?: PostDTO[];
     /** 总记录数 */
     total?: number;
+    /** 列表数据 */
+    rows?: PostDTO[];
   };
 
   type PageDTORoleDTO = {
-    /** 列表数据 */
-    rows?: RoleDTO[];
     /** 总记录数 */
     total?: number;
+    /** 列表数据 */
+    rows?: RoleDTO[];
   };
 
   type PageDTOUserDTO = {
-    /** 列表数据 */
-    rows?: UserDTO[];
     /** 总记录数 */
     total?: number;
+    /** 列表数据 */
+    rows?: UserDTO[];
   };
 
   type PostDTO = {
-    createTime?: string;
-    /** 岗位编码 */
-    postCode?: string;
     /** 岗位ID */
     postId?: number;
+    /** 岗位编码 */
+    postCode?: string;
     /** 岗位名称 */
     postName?: string;
     /** 岗位排序 */
@@ -449,19 +397,20 @@ declare namespace API {
     status?: number;
     /** 状态 */
     statusStr?: string;
+    createTime?: string;
   };
 
   type PostQuery = {
-    beginTime?: string;
-    endTime?: string;
     orderColumn?: string;
     orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
     pageNum?: number;
     pageSize?: number;
     postCode?: string;
     postName?: string;
     status?: number;
-    timeRangeColumn?: string;
   };
 
   type removeDeptParams = {
@@ -493,144 +442,114 @@ declare namespace API {
   };
 
   type ResetPasswordCommand = {
-    password?: string;
     userId?: number;
+    password?: string;
   };
 
   type resetPasswordParams = {
     userId: number;
   };
 
-  type ResponseDTOCurrentLoginUserDTO = {
-    code?: number;
-    data?: CurrentLoginUserDTO;
-    message?: string;
-  };
-
   type ResponseDTODeptDTO = {
     code?: number;
-    data?: DeptDTO;
     message?: string;
+    data?: DeptDTO;
   };
 
   type ResponseDTODeptTreeSelectDTO = {
     code?: number;
-    data?: DeptTreeSelectDTO;
     message?: string;
+    data?: DeptTreeSelectDTO;
   };
 
   type ResponseDTOListDeptDTO = {
     code?: number;
+    message?: string;
     data?: DeptDTO[];
-    message?: string;
-  };
-
-  type ResponseDTOListFileMetadataDTO = {
-    code?: number;
-    data?: FileMetadataDTO[];
-    message?: string;
   };
 
   type ResponseDTOListRoleDTO = {
     code?: number;
+    message?: string;
     data?: RoleDTO[];
-    message?: string;
-  };
-
-  type ResponseDTOListRouterDTO = {
-    code?: number;
-    data?: RouterDTO[];
-    message?: string;
   };
 
   type ResponseDTOListSysMenuDTO = {
     code?: number;
-    data?: SysMenuDTO[];
     message?: string;
+    data?: SysMenuDTO[];
   };
 
   type ResponseDTOListTreeLong = {
     code?: number;
+    message?: string;
     data?: TreeLong[];
-    message?: string;
-  };
-
-  type ResponseDTOMenuDetailDTO = {
-    code?: number;
-    data?: MenuDetailDTO;
-    message?: string;
   };
 
   type ResponseDTOPageDTOLoginLogDTO = {
     code?: number;
-    data?: PageDTOLoginLogDTO;
     message?: string;
+    data?: PageDTOLoginLogDTO;
   };
 
   type ResponseDTOPageDTOOperationLogDTO = {
     code?: number;
-    data?: PageDTOOperationLogDTO;
     message?: string;
+    data?: PageDTOOperationLogDTO;
   };
 
   type ResponseDTOPageDTOPostDTO = {
     code?: number;
-    data?: PageDTOPostDTO;
     message?: string;
+    data?: PageDTOPostDTO;
   };
 
   type ResponseDTOPageDTORoleDTO = {
     code?: number;
-    data?: PageDTORoleDTO;
     message?: string;
+    data?: PageDTORoleDTO;
   };
 
   type ResponseDTOPageDTOUserDTO = {
     code?: number;
-    data?: PageDTOUserDTO;
     message?: string;
+    data?: PageDTOUserDTO;
   };
 
   type ResponseDTOPostDTO = {
     code?: number;
-    data?: PostDTO;
     message?: string;
+    data?: PostDTO;
   };
 
   type ResponseDTORoleDTO = {
     code?: number;
+    message?: string;
     data?: RoleDTO;
-    message?: string;
   };
 
-  type ResponseDTOString = {
+  type ResponseDTOSysMenuDTO = {
     code?: number;
-    data?: string;
     message?: string;
-  };
-
-  type ResponseDTOTokenDTO = {
-    code?: number;
-    data?: TokenDTO;
-    message?: string;
+    data?: SysMenuDTO;
   };
 
   type ResponseDTOUserDetailDTO = {
     code?: number;
-    data?: UserDetailDTO;
     message?: string;
+    data?: UserDetailDTO;
   };
 
   type ResponseDTOUserProfileDTO = {
     code?: number;
-    data?: UserProfileDTO;
     message?: string;
+    data?: UserProfileDTO;
   };
 
   type ResponseDTOVoid = {
     code?: number;
-    data?: Record<string, any>;
     message?: string;
+    data?: Record<string, any>;
   };
 
   type roleDeptTreeSelectParams = {
@@ -638,227 +557,178 @@ declare namespace API {
   };
 
   type RoleDTO = {
-    createTime?: string;
-    dataScope?: string;
-    deptCheckStrictly?: boolean;
-    menuCheckStrictly?: boolean;
-    remark?: string;
     roleId?: number;
-    roleKey?: string;
     roleName?: string;
+    roleKey?: string;
     roleSort?: number;
+    dataScope?: string;
+    menuCheckStrictly?: boolean;
+    deptCheckStrictly?: boolean;
     status?: string;
+    remark?: string;
+    createTime?: string;
   };
 
   type RoleQuery = {
-    beginTime?: string;
-    endTime?: string;
     orderColumn?: string;
     orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
     pageNum?: number;
     pageSize?: number;
-    /** 角色权限字符串 */
-    roleKey?: string;
     /** 角色名称 */
     roleName?: string;
+    /** 角色权限字符串 */
+    roleKey?: string;
     /** 角色状态 */
     status?: string;
-    timeRangeColumn?: string;
-  };
-
-  type RouterDTO = {
-    alwaysShow?: boolean;
-    children?: RouterDTO[];
-    component?: string;
-    hidden?: boolean;
-    meta?: RouterMeta;
-    name?: string;
-    path?: string;
-    query?: string;
-    redirect?: string;
-  };
-
-  type RouterMeta = {
-    activeIcon?: string;
-    activePath?: string;
-    affixTab?: boolean;
-    affixTabOrder?: number;
-    authority?: string[];
-    badge?: string;
-    badgeType?: string;
-    badgeVariants?: string;
-    hideChildrenInMenu?: boolean;
-    hideInBreadcrumb?: boolean;
-    hideInMenu?: boolean;
-    hideInTab?: boolean;
-    icon?: string;
-    iframeSrc?: string;
-    ignoreAccess?: boolean;
-    link?: string;
-    loaded?: boolean;
-    maxNumOfOpenTab?: number;
-    menuVisibleWithForbidden?: boolean;
-    noCache?: boolean;
-    openInNewWindow?: boolean;
-    order?: number;
-    query?: Record<string, any>;
-    title?: string;
   };
 
   type SearchUserQuerySearchUserDO = {
-    beginTime?: string;
-    /** 部门ID */
-    deptId?: number;
-    endTime?: string;
     orderColumn?: string;
     orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
     pageNum?: number;
     pageSize?: number;
-    /** 手机号 */
-    phoneNumber?: string;
-    /** 用户状态 */
-    status?: number;
-    timeRangeColumn?: string;
     /** 用户ID */
     userId?: number;
     /** 用户名 */
     username?: string;
+    /** 用户状态 */
+    status?: number;
+    /** 手机号 */
+    phoneNumber?: string;
+    /** 部门ID */
+    deptId?: number;
   };
 
   type SysMenuDTO = {
-    children?: SysMenuDTO[];
-    component?: string;
-    createDept?: number;
-    createTime?: string;
-    icon?: string;
-    isCache?: string;
-    isFrame?: string;
     menuId?: number;
     menuName?: string;
-    menuType?: string;
-    orderNum?: number;
     parentId?: number;
+    orderNum?: number;
     path?: string;
-    perms?: string;
+    component?: string;
     queryParam?: string;
-    remark?: string;
-    status?: string;
+    isFrame?: string;
+    isCache?: string;
+    menuType?: string;
     visible?: string;
-  };
-
-  type TokenDTO = {
-    access_token?: string;
-    client_id?: string;
-    expire_in?: number;
-    openid?: string;
-    refresh_expire_in?: number;
-    refresh_token?: string;
-    scope?: string;
+    status?: string;
+    perms?: string;
+    icon?: string;
+    createDept?: number;
+    remark?: string;
+    createTime?: string;
+    children?: SysMenuDTO[];
   };
 
   type TreeLong = {
     config?: TreeNodeConfig;
-    empty?: boolean;
-    id?: number;
-    name?: { empty?: boolean };
     parentId?: number;
     weight?: Record<string, any>;
+    name?: { empty?: boolean };
+    id?: number;
+    empty?: boolean;
   };
 
   type TreeNodeConfig = {
-    childrenKey?: string;
-    deep?: number;
     idKey?: string;
-    nameKey?: string;
     parentIdKey?: string;
     weightKey?: string;
+    nameKey?: string;
+    childrenKey?: string;
+    deep?: number;
   };
 
   type UnallocatedRoleQuery = {
-    beginTime?: string;
-    endTime?: string;
     orderColumn?: string;
     orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
     pageNum?: number;
     pageSize?: number;
-    phoneNumber?: string;
     roleId?: number;
-    timeRangeColumn?: string;
     username?: string;
+    phoneNumber?: string;
   };
 
   type unallocatedUserListParams = {
-    query: UnallocatedRoleQuery;
     roleId: number;
+    query: UnallocatedRoleQuery;
   };
 
   type UpdateDataScopeCommand = {
-    dataScope?: number;
-    deptIds: number[];
     roleId: number;
+    deptIds: number[];
+    dataScope?: number;
   };
 
   type UpdateDeptCommand = {
-    deptId: number;
-    deptName?: string;
-    email?: string;
-    leaderId?: number;
-    orderNum: number;
     parentId: number;
+    deptName?: string;
+    orderNum: number;
+    leaderId?: number;
     phone?: string;
+    email?: string;
     status?: number;
+    deptId: number;
   };
 
   type UpdateMenuCommand = {
-    component?: string;
-    icon?: string;
-    isCache?: string;
-    isFrame?: string;
-    menuId: number;
-    menuName?: string;
-    menuType?: string;
-    orderNum: number;
     parentId?: number;
+    menuName?: string;
+    orderNum: number;
     path?: string;
-    perms?: string;
+    component?: string;
     queryParam?: string;
-    remark?: string;
-    status?: string;
+    isFrame?: string;
+    isCache?: string;
+    menuType?: string;
     visible?: string;
+    status?: string;
+    perms?: string;
+    icon?: string;
+    remark?: string;
+    menuId: number;
   };
 
   type UpdatePostCommand = {
-    belongDeptId?: number;
     deptId: number;
-    postCategory?: string;
+    belongDeptId?: number;
     postCode?: string;
-    postId: number;
     postName?: string;
+    postCategory?: string;
     postSort: number;
-    remark?: string;
     status?: string;
+    remark?: string;
+    postId: number;
   };
 
   type UpdateProfileCommand = {
-    email?: string;
+    userId?: number;
+    sex?: number;
     nickName?: string;
     phoneNumber?: string;
-    sex?: number;
-    userId?: number;
+    email?: string;
   };
 
   type UpdateRoleCommand = {
-    dataScope?: string;
-    deptCheckStrictly?: boolean;
-    deptIds?: number[];
-    menuCheckStrictly?: boolean;
-    menuIds?: number[];
-    remark?: string;
-    roleId: number;
-    roleKey?: string;
     roleName?: string;
+    roleKey?: string;
     roleSort: number;
+    dataScope?: string;
+    menuCheckStrictly?: boolean;
+    deptCheckStrictly?: boolean;
     status?: string;
+    remark?: string;
+    menuIds?: number[];
+    deptIds?: number[];
+    roleId: number;
   };
 
   type UpdateStatusCommand = {
@@ -867,104 +737,84 @@ declare namespace API {
   };
 
   type UpdateUserCommand = {
-    avatar?: string;
     deptId?: number;
-    email?: string;
+    username?: string;
     nickname?: string;
-    password?: string;
+    email?: string;
     phoneNumber?: string;
+    sex?: number;
+    avatar?: string;
+    password?: string;
+    status?: number;
+    roleId?: number;
     postId?: number;
     remark?: string;
-    roleId?: number;
-    sex?: number;
-    status?: number;
     userId?: number;
-    username?: string;
   };
 
   type UpdateUserPasswordCommand = {
+    userId?: number;
     newPassword?: string;
     oldPassword?: string;
-    userId?: number;
-  };
-
-  type uploadMultipleParams = {
-    files: string[];
-    folder?: string;
-  };
-
-  type uploadSingleParams = {
-    fileType?: string;
-    folder?: string;
-    originalName?: string;
   };
 
   type UserDetailDTO = {
-    permissions?: string[];
-    postId?: number;
-    postOptions?: PostDTO[];
-    roleId?: number;
-    roleOptions?: RoleDTO[];
     user?: UserDTO;
+    roleOptions?: RoleDTO[];
+    postOptions?: PostDTO[];
+    postId?: number;
+    roleId?: number;
+    permissions?: string[];
   };
 
   type UserDTO = {
-    /** 用户头像 */
-    avatar?: string;
-    /** 创建部门 */
-    creatDept?: number;
-    /** 创建时间 */
-    createTime?: string;
-    /** 创建者ID */
-    creatorId?: number;
+    /** 用户ID */
+    userId?: number;
     /** 部门ID */
     deptId?: number;
-    /** 部门名称 */
-    deptName?: string;
-    /** 邮件 */
-    email?: string;
-    /** 最后登录时间 */
-    loginDate?: string;
-    /** 最后登录IP */
-    loginIp?: string;
+    /** 用户名 */
+    userName?: string;
     /** 用户昵称 */
     nickName?: string;
+    /** 用户类型 */
+    userType?: number;
+    /** 邮件 */
+    email?: string;
     /** 号码 */
     phoneNumber?: string;
-    postIds?: number[];
-    posts?: PostDTO[];
-    /** 备注 */
-    remark?: string;
-    roleIds?: number[];
-    roles?: RoleDTO[];
     /** 性别 */
     sex?: number;
+    /** 用户头像 */
+    avatar?: string;
     /** 状态 */
     status?: number;
+    /** 最后登录IP */
+    loginIp?: string;
+    /** 最后登录时间 */
+    loginDate?: string;
+    /** 备注 */
+    remark?: string;
+    /** 部门名称 */
+    deptName?: string;
+    roles?: RoleDTO[];
+    posts?: PostDTO[];
+    roleIds?: number[];
+    postIds?: number[];
+    /** 创建部门 */
+    creatDept?: number;
+    /** 创建者ID */
+    creatorId?: number;
+    /** 创建时间 */
+    createTime?: string;
     /** 修改者ID */
     updaterId?: number;
     /** 修改时间 */
     updateTime?: string;
-    /** 用户ID */
-    userId?: number;
-    /** 用户名 */
-    userName?: string;
-    /** 用户类型 */
-    userType?: number;
   };
 
   type UserProfileDTO = {
-    postName?: string;
-    roleName?: string;
     user?: UserDTO;
-  };
-
-  type WxUserProfileCommand = {
-    cloudId?: string;
-    code?: string;
-    encryptedData?: string;
-    iv?: string;
-    rawData?: string;
-    signature?: string;
+    roleName?: string;
+    postName?: string;
   };
 }

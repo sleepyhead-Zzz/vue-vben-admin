@@ -16,7 +16,7 @@ import {
   editMenu,
   getMenuInfo,
   listMenu,
-} from '#/api/system/api/caidanApi';
+} from '#/api/system/api/sysMenuApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -25,7 +25,6 @@ interface ModalProps {
   id?: number | string;
   update: boolean;
 }
-
 const emit = defineEmits<{ reload: [] }>();
 
 const isUpdate = ref(false);
@@ -48,10 +47,10 @@ const [BasicForm, formApi] = useVbenForm({
 
 async function setupMenuSelect() {
   // menu
-  const data = await listMenu({
+  const { data } = await listMenu({
     menuName: '',
   });
-  const menuArray = data.data;
+  const menuArray = data || [];
   // support i18n
   menuArray.forEach((item) => {
     item.menuName = $t(item.menuName);
@@ -66,33 +65,29 @@ async function setupMenuSelect() {
   const fullMenuTree = [
     {
       menuId: 0,
-      menuName: $t('menu.root'),
+      menuName: $t('system.menu.root'),
       children: menuTree,
     },
   ];
   addFullName(fullMenuTree, 'menuName', ' / ');
-
   formApi.updateSchema([
     {
+      fieldName: 'parentId',
       componentProps: {
-        fieldNames: {
-          label: 'menuName',
-          value: 'menuId',
-        },
+        keyField: 'menuId', // 对应 value 的字段
+        labelField: 'menuName', // 显示 label 的字段
+        childrenField: 'children', // 子节点字段
         getPopupContainer,
         // 设置弹窗滚动高度 默认256
         listHeight: 300,
         showSearch: true,
-        treeData: fullMenuTree,
-        treeDefaultExpandAll: false,
+        options: fullMenuTree,
         // 默认展开的树节点
-        treeDefaultExpandedKeys: [0],
-        treeLine: { showLeafIcon: false },
-        // 筛选的字段
-        treeNodeFilterProp: 'menuName',
-        treeNodeLabelProp: 'fullName',
+        defaultExpandedKeys: [0], // 默认展开的节点
+        showPath: true, // 展示路径信息（可选）
+        filterable: true, // 启用过滤（等效于 showSearch）
+        leafOnly: false, // 是否只能选叶子节点（视业务而定）
       },
-      fieldName: 'parentId',
     },
   ]);
 }
@@ -122,8 +117,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     if (id) {
       await formApi.setFieldValue('parentId', id);
       if (update) {
-        const record = await getMenuInfo({ menuId: id });
-        await formApi.setValues(record);
+        const { data } = await getMenuInfo({ menuId: id });
+        await formApi.setValues(data);
       }
     }
     await markInitialized();
@@ -141,8 +136,13 @@ async function handleConfirm() {
     }
     const data = cloneDeep(await formApi.getValues());
     await (isUpdate.value
-      ? editMenu(data.menuId, { data })
-      : addMenu(data, { data }));
+      ? editMenu(
+          {
+            menuId: data.menuId,
+          },
+          data,
+        )
+      : addMenu(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();

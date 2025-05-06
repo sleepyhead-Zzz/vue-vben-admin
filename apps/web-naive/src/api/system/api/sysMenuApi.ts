@@ -24,7 +24,7 @@ export async function getMenuInfo(
   options?: { [key: string]: any },
 ) {
   const { menuId: param0, ...queryParams } = params;
-  return request<API.ResponseDTOMenuDetailDTO>(`/system/menu/${param0}`, {
+  return request<API.ResponseDTOSysMenuDTO>(`/system/menu/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),

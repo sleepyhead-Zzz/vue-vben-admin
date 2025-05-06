@@ -1,178 +1,297 @@
-<script lang="ts" setup>
-import type { VbenFormProps } from '#/adapter/form';
-import type {
-  VxeGridListeners,
-  VxeTableGridOptions,
-} from '#/adapter/vxe-table';
-import type { SearchUserQuerySearchUserDO, UserDTO } from '#/apis';
+<script setup lang="ts">
+import type { VbenFormProps } from '@vben/common-ui';
 
-import { reactive, ref, toRaw } from 'vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { User } from '#/api/system/user/model';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { ref } from 'vue';
 
-import { NButton, NPopconfirm, NTag, useMessage } from 'naive-ui';
+import { useAccess } from '@vben/access';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+import { preferences } from '@vben/preferences';
+import { getVxePopupContainer } from '@vben/utils';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { ApiService } from '#/apis';
-import { $t } from '#/locales';
+import {
+  Avatar,
+  Dropdown,
+  Menu,
+  MenuItem,
+  Modal,
+  Popconfirm,
+  Space,
+} from 'ant-design-vue';
 
-import UserForm from './user-form.vue';
+import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import {
+  userExport,
+  userList,
+  userRemove,
+  userStatusChange,
+} from '#/api/system/user';
+import { TableSwitch } from '#/components/table';
+import { commonDownloadExcel } from '#/utils/file/download';
 
-const searchFormParams = reactive<SearchUserQuerySearchUserDO>({
-  deptId: undefined,
-  phoneNumber: undefined,
-  status: undefined,
-  username: undefined,
-  timeRangeColumn: 'createTime',
+import { columns, querySchema } from './data';
+import DeptTree from './dept-tree.vue';
+import userDrawer from './user-drawer.vue';
+import userImportModal from './user-import-modal.vue';
+import userInfoModal from './user-info-modal.vue';
+import userResetPwdModal from './user-reset-pwd-modal.vue';
+
+/**
+ * 导入
+ */
+const [UserImpotModal, userImportModalApi] = useVbenModal({
+  connectedComponent: userImportModal,
 });
+
+function handleImport() {
+  userImportModalApi.open();
+}
+
+// 左边部门用
+const selectDeptId = ref<string[]>([]);
+
 const formOptions: VbenFormProps = {
-  collapsed: false,
-  schema: [
-    {
-      component: 'Input',
-      componentProps: {
-        placeholder: $t('system.user.input_name'),
-      },
-      defaultValue: '',
-      fieldName: 'name',
-      label: $t('system.user.name'),
+  schema: querySchema(),
+  commonConfig: {
+    labelWidth: 80,
+    componentProps: {
+      allowClear: true,
     },
-  ],
-  showCollapseButton: true,
-  submitOnChange: true,
-  submitOnEnter: false,
-};
-const message = useMessage();
-const gridOptions: VxeTableGridOptions<UserDTO> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
   },
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+  handleReset: async () => {
+    selectDeptId.value = [];
 
-  columns: [
-    { field: 'avatar', title: '头像' },
-    { field: 'userId', title: '用户ID', visible: false },
-    { field: 'postId', title: '职位ID', visible: false },
-    { field: 'postName', title: '职位名称' },
-    { field: 'roleId', title: '角色ID', visible: false },
-    { field: 'roleName', title: '角色名称' },
-    { field: 'deptId', title: '部门ID', visible: false },
-    { field: 'deptName', title: '部门名称' },
-    { field: 'username', title: '用户名' },
-    { field: 'nickname', title: '昵称' },
-    { field: 'userType', title: '用户类型' },
-    { field: 'email', title: '邮箱' },
-    { field: 'photoNumber', title: '电话号码' },
-    { field: 'sex', title: '性别', slots: { default: 'sex' } },
-
-    {
-      field: 'action',
-      fixed: 'right',
-      slots: { default: 'action' },
-      title: '操作',
-      width: 230,
-    },
+    const { formApi, reload } = tableApi;
+    await formApi.resetForm();
+    const formValues = formApi.form.values;
+    formApi.setLatestSubmissionValues(formValues);
+    await reload(formValues);
+  },
+  // 日期选择格式化
+  fieldMappingTime: [
+    [
+      'createTime',
+      ['params[beginTime]', 'params[endTime]'],
+      ['YYYY-MM-DD 00:00:00', 'YYYY-MM-DD 23:59:59'],
+    ],
   ],
-  exportConfig: {},
+};
+
+const gridOptions: VxeGridProps = {
+  checkboxConfig: {
+    // 高亮
+    highlight: true,
+    // 翻页时保留选中状态
+    reserve: true,
+    // 点击行选中
+    trigger: 'default',
+    checkMethod: ({ row }) => row?.userId !== 1,
+  },
+  columns,
   height: 'auto',
   keepSource: true,
   pagerConfig: {},
   proxyConfig: {
     ajax: {
-      query: async ({ page }, formValues) => {
-        searchFormParams.pageNum = page.currentPage;
-        searchFormParams.pageSize = page.pageSize;
-        searchFormParams.username = formValues.name;
-        return await ApiService.getPagedUser(toRaw(searchFormParams));
+      query: async ({ page }, formValues = {}) => {
+        // 部门树选择处理
+        if (selectDeptId.value.length === 1) {
+          formValues.deptId = selectDeptId.value[0];
+        } else {
+          Reflect.deleteProperty(formValues, 'deptId');
+        }
+
+        return await userList({
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
+        });
       },
     },
   },
-
-  toolbarConfig: {
-    tools: [
-      { name: '新增', code: 'add', status: 'primary' },
-      { name: '删除', code: 'del', status: 'error' },
-    ],
-
-    custom: true,
-    export: true,
-    refresh: true,
-    resizable: true,
-    search: true,
-    zoom: true,
+  headerCellConfig: {
+    height: 44,
   },
-};
-const [Modal, modalApi] = useVbenModal({
-  connectedComponent: UserForm,
-});
-function addUser() {
-  modalApi.setData(ref(null));
-  modalApi.open();
-}
-function deleteUsers() {}
-
-async function editUser(user: number) {
-  message.success(`编辑用户ID: ${user}`);
-  const { data: selectUser } = await ApiService.getUserDetailInfo(user);
-  modalApi.setData({ userData: selectUser });
-  modalApi.open();
-}
-
-async function infoUser(user: number) {
-  message.success(`编辑用户ID: ${user}`);
-}
-async function deleteUser(user: number) {
-  message.success(`删除用户ID: ${user}`);
-}
-
-const gridEvents: VxeGridListeners = {
-  toolbarToolClick(params) {
-    if (params.code === 'add') {
-      addUser();
-    } else if (params.code === 'del') {
-      deleteUsers();
-    }
+  cellConfig: {
+    height: 48,
   },
+  rowConfig: {
+    keyField: 'userId',
+  },
+  id: 'system-user-index',
 };
-const [Grid] = useVbenVxeGrid({
+const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
-  gridEvents,
 });
+
+const [UserDrawer, userDrawerApi] = useVbenDrawer({
+  connectedComponent: userDrawer,
+});
+
+function handleAdd() {
+  userDrawerApi.setData({});
+  userDrawerApi.open();
+}
+
+function handleEdit(row: User) {
+  userDrawerApi.setData({ id: row.userId });
+  userDrawerApi.open();
+}
+
+async function handleDelete(row: User) {
+  await userRemove([row.userId]);
+  await tableApi.query();
+}
+
+function handleMultiDelete() {
+  const rows = tableApi.grid.getCheckboxRecords();
+  const ids = rows.map((row: User) => row.userId);
+  Modal.confirm({
+    title: '提示',
+    okType: 'danger',
+    content: `确认删除选中的${ids.length}条记录吗？`,
+    onOk: async () => {
+      await userRemove(ids);
+      await tableApi.query();
+    },
+  });
+}
+
+function handleDownloadExcel() {
+  commonDownloadExcel(userExport, '用户管理', tableApi.formApi.form.values, {
+    fieldMappingTime: formOptions.fieldMappingTime,
+  });
+}
+
+const [UserInfoModal, userInfoModalApi] = useVbenModal({
+  connectedComponent: userInfoModal,
+});
+function handleUserInfo(row: User) {
+  userInfoModalApi.setData({ userId: row.userId });
+  userInfoModalApi.open();
+}
+
+const [UserResetPwdModal, userResetPwdModalApi] = useVbenModal({
+  connectedComponent: userResetPwdModal,
+});
+
+function handleResetPwd(record: User) {
+  userResetPwdModalApi.setData({ record });
+  userResetPwdModalApi.open();
+}
+
+const { hasAccessByCodes } = useAccess();
 </script>
 
 <template>
-  <div>
-    <Page auto-content-height>
-      <Grid v-on="gridEvents">
-        <template #sex="{ row }">
-          <NTag
-            :bordered="false"
-            :type="
-              row.sex === 0 ? 'primary' : row.sex === 1 ? 'error' : 'warning'
+  <Page :auto-content-height="true">
+    <div class="flex h-full gap-[8px]">
+      <DeptTree
+        v-model:select-dept-id="selectDeptId"
+        class="w-[260px]"
+        @reload="() => tableApi.reload()"
+        @select="() => tableApi.reload()"
+      />
+      <BasicTable class="flex-1 overflow-hidden" table-title="用户列表">
+        <template #toolbar-tools>
+          <Space>
+            <a-button
+              v-access:code="['system:user:export']"
+              @click="handleDownloadExcel"
+            >
+              {{ $t('pages.common.export') }}
+            </a-button>
+            <a-button
+              v-access:code="['system:user:import']"
+              @click="handleImport"
+            >
+              {{ $t('pages.common.import') }}
+            </a-button>
+            <a-button
+              :disabled="!vxeCheckboxChecked(tableApi)"
+              danger
+              type="primary"
+              v-access:code="['system:user:remove']"
+              @click="handleMultiDelete"
+            >
+              {{ $t('pages.common.delete') }}
+            </a-button>
+            <a-button
+              type="primary"
+              v-access:code="['system:user:add']"
+              @click="handleAdd"
+            >
+              {{ $t('pages.common.add') }}
+            </a-button>
+          </Space>
+        </template>
+        <template #avatar="{ row }">
+          <!-- 可能要判断空字符串情况 所以没有使用?? -->
+          <Avatar :src="row.avatar || preferences.app.defaultAvatar" />
+        </template>
+        <template #status="{ row }">
+          <TableSwitch
+            v-model:value="row.status"
+            :api="() => userStatusChange(row)"
+            :disabled="
+              row.userId === 1 || !hasAccessByCodes(['system:user:edit'])
             "
-          >
-            {{ row.sex === 0 ? '男' : row.sex === 1 ? '女' : '未知' }}
-          </NTag>
+            @reload="() => tableApi.query()"
+          />
         </template>
         <template #action="{ row }">
-          <NButton quaternary type="primary" @click="editUser(row.userId)">
-            {{ $t('common.table.edit') }}
-          </NButton>
-          <NButton quaternary type="info" @click="infoUser(row.userId)">
-            {{ $t('common.table.info') }}
-          </NButton>
-          <NPopconfirm @positive-click="deleteUser(row.userId)">
-            <template #trigger>
-              <NButton quaternary type="error">
-                {{ $t('common.table.delete') }}
-              </NButton>
-            </template>
-            {{ $t('common.table.contrim_delete') }}
-          </NPopconfirm>
+          <template v-if="row.userId !== 1">
+            <Space>
+              <ghost-button
+                v-access:code="['system:user:edit']"
+                @click.stop="handleEdit(row)"
+              >
+                {{ $t('pages.common.edit') }}
+              </ghost-button>
+              <Popconfirm
+                :get-popup-container="getVxePopupContainer"
+                placement="left"
+                title="确认删除？"
+                @confirm="handleDelete(row)"
+              >
+                <ghost-button
+                  danger
+                  v-access:code="['system:user:remove']"
+                  @click.stop=""
+                >
+                  {{ $t('pages.common.delete') }}
+                </ghost-button>
+              </Popconfirm>
+            </Space>
+            <Dropdown placement="bottomRight">
+              <template #overlay>
+                <Menu>
+                  <MenuItem key="1" @click="handleUserInfo(row)">
+                    用户信息
+                  </MenuItem>
+                  <span v-access:code="['system:user:resetPwd']">
+                    <MenuItem key="2" @click="handleResetPwd(row)">
+                      重置密码
+                    </MenuItem>
+                  </span>
+                </Menu>
+              </template>
+              <a-button size="small" type="link">
+                {{ $t('pages.common.more') }}
+              </a-button>
+            </Dropdown>
+          </template>
         </template>
-      </Grid>
-    </Page>
-    <Modal />
-  </div>
+      </BasicTable>
+    </div>
+    <UserImpotModal @reload="tableApi.query()" />
+    <UserDrawer @reload="tableApi.query()" />
+    <UserInfoModal />
+    <UserResetPwdModal />
+  </Page>
 </template>

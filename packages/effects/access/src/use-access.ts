@@ -28,7 +28,12 @@ function useAccess() {
    */
   function hasAccessByCodes(codes: string[]) {
     const userCodesSet = new Set(accessStore.accessCodes);
-
+    /**
+     * 管理员权限
+     */
+    if (userCodesSet.has('*:*:*')) {
+      return true;
+    }
     const intersection = codes.filter((item) => userCodesSet.has(item));
     return intersection.length > 0;
   }

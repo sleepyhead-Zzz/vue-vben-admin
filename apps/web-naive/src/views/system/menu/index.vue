@@ -12,7 +12,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { NButton, NPopconfirm, NSpace } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listMenu, removeMenu } from '#/api/system/api/caidanApi';
+import { listMenu, removeMenu } from '#/api/system/api/sysMenuApi';
 import { GhostButton } from '#/components/global/button';
 
 import { columns, querySchema } from './data';
@@ -44,14 +44,12 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async (_, formValues = {}) => {
-        const resp = await listMenu({
-          ...formValues,
-        });
-
-        return resp.data;
+        const resp = await listMenu({ ...formValues });
+        return { rows: resp.data };
       },
     },
   },
+
   rowConfig: {
     keyField: 'menuId',
   },
@@ -113,8 +111,16 @@ async function handleEdit(record: API.SysMenuDTO) {
 }
 
 async function handleDelete(row: API.SysMenuDTO) {
-  await removeMenu({ menuId: row.menuId });
-  await tableApi.query();
+  try {
+    if (!row?.menuId) {
+      console.warn('删除失败，row 无效', row);
+      return;
+    }
+    await removeMenu({ menuId: row.menuId });
+    await tableApi.query();
+  } catch (error) {
+    console.error('删除菜单失败:', error);
+  }
 }
 
 /**
@@ -176,16 +182,18 @@ const isAdmin = computed(() => {
           <NPopconfirm
             :get-popup-container="getVxePopupContainer"
             placement="left"
-            title="确认删除？"
-            @confirm="handleDelete(row)"
+            @positive-click="handleDelete(row)"
           >
-            <GhostButton
-              danger
-              v-access:code="['system:menu:remove']"
-              @click.stop=""
-            >
-              {{ $t('pages.common.delete') }}
-            </GhostButton>
+            <template #trigger>
+              <GhostButton
+                type="error"
+                v-access:code="['system:menu:remove']"
+                @click.stop=""
+              >
+                {{ $t('pages.common.delete') }}
+              </GhostButton>
+            </template>
+            确认删除？
           </NPopconfirm>
         </NSpace>
       </template>

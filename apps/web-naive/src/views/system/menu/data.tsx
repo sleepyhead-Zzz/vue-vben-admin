@@ -64,11 +64,6 @@ const menuTypes = {
 
 export const columns: VxeGridProps['columns'] = [
   {
-    title: '菜单ID',
-    field: 'menuId',
-    width: 120,
-  },
-  {
     title: '菜单名称',
     field: 'menuName',
     treeNode: true,
@@ -133,7 +128,6 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     slots: {
       default: ({ row }) => {
-        // 用字典选项替代getDictOptions
         return row.status === '0' ? '启用' : '停用';
       },
     },
@@ -144,7 +138,6 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     slots: {
       default: ({ row }) => {
-        // 用字典选项替代getDictOptions
         return row.visible === '0' ? '显示' : '隐藏';
       },
     },
@@ -159,13 +152,13 @@ export const columns: VxeGridProps['columns'] = [
     slots: { default: 'action' },
     title: '操作',
     resizable: false,
-    width: 'auto',
+    width: '200',
   },
 ];
 
 export const drawerSchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
+    component: 'InputNumber',
     dependencies: {
       show: () => false,
       triggerFields: [''],

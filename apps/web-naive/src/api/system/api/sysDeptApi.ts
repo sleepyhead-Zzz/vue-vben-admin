@@ -64,10 +64,19 @@ export async function removeDept(
   });
 }
 
-/** 获取部门树级结构 GET /system/dept/dropdown */
-export async function dropdownDeptList(options?: { [key: string]: any }) {
-  return request<API.ResponseDTOListTreeLong>('/system/dept/dropdown', {
+/** 获取部门树级结构 GET /system/dept/dept-tree */
+export async function dropdownDeptList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.dropdownDeptListParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseDTOListTreeLong>('/system/dept/dept-tree', {
     method: 'GET',
+    params: {
+      ...params,
+      query: undefined,
+      ...params['query'],
+    },
     ...(options || {}),
   });
 }

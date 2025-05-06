@@ -6,7 +6,8 @@ import { ref } from 'vue';
 import { $t } from '@vben/locales';
 
 import { isFunction } from 'lodash-es';
-import Modal from 'naive-ui/es/modal/src/Modal';
+
+import { modal } from '#/adapter/naive';
 
 interface BeforeCloseDiffProps {
   /**
@@ -86,18 +87,21 @@ export function useBeforeCloseDiff(props: BeforeCloseDiffProps) {
 
       // 数据有变化，显示确认对话框
       return new Promise<boolean>((resolve) => {
-        Modal.confirm({
+        modal.create({
+          preset: 'dialog',
           title: $t('pages.common.tip'),
           content: $t('pages.common.beforeCloseTip'),
-          centered: true,
-          okButtonProps: { danger: true },
-          cancelText: $t('common.cancel'),
-          okText: $t('common.confirm'),
-          onOk: () => {
+          negativeText: $t('common.cancel'),
+          positiveText: $t('common.confirm'),
+          onPositiveClick: () => {
             resolve(true);
             isInitialized.value = false;
+            modal.destroyAll();
           },
-          onCancel: () => resolve(false),
+          onNegativeClick: () => {
+            resolve(false);
+            modal.destroyAll();
+          },
         });
       });
     } catch (error) {

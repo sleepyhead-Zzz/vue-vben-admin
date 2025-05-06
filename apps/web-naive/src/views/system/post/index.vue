@@ -1,166 +1,188 @@
-<script lang="ts" setup>
-import type { VbenFormProps } from '#/adapter/form';
-import type {
-  VxeGridListeners,
-  VxeTableGridOptions,
-} from '#/adapter/vxe-table';
-import type { PostDTO, PostQuery } from '#/apis';
+<script setup lang="ts">
+import type { VbenFormProps } from '@vben/common-ui';
 
-import { reactive, ref, toRaw } from 'vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
+import { ref } from 'vue';
 
-import { NButton, NPopconfirm, useMessage } from 'naive-ui';
+import { Page, useVbenDrawer } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+import { getVxePopupContainer } from '@vben/utils';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { ApiService } from '#/apis';
-import { $t } from '#/locales';
+import { NPopconfirm, NSpace } from 'naive-ui';
 
-import PostForm from './post-form.vue';
-import PostInfo from './post-info.vue';
+import { modal } from '#/adapter/naive';
+import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import { getPagedPost, removePost } from '#/api/system/api/sysPostApi';
+import { GhostButton } from '#/components/global/button';
+import DeptTree from '#/views/system/user/dept-tree.vue';
 
-const searchFormParams = reactive<PostQuery>({
-  postName: undefined,
-  status: undefined,
-});
+import { columns, querySchema } from './data';
+import postDrawer from './post-drawer.vue';
+
+// 左边部门用
+const selectDeptId = ref<string[]>([]);
 const formOptions: VbenFormProps = {
-  collapsed: false,
-  schema: [
-    {
-      component: 'Input',
-      componentProps: {
-        placeholder: $t('system.post.input_name'),
-      },
-      defaultValue: '',
-      fieldName: 'name',
-      label: $t('system.post.name'),
+  commonConfig: {
+    labelWidth: 80,
+    componentProps: {
+      allowClear: true,
     },
-  ],
-  showCollapseButton: true,
-  submitOnChange: true,
-  submitOnEnter: false,
-};
-const message = useMessage();
-const gridOptions: VxeTableGridOptions<PostDTO> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
   },
+  schema: querySchema(),
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+  handleReset: async () => {
+    selectDeptId.value = [];
 
-  columns: [
-    { field: 'postId', title: $t('system.post.id'), visible: false },
-    { field: 'postCode', title: $t('system.post.code') },
-    { field: 'postName', title: $t('system.post.name') },
-    { field: 'statusStr', title: $t('common.table.status') },
-    { field: 'postSort', title: $t('common.table.sort'), visible: false },
-    { field: 'createTime', title: $t('common.table.create_time') },
-    {
-      field: 'action',
-      fixed: 'right',
-      slots: { default: 'action' },
-      title: '操作',
-      width: 230,
-    },
-  ],
-  exportConfig: {},
+    const { formApi, reload } = tableApi;
+    await formApi.resetForm();
+    const formValues = formApi.form.values;
+    formApi.setLatestSubmissionValues(formValues);
+    await reload(formValues);
+  },
+};
+
+const gridOptions: VxeGridProps = {
+  checkboxConfig: {
+    // 高亮
+    highlight: true,
+    // 翻页时保留选中状态
+    reserve: true,
+    trigger: 'cell',
+  },
+  columns,
   height: 'auto',
   keepSource: true,
   pagerConfig: {},
   proxyConfig: {
     ajax: {
-      query: async ({ page }, formValues) => {
-        searchFormParams.pageNum = page.currentPage;
-        searchFormParams.pageSize = page.pageSize;
-        searchFormParams.postName = formValues.name;
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        return await ApiService.getPagedPost(toRaw(searchFormParams));
+      query: async ({ page }, formValues = {}) => {
+        // 部门树选择处理
+        if (selectDeptId.value.length === 1) {
+          formValues.belongDeptId = selectDeptId.value[0];
+        } else {
+          Reflect.deleteProperty(formValues, 'belongDeptId');
+        }
+
+        const { data } = await getPagedPost({
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
+        });
+        return data;
       },
     },
   },
-
-  toolbarConfig: {
-    tools: [
-      { name: $t('common.table.add'), code: 'add', status: 'primary' },
-      { name: $t('common.table.delete'), code: 'del', status: 'error' },
-    ],
-
-    custom: true,
-    export: true,
-    refresh: true,
-    resizable: true,
-    search: true,
-    zoom: true,
+  rowConfig: {
+    keyField: 'postId',
   },
+  id: 'system-post-index',
 };
-const [Modal, modalApi] = useVbenModal({
-  connectedComponent: PostForm,
-});
-function addPost() {
-  modalApi.setData(ref(null));
-  modalApi.open();
-}
-function deletePosts() {}
 
-async function editPost(post: number) {
-  const { data: selectPost } = await ApiService.getPostInfo(post);
-  modalApi.setData({ postData: selectPost });
-  modalApi.open();
-}
-
-const [Drawer, drawerApi] = useVbenDrawer({
-  connectedComponent: PostInfo,
-});
-async function infoPost(post: number) {
-  drawerApi.setData({
-    postId: post,
-  });
-  drawerApi.open();
-}
-async function deletePost(post: number) {
-  message.success(`删除角色ID: ${post}`);
-}
-
-const gridEvents: VxeGridListeners = {
-  toolbarToolClick(params) {
-    if (params.code === 'add') {
-      addPost();
-    } else if (params.code === 'del') {
-      deletePosts();
-    }
-  },
-};
-const [Grid] = useVbenVxeGrid({
+const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
-  gridEvents,
 });
+
+const [PostDrawer, drawerApi] = useVbenDrawer({
+  connectedComponent: postDrawer,
+});
+
+function handleAdd() {
+  drawerApi.setData({});
+  drawerApi.open();
+}
+
+async function handleEdit(record: API.UpdatePostCommand) {
+  drawerApi.setData({ id: record.postId });
+  drawerApi.open();
+}
+
+async function handleDelete(row: API.PostDTO) {
+  await removePost({ ids: [row.postId] });
+  await tableApi.query();
+}
+
+function handleMultiDelete() {
+  const rows = tableApi.grid.getCheckboxRecords();
+  const ids = rows.map((row: API.PostDTO) => row.postId);
+  modal.create({
+    preset: 'dialog',
+    title: $t('pages.common.tip'),
+    content: $t('pages.common.confirmDeleteRecords', { count: ids.length }),
+    negativeText: $t('common.cancel'),
+    positiveText: $t('common.confirm'),
+    onPositiveClick: async () => {
+      await removePost({ ids });
+      await tableApi.query();
+      modal.destroyAll();
+    },
+  });
+}
+
+function handleDownloadExcel() {}
 </script>
 
 <template>
-  <div>
-    <Page auto-content-height>
-      <Grid v-on="gridEvents">
-        <template #action="{ row }">
-          <NButton quaternary type="primary" @click="editPost(row.postId)">
-            {{ $t('common.table.edit') }}
-          </NButton>
-          <NButton quaternary type="info" @click="infoPost(row.postId)">
-            {{ $t('common.table.info') }}
-          </NButton>
-          <NPopconfirm @positive-click="deletePost(row.postId)">
-            <template #trigger>
-              <NButton quaternary type="error">
-                {{ $t('common.table.delete') }}
-              </NButton>
-            </template>
-            {{ $t('common.table.confirm_delete') }}
-          </NPopconfirm>
-        </template>
-      </Grid>
-    </Page>
-    <Modal />
-    <Drawer />
-  </div>
+  <Page :auto-content-height="true" content-class="flex gap-[8px] w-full">
+    <DeptTree
+      v-model:select-dept-id="selectDeptId"
+      class="w-[260px]"
+      @reload="() => tableApi.reload()"
+      @select="() => tableApi.reload()"
+    />
+    <BasicTable class="flex-1 overflow-hidden" table-title="岗位列表">
+      <template #toolbar-tools>
+        <NSpace>
+          <GhostButton
+            v-access:code="['system:post:export']"
+            @click="handleDownloadExcel"
+          >
+            {{ $t('pages.common.export') }}
+          </GhostButton>
+          <GhostButton
+            :disabled="!vxeCheckboxChecked(tableApi)"
+            danger
+            type="primary"
+            v-access:code="['system:post:remove']"
+            @click="handleMultiDelete"
+          >
+            {{ $t('pages.common.delete') }}
+          </GhostButton>
+          <GhostButton
+            type="primary"
+            v-access:code="['system:post:add']"
+            @click="handleAdd"
+          >
+            {{ $t('pages.common.add') }}
+          </GhostButton>
+        </NSpace>
+      </template>
+      <template #action="{ row }">
+        <GhostButton
+          v-access:code="['system:post:edit']"
+          @click="handleEdit(row)"
+        >
+          {{ $t('pages.common.edit') }}
+        </GhostButton>
+        <NPopconfirm
+          :get-popup-container="getVxePopupContainer"
+          placement="left"
+          @positive-click="handleDelete(row)"
+        >
+          <template #trigger>
+            <GhostButton
+              type="error"
+              v-access:code="['system:post:remove']"
+              @click.stop=""
+            >
+              {{ $t('pages.common.delete') }}
+            </GhostButton>
+          </template>
+          确认删除？
+        </NPopconfirm>
+      </template>
+    </BasicTable>
+    <PostDrawer @reload="tableApi.query()" />
+  </Page>
 </template>
-
-<style></style>

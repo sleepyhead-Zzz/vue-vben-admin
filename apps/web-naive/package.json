@@ -21,7 +21,7 @@
     "dev": "pnpm vite --mode development",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit --skipLibCheck",
-    "openapi2ts": "openapi2ts --input ./src/api/openapi/index.ts"
+    "openapi2ts": "openapi2ts"
   },
   "imports": {
     "#/*": "./src/*"

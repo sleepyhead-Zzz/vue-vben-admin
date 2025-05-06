@@ -101,7 +101,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
       if (hasSuccess) {
         const successMsg = message;
-        notify.create(successMsg);
+        notify.success(successMsg);
 
         // 分页情况下为code msg rows total 并没有data字段
         // 如果有data 直接返回data 没有data将剩余参数(...other)封装为data返回
@@ -127,8 +127,11 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
           isLogoutProcessing.value = false; // 正确地设置为false
         });
 
-        // 不再执行下面逻辑
         throw new Error(_msg);
+      } else {
+        notify.error(message);
+
+        throw new Error(message);
       }
 
       // 如果没有成功的情况，根据业务处理

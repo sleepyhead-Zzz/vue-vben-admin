@@ -8,18 +8,19 @@ import { buttonProps, NButton } from 'naive-ui';
  */
 export const GhostButton = defineComponent({
   name: 'GhostButton',
-  props: omit(buttonProps, ['type', 'ghost', 'size']), // 直接传递 `buttonProps` 对象
+  props: omit(buttonProps, ['size']),
   setup(props, { attrs, slots }) {
     // 返回一个虚拟 DOM 节点，使用 NButton 组件
     return () =>
       h(
         NButton,
         {
-          ...props, // 保留传递的 props
+          ...props, // 保留外部传入的 props
           ...attrs, // 保留传递的额外属性
-          type: 'primary', // 强制设置按钮类型为 primary
-          ghost: true, // 强制设置按钮样式为 ghost
+          ghost: true, // 强制设置为 ghost 样式
           size: 'small', // 强制设置按钮大小为 small
+          // 如果传入了 type，就使用传入的 type；否则使用默认值 'default'
+          type: props.type || 'default',
         },
         slots, // 渲染插槽内容
       );

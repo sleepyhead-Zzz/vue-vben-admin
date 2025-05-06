@@ -88,10 +88,10 @@ export class DrawerApi {
   /**
    * 关闭弹窗
    */
-  close() {
+  async close() {
     // 通过 onBeforeClose 钩子函数来判断是否允许关闭弹窗
     // 如果 onBeforeClose 返回 false，则不关闭弹窗
-    const allowClose = this.api.onBeforeClose?.() ?? true;
+    const allowClose = (await this.api.onBeforeClose?.()) ?? true;
     if (allowClose) {
       this.store.setState((prev) => ({
         ...prev,
@@ -99,6 +99,16 @@ export class DrawerApi {
         submitting: false,
       }));
     }
+  }
+
+  /**
+   * loading和lock的区别
+   * loading允许关闭窗口
+   * lock不允许关闭窗口
+   * @param loading 是否loading
+   */
+  drawerLoading(loading: boolean) {
+    this.setState({ confirmLoading: loading, loading });
   }
 
   getData<T extends object = Record<string, any>>() {
