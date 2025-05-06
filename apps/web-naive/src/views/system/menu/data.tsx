@@ -3,9 +3,15 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { h } from 'vue';
 
-import { MdiLinux } from '@vben/icons';
+import {
+  BaselineFormatListBulleted,
+  BaselineRadioButtonChecked,
+  RoundFolder,
+} from '@vben/icons';
 import { $t } from '@vben/locales';
 import { getPopupContainer } from '@vben/utils';
+
+import { NTag } from 'naive-ui';
 
 import { z } from '#/adapter/form';
 
@@ -57,9 +63,17 @@ export const yesNoOptions = [
 
 // （M目录 C菜单 F按钮）
 const menuTypes = {
-  C: { icon: MdiLinux, value: '菜单' },
-  F: { icon: MdiLinux, value: '按钮' },
-  M: { icon: MdiLinux, value: '目录' },
+  C: {
+    icon: BaselineFormatListBulleted,
+    value: '菜单',
+    style: { color: '#42b883' },
+  },
+  F: {
+    icon: BaselineRadioButtonChecked,
+    value: '按钮',
+    style: { color: '#f56c6c' },
+  },
+  M: { icon: RoundFolder, value: '目录', style: { color: '#f8e45c' } },
 };
 
 export const columns: VxeGridProps['columns'] = [
@@ -107,7 +121,10 @@ export const columns: VxeGridProps['columns'] = [
         }
         return (
           <span class="flex items-center justify-center gap-1">
-            {h(current.icon, { class: 'size-[18px]' })}
+            {h(current.icon, {
+              class: 'size-[18px]',
+              style: current.style,
+            })}
             <span>{current.value}</span>
           </span>
         );
@@ -128,7 +145,12 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     slots: {
       default: ({ row }) => {
-        return row.status === '0' ? '启用' : '停用';
+        const isEnabled = row.status === '0';
+        return (
+          <NTag bordered={false} type={isEnabled ? 'success' : 'error'}>
+            {isEnabled ? '正常' : '停用'}
+          </NTag>
+        );
       },
     },
   },
@@ -138,7 +160,12 @@ export const columns: VxeGridProps['columns'] = [
     width: 100,
     slots: {
       default: ({ row }) => {
-        return row.visible === '0' ? '显示' : '隐藏';
+        const isVisible = row.visible === '0';
+        return (
+          <NTag bordered={false} type={isVisible ? 'info' : 'warning'}>
+            {isVisible ? '显示' : '隐藏'}
+          </NTag>
+        );
       },
     },
   },
@@ -158,7 +185,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const drawerSchema: FormSchemaGetter = () => [
   {
-    component: 'InputNumber',
+    component: 'Input',
     dependencies: {
       show: () => false,
       triggerFields: [''],

@@ -56,6 +56,8 @@ declare namespace API {
   type PostDTO = {
     /** 岗位ID */
     postId?: number;
+    /** 部门ID */
+    deptId?: number;
     /** 岗位编码 */
     postCode?: string;
     /** 岗位名称 */
@@ -64,7 +66,7 @@ declare namespace API {
     postSort?: number;
     /** 备注 */
     remark?: string;
-    status?: number;
+    status?: string;
     /** 状态 */
     statusStr?: string;
     createTime?: string;

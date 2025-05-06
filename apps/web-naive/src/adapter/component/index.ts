@@ -36,7 +36,7 @@ import { message } from '#/adapter/naive';
 
 const withDefaultPlaceholder = <T extends Component>(
   component: T,
-  type: 'input' | 'select',
+  type: 'input' | 'select' | 'textarea',
 ) => {
   return defineComponent({
     inheritAttrs: false,
@@ -79,6 +79,7 @@ export type ComponentType =
   | 'Select'
   | 'Space'
   | 'Switch'
+  | 'Textarea'
   | 'TimePicker'
   | 'TreeSelect'
   | 'Upload'
@@ -186,6 +187,7 @@ async function initComponentAdapter() {
     TreeSelect: withDefaultPlaceholder(NTreeSelect, 'select'),
     Upload: NUpload,
     TreeSelectCustomize: NTreeSelect,
+    Textarea: withDefaultPlaceholder(NInput, 'textarea'),
   };
 
   // 将组件注册到全局共享状态中

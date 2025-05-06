@@ -1,11 +1,9 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { DictEnum } from '@vben/constants';
 import { getPopupContainer } from '@vben/utils';
 
 import { z } from '#/adapter/form';
-import { getDictOptions } from '#/utils/dict';
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -27,7 +25,10 @@ export const querySchema: FormSchemaGetter = () => [
     component: 'Select',
     componentProps: {
       getPopupContainer,
-      options: getDictOptions(DictEnum.SYS_NORMAL_DISABLE),
+      options: [
+        { label: '启用', value: '0' },
+        { label: '停用', value: '1' },
+      ],
     },
     fieldName: 'status',
     label: '用户状态',
@@ -154,7 +155,10 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'RadioGroup',
     componentProps: {
       buttonStyle: 'solid',
-      options: getDictOptions(DictEnum.SYS_USER_SEX),
+      options: [
+        { label: '男', value: 0 },
+        { label: '女', value: 1 },
+      ],
       optionType: 'button',
     },
     defaultValue: '0',
@@ -166,7 +170,10 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'RadioGroup',
     componentProps: {
       buttonStyle: 'solid',
-      options: getDictOptions(DictEnum.SYS_NORMAL_DISABLE),
+      options: [
+        { label: '启用', value: '0' },
+        { label: '停用', value: '1' },
+      ],
       optionType: 'button',
     },
     defaultValue: '0',

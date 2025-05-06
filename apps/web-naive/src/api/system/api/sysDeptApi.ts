@@ -95,3 +95,37 @@ export async function listDept(
     ...(options || {}),
   });
 }
+
+/** 查询部门列表（排除节点） GET /system/dept/list/exclude/${param0} */
+export async function deptNodeList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.deptNodeListParams,
+  options?: { [key: string]: any },
+) {
+  const { deptId: param0, ...queryParams } = params;
+  return request<API.ResponseDTOListDeptDTO>(
+    `/system/dept/list/exclude/${param0}`,
+    {
+      method: 'GET',
+      params: { ...queryParams },
+      ...(options || {}),
+    },
+  );
+}
+
+/** 获取部门下的所有用户信息 GET /system/dept/list/user/${param0} */
+export async function listUserByDept(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.listUserByDeptParams,
+  options?: { [key: string]: any },
+) {
+  const { deptId: param0, ...queryParams } = params;
+  return request<API.ResponseDTOListUserDTO>(
+    `/system/dept/list/user/${param0}`,
+    {
+      method: 'GET',
+      params: { ...queryParams },
+      ...(options || {}),
+    },
+  );
+}

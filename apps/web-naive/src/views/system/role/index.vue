@@ -1,202 +1,243 @@
-<script lang="ts" setup>
-import type { VbenFormProps } from '#/adapter/form';
-import type { VxeGridListeners, VxeGridProps } from '#/adapter/vxe-table';
-import type { RoleDTO, RoleQuery } from '#/apis';
+<script setup lang="ts">
+import type { VbenFormProps } from '@vben/common-ui';
 
-import { h, reactive, ref, toRaw } from 'vue';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { Role } from '#/api/system/role/model';
 
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
+import { getVxePopupContainer } from '@vben/utils';
 
-import { NButton, NPopconfirm, NTag, useDialog, useMessage } from 'naive-ui';
+import {
+  Dropdown,
+  Menu,
+  MenuItem,
+  Modal,
+  Popconfirm,
+  Space,
+} from 'ant-design-vue';
 
-import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { ApiService } from '#/apis';
-import { $t } from '#/locales';
+import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import {
+  roleChangeStatus,
+  roleExport,
+  roleList,
+  roleRemove,
+} from '#/api/system/role';
+import { TableSwitch } from '#/components/table';
+import { commonDownloadExcel } from '#/utils/file/download';
 
-import RoleForm from './role-form.vue';
-import RoleInfo from './role-info.vue';
+import { columns, querySchema } from './data';
+import roleAuthModal from './role-auth-modal.vue';
+import roleDrawer from './role-drawer.vue';
 
-const searchFormParams = reactive<RoleQuery>({
-  roleName: undefined,
-  roleKey: undefined,
-  status: undefined,
-});
 const formOptions: VbenFormProps = {
-  collapsed: false,
-  schema: [
-    {
-      component: 'Input',
-      componentProps: {
-        placeholder: $t('system.role.input_name'),
-      },
-      defaultValue: '',
-      fieldName: 'name',
-      label: $t('system.role.name'),
+  commonConfig: {
+    labelWidth: 80,
+    componentProps: {
+      allowClear: true,
     },
-  ],
-  showCollapseButton: true,
-  submitOnChange: true,
-  submitOnEnter: false,
-};
-const message = useMessage();
-const gridOptions: VxeGridProps<RoleDTO> = {
-  checkboxConfig: {
-    highlight: true,
-    labelField: 'name',
   },
-
-  columns: [
-    {
-      type: 'checkbox',
-      title: '选择',
-    },
-    { field: 'roleId', title: '角色ID', visible: false },
-    { field: 'roleName', title: '角色名称' },
-    { field: 'roleKey', title: '角色权限字符串' },
-    { field: 'roleSort', title: '显示顺序' },
-    {
-      field: 'status',
-      title: '角色状态',
-      slots: {
-        default: ({ row }) => {
-          return h(
-            NTag,
-            {
-              type: row.status === 1 ? 'success' : 'error',
-            },
-            {
-              default: () => (row.status === 1 ? '正常' : '禁用'),
-            },
-          );
-        },
-      },
-    },
-    {
-      field: 'action',
-      fixed: 'right',
-      slots: { default: 'action' },
-      title: '操作',
-      width: 230,
-    },
+  schema: querySchema(),
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+  // 日期选择格式化
+  fieldMappingTime: [
+    [
+      'createTime',
+      ['params[beginTime]', 'params[endTime]'],
+      ['YYYY-MM-DD 00:00:00', 'YYYY-MM-DD 23:59:59'],
+    ],
   ],
-  exportConfig: {},
+};
+
+const gridOptions: VxeGridProps = {
+  checkboxConfig: {
+    // 高亮
+    highlight: true,
+    // 翻页时保留选中状态
+    reserve: true,
+    // 点击行选中
+    // trigger: 'row',
+    checkMethod: ({ row }) => row.roleId !== 1,
+  },
+  columns,
   height: 'auto',
   keepSource: true,
   pagerConfig: {},
   proxyConfig: {
     ajax: {
-      query: async ({ page }, formValues) => {
-        searchFormParams.pageNum = page.currentPage;
-        searchFormParams.pageSize = page.pageSize;
-        searchFormParams.roleName = formValues.name;
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        return await ApiService.getPagedRole(toRaw(searchFormParams));
+      query: async ({ page }, formValues = {}) => {
+        return await roleList({
+          pageNum: page.currentPage,
+          pageSize: page.pageSize,
+          ...formValues,
+        });
       },
     },
   },
-
-  toolbarConfig: {
-    tools: [
-      { name: $t('common.table.add'), code: 'add', status: 'primary' },
-      { name: $t('common.table.delete'), code: 'del', status: 'error' },
-    ],
-
-    custom: true,
-    export: true,
-    refresh: true,
-    resizable: true,
-    // @ts-ignore 正式环境时有完整的类型声明
-    search: true,
-    zoom: true,
+  rowConfig: {
+    keyField: 'roleId',
   },
+  id: 'system-role-index',
 };
-const [Modal, modalApi] = useVbenModal({
-  connectedComponent: RoleForm,
-});
-function addRole() {
-  modalApi.setData(ref(null));
-  modalApi.open();
-}
 
-async function editRole(role: number) {
-  const { data: selectRole } = await ApiService.getRoleInfo(role);
-  modalApi.setData({ roleData: selectRole });
-  modalApi.open();
-}
-const [Drawer, drawerApi] = useVbenDrawer({
-  connectedComponent: RoleInfo,
-});
-async function infoRole(role: number) {
-  drawerApi.setData({
-    roleId: role,
-  });
-  drawerApi.open();
-}
-const dialog = useDialog();
-const gridEvents: VxeGridListeners = {
-  toolbarToolClick(params) {
-    if (params.code === 'add') {
-      addRole();
-    } else if (params.code === 'del') {
-      dialog.warning({
-        title: '警告',
-        content: '你确定？',
-        positiveText: '确定',
-        negativeText: '不确定',
-        onPositiveClick: () => {
-          deleteRoles([]);
-        },
-        onNegativeClick: () => {},
-      });
-    }
-  },
-};
-const [Grid, gridApi] = useVbenVxeGrid({
+const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
-  gridEvents,
 });
-async function deleteRoles(role: number[]) {
-  if (role.length > 0) {
-    await ApiService.removeRole(role);
-    gridApi.reload();
-  } else {
-    const selectedRoles = gridApi.grid.getCheckboxRecords();
-    if (selectedRoles.length === 0) {
-      message.warning('请先选择要删除的角色');
-      return;
-    }
-    const roleIds = selectedRoles.map((role) => role.roleId); // 提取出选中的角色ID
-    await ApiService.removeRole(roleIds);
-    message.success('删除成功');
-    gridApi.reload();
-  }
+const [RoleDrawer, drawerApi] = useVbenDrawer({
+  connectedComponent: roleDrawer,
+});
+
+function handleAdd() {
+  drawerApi.setData({});
+  drawerApi.open();
+}
+
+async function handleEdit(record: Role) {
+  drawerApi.setData({ id: record.roleId });
+  drawerApi.open();
+}
+
+async function handleDelete(row: Role) {
+  await roleRemove([row.roleId]);
+  await tableApi.query();
+}
+
+function handleMultiDelete() {
+  const rows = tableApi.grid.getCheckboxRecords();
+  const ids = rows.map((row: Role) => row.roleId);
+  Modal.confirm({
+    title: '提示',
+    okType: 'danger',
+    content: `确认删除选中的${ids.length}条记录吗？`,
+    onOk: async () => {
+      await roleRemove(ids);
+      await tableApi.query();
+    },
+  });
+}
+
+function handleDownloadExcel() {
+  commonDownloadExcel(roleExport, '角色数据', tableApi.formApi.form.values, {
+    fieldMappingTime: formOptions.fieldMappingTime,
+  });
+}
+
+const { hasAccessByCodes, hasAccessByRoles } = useAccess();
+
+const isSuperAdmin = computed(() => hasAccessByRoles(['superadmin']));
+
+const [RoleAuthModal, authModalApi] = useVbenModal({
+  connectedComponent: roleAuthModal,
+});
+
+function handleAuthEdit(record: Role) {
+  authModalApi.setData({ id: record.roleId });
+  authModalApi.open();
+}
+
+const router = useRouter();
+function handleAssignRole(record: Role) {
+  router.push(`/system/role-assign/${record.roleId}`);
 }
 </script>
 
 <template>
-  <div>
-    <Page auto-content-height>
-      <Grid v-on="gridEvents">
-        <template #action="{ row }">
-          <NButton quaternary type="primary" @click="editRole(row.roleId)">
-            {{ $t('common.table.edit') }}
-          </NButton>
-          <NButton quaternary type="info" @click="infoRole(row.roleId)">
-            {{ $t('common.table.info') }}
-          </NButton>
-          <NPopconfirm @positive-click="deleteRoles([row.roleId])">
-            <template #trigger>
-              <NButton quaternary type="error">
-                {{ $t('common.table.delete') }}
-              </NButton>
+  <Page :auto-content-height="true">
+    <BasicTable table-title="角色列表">
+      <template #toolbar-tools>
+        <Space>
+          <a-button
+            v-access:code="['system:role:export']"
+            @click="handleDownloadExcel"
+          >
+            {{ $t('pages.common.export') }}
+          </a-button>
+          <a-button
+            :disabled="!vxeCheckboxChecked(tableApi)"
+            danger
+            type="primary"
+            v-access:code="['system:role:remove']"
+            @click="handleMultiDelete"
+          >
+            {{ $t('pages.common.delete') }}
+          </a-button>
+          <a-button
+            type="primary"
+            v-access:code="['system:role:add']"
+            @click="handleAdd"
+          >
+            {{ $t('pages.common.add') }}
+          </a-button>
+        </Space>
+      </template>
+      <template #status="{ row }">
+        <TableSwitch
+          v-model:value="row.status"
+          :api="() => roleChangeStatus(row)"
+          :disabled="
+            row.roleId === 1 ||
+            row.roleKey === 'admin' ||
+            !hasAccessByCodes(['system:role:edit'])
+          "
+          @reload="tableApi.query()"
+        />
+      </template>
+      <template #action="{ row }">
+        <!-- 租户管理员不可修改admin角色 防止误操作 -->
+        <!-- 超级管理员可通过租户切换来操作租户管理员角色 -->
+        <template
+          v-if="!row.superAdmin && (row.roleKey !== 'admin' || isSuperAdmin)"
+        >
+          <Space>
+            <ghost-button
+              v-access:code="['system:role:edit']"
+              @click.stop="handleEdit(row)"
+            >
+              {{ $t('pages.common.edit') }}
+            </ghost-button>
+            <Popconfirm
+              :get-popup-container="getVxePopupContainer"
+              placement="left"
+              title="确认删除？"
+              @confirm="handleDelete(row)"
+            >
+              <ghost-button
+                danger
+                v-access:code="['system:role:remove']"
+                @click.stop=""
+              >
+                {{ $t('pages.common.delete') }}
+              </ghost-button>
+            </Popconfirm>
+          </Space>
+          <Dropdown placement="bottomRight">
+            <template #overlay>
+              <Menu>
+                <MenuItem key="1" @click="handleAuthEdit(row)">
+                  数据权限
+                </MenuItem>
+                <MenuItem key="2" @click="handleAssignRole(row)">
+                  分配用户
+                </MenuItem>
+              </Menu>
             </template>
-            {{ $t('common.table.contrim_delete') }}
-          </NPopconfirm>
+            <a-button
+              size="small"
+              type="link"
+              v-access:code="'system:role:edit'"
+            >
+              {{ $t('pages.common.more') }}
+            </a-button>
+          </Dropdown>
         </template>
-      </Grid>
-    </Page>
-    <Modal />
-    <Drawer />
-  </div>
+      </template>
+    </BasicTable>
+    <RoleDrawer @reload="tableApi.query()" />
+    <RoleAuthModal @reload="tableApi.query()" />
+  </Page>
 </template>

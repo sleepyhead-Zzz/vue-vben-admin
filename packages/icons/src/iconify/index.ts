@@ -13,3 +13,15 @@ export const MdiGoogle = createIconifyIcon('mdi:google');
 export const MdiQqchat = createIconifyIcon('mdi:qqchat');
 
 export const MdiLinux = createIconifyIcon('mdi:linux');
+
+export const RoundFolder = createIconifyIcon(
+  'material-symbols-light:folder-copy-rounded',
+);
+
+export const BaselineRadioButtonChecked = createIconifyIcon(
+  'i-ic:baseline-radio-button-checked',
+);
+
+export const BaselineFormatListBulleted = createIconifyIcon(
+  'ic:baseline-format-list-bulleted',
+);

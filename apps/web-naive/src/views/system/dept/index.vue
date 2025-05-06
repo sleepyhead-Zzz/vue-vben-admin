@@ -1,198 +1,186 @@
 <script setup lang="ts">
-import type { DataTableColumns } from 'naive-ui';
+import type { VbenFormProps } from '@vben/common-ui';
 
-import type { DeptDTO } from '#/apis';
+import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { computed, h, ref } from 'vue';
+import { nextTick } from 'vue';
 
-import { useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer } from '@vben/common-ui';
+import { eachTree, getVxePopupContainer } from '@vben/utils';
 
-import {
-  NButton,
-  NCard,
-  NDataTable,
-  NInput,
-  NPopconfirm,
-  useMessage,
-} from 'naive-ui';
+import { NButton, NPopconfirm, NSpace } from 'naive-ui';
 
-import { ApiService } from '#/apis';
-import { Button } from '#/components/ui/button';
-import { $t } from '#/locales';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { listDept, removeDept } from '#/api/system/api/sysDeptApi';
+import { GhostButton } from '#/components/global/button';
 
-import DeptForm from './dept-form.vue';
+import { columns, querySchema } from './data';
+import deptDrawer from './dept-drawer.vue';
 
-interface DeptDTOTree extends DeptDTO {
-  children?: DeptDTOTree[];
-}
-
-const allDept = ref<DeptDTOTree[]>([]);
-const selectedDept = ref<DeptDTO | null>(null);
-const searchQuery = ref('');
-
-const buildDeptTree = (data: DeptDTO[]): DeptDTOTree[] => {
-  const map = new Map<number, DeptDTOTree>();
-  const tree: DeptDTOTree[] = [];
-  data.forEach((dept) => {
-    if (dept.deptId !== undefined) {
-      map.set(dept.deptId, { ...dept, children: [] });
-    }
-  });
-  data.forEach((dept) => {
-    const node = dept.deptId === undefined ? undefined : map.get(dept.deptId);
-    if (!node) return;
-    const parentId = dept.parentId ?? 0;
-    if (parentId !== 0 && map.get(parentId)?.children) {
-      // @ts-ignore
-      map.get(parentId)!.children.push(node);
-    } else {
-      tree.push(node);
-    }
-  });
-  return tree;
-};
-
-const filterTree = (nodes: DeptDTOTree[], query: string): DeptDTOTree[] => {
-  if (!query) return nodes;
-  const lowerQuery = query.toLowerCase();
-  const result: DeptDTOTree[] = [];
-  nodes.forEach((node) => {
-    const children = node.children ? filterTree(node.children, query) : [];
-    if (
-      node.deptName?.toLowerCase().includes(lowerQuery) ||
-      children.length > 0
-    ) {
-      result.push({ ...node, children });
-    }
-  });
-  return result;
-};
-
-const fetchData = async () => {
-  try {
-    const { data } = await ApiService.listDept();
-    allDept.value = buildDeptTree(data ?? []);
-  } catch (error) {
-    console.error($t('common.table.error'), error);
-  }
-};
-
-fetchData();
-
-const [Modal, modalApi] = useVbenModal({
-  connectedComponent: DeptForm,
-  onClosed: fetchData,
-});
-
-const message = useMessage();
-
-const handleEdit = async (row: DeptDTO) => {
-  try {
-    if (row.deptId === undefined) {
-      return;
-    }
-    const { data: selectedDept } = await ApiService.getDeptInfo(row.deptId);
-    modalApi.setData({ deptData: selectedDept });
-    modalApi.open();
-  } catch (error) {
-    console.error($t('common.table.error'), error);
-  }
-};
-
-const handleDelete = async (row: DeptDTO) => {
-  try {
-    if (row.deptId === undefined) {
-      return;
-    }
-    await ApiService.removeDept(row.deptId);
-    message.info($t('common.table.delete_success'));
-    await fetchData();
-  } catch (error) {
-    console.error($t('common.table.delete_error'), error);
-  }
-};
-
-const columns: DataTableColumns<DeptDTOTree> = [
-  { title: $t('system.dept.name'), key: 'deptName' },
-  { title: $t('system.dept.id'), key: 'deptId' },
-  { title: $t('system.dept.leader_name'), key: 'leaderName' },
-  {
-    title: $t('common.table.action'),
-    key: 'actions',
-    render(row: DeptDTOTree) {
-      return h('div', { class: 'flex gap-2' }, [
-        h(
-          NButton,
-          {
-            strong: true,
-            tertiary: true,
-            size: 'small',
-            onClick: () => handleEdit(row),
-          },
-          { default: () => $t('common.table.edit') },
-        ),
-        h(
-          NPopconfirm,
-          {
-            positiveButtonProps: {},
-            negativeButtonProps: {},
-            onPositiveClick: () => handleDelete(row),
-            negativeText: $t('common.table.cancel'),
-            positiveText: $t('common.table.delete'),
-          },
-          {
-            trigger: () =>
-              h(
-                NButton,
-                { type: 'error', strong: true, tertiary: true, size: 'small' },
-                { default: () => $t('common.table.delete') },
-              ),
-            default: () => $t('common.table.confirm_delete'),
-          },
-        ),
-      ]);
+const formOptions: VbenFormProps = {
+  commonConfig: {
+    labelWidth: 80,
+    componentProps: {
+      allowClear: true,
     },
   },
-];
-
-const addNewDept = () => {
-  selectedDept.value = null;
-  modalApi.setData(selectedDept);
-  modalApi.open();
+  schema: querySchema(),
+  wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
 };
 
-const rowKey = (row: DeptDTO) => row.deptId ?? 0;
-const filteredDept = computed(() =>
-  filterTree(allDept.value, searchQuery.value),
-);
+const gridOptions: VxeGridProps = {
+  columns,
+  height: 'auto',
+  keepSource: true,
+  pagerConfig: {
+    enabled: false,
+  },
+  proxyConfig: {
+    ajax: {
+      query: async (_, formValues = {}) => {
+        const { data } = await listDept({
+          ...formValues,
+        });
+        return { rows: data };
+      },
+      // 默认请求接口后展开全部 不需要可以删除这段
+      querySuccess: () => {
+        // 默认展开 需要加上标记
+
+        eachTree(tableApi.grid.getData(), (item) => (item.expand = true));
+        nextTick(() => {
+          setExpandOrCollapse(true);
+        });
+      },
+    },
+  },
+  /**
+   * 虚拟滚动  默认关闭
+   */
+  scrollY: {
+    enabled: false,
+    gt: 0,
+  },
+  rowConfig: {
+    keyField: 'deptId',
+  },
+  treeConfig: {
+    parentField: 'parentId',
+    rowField: 'deptId',
+    transform: true,
+  },
+  id: 'system-dept-index',
+};
+
+const [BasicTable, tableApi] = useVbenVxeGrid({
+  formOptions,
+  gridOptions,
+  gridEvents: {
+    cellDblclick: (e) => {
+      const { row = {} } = e;
+      if (!row?.children) {
+        return;
+      }
+      const isExpanded = row?.expand;
+      tableApi.grid.setTreeExpand(row, !isExpanded);
+      row.expand = !isExpanded;
+    },
+    // 需要监听使用箭头展开的情况 否则展开/折叠的数据不一致
+    toggleTreeExpand: (e) => {
+      const { row = {}, expanded } = e;
+      row.expand = expanded;
+    },
+  },
+});
+const [DeptDrawer, drawerApi] = useVbenDrawer({
+  connectedComponent: deptDrawer,
+});
+
+function handleAdd() {
+  drawerApi.setData({ update: false });
+  drawerApi.open();
+}
+
+function handleSubAdd(row: API.DeptDTO) {
+  const { deptId } = row;
+  drawerApi.setData({ id: deptId, update: false });
+  drawerApi.open();
+}
+
+async function handleEdit(record: API.DeptDTO) {
+  drawerApi.setData({ id: record.deptId, update: true });
+  drawerApi.open();
+}
+
+async function handleDelete(row: API.DeptDTO) {
+  await removeDept({ deptId: row.deptId });
+  await tableApi.query();
+}
+
+/**
+ * 全部展开/折叠
+ * @param expand 是否展开
+ */
+function setExpandOrCollapse(expand: boolean) {
+  eachTree(tableApi.grid.getData(), (item) => (item.expand = expand));
+  tableApi.grid?.setAllTreeExpand(expand);
+}
 </script>
 
 <template>
-  <div
-    class="flex h-full w-full flex-col rounded-lg bg-gray-50 shadow-lg dark:bg-black"
-  >
-    <NCard class="h-full w-full">
-      <div
-        class="mb-4 h-auto rounded-md bg-gray-100 p-4 shadow-sm dark:bg-gray-800"
-      >
-        <div class="flex justify-between gap-4">
-          <NInput
-            v-model:value="searchQuery"
-            :placeholder="$t('system.dept.search_placeholder')"
-            clearable
-            autosize
-            style="min-width: 30%"
-          />
-          <Button @click="addNewDept">{{ $t('system.dept.add') }}</Button>
-        </div>
-      </div>
-      <NDataTable
-        :columns="columns"
-        :data="filteredDept"
-        :row-key="rowKey"
-        default-expand-all
-      />
-    </NCard>
-    <Modal />
-  </div>
+  <Page :auto-content-height="true">
+    <BasicTable table-title="部门列表" table-title-help="双击展开/收起子菜单">
+      <template #toolbar-tools>
+        <NSpace>
+          <NButton @click="setExpandOrCollapse(false)">
+            {{ $t('pages.common.collapse') }}
+          </NButton>
+          <NButton @click="setExpandOrCollapse(true)">
+            {{ $t('pages.common.expand') }}
+          </NButton>
+          <NButton
+            type="primary"
+            v-access:code="['system:dept:add']"
+            @click="handleAdd"
+          >
+            {{ $t('pages.common.add') }}
+          </NButton>
+        </NSpace>
+      </template>
+      <template #action="{ row }">
+        <NSpace>
+          <GhostButton
+            v-access:code="['system:dept:edit']"
+            @click="handleEdit(row)"
+          >
+            {{ $t('pages.common.edit') }}
+          </GhostButton>
+          <GhostButton
+            class="btn-success"
+            v-access:code="['system:dept:add']"
+            @click="handleSubAdd(row)"
+          >
+            {{ $t('pages.common.add') }}
+          </GhostButton>
+          <NPopconfirm
+            :get-popup-container="getVxePopupContainer"
+            placement="left"
+            @positive-click="handleDelete(row)"
+          >
+            <template #trigger>
+              <GhostButton
+                type="error"
+                v-access:code="['system:dept:remove']"
+                @click.stop=""
+              >
+                {{ $t('pages.common.delete') }}
+              </GhostButton>
+            </template>
+            确认删除？
+          </NPopconfirm>
+        </NSpace>
+      </template>
+    </BasicTable>
+    <DeptDrawer @reload="tableApi.query()" />
+  </Page>
 </template>

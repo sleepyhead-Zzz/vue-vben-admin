@@ -6,7 +6,8 @@ import { $t } from '@vben/locales';
 import { addFullName, cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { listDept } from '#/api/system/api/sysDeptApi';
+import { dropdownDeptList } from '#/api/system/api/sysDeptApi';
+import { addPost, editPost, getPostInfo } from '#/api/system/api/sysPostApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -32,18 +33,21 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function setupDeptSelect() {
-  const { data } = await listDept({});
+  const { data } = await dropdownDeptList({});
   // 选中后显示在输入框的值 即父节点 / 子节点
   addFullName(data, 'label', ' / ');
   formApi.updateSchema([
     {
       componentProps: {
-        fieldNames: { label: 'label', value: 'id' },
-        treeData: data,
-        treeDefaultExpandAll: true,
-        treeLine: { showLeafIcon: false },
-        // 选中后显示在输入框的值
-        treeNodeLabelProp: 'fullName',
+        keyField: 'id', // 对应 value 的字段
+        labelField: 'label', // 显示 label 的字段
+        childrenField: 'children', // 子节点字段
+        options: data,
+        // 默认展开的树节点
+        defaultExpandedKeys: [1], // 默认展开的节点
+        showPath: true, // 展示路径信息（可选）
+        filterable: true, // 启用过滤（等效于 showSearch）
+        leafOnly: false, // 是否只能选叶子节点（视业务而定）
       },
       fieldName: 'deptId',
     },
@@ -72,8 +76,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     await setupDeptSelect();
     // 更新 && 赋值
     if (isUpdate.value && id) {
-      const record = await postInfo(id);
-      await formApi.setValues(record);
+      const { data } = await getPostInfo({ postId: id });
+      await formApi.setValues(data);
     }
     await markInitialized();
     drawerApi.drawerLoading(false);
@@ -88,7 +92,9 @@ async function handleConfirm() {
       return;
     }
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? postUpdate(data) : postAdd(data));
+    await (isUpdate.value
+      ? editPost({ postId: data.postId }, data)
+      : addPost(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();

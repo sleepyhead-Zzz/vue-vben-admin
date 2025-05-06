@@ -3,16 +3,13 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { getPopupContainer } from '@vben/utils';
 
+import { z } from '#/adapter/form';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'postCode',
-    label: '岗位编码',
-  },
-  {
-    component: 'Input',
-    fieldName: 'postName',
-    label: '岗位名称',
+    fieldName: 'deptName',
+    label: '部门名称',
   },
   {
     component: 'Select',
@@ -24,31 +21,32 @@ export const querySchema: FormSchemaGetter = () => [
       ],
     },
     fieldName: 'status',
-    label: '状态',
+    label: '部门状态',
   },
 ];
 
 export const columns: VxeGridProps['columns'] = [
-  { type: 'checkbox', width: 60 },
   {
-    title: '岗位编码',
-    field: 'postCode',
+    field: 'deptName',
+    title: '部门名称',
+    treeNode: true,
+    width: 200,
   },
   {
+    field: 'deptCategory',
     title: '类别编码',
-    field: 'postCategory',
   },
   {
-    title: '岗位名称',
-    field: 'postName',
-  },
-  {
+    field: 'orderNum',
     title: '排序',
-    field: 'postSort',
+    resizable: false,
+    width: 'auto',
   },
   {
-    title: '状态',
     field: 'status',
+    resizable: false,
+    width: 'auto',
+    title: '状态',
     slots: {
       default: ({ row }) => {
         const statusMap = {
@@ -59,18 +57,16 @@ export const columns: VxeGridProps['columns'] = [
       },
     },
   },
-
   {
-    title: '创建时间',
     field: 'createTime',
+    title: '创建时间',
   },
   {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    resizable: false,
-    width: '200',
+    width: 200,
   },
 ];
 
@@ -81,39 +77,67 @@ export const drawerSchema: FormSchemaGetter = () => [
       show: () => false,
       triggerFields: [''],
     },
-    fieldName: 'postId',
+    fieldName: 'deptId',
   },
   {
     component: 'TreeSelect',
     componentProps: {
       getPopupContainer,
     },
-    fieldName: 'deptId',
-    label: '所属部门',
+    dependencies: {
+      show: (model) => model.parentId !== 0,
+      triggerFields: ['parentId'],
+    },
+    fieldName: 'parentId',
+    label: '上级部门',
     rules: 'selectRequired',
   },
   {
     component: 'Input',
-    fieldName: 'postName',
-    label: '岗位名称',
+    fieldName: 'deptName',
+    label: '部门名称',
     rules: 'required',
-  },
-  {
-    component: 'Input',
-    fieldName: 'postCode',
-    label: '岗位编码',
-    rules: 'required',
-  },
-  {
-    component: 'Input',
-    fieldName: 'postCategory',
-    label: '类别编码',
   },
   {
     component: 'InputNumber',
-    fieldName: 'postSort',
-    label: '岗位排序',
+    fieldName: 'orderNum',
+    label: '显示排序',
     rules: 'required',
+  },
+  {
+    component: 'Input',
+    fieldName: 'deptCategory',
+    label: '类别编码',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      // 选中了就只能修改 不能重置为无负责人
+      allowClear: false,
+      getPopupContainer,
+    },
+    fieldName: 'leader',
+    label: '负责人',
+  },
+  {
+    component: 'Input',
+    fieldName: 'phone',
+    label: '联系电话',
+    rules: z
+      .string()
+      .regex(/^1[3,4578]\d{9}$/, { message: '请输入正确的手机号' })
+      .optional()
+      .or(z.literal('')),
+  },
+  {
+    component: 'Input',
+    fieldName: 'email',
+    label: '邮箱',
+    rules: z
+      .string()
+      .email({ message: '请输入正确的邮箱' })
+      .optional()
+      .or(z.literal('')),
   },
   {
     component: 'RadioGroup',
@@ -127,14 +151,6 @@ export const drawerSchema: FormSchemaGetter = () => [
     },
     defaultValue: '0',
     fieldName: 'status',
-    label: '岗位状态',
-    rules: 'required',
-  },
-
-  {
-    component: 'Textarea',
-    fieldName: 'remark',
-    formItemClass: 'items-start',
-    label: '备注',
+    label: '状态',
   },
 ];
