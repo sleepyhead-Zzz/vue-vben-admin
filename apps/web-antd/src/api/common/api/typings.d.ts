@@ -67,8 +67,6 @@ declare namespace API {
     /** 备注 */
     remark?: string;
     status?: string;
-    /** 状态 */
-    statusStr?: string;
     createTime?: string;
   };
 
@@ -191,17 +189,17 @@ declare namespace API {
     /** 用户昵称 */
     nickName?: string;
     /** 用户类型 */
-    userType?: number;
+    userType?: string;
     /** 邮件 */
     email?: string;
     /** 号码 */
     phoneNumber?: string;
     /** 性别 */
-    sex?: number;
+    sex?: string;
     /** 用户头像 */
     avatar?: string;
     /** 状态 */
-    status?: number;
+    status?: string;
     /** 最后登录IP */
     loginIp?: string;
     /** 最后登录时间 */

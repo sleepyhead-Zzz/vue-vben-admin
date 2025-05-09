@@ -19,7 +19,7 @@ declare namespace API {
     leaderId?: number;
     phone?: string;
     email?: string;
-    status?: number;
+    status?: string;
   };
 
   type AddDictDataCommand = {
@@ -690,8 +690,6 @@ declare namespace API {
     /** 备注 */
     remark?: string;
     status?: string;
-    /** 状态 */
-    statusStr?: string;
     createTime?: string;
   };
 
@@ -1031,7 +1029,7 @@ declare namespace API {
     /** 用户ID */
     userId?: number;
     /** 用户名 */
-    username?: string;
+    userName?: string;
     /** 用户状态 */
     status?: number;
     /** 手机号 */
@@ -1308,7 +1306,7 @@ declare namespace API {
     leaderId?: number;
     phone?: string;
     email?: string;
-    status?: number;
+    status?: string;
     deptId: number;
   };
 
@@ -1388,7 +1386,7 @@ declare namespace API {
 
   type UpdateProfileCommand = {
     userId?: number;
-    sex?: number;
+    sex?: string;
     nickName?: string;
     phoneNumber?: string;
     email?: string;
@@ -1458,17 +1456,17 @@ declare namespace API {
     /** 用户昵称 */
     nickName?: string;
     /** 用户类型 */
-    userType?: number;
+    userType?: string;
     /** 邮件 */
     email?: string;
     /** 号码 */
     phoneNumber?: string;
     /** 性别 */
-    sex?: number;
+    sex?: string;
     /** 用户头像 */
     avatar?: string;
     /** 状态 */
-    status?: number;
+    status?: string;
     /** 最后登录IP */
     loginIp?: string;
     /** 最后登录时间 */
