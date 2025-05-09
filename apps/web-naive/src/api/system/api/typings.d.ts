@@ -138,6 +138,8 @@ declare namespace API {
     endTime?: string;
     deptId?: number;
     parentId?: number;
+    status?: string;
+    deptName?: string;
   };
 
   type DeptTreeSelectDTO = {
@@ -238,6 +240,8 @@ declare namespace API {
   type listDeptParams = {
     deptId?: number;
     parentId?: number;
+    status?: string;
+    deptName?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -445,7 +449,7 @@ declare namespace API {
   };
 
   type removeRoleParams = {
-    roleId: number[];
+    roleIds: number[];
   };
 
   type removeUserParams = {

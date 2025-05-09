@@ -25,3 +25,4 @@ export const BaselineRadioButtonChecked = createIconifyIcon(
 export const BaselineFormatListBulleted = createIconifyIcon(
   'ic:baseline-format-list-bulleted',
 );
+export const ProfileIcon = createIconifyIcon('mingcute:profile-line');

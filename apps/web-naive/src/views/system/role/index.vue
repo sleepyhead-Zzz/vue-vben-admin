@@ -2,33 +2,24 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { Role } from '#/api/system/role/model';
 
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
-import { getVxePopupContainer } from '@vben/utils';
 
-import {
-  Dropdown,
-  Menu,
-  MenuItem,
-  Modal,
-  Popconfirm,
-  Space,
-} from 'ant-design-vue';
+import { NButton, NSpace } from 'naive-ui';
 
+import { dialog } from '#/adapter/naive';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  roleChangeStatus,
-  roleExport,
-  roleList,
-  roleRemove,
-} from '#/api/system/role';
+  changeRoleStatus,
+  getPagedRole,
+  removeRole,
+} from '#/api/system/api/sysRoleApi';
+import { GhostButton } from '#/components/global/button';
 import { TableSwitch } from '#/components/table';
-import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
 import roleAuthModal from './role-auth-modal.vue';
@@ -70,7 +61,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await roleList({
+        return await getPagedRole({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -97,35 +88,32 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: Role) {
+async function handleEdit(record: API.RoleDTO) {
   drawerApi.setData({ id: record.roleId });
   drawerApi.open();
 }
 
-async function handleDelete(row: Role) {
-  await roleRemove([row.roleId]);
+async function handleDelete(row: API.RoleDTO) {
+  await removeRole({ roleIds: [row.roleId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Role) => row.roleId);
-  Modal.confirm({
+  const ids = rows.map((row: API.RoleDTO) => row.roleId);
+  dialog.warning({
     title: '提示',
-    okType: 'danger',
-    content: `确认删除选中的${ids.length}条记录吗？`,
-    onOk: async () => {
-      await roleRemove(ids);
+    content: `确认删除选中的 ${ids.length} 条记录吗？`,
+    positiveText: '确定',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      await removeRole({ roleIds: ids });
       await tableApi.query();
     },
   });
 }
 
-function handleDownloadExcel() {
-  commonDownloadExcel(roleExport, '角色数据', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
-}
+function handleDownloadExcel() {}
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();
 
@@ -135,13 +123,13 @@ const [RoleAuthModal, authModalApi] = useVbenModal({
   connectedComponent: roleAuthModal,
 });
 
-function handleAuthEdit(record: Role) {
+function handleAuthEdit(record: API.RoleDTO) {
   authModalApi.setData({ id: record.roleId });
   authModalApi.open();
 }
 
 const router = useRouter();
-function handleAssignRole(record: Role) {
+function handleAssignRole(record: API.RoleDTO) {
   router.push(`/system/role-assign/${record.roleId}`);
 }
 </script>
@@ -150,35 +138,29 @@ function handleAssignRole(record: Role) {
   <Page :auto-content-height="true">
     <BasicTable table-title="角色列表">
       <template #toolbar-tools>
-        <Space>
-          <a-button
-            v-access:code="['system:role:export']"
-            @click="handleDownloadExcel"
-          >
+        <NSpace>
+          <NButton @click="handleDownloadExcel">
             {{ $t('pages.common.export') }}
-          </a-button>
-          <a-button
+          </NButton>
+
+          <NButton
             :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
-            type="primary"
-            v-access:code="['system:role:remove']"
+            type="error"
             @click="handleMultiDelete"
           >
             {{ $t('pages.common.delete') }}
-          </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['system:role:add']"
-            @click="handleAdd"
-          >
+          </NButton>
+
+          <NButton type="primary" @click="handleAdd">
             {{ $t('pages.common.add') }}
-          </a-button>
-        </Space>
+          </NButton>
+        </NSpace>
       </template>
+
       <template #status="{ row }">
         <TableSwitch
           v-model:value="row.status"
-          :api="() => roleChangeStatus(row)"
+          :api="() => changeRoleStatus({ roleId: row.roleId }, row)"
           :disabled="
             row.roleId === 1 ||
             row.roleKey === 'admin' ||
@@ -194,26 +176,24 @@ function handleAssignRole(record: Role) {
           v-if="!row.superAdmin && (row.roleKey !== 'admin' || isSuperAdmin)"
         >
           <Space>
-            <ghost-button
+            <GhostButton
               v-access:code="['system:role:edit']"
               @click.stop="handleEdit(row)"
             >
               {{ $t('pages.common.edit') }}
-            </ghost-button>
-            <Popconfirm
-              :get-popup-container="getVxePopupContainer"
-              placement="left"
-              title="确认删除？"
-              @confirm="handleDelete(row)"
+            </GhostButton>
+            <n-popconfirm
+              @positive-click="handleDelete(row)"
+              positive-text="删除"
+              negative-text="取消"
             >
-              <ghost-button
-                danger
-                v-access:code="['system:role:remove']"
-                @click.stop=""
-              >
-                {{ $t('pages.common.delete') }}
-              </ghost-button>
-            </Popconfirm>
+              <template #trigger>
+                <GhostButton type="error">
+                  {{ $t('pages.common.delete') }}
+                </GhostButton>
+              </template>
+              确认删除？
+            </n-popconfirm>
           </Space>
           <Dropdown placement="bottomRight">
             <template #overlay>

@@ -1,21 +1,18 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { DictEnum } from '@vben/constants';
 import { getPopupContainer } from '@vben/utils';
 
-import { Tag } from 'ant-design-vue';
-
-import { getDictOptions } from '#/utils/dict';
+import { NTag } from 'naive-ui';
 
 /**
  * authScopeOptions user也会用到
  */
 export const authScopeOptions = [
-  { color: 'green', label: '全部数据权限', value: '1' },
+  { color: 'success', label: '全部数据权限', value: '1' },
   { color: 'default', label: '自定数据权限', value: '2' },
-  { color: 'orange', label: '本部门数据权限', value: '3' },
-  { color: 'cyan', label: '本部门及以下数据权限', value: '4' },
+  { color: 'warning', label: '本部门数据权限', value: '3' },
+  { color: 'info', label: '本部门及以下数据权限', value: '4' },
   { color: 'error', label: '仅本人数据权限', value: '5' },
   { color: 'default', label: '部门及以下或本人数据权限', value: '6' },
 ];
@@ -34,7 +31,10 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.SYS_NORMAL_DISABLE),
+      options: [
+        { label: '启用', value: '0' },
+        { label: '禁用', value: '1' },
+      ],
     },
     fieldName: 'status',
     label: '状态',
@@ -57,7 +57,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'roleKey',
     slots: {
       default: ({ row }) => {
-        return <Tag color="processing">{row.roleKey}</Tag>;
+        return <NTag type="primary">{row.roleKey}</NTag>;
       },
     },
   },
@@ -69,10 +69,11 @@ export const columns: VxeGridProps['columns'] = [
         const found = authScopeOptions.find(
           (item) => item.value === row.dataScope,
         );
-        if (found) {
-          return <Tag color={found.color}>{found.label}</Tag>;
-        }
-        return <Tag>{row.dataScope}</Tag>;
+        return (
+          <NTag type={found?.color ?? 'default'}>
+            {found?.label ?? row.dataScope}
+          </NTag>
+        );
       },
     },
   },
@@ -132,7 +133,10 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Select',
     componentProps: {
       allowClear: false,
-      options: getDictOptions(DictEnum.SYS_NORMAL_DISABLE),
+      options: [
+        { label: '启用', value: '0' },
+        { label: '禁用', value: '1' },
+      ],
       getPopupContainer,
     },
     defaultValue: '0',

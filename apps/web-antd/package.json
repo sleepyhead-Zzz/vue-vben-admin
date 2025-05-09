@@ -20,12 +20,15 @@
     "build:analyze": "pnpm vite build --mode analyze",
     "dev": "pnpm vite --mode development",
     "preview": "vite preview",
-    "typecheck": "vue-tsc --noEmit --skipLibCheck"
+    "typecheck": "vue-tsc --noEmit --skipLibCheck",
+    "openapi2ts": "openapi2ts"
   },
   "imports": {
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
+    "@tinymce/tinymce-vue": "^6.0.1",
     "@vben/access": "workspace:*",
     "@vben/common-ui": "workspace:*",
     "@vben/constants": "workspace:*",
@@ -42,9 +45,20 @@
     "@vben/utils": "workspace:*",
     "@vueuse/core": "catalog:",
     "ant-design-vue": "catalog:",
+    "cropperjs": "^1.6.2",
+    "crypto-js": "^4.2.0",
     "dayjs": "catalog:",
+    "echarts": "^5.5.1",
+    "jsencrypt": "^3.3.2",
+    "lodash-es": "^4.17.21",
     "pinia": "catalog:",
+    "tinymce": "^7.3.0",
     "vue": "catalog:",
     "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/lodash-es": "^4.17.12",
+    "@umijs/openapi": "^1.13.0"
   }
 }
