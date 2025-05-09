@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { User } from '#/api/system/user/model';
 
 import { ref } from 'vue';
 
@@ -23,14 +22,8 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  userExport,
-  userList,
-  userRemove,
-  userStatusChange,
-} from '#/api/system/user';
+import { getPagedUser, removeUser } from '#/api/system/api/sysUserApi';
 import { TableSwitch } from '#/components/table';
-import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
 import DeptTree from './dept-tree.vue';
@@ -104,12 +97,12 @@ const gridOptions: VxeGridProps = {
         } else {
           Reflect.deleteProperty(formValues, 'deptId');
         }
-
-        return await userList({
+        const { data } = await getPagedUser({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        return data;
       },
     },
   },
@@ -138,40 +131,40 @@ function handleAdd() {
   userDrawerApi.open();
 }
 
-function handleEdit(row: User) {
+function handleEdit(row: API.UserDTO) {
   userDrawerApi.setData({ id: row.userId });
   userDrawerApi.open();
 }
 
-async function handleDelete(row: User) {
-  await userRemove([row.userId]);
+async function handleDelete(row: API.UserDTO) {
+  await removeUser({ userIds: [row.userId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: User) => row.userId);
+  const ids = rows.map((row: API.UserDTO) => row.userId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await userRemove(ids);
+      await removeUser({ userIds: ids });
       await tableApi.query();
     },
   });
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(userExport, '用户管理', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
+  // commonDownloadExcel(userExport, '用户管理', tableApi.formApi.form.values, {
+  //   fieldMappingTime: formOptions.fieldMappingTime,
+  // });
 }
 
 const [UserInfoModal, userInfoModalApi] = useVbenModal({
   connectedComponent: userInfoModal,
 });
-function handleUserInfo(row: User) {
+function handleUserInfo(row: API.UserDTO) {
   userInfoModalApi.setData({ userId: row.userId });
   userInfoModalApi.open();
 }
@@ -180,7 +173,7 @@ const [UserResetPwdModal, userResetPwdModalApi] = useVbenModal({
   connectedComponent: userResetPwdModal,
 });
 
-function handleResetPwd(record: User) {
+function handleResetPwd(record: API.UserDTO) {
   userResetPwdModalApi.setData({ record });
   userResetPwdModalApi.open();
 }

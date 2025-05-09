@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { User } from '#/api/system/user/model';
-
 import { computed, shallowRef } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
@@ -11,7 +9,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { findUserInfo } from '#/api/system/user';
+import { getUserDetailInfo } from '#/api/system/api/sysUserApi';
 import { renderDict } from '#/utils/render';
 
 dayjs.extend(duration);
@@ -24,7 +22,7 @@ const [BasicModal, modalApi] = useVbenModal({
   },
 });
 
-interface UserWithNames extends User {
+interface UserWithNames extends API.UserDTO {
   postNames: string[];
   roleNames: string[];
 }
@@ -37,10 +35,16 @@ async function handleOpenChange(open: boolean) {
   modalApi.modalLoading(true);
 
   const { userId } = modalApi.getData() as { userId: number | string };
-  const response = await findUserInfo(userId);
+  const response = await getUserDetailInfo({ userId });
   // 外部的roleIds postIds才是真正对应的  新增时为空
   // posts有为Null的情况 需要给默认值
-  const { postIds = [], posts = [], roleIds = [], roles = [], user } = response;
+  const {
+    postIds = [],
+    posts = [],
+    roleIds = [],
+    roles = [],
+    user,
+  } = response.data;
 
   const postNames = posts
     .filter((item) => postIds.includes(item.postId))
@@ -100,7 +104,7 @@ const diffLoginTime = computed(() => {
         {{ mixInfo }}
       </DescriptionsItem>
       <DescriptionsItem label="手机号">
-        {{ currentUser.phonenumber || '-' }}
+        {{ currentUser.phoneNumber || '-' }}
       </DescriptionsItem>
       <DescriptionsItem label="邮箱">
         {{ currentUser.email || '-' }}

@@ -4,12 +4,11 @@ import type { UploadFile } from 'ant-design-vue/es/upload/interface';
 import { h, ref, unref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
-import { ExcelIcon, InBoxIcon } from '@vben/icons';
+import { InBoxIcon } from '@vben/icons';
 
 import { Modal, Switch, Upload } from 'ant-design-vue';
 
-import { downloadImportTemplate, userImportData } from '#/api/system/user';
-import { commonDownloadExcel } from '#/utils/file/download';
+import { importUserByExcel } from '#/api/system/api/sysUserApi';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -34,7 +33,7 @@ async function handleSubmit() {
       file: fileList.value[0]!.originFileObj as Blob,
       updateSupport: unref(checked),
     };
-    const { code, msg } = await userImportData(data);
+    const { code, message } = await importUserByExcel({ file: data });
     let modal = Modal.success;
     if (code === 200) {
       emit('reload');
@@ -45,7 +44,7 @@ async function handleSubmit() {
     modal({
       content: h('div', {
         class: 'max-h-[260px] overflow-y-auto',
-        innerHTML: msg, // 后台已经处理xss问题
+        innerHTML: message, // 后台已经处理xss问题
       }),
       title: '提示',
     });
@@ -87,7 +86,8 @@ function handleCancel() {
     <div class="mt-2 flex flex-col gap-2">
       <div class="flex items-center gap-2">
         <span>允许导入xlsx, xls文件</span>
-        <a-button
+        <!-- /todo -->
+        <!-- <a-button
           type="link"
           @click="commonDownloadExcel(downloadImportTemplate, '用户导入模板')"
         >
@@ -95,7 +95,7 @@ function handleCancel() {
             <ExcelIcon />
             <span>下载模板</span>
           </div>
-        </a-button>
+        </a-button> -->
       </div>
       <div class="flex items-center gap-2">
         <span :class="{ 'text-red-500': checked }">

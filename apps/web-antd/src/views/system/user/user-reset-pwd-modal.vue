@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ResetPwdParam, User } from '#/api/system/user/model';
-
 import { ref } from 'vue';
 
 import { useVbenModal, z } from '@vben/common-ui';
@@ -8,7 +6,7 @@ import { useVbenModal, z } from '@vben/common-ui';
 import { Descriptions, DescriptionsItem } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { userResetPassword } from '#/api/system/user';
+import { resetPassword } from '#/api/system/api/sysUserApi';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -49,14 +47,14 @@ const [BasicForm, formApi] = useVbenForm({
   },
 });
 
-const currentUser = ref<null | User>(null);
+const currentUser = ref<API.UserDTO | null>(null);
 async function handleOpenChange(open: boolean) {
   if (!open) {
     return null;
   }
   modalApi.modalLoading(true);
 
-  const { record } = modalApi.getData() as { record: User };
+  const { record } = modalApi.getData() as { record: API.UserDTO };
   currentUser.value = record;
   await formApi.setValues({ userId: record.userId });
 
@@ -71,7 +69,10 @@ async function handleSubmit() {
       return;
     }
     const data = await formApi.getValues();
-    await userResetPassword(data as ResetPwdParam);
+    await resetPassword(
+      { userId: data.userId },
+      data as API.ResetPasswordCommand,
+    );
     emit('reload');
     handleClosed();
   } catch (error) {

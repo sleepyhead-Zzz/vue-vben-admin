@@ -591,6 +591,28 @@ declare namespace API {
     roleIds?: number[];
   };
 
+  type optionSelectPostParams = {
+    postCode?: string;
+    postName?: string;
+    status?: string;
+    belongDeptId?: number;
+    deptId?: number;
+    postIds?: number[];
+    postCategory?: string;
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type PageDTOLoginLogDTO = {
     /** 总记录数 */
     total?: number;
@@ -683,8 +705,11 @@ declare namespace API {
     pageSize?: number;
     postCode?: string;
     postName?: string;
-    status?: number;
+    status?: string;
     belongDeptId?: number;
+    deptId?: number;
+    postIds?: number[];
+    postCategory?: string;
   };
 
   type removeConfigParams = {
@@ -762,6 +787,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: DeptDTO[];
+  };
+
+  type ResponseDTOListPostDTO = {
+    code?: number;
+    message?: string;
+    data?: PostDTO[];
   };
 
   type ResponseDTOListRoleDTO = {
@@ -1411,11 +1442,10 @@ declare namespace API {
 
   type UserDetailDTO = {
     user?: UserDTO;
-    roleOptions?: RoleDTO[];
-    postOptions?: PostDTO[];
-    postId?: number;
-    roleId?: number;
-    permissions?: string[];
+    roleIds?: number[];
+    roles?: RoleDTO[];
+    postIds?: number[];
+    posts?: PostDTO[];
   };
 
   type UserDTO = {

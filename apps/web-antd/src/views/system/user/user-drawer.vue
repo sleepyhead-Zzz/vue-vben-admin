@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Role } from '#/api/system/user/model';
-
 import { computed, h, onMounted, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -10,14 +8,14 @@ import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 import { Tag } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { configInfoByKey } from '#/api/system/config';
-import { postOptionSelect } from '#/api/system/post';
+import { getConfigKey } from '#/api/system/api/canshupeizhibiao';
+import { dropdownDeptList } from '#/api/system/api/sysDeptApi';
+import { optionSelectPost } from '#/api/system/api/sysPostApi';
 import {
-  findUserInfo,
-  getDeptTree,
-  userAdd,
-  userUpdate,
-} from '#/api/system/user';
+  addUser,
+  editUser,
+  getUserDetailInfo,
+} from '#/api/system/api/sysUserApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 import { authScopeOptions } from '#/views/system/role/data';
 
@@ -50,7 +48,7 @@ const [BasicForm, formApi] = useVbenForm({
     option: ({value, label, [disabled, key, title]}) => '',
   }),
  */
-function genRoleOptionlabel(role: Role) {
+function genRoleOptionlabel(role: API.RoleDTO) {
   const found = authScopeOptions.find((item) => item.value === role.dataScope);
   if (!found) {
     return role.roleName;
@@ -65,7 +63,8 @@ function genRoleOptionlabel(role: Role) {
  * 岗位的加载
  */
 async function setupPostOptions(deptId: number | string) {
-  const postListResp = await postOptionSelect(deptId);
+  const { data } = await optionSelectPost({ deptId });
+  const postListResp = data;
   const options = postListResp.map((item) => ({
     label: item.postName,
     value: item.postId,
@@ -84,9 +83,21 @@ async function setupPostOptions(deptId: number | string) {
  */
 async function setupDeptSelect() {
   // updateSchema
-  const deptTree = await getDeptTree();
+  const deptTree = await dropdownDeptList({
+    query: {
+      orderColumn: undefined,
+      orderDirection: undefined,
+      timeRangeColumn: undefined,
+      beginTime: undefined,
+      endTime: undefined,
+      deptId: undefined,
+      parentId: undefined,
+      status: undefined,
+      deptName: undefined,
+    },
+  });
   // 选中后显示在输入框的值 即父节点 / 子节点
-  addFullName(deptTree, 'label', ' / ');
+  addFullName(deptTree.data, 'label', ' / ');
   formApi.updateSchema([
     {
       componentProps: (formModel) => ({
@@ -105,7 +116,7 @@ async function setupDeptSelect() {
         },
         placeholder: '请选择',
         showSearch: true,
-        treeData: deptTree,
+        treeData: deptTree.data,
         treeDefaultExpandAll: true,
         treeLine: { showLeafIcon: false },
         // 筛选的字段
@@ -120,9 +131,9 @@ async function setupDeptSelect() {
 
 const defaultPassword = ref('');
 onMounted(async () => {
-  const password = await configInfoByKey('sys.user.initPassword');
-  if (password) {
-    defaultPassword.value = password;
+  const { data } = await getConfigKey({ configKey: 'sys.user.initPassword' });
+  if (data) {
+    defaultPassword.value = data;
   }
 });
 
@@ -170,7 +181,10 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       },
     ]);
     // 更新 && 赋值
-    const { postIds, posts, roleIds, roles, user } = await findUserInfo(id);
+    const { data } = await getUserDetailInfo({
+      userId: id,
+    });
+    const { postIds, posts, roleIds, roles, user } = data;
     const postOptions = (posts ?? []).map((item) => ({
       label: item.postName,
       value: item.postId,
@@ -226,7 +240,9 @@ async function handleConfirm() {
       return;
     }
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? userUpdate(data) : userAdd(data));
+    await (isUpdate.value
+      ? editUser({ userId: data.userId }, data)
+      : addUser(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();

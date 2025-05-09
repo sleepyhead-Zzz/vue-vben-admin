@@ -96,3 +96,18 @@ export async function getPagedPost(
     ...(options || {}),
   });
 }
+
+/** 职位列表（树级） 职位树级下拉框 GET /system/post/option-select */
+export async function optionSelectPost(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.optionSelectPostParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseDTOListPostDTO>('/system/post/option-select', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}

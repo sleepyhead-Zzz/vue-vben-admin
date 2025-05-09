@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
 
-import type { DeptTree } from '#/api/system/user/model';
-
 import { onMounted, ref } from 'vue';
 
 import { SyncOutlined } from '@ant-design/icons-vue';
 import { Empty, InputSearch, Skeleton, Tree } from 'ant-design-vue';
 
-import { getDeptTree } from '#/api/system/user';
+import { dropdownDeptList } from '#/api/system/api/sysDeptApi';
 
 defineOptions({ inheritAttrs: false });
 
@@ -36,7 +34,7 @@ const searchValue = defineModel('searchValue', {
 });
 
 /** 部门数据源 */
-type DeptTreeArray = DeptTree[];
+type DeptTreeArray = API.DeptDTO[];
 const deptTreeArray = ref<DeptTreeArray>([]);
 /** 骨架屏加载 */
 const showTreeSkeleton = ref<boolean>(true);
@@ -46,9 +44,21 @@ async function loadTree() {
   searchValue.value = '';
   selectDeptId.value = [];
 
-  const ret = await getDeptTree();
+  const ret = await dropdownDeptList({
+    query: {
+      orderColumn: undefined,
+      orderDirection: undefined,
+      timeRangeColumn: undefined,
+      beginTime: undefined,
+      endTime: undefined,
+      deptId: undefined,
+      parentId: undefined,
+      status: undefined,
+      deptName: undefined,
+    },
+  });
 
-  deptTreeArray.value = ret;
+  deptTreeArray.value = ret.data;
   showTreeSkeleton.value = false;
 }
 
