@@ -11,7 +11,12 @@ import {
 } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { menuAdd, menuInfo, menuList, menuUpdate } from '#/api/system/menu';
+import {
+  addMenu,
+  editMenu,
+  getMenuInfo,
+  listMenu,
+} from '#/api/system/api/sysMenuApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -42,8 +47,10 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function setupMenuSelect() {
-  // menu
-  const menuArray = await menuList();
+  const { data } = await listMenu({
+    menuName: '',
+  });
+  const menuArray = data || [];
   // support i18n
   menuArray.forEach((item) => {
     item.menuName = $t(item.menuName);
@@ -114,8 +121,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     if (id) {
       await formApi.setFieldValue('parentId', id);
       if (update) {
-        const record = await menuInfo(id);
-        await formApi.setValues(record);
+        const { data } = await getMenuInfo({ menuId: id });
+        await formApi.setValues(data);
       }
     }
     await markInitialized();
@@ -132,7 +139,9 @@ async function handleConfirm() {
       return;
     }
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? menuUpdate(data) : menuAdd(data));
+    await (isUpdate.value
+      ? editMenu({ menuId: data.menuId }, data)
+      : addMenu(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();

@@ -144,21 +144,49 @@ export async function unallocatedUserList(
   );
 }
 
-/** 批量添加用户和角色关联 POST /system/role/${param0}/users/${param1}/grant/bulk */
-export async function addRoleForUserByBulk(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.addRoleForUserByBulkParams,
+/** 此处后端没有提供注释 PUT /system/role/authUser/cancel */
+export async function cancelAuthUser(
+  body: API.UpdateUserRoleCommand,
   options?: { [key: string]: any },
 ) {
-  const { roleId: param0, userIds: param1, ...queryParams } = params;
-  return request<API.ResponseDTOVoid>(
-    `/system/role/${param0}/users/${param1}/grant/bulk`,
-    {
-      method: 'POST',
-      params: { ...queryParams },
-      ...(options || {}),
+  return request<API.ResponseDTOInteger>('/system/role/authUser/cancel', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
     },
-  );
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 批量解除角色和用户的关联 PUT /system/role/authUser/cancelAll */
+export async function cancelAuthUserAll(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.cancelAuthUserAllParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseDTOInteger>('/system/role/authUser/cancelAll', {
+    method: 'PUT',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
+/** 批量添加用户和角色关联 POST /system/role/authUser/selectAll */
+export async function selectAuthUserAll(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.selectAuthUserAllParams,
+  options?: { [key: string]: any },
+) {
+  return request<API.ResponseDTOInteger>('/system/role/authUser/selectAll', {
+    method: 'POST',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
 }
 
 /** 此处后端没有提供注释 GET /system/role/dept-tree/${param0} */
@@ -206,21 +234,4 @@ export async function optionSelect(
     },
     ...(options || {}),
   });
-}
-
-/** 批量解除角色和用户的关联 DELETE /system/role/users/${param0}/grant/bulk */
-export async function deleteRoleOfUserByBulk(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.deleteRoleOfUserByBulkParams,
-  options?: { [key: string]: any },
-) {
-  const { userIds: param0, ...queryParams } = params;
-  return request<API.ResponseDTOVoid>(
-    `/system/role/users/${param0}/grant/bulk`,
-    {
-      method: 'DELETE',
-      params: { ...queryParams },
-      ...(options || {}),
-    },
-  );
 }

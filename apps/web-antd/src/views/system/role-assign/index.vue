@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { User } from '#/api/system/user/model';
 
 import { useRoute } from 'vue-router';
 
@@ -13,10 +12,10 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  roleAllocatedList,
-  roleAuthCancel,
-  roleAuthCancelAll,
-} from '#/api/system/role';
+  allocatedUserList,
+  cancelAuthUser,
+  cancelAuthUserAll,
+} from '#/api/system/api/sysRoleApi';
 
 import { columns, querySchema } from './data';
 import roleAssignDrawer from './role-assign-drawer.vue';
@@ -51,7 +50,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await roleAllocatedList({
+        return await allocatedUserList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           roleId,
@@ -83,8 +82,8 @@ function handleAdd() {
 /**
  * 取消授权 一条记录
  */
-async function handleAuthCancel(record: User) {
-  await roleAuthCancel({ userId: record.userId, roleId });
+async function handleAuthCancel(record: API.UserDTO) {
+  await cancelAuthUser({ userId: record.userId, roleId });
   await tableApi.query();
 }
 
@@ -93,13 +92,13 @@ async function handleAuthCancel(record: User) {
  */
 function handleMultipleAuthCancel() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: User) => row.userId);
+  const ids = rows.map((row: API.UserDTO) => row.userId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认取消选中的${ids.length}条授权记录吗？`,
     onOk: async () => {
-      await roleAuthCancelAll(roleId, ids);
+      await cancelAuthUserAll({ roleId, userIds: ids });
       await tableApi.query();
       tableApi.grid.clearCheckboxRow();
     },

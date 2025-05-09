@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { Menu } from '#/api/system/menu/model';
 
 import { computed } from 'vue';
 
@@ -13,7 +12,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { menuList, menuRemove } from '#/api/system/menu';
+import { listMenu, removeMenu } from '#/api/system/api/sysMenuApi';
 
 import { columns, querySchema } from './data';
 import menuDrawer from './menu-drawer.vue';
@@ -43,10 +42,10 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async (_, formValues = {}) => {
-        const resp = await menuList({
+        const resp = await listMenu({
           ...formValues,
         });
-        return { rows: resp };
+        return { rows: resp.data };
       },
     },
   },
@@ -100,19 +99,19 @@ function handleAdd() {
   drawerApi.open();
 }
 
-function handleSubAdd(row: Menu) {
+function handleSubAdd(row: API.SysMenuDTO) {
   const { menuId } = row;
   drawerApi.setData({ id: menuId, update: false });
   drawerApi.open();
 }
 
-async function handleEdit(record: Menu) {
+async function handleEdit(record: API.SysMenuDTO) {
   drawerApi.setData({ id: record.menuId, update: true });
   drawerApi.open();
 }
 
-async function handleDelete(row: Menu) {
-  await menuRemove([row.menuId]);
+async function handleDelete(row: API.SysMenuDTO) {
+  await removeMenu({ menuId: row.menuId });
   await tableApi.query();
 }
 
@@ -140,9 +139,9 @@ const isAdmin = computed(() => {
     <BasicTable table-title="菜单列表" table-title-help="双击展开/收起子菜单">
       <template #toolbar-tools>
         <Space>
-          <a-button @click="setExpandOrCollapse(false)">
+          <AButton @click="setExpandOrCollapse(false)">
             {{ $t('pages.common.collapse') }}
-          </a-button>
+          </AButton>
           <a-button @click="setExpandOrCollapse(true)">
             {{ $t('pages.common.expand') }}
           </a-button>

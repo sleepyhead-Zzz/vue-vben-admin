@@ -122,3 +122,20 @@ export async function removeDictData(
     ...(options || {}),
   });
 }
+
+/** 根据字典类型查询字典数据信息 GET /system/dict/data/type/${param0} */
+export async function getDictDataByType(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getDictDataByTypeParams,
+  options?: { [key: string]: any },
+) {
+  const { dictType: param0, ...queryParams } = params;
+  return request<API.ResponseDTOListSysDictDataDTO>(
+    `/system/dict/data/type/${param0}`,
+    {
+      method: 'GET',
+      params: { ...queryParams },
+      ...(options || {}),
+    },
+  );
+}

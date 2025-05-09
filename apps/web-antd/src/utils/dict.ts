@@ -1,4 +1,4 @@
-import { dictDataInfo } from '#/api/system/dict/dict-data';
+import { dictDataInfo } from '#/api/core/menu';
 import { useDictStore } from '#/store/dict';
 
 /**
@@ -25,7 +25,7 @@ function fetchAndCacheDictData<T>(
         .then((resp) => {
           // 缓存到store 这样就不用重复获取了
           // 内部处理了push的逻辑 这里不用push
-          setDictInfo(dictName, resp, formatNumber);
+          setDictInfo(dictName, resp.data, formatNumber);
         })
         .catch(() => {
           // 401时 移除字典缓存 下次登录重新获取

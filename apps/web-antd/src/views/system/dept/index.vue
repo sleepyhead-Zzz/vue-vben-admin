@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { Dept } from '#/api/system/dept/model';
 
 import { nextTick } from 'vue';
 
@@ -12,7 +11,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deptList, deptRemove } from '#/api/system/dept';
+import { listDept } from '#/api/system/api/sysDeptApi';
 
 import { columns, querySchema } from './data';
 import deptDrawer from './dept-drawer.vue';
@@ -38,10 +37,10 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async (_, formValues = {}) => {
-        const resp = await deptList({
+        const resp = await listDept({
           ...formValues,
         });
-        return { rows: resp };
+        return { rows: resp.data };
       },
       // 默认请求接口后展开全部 不需要可以删除这段
       querySuccess: () => {
@@ -101,19 +100,19 @@ function handleAdd() {
   drawerApi.open();
 }
 
-function handleSubAdd(row: Dept) {
+function handleSubAdd(row: API.DeptDTO) {
   const { deptId } = row;
   drawerApi.setData({ id: deptId, update: false });
   drawerApi.open();
 }
 
-async function handleEdit(record: Dept) {
+async function handleEdit(record: API.DeptDTO) {
   drawerApi.setData({ id: record.deptId, update: true });
   drawerApi.open();
 }
 
-async function handleDelete(row: Dept) {
-  await deptRemove(row.deptId);
+async function handleDelete(row: API.DeptDTO) {
+  await removeDept({ deptId: row.deptId });
   await tableApi.query();
 }
 

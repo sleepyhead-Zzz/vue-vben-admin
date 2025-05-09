@@ -104,11 +104,6 @@ declare namespace API {
     deptIds?: number[];
   };
 
-  type addRoleForUserByBulkParams = {
-    roleId: number;
-    userIds: number[];
-  };
-
   type AddUserCommand = {
     deptId?: number;
     username?: string;
@@ -158,6 +153,11 @@ declare namespace API {
     noticeIds: number[];
   };
 
+  type cancelAuthUserAllParams = {
+    roleId: number;
+    userIds: number[];
+  };
+
   type changeRoleStatusParams = {
     roleId: number;
   };
@@ -173,10 +173,6 @@ declare namespace API {
 
   type dataScopeParams = {
     roleId: number;
-  };
-
-  type deleteRoleOfUserByBulkParams = {
-    userIds: number[];
   };
 
   type DeptDTO = {
@@ -294,6 +290,10 @@ declare namespace API {
     deptId: number;
   };
 
+  type getDictDataByTypeParams = {
+    dictType: string;
+  };
+
   type getDictDataInfoParams = {
     /** 记录ID */
     dictDataId: number;
@@ -396,6 +396,10 @@ declare namespace API {
   };
 
   type getRoleInfoParams = {
+    roleId: number;
+  };
+
+  type getRoleMenuTreeSelectParams = {
     roleId: number;
   };
 
@@ -516,6 +520,11 @@ declare namespace API {
     msg?: string;
     /** 登录时间 */
     loginTime?: string;
+  };
+
+  type MenuTreeSelectDTO = {
+    checkedKeys?: number[];
+    menus?: TreeLong[];
   };
 
   type OperationLogDTO = {
@@ -743,6 +752,12 @@ declare namespace API {
     data?: DeptTreeSelectDTO;
   };
 
+  type ResponseDTOInteger = {
+    code?: number;
+    message?: string;
+    data?: number;
+  };
+
   type ResponseDTOListDeptDTO = {
     code?: number;
     message?: string;
@@ -813,6 +828,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: UserDTO[];
+  };
+
+  type ResponseDTOMenuTreeSelectDTO = {
+    code?: number;
+    message?: string;
+    data?: MenuTreeSelectDTO;
   };
 
   type ResponseDTOPageDTOLoginLogDTO = {
@@ -986,6 +1007,11 @@ declare namespace API {
     phoneNumber?: string;
     /** 部门ID */
     deptId?: number;
+  };
+
+  type selectAuthUserAllParams = {
+    roleId: number;
+    userIds: number[];
   };
 
   type SysConfigDTO = {
@@ -1376,6 +1402,11 @@ declare namespace API {
     userId?: number;
     newPassword?: string;
     oldPassword?: string;
+  };
+
+  type UpdateUserRoleCommand = {
+    userId?: number;
+    roleId?: number;
   };
 
   type UserDetailDTO = {

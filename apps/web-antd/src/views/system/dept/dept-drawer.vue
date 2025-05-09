@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Dept } from '#/api/system/dept/model';
-
 import { computed, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -9,13 +7,13 @@ import { addFullName, cloneDeep, listToTree } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 import {
-  deptAdd,
-  deptInfo,
-  deptList,
+  addDept,
   deptNodeList,
-  deptUpdate,
-} from '#/api/system/dept';
-import { listUserByDeptId } from '#/api/system/user';
+  editDept,
+  getDeptInfo,
+  listDept,
+  listUserByDept,
+} from '#/api/system/api/sysDeptApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -46,8 +44,11 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function getDeptTree(deptId?: number | string, exclude = false) {
-  let ret: Dept[] = [];
-  ret = await (!deptId || exclude ? deptList({}) : deptNodeList(deptId));
+  let ret: API.DeptDTO[] = [];
+  const { data } = await (!deptId || exclude
+    ? listDept({})
+    : deptNodeList({ deptId }));
+  ret = data;
   const treeData = listToTree(ret, { id: 'deptId', pid: 'parentId' });
   // 添加部门名称 如 xx-xx-xx
   addFullName(treeData, 'deptName', ' / ');
@@ -78,7 +79,8 @@ async function initDeptSelect(deptId?: number | string) {
  * @param deptId
  */
 async function initDeptUsers(deptId: number | string) {
-  const ret = await listUserByDeptId(deptId);
+  const { data } = await listUserByDept({ deptId });
+  const ret = data;
   const options = ret.map((user) => ({
     label: `${user.userName} | ${user.nickName}`,
     value: user.userId,
@@ -131,8 +133,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     if (id) {
       await formApi.setFieldValue('parentId', id);
       if (update) {
-        const record = await deptInfo(id);
-        await formApi.setValues(record);
+        const { data } = await getDeptInfo({ deptId: id });
+        await formApi.setValues(data);
       }
     }
 
@@ -153,7 +155,9 @@ async function handleConfirm() {
       return;
     }
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? deptUpdate(data) : deptAdd(data));
+    await (isUpdate.value
+      ? editDept({ deptId: data.deptId }, data)
+      : addDept(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();

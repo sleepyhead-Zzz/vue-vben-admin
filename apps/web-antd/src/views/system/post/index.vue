@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { Post } from '#/api/system/post/model';
 
 import { ref } from 'vue';
 
@@ -12,8 +11,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { postExport, postList, postRemove } from '#/api/system/post';
-import { commonDownloadExcel } from '#/utils/file/download';
+import { getPagedPost, removePost } from '#/api/system/api/sysPostApi';
 import DeptTree from '#/views/system/user/dept-tree.vue';
 
 import { columns, querySchema } from './data';
@@ -63,11 +61,12 @@ const gridOptions: VxeGridProps = {
           Reflect.deleteProperty(formValues, 'belongDeptId');
         }
 
-        return await postList({
+        const { data } = await getPagedPost({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        return data;
       },
     },
   },
@@ -91,33 +90,31 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: Post) {
+async function handleEdit(record: API.PostDTO) {
   drawerApi.setData({ id: record.postId });
   drawerApi.open();
 }
 
-async function handleDelete(row: Post) {
-  await postRemove([row.postId]);
+async function handleDelete(row: API.PostDTO) {
+  await removePost({ ids: [row.postId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Post) => row.postId);
+  const ids = rows.map((row: API.PostDTO) => row.postId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await postRemove(ids);
+      await removePost({ ids });
       await tableApi.query();
     },
   });
 }
 
-function handleDownloadExcel() {
-  commonDownloadExcel(postExport, '岗位信息', tableApi.formApi.form.values);
-}
+function handleDownloadExcel() {}
 </script>
 
 <template>

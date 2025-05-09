@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import type { DeptOption } from '#/api/system/role/model';
-
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { roleDataScope, roleDeptTree, roleInfo } from '#/api/system/role';
+import {
+  dataScope,
+  getRoleInfo,
+  roleDeptTreeSelect,
+} from '#/api/system/api/sysRoleApi';
 import { TreeSelectPanel } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -26,12 +28,12 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
 });
 
-const deptTree = ref<DeptOption[]>([]);
+const deptTree = ref<API.DeptTreeSelectDTO[]>([]);
 async function setupDeptTree(id: number | string) {
-  const resp = await roleDeptTree(id);
-  formApi.setFieldValue('deptIds', resp.checkedKeys);
+  const resp = await roleDeptTreeSelect({ roleId: id });
+  formApi.setFieldValue('deptIds', resp.data.checkedKeys);
   // 设置菜单信息
-  deptTree.value = resp.depts;
+  deptTree.value = resp.data?.deptIds;
 }
 
 async function customFormValueGetter() {
@@ -63,7 +65,7 @@ const [BasicModal, modalApi] = useVbenModal({
     const { id } = modalApi.getData() as { id: number | string };
 
     setupDeptTree(id);
-    const record = await roleInfo(id);
+    const record = await getRoleInfo({ roleId: id });
     await formApi.setValues(record);
     markInitialized();
 
@@ -92,7 +94,7 @@ async function handleConfirm() {
     } else {
       data.deptIds = [];
     }
-    await roleDataScope(data);
+    await dataScope({ roleId: data.roleId }, data);
     resetInitialized();
     emit('reload');
     modalApi.close();

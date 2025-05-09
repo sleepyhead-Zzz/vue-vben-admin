@@ -6,8 +6,7 @@ import { $t } from '@vben/locales';
 import { addFullName, cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { postAdd, postInfo, postUpdate } from '#/api/system/post';
-import { getDeptTree } from '#/api/system/user';
+import { addPost, editPost, getPostInfo } from '#/api/system/api/sysPostApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -33,7 +32,8 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function setupDeptSelect() {
-  const deptTree = await getDeptTree();
+  const { data } = await dropdownDeptList({});
+  const deptTree = data;
   // 选中后显示在输入框的值 即父节点 / 子节点
   addFullName(deptTree, 'label', ' / ');
   formApi.updateSchema([
@@ -73,8 +73,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     await setupDeptSelect();
     // 更新 && 赋值
     if (isUpdate.value && id) {
-      const record = await postInfo(id);
-      await formApi.setValues(record);
+      const { data } = await getPostInfo({ postId: id });
+      await formApi.setValues(data);
     }
     await markInitialized();
     drawerApi.drawerLoading(false);
@@ -89,7 +89,9 @@ async function handleConfirm() {
       return;
     }
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? postUpdate(data) : postAdd(data));
+    await (isUpdate.value
+      ? editPost({ postId: data.postId }, data)
+      : addPost(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();

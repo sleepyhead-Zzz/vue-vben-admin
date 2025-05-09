@@ -2,8 +2,6 @@
 TODO: 这个页面要优化逻辑
 -->
 <script setup lang="ts">
-import type { MenuOption } from '#/api/system/menu/model';
-
 import { computed, nextTick, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
@@ -11,8 +9,11 @@ import { $t } from '@vben/locales';
 import { cloneDeep, eachTree } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { menuTreeSelect, roleMenuTreeSelect } from '#/api/system/menu';
-import { roleAdd, roleInfo, roleUpdate } from '#/api/system/role';
+import {
+  dropdownMenu,
+  getRoleMenuTreeSelect,
+} from '#/api/system/api/sysMenuApi';
+import { addRole, editRole, getRoleInfo } from '#/api/system/api/sysRoleApi';
 import { MenuSelectTable } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -38,28 +39,28 @@ const [BasicForm, formApi] = useVbenForm({
   wrapperClass: 'grid-cols-2 gap-x-4',
 });
 
-const menuTree = ref<MenuOption[]>([]);
+const menuTree = ref<API.MenuTreeSelectDTO[]>([]);
 async function setupMenuTree(id?: number | string) {
   if (id) {
-    const resp = await roleMenuTreeSelect(id);
-    const menus = resp.menus;
+    const resp = await getRoleMenuTreeSelect({ roleId: id });
+    const menus = resp.data.menus;
     // i18n处理
     eachTree(menus, (node) => {
       node.label = $t(node.label);
     });
     // 设置菜单信息
-    menuTree.value = resp.menus;
+    menuTree.value = resp.data.menus;
     // keys依赖于menu 需要先加载menu
     await nextTick();
-    await formApi.setFieldValue('menuIds', resp.checkedKeys);
+    await formApi.setFieldValue('menuIds', resp.data.checkedKeys);
   } else {
-    const resp = await menuTreeSelect();
+    const resp = await dropdownMenu({});
     // i18n处理
-    eachTree(resp, (node) => {
+    eachTree(resp.data, (node) => {
       node.label = $t(node.label);
     });
     // 设置菜单信息
-    menuTree.value = resp;
+    menuTree.value = resp.data;
     // keys依赖于menu 需要先加载menu
     await nextTick();
     await formApi.setFieldValue('menuIds', []);
@@ -96,8 +97,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
-      const record = await roleInfo(id);
-      await formApi.setValues(record);
+      const { data } = await getRoleInfo({ roleId: id });
+      await formApi.setValues(data);
     }
     // init菜单 注意顺序要放在赋值record之后 内部watch会依赖record
     await setupMenuTree(id);
@@ -121,7 +122,9 @@ async function handleConfirm() {
     // formApi.getValues拿到的是一个readonly对象，不能直接修改，需要cloneDeep
     const data = cloneDeep(await formApi.getValues());
     data.menuIds = menuIds;
-    await (isUpdate.value ? roleUpdate(data) : roleAdd(data));
+    await (isUpdate.value
+      ? editRole({ roleId: data.roleId }, data)
+      : addRole(data));
     emit('reload');
     resetInitialized();
     drawerApi.close();

@@ -8,7 +8,10 @@ import { useRoute } from 'vue-router';
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { roleSelectAll, roleUnallocatedList } from '#/api/system/role';
+import {
+  selectAuthUserAll,
+  unallocatedUserList,
+} from '#/api/system/api/sysRoleApi';
 
 import { columns, querySchema } from './data';
 
@@ -47,7 +50,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await roleUnallocatedList({
+        return await unallocatedUserList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           roleId,
@@ -70,7 +73,7 @@ async function handleSubmit() {
   const records = tableApi.grid.getCheckboxRecords();
   const userIds = records.map((item) => item.userId);
   if (userIds.length > 0) {
-    await roleSelectAll(roleId, userIds);
+    await selectAuthUserAll({ roleId, userIds });
   }
   handleReset();
   emit('reload');
