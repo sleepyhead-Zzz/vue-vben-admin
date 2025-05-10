@@ -66,7 +66,7 @@ const [BasicModal, modalApi] = useVbenModal({
 
     setupDeptTree(id);
     const record = await getRoleInfo({ roleId: id });
-    await formApi.setValues(record);
+    await formApi.setValues(record.data);
     markInitialized();
 
     modalApi.modalLoading(false);

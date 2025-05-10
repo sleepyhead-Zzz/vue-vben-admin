@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { OnlineUser } from '#/api/monitor/online/model';
 
 import { ref } from 'vue';
 
@@ -12,7 +11,6 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Popconfirm } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { forceLogout, onlineList } from '#/api/monitor/online';
 
 import { columns, querySchema } from './data';
 
@@ -38,11 +36,11 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async (_, formValues = {}) => {
-        const resp = await onlineList({
+        const resp = await onlineUsers({
           ...formValues,
         });
-        onlineCount.value = resp.total;
-        return resp;
+        onlineCount.value = resp.data.total;
+        return resp.data;
       },
     },
   },
@@ -58,9 +56,13 @@ const gridOptions: VxeGridProps = {
 
 const [BasicTable, tableApi] = useVbenVxeGrid({ formOptions, gridOptions });
 
-async function handleForceOffline(row: OnlineUser) {
-  await forceLogout(row.tokenId);
+async function handleForceOffline(row: API.OnlineUserDTO) {
+  await logoutOnlineUser(row.tokenId);
   await tableApi.query();
+}
+
+function onlineUsers() {
+  throw new Error('Function not implemented.');
 }
 </script>
 

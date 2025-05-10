@@ -32,9 +32,41 @@ setupVbenVxeTable({
           showActiveMsg: true,
           showResponseMsg: false,
         },
-        round: true,
+        // 溢出展示形式
         showOverflow: true,
+        pagerConfig: {
+          // 默认条数
+          pageSize: 10,
+          // 分页可选条数
+          pageSizes: [10, 20, 30, 40, 50],
+        },
+        rowConfig: {
+          // 鼠标移入行显示 hover 样式
+          isHover: true,
+          // 点击行高亮
+          isCurrent: false,
+        },
+        // 右上角工具栏
+        toolbarConfig: {
+          // 自定义列
+          custom: {
+            icon: 'vxe-icon-setting',
+          },
+          // 最大化
+          zoom: true,
+          // 刷新
+          refresh: {
+            // 默认为reload 修改为在当前页刷新
+            code: 'query',
+          },
+        },
+        round: true,
         size: 'small',
+        customConfig: {
+          // 表格右上角自定义列配置 是否保存到localStorage
+          // 必须存在id参数才能使用
+          storage: false,
+        },
       },
     });
 
