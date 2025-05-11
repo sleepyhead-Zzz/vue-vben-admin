@@ -7,10 +7,10 @@ import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 import {
-  dictTypeAdd,
-  dictTypeInfo,
-  dictTypeUpdate,
-} from '#/api/system/dict/dict-type';
+  addDictType,
+  editDictType,
+  getDictTypeInfo,
+} from '#/api/system/api/zidileixingbiao';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -52,8 +52,8 @@ const [BasicModal, modalApi] = useVbenModal({
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
     if (isUpdate.value && id) {
-      const record = await dictTypeInfo(id);
-      await formApi.setValues(record);
+      const record = await getDictTypeInfo({ dictTypeId: id });
+      await formApi.setValues(record.data);
     }
     await markInitialized();
 
@@ -69,7 +69,9 @@ async function handleConfirm() {
       return;
     }
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? dictTypeUpdate(data) : dictTypeAdd(data));
+    await (isUpdate.value
+      ? editDictType({ dictTypeId: data.dictTypeId }, data)
+      : addDictType(data));
     resetInitialized();
     emit('reload');
     modalApi.close();

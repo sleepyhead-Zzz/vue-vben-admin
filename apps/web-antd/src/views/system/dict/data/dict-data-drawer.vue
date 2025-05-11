@@ -7,10 +7,10 @@ import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 import {
-  dictDataAdd,
-  dictDataUpdate,
-  dictDetailInfo,
-} from '#/api/system/dict/dict-data';
+  addDictData,
+  editDictData,
+  getDictDataInfo,
+} from '#/api/system/api/zidishujubiao';
 import { tagTypes } from '#/components/dict';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -80,9 +80,9 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     await formApi.setFieldValue('dictType', dictType);
 
     if (dictCode && isUpdate.value) {
-      const record = await dictDetailInfo(dictCode);
-      setupSelectType(record.listClass);
-      await formApi.setValues(record);
+      const record = await getDictDataInfo({ dictCode });
+      setupSelectType(record.data.listClass);
+      await formApi.setValues(record.data);
     }
     await markInitialized();
 
@@ -102,7 +102,9 @@ async function handleConfirm() {
     if (!data.listClass) {
       data.listClass = '';
     }
-    await (isUpdate.value ? dictDataUpdate(data) : dictDataAdd(data));
+    await (isUpdate.value
+      ? editDictData({ dictCode: data.dictCode }, data)
+      : addDictData(data));
     resetInitialized();
     emit('reload');
     drawerApi.close();

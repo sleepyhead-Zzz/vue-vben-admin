@@ -1,17 +1,18 @@
 declare namespace API {
   type AddUserCommand = {
     deptId?: number;
-    username?: string;
-    nickname?: string;
+    userName?: string;
+    nickName?: string;
     email?: string;
     phoneNumber?: string;
     sex?: number;
     avatar?: string;
     password?: string;
     status?: number;
-    roleId?: number;
-    postId?: number;
+    roleIds?: number[];
+    postIds?: number[];
     remark?: string;
+    creatorId?: number;
   };
 
   type callbackParams = {

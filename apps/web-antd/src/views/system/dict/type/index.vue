@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { DictType } from '#/api/system/dict/dict-type-model';
 
 import { ref } from 'vue';
 
@@ -13,12 +12,10 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  dictTypeExport,
-  dictTypeList,
-  dictTypeRemove,
-  refreshDictTypeCache,
-} from '#/api/system/dict/dict-type';
-import { commonDownloadExcel } from '#/utils/file/download';
+  batchRemoveDictType,
+  getPagedDictTypes,
+  removeDictType,
+} from '#/api/system/api/zidileixingbiao';
 
 import { emitter } from '../mitt';
 import { columns, querySchema } from './data';
@@ -51,11 +48,12 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await dictTypeList({
+        const { data } = await getPagedDictTypes({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        return data;
       },
     },
   },
@@ -93,41 +91,41 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(record: DictType) {
+async function handleEdit(record: API.SysDictTypeDTO) {
   modalApi.setData({ id: record.dictId });
   modalApi.open();
 }
 
-async function handleDelete(row: DictType) {
-  await dictTypeRemove([row.dictId]);
+async function handleDelete(row: API.SysDictTypeDTO) {
+  await removeDictType({ dictTypeId: row.dictId });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: DictType) => row.dictId);
+  const ids = rows.map((row: API.SysDictTypeDTO) => row.dictId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await dictTypeRemove(ids);
+      await batchRemoveDictType({ dictTypeIds: ids });
       await tableApi.query();
     },
   });
 }
 
 async function handleRefreshCache() {
-  await refreshDictTypeCache();
+  // await refreshDictTypeCache();
   await tableApi.query();
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(
-    dictTypeExport,
-    '字典类型数据',
-    tableApi.formApi.form.values,
-  );
+  // commonDownloadExcel(
+  //   dictTypeExport,
+  //   '字典类型数据',
+  //   tableApi.formApi.form.values,
+  // );
 }
 </script>
 

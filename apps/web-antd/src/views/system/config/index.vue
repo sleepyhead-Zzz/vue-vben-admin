@@ -11,7 +11,7 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
   batchRemoveConfig,
-  listConfig,
+  getPagedConfigs,
   refreshCache,
   removeConfig,
 } from '#/api/system/api/canshupeizhibiao';
@@ -52,11 +52,12 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await listConfig({
+        const { data } = await getPagedConfigs({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        return data;
       },
     },
   },

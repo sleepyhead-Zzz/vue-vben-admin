@@ -17,6 +17,20 @@ export async function addConfig(
   });
 }
 
+/** 获取参数配置表详情 GET /sysConfig/${param0} */
+export async function getConfigInfo(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getConfigInfoParams,
+  options?: { [key: string]: any },
+) {
+  const { configId: param0, ...queryParams } = params;
+  return request<API.ResponseDTOSysConfigDTO>(`/sysConfig/${param0}`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
 /** 修改参数配置表 PUT /sysConfig/${param0} */
 export async function editConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -32,20 +46,6 @@ export async function editConfig(
     },
     params: { ...queryParams },
     data: body,
-    ...(options || {}),
-  });
-}
-
-/** 获取参数配置表详情 GET /sysConfig/${param0} */
-export async function getConfigInfo(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getConfigInfoParams,
-  options?: { [key: string]: any },
-) {
-  const { id: param0, ...queryParams } = params;
-  return request<API.ResponseDTOSysConfigDTO>(`/sysConfig/${param0}`, {
-    method: 'GET',
-    params: { ...queryParams },
     ...(options || {}),
   });
 }

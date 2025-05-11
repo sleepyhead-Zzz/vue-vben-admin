@@ -53,7 +53,7 @@ const [BasicModal, modalApi] = useVbenModal({
 
     if (isUpdate.value && id) {
       const record = await getConfigInfo({ configId: id });
-      await formApi.setValues(record);
+      await formApi.setValues(record.data);
     }
     await markInitialized();
 

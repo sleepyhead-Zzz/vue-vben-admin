@@ -17,6 +17,14 @@ export async function addUser(
   });
 }
 
+/** 用户详情 GET /system/user/ */
+export async function getUserDetailInfo1(options?: { [key: string]: any }) {
+  return request<API.ResponseDTOUserDetailDTO>('/system/user/', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 /** 用户详情 GET /system/user/${param0} */
 export async function getUserDetailInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -119,25 +127,48 @@ export async function exportUserByExcel(
   });
 }
 
-/** 用户列表导入 POST /system/user/excel */
-export async function importUserByExcel(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.importUserByExcelParams,
-  options?: { [key: string]: any },
-) {
-  return request<API.ResponseDTOVoid>('/system/user/excel', {
-    method: 'POST',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 用户导入excel下载 GET /system/user/excelTemplate */
 export async function downloadExcelTemplate(options?: { [key: string]: any }) {
   return request<any>('/system/user/excelTemplate', {
     method: 'GET',
+    ...(options || {}),
+  });
+}
+
+/** 用户列表导入 POST /system/user/importData */
+export async function importUserByExcel(
+  body: {
+    updateSupport?: boolean;
+  },
+  file?: File,
+  options?: { [key: string]: any },
+) {
+  const formData = new FormData();
+
+  if (file) {
+    formData.append('file', file);
+  }
+
+  Object.keys(body).forEach((ele) => {
+    const item = (body as any)[ele];
+
+    if (item !== undefined && item !== null) {
+      if (typeof item === 'object' && !(item instanceof File)) {
+        if (item instanceof Array) {
+          item.forEach((f) => formData.append(ele, f || ''));
+        } else {
+          formData.append(ele, JSON.stringify(item));
+        }
+      } else {
+        formData.append(ele, item);
+      }
+    }
+  });
+
+  return request<API.ResponseDTOString>('/system/user/importData', {
+    method: 'POST',
+    data: formData,
+    requestType: 'form',
     ...(options || {}),
   });
 }

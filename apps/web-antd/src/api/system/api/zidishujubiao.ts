@@ -17,20 +17,6 @@ export async function addDictData(
   });
 }
 
-/** 获取字典数据表详情 GET /system/dict/data/${param0} */
-export async function getDictDataInfo(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getDictDataInfoParams,
-  options?: { [key: string]: any },
-) {
-  const { dictDataId: param0, ...queryParams } = params;
-  return request<API.ResponseDTOSysDictDataDTO>(`/system/dict/data/${param0}`, {
-    method: 'GET',
-    params: { ...queryParams },
-    ...(options || {}),
-  });
-}
-
 /** 修改字典数据表 PUT /system/dict/data/${param0} */
 export async function editDictData(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -38,7 +24,7 @@ export async function editDictData(
   body: API.UpdateDictDataCommand,
   options?: { [key: string]: any },
 ) {
-  const { dictDataId: param0, ...queryParams } = params;
+  const { dictDataCode: param0, ...queryParams } = params;
   return request<API.ResponseDTOVoid>(`/system/dict/data/${param0}`, {
     method: 'PUT',
     headers: {
@@ -46,6 +32,20 @@ export async function editDictData(
     },
     params: { ...queryParams },
     data: body,
+    ...(options || {}),
+  });
+}
+
+/** 获取字典数据表详情 GET /system/dict/data/${param0} */
+export async function getDictDataInfo(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.getDictDataInfoParams,
+  options?: { [key: string]: any },
+) {
+  const { dictCode: param0, ...queryParams } = params;
+  return request<API.ResponseDTOSysDictDataDTO>(`/system/dict/data/${param0}`, {
+    method: 'GET',
+    params: { ...queryParams },
     ...(options || {}),
   });
 }
@@ -92,9 +92,9 @@ export async function listDictData(
 }
 
 /** 分页获取字典数据表列表 GET /system/dict/data/page */
-export async function getPagedDictDatas(
+export async function getPagedDictData(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getPagedDictDatasParams,
+  params: API.getPagedDictDataParams,
   options?: { [key: string]: any },
 ) {
   return request<API.ResponseDTOPageDTOSysDictDataDTO>(
@@ -115,7 +115,7 @@ export async function removeDictData(
   params: API.removeDictDataParams,
   options?: { [key: string]: any },
 ) {
-  const { dictDataId: param0, ...queryParams } = params;
+  const { dictCode: param0, ...queryParams } = params;
   return request<API.ResponseDTOVoid>(`/system/dict/data/remove/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },

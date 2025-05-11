@@ -106,17 +106,18 @@ declare namespace API {
 
   type AddUserCommand = {
     deptId?: number;
-    username?: string;
-    nickname?: string;
+    userName?: string;
+    nickName?: string;
     email?: string;
     phoneNumber?: string;
     sex?: number;
     avatar?: string;
     password?: string;
     status?: number;
-    roleId?: number;
-    postId?: number;
+    roleIds?: number[];
+    postIds?: number[];
     remark?: string;
+    creatorId?: number;
   };
 
   type AllocatedRoleQuery = {
@@ -142,7 +143,7 @@ declare namespace API {
   };
 
   type batchRemoveDictDataParams = {
-    dictDataIds: number[];
+    dictCodes: number[];
   };
 
   type batchRemoveDictTypeParams = {
@@ -241,10 +242,6 @@ declare namespace API {
     deptId: number;
   };
 
-  type editDictDataParams = {
-    dictDataId: number;
-  };
-
   type editDictTypeParams = {
     dictTypeId: number;
   };
@@ -279,7 +276,7 @@ declare namespace API {
 
   type getConfigInfoParams = {
     /** 记录ID */
-    id: number;
+    configId: number;
   };
 
   type getConfigKeyParams = {
@@ -296,7 +293,7 @@ declare namespace API {
 
   type getDictDataInfoParams = {
     /** 记录ID */
-    dictDataId: number;
+    dictCode: number;
   };
 
   type getDictTypeInfoParams = {
@@ -328,7 +325,7 @@ declare namespace API {
     endTime?: Date;
   };
 
-  type getPagedDictDatasParams = {
+  type getPagedDictDataParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -405,10 +402,6 @@ declare namespace API {
 
   type getUserDetailInfoParams = {
     userId: number;
-  };
-
-  type importUserByExcelParams = {
-    file: string;
   };
 
   type listConfigParams = {
@@ -719,7 +712,7 @@ declare namespace API {
   };
 
   type removeDictDataParams = {
-    dictDataId: number;
+    dictCode: number;
   };
 
   type removeDictTypeParams = {
@@ -1244,11 +1237,11 @@ declare namespace API {
   };
 
   type TreeLong = {
-    config?: TreeNodeConfig;
-    parentId?: number;
-    weight?: Record<string, any>;
     name?: { empty?: boolean };
     id?: number;
+    parentId?: number;
+    config?: TreeNodeConfig;
+    weight?: Record<string, any>;
     empty?: boolean;
   };
 
@@ -1296,7 +1289,7 @@ declare namespace API {
   type UpdateDataScopeCommand = {
     roleId: number;
     deptIds: number[];
-    dataScope?: number;
+    dataScope?: string;
   };
 
   type UpdateDeptCommand = {
@@ -1327,7 +1320,7 @@ declare namespace API {
     isDefault?: string;
     /** 备注 */
     remark?: string;
-    dictDataId?: number;
+    dictCode?: number;
   };
 
   type UpdateDictTypeCommand = {
@@ -1413,17 +1406,18 @@ declare namespace API {
 
   type UpdateUserCommand = {
     deptId?: number;
-    username?: string;
-    nickname?: string;
+    userName?: string;
+    nickName?: string;
     email?: string;
     phoneNumber?: string;
     sex?: number;
     avatar?: string;
     password?: string;
     status?: number;
-    roleId?: number;
-    postId?: number;
+    roleIds?: number[];
+    postIds?: number[];
     remark?: string;
+    creatorId?: number;
     userId?: number;
   };
 

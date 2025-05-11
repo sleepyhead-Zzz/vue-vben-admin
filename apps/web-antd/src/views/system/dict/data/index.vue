@@ -3,7 +3,6 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { PageQuery } from '#/api/common';
-import type { DictData } from '#/api/system/dict/dict-data-model';
 
 import { ref } from 'vue';
 
@@ -14,11 +13,10 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  dictDataExport,
-  dictDataList,
-  dictDataRemove,
-} from '#/api/system/dict/dict-data';
-import { commonDownloadExcel } from '#/utils/file/download';
+  batchRemoveDictData,
+  getPagedDictData,
+  removeDictData,
+} from '#/api/system/api/zidishujubiao';
 
 import { emitter } from '../mitt';
 import { columns, querySchema } from './data';
@@ -61,8 +59,8 @@ const gridOptions: VxeGridProps = {
         if (dictType.value) {
           params.dictType = dictType.value;
         }
-
-        return await dictDataList(params);
+        const { data } = await getPagedDictData(params);
+        return data;
       },
     },
   },
@@ -86,7 +84,7 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: DictData) {
+async function handleEdit(record: API.SysDictDataDTO) {
   drawerApi.setData({
     dictType: dictType.value,
     dictCode: record.dictCode,
@@ -94,27 +92,27 @@ async function handleEdit(record: DictData) {
   drawerApi.open();
 }
 
-async function handleDelete(row: DictData) {
-  await dictDataRemove([row.dictCode]);
+async function handleDelete(row: API.SysDictDataDTO) {
+  await removeDictData({ dictCode: row.dictCode });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: DictData) => row.dictCode);
+  const ids = rows.map((row: API.SysDictDataDTO) => row.dictCode);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await dictDataRemove(ids);
+      await batchRemoveDictData({ dictCodes: ids });
       await tableApi.query();
     },
   });
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(dictDataExport, '字典数据', tableApi.formApi.form.values);
+  // commonDownloadExcel(dictDataExport, '字典数据', tableApi.formApi.form.values);
 }
 
 emitter.on('rowClick', async (value) => {
