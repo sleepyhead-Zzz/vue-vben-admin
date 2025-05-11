@@ -127,7 +127,7 @@ const [UserDrawer, userDrawerApi] = useVbenDrawer({
 });
 
 function handleAdd() {
-  userDrawerApi.setData({});
+  userDrawerApi.setData({ id: '' });
   userDrawerApi.open();
 }
 
