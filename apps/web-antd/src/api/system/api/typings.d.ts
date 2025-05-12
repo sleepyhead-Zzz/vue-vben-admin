@@ -150,6 +150,10 @@ declare namespace API {
     dictTypeIds: number[];
   };
 
+  type batchRemoveFileParams = {
+    fileIds: number[];
+  };
+
   type batchRemoveNoticeParams = {
     noticeIds: number[];
   };
@@ -212,6 +216,10 @@ declare namespace API {
   type DeptTreeSelectDTO = {
     checkedKeys?: number[];
     deptIds?: TreeLong[];
+  };
+
+  type downloadParams = {
+    fileId: number;
   };
 
   type dropdownDeptListParams = {
@@ -355,6 +363,21 @@ declare namespace API {
     endTime?: Date;
   };
 
+  type getPagedFilesParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getPagedLoginInfoParams = {
     ipAddress?: string;
     status?: string;
@@ -404,6 +427,10 @@ declare namespace API {
     userId: number;
   };
 
+  type listByIdsParams = {
+    ossIds: number[];
+  };
+
   type listConfigParams = {
     /** 排序字段 */
     orderColumn?: string;
@@ -448,6 +475,19 @@ declare namespace API {
   };
 
   type listDictTypeParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
+  type listFileParams = {
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -655,6 +695,13 @@ declare namespace API {
     rows?: SysDictTypeDTO[];
   };
 
+  type PageDTOSysFileDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysFileDTO[];
+  };
+
   type PageDTOSysNoticeDTO = {
     /** 总记录数 */
     total?: number;
@@ -828,6 +875,12 @@ declare namespace API {
     data?: SysDictTypeVO[];
   };
 
+  type ResponseDTOListSysFileDTO = {
+    code?: number;
+    message?: string;
+    data?: SysFileDTO[];
+  };
+
   type ResponseDTOListSysMenuDTO = {
     code?: number;
     message?: string;
@@ -900,6 +953,12 @@ declare namespace API {
     data?: PageDTOSysDictTypeDTO;
   };
 
+  type ResponseDTOPageDTOSysFileDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOSysFileDTO;
+  };
+
   type ResponseDTOPageDTOSysNoticeDTO = {
     code?: number;
     message?: string;
@@ -948,6 +1007,12 @@ declare namespace API {
     data?: SysDictTypeDTO;
   };
 
+  type ResponseDTOSysFileUploadDTO = {
+    code?: number;
+    message?: string;
+    data?: SysFileUploadDTO;
+  };
+
   type ResponseDTOSysMenuDTO = {
     code?: number;
     message?: string;
@@ -958,6 +1023,12 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: SysNoticeDTO;
+  };
+
+  type ResponseDTOUploadResult = {
+    code?: number;
+    message?: string;
+    data?: UploadResult;
   };
 
   type ResponseDTOUserDetailDTO = {
@@ -1190,6 +1261,42 @@ declare namespace API {
     remark?: string;
   };
 
+  type SysFileDTO = {
+    fileId?: number;
+    /** 文件名 */
+    fileName?: string;
+    /** 文件存储路径 */
+    filePath?: string;
+    /** 文件大小（单位：字节） */
+    fileSize?: number;
+    /** 文件类型（如 image/jpeg、application/pdf） */
+    fileType?: string;
+    /** 文件扩展名（如 jpg、pdf） */
+    fileExtension?: string;
+    /** 桶名 */
+    bucketName?: string;
+    /** 访问策略 */
+    accessPolicy?: string;
+    /** URL */
+    url?: string;
+    status?: string;
+    createDept?: number;
+    /** 创建者ID */
+    creatorId?: number;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新者ID */
+    updaterId?: number;
+    /** 更新时间 */
+    updateTime?: string;
+  };
+
+  type SysFileUploadDTO = {
+    url?: string;
+    fileName?: string;
+    fileId?: number;
+  };
+
   type SysMenuDTO = {
     menuId?: number;
     menuName?: string;
@@ -1237,11 +1344,11 @@ declare namespace API {
   };
 
   type TreeLong = {
+    config?: TreeNodeConfig;
+    parentId?: number;
+    weight?: Record<string, any>;
     name?: { empty?: boolean };
     id?: number;
-    parentId?: number;
-    config?: TreeNodeConfig;
-    weight?: Record<string, any>;
     empty?: boolean;
   };
 
@@ -1432,6 +1539,17 @@ declare namespace API {
     roleId?: number;
   };
 
+  type uploadParams = {
+    folder?: string;
+    originalName?: string;
+    fileType?: string;
+  };
+
+  type UploadResult = {
+    url?: string;
+    filename?: string;
+  };
+
   type UserDetailDTO = {
     user?: UserDTO;
     roleIds?: number[];
@@ -1487,7 +1605,7 @@ declare namespace API {
 
   type UserProfileDTO = {
     user?: UserDTO;
-    roleName?: string;
-    postName?: string;
+    roleGroup?: string;
+    postGroup?: string;
   };
 }

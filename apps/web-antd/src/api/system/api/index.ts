@@ -12,6 +12,7 @@ import * as zidishujubiao from './zidishujubiao';
 import * as sysDeptApi from './sysDeptApi';
 import * as tongzhigonggaobiao from './tongzhigonggaobiao';
 import * as canshupeizhibiao from './canshupeizhibiao';
+import * as wenjianshangchuan from './wenjianshangchuan';
 import * as sysLogsApi from './sysLogsApi';
 export default {
   sysUserApi,
@@ -24,5 +25,6 @@ export default {
   sysDeptApi,
   tongzhigonggaobiao,
   canshupeizhibiao,
+  wenjianshangchuan,
   sysLogsApi,
 };

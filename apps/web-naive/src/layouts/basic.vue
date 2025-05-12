@@ -6,7 +6,7 @@ import { computed, ref, watch } from 'vue';
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
 import { VBEN_DOC_URL, VBEN_GITHUB_URL } from '@vben/constants';
 import { useWatermark } from '@vben/hooks';
-import { BookOpenText, CircleHelp, MdiGithub } from '@vben/icons';
+import { BookOpenText, CircleHelp, MdiGithub, UserOutlined } from '@vben/icons';
 import {
   BasicLayout,
   LockScreen,
@@ -18,6 +18,7 @@ import { useAccessStore, useUserStore } from '@vben/stores';
 import { openWindow } from '@vben/utils';
 
 import { $t } from '#/locales';
+import { router } from '#/router';
 import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
 
@@ -72,12 +73,19 @@ const menus = computed(() => [
   },
   {
     handler: () => {
+      router.push('/profile');
+    },
+    icon: UserOutlined,
+    text: $t('ui.widgets.profile'),
+  },
+  {
+    handler: () => {
       openWindow(VBEN_GITHUB_URL, {
         target: '_blank',
       });
     },
     icon: MdiGithub,
-    text: 'GitHub',
+    text: 'GitHub22',
   },
   {
     handler: () => {

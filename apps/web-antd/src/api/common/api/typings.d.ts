@@ -25,28 +25,6 @@ declare namespace API {
     roles?: string[];
   };
 
-  type deleteFileParams = {
-    fileName: string;
-  };
-
-  type downloadFileParams = {
-    fileName: string;
-  };
-
-  type FileMetadataDTO = {
-    fileName?: string;
-    filePath?: string;
-    fileSize?: number;
-    fileType?: string;
-    fileExtension?: string;
-    creatorId?: number;
-    createTime?: string;
-  };
-
-  type getFileUrlParams = {
-    filePath: string;
-  };
-
   type LoginCommand = {
     username?: string;
     password?: string;
@@ -77,22 +55,10 @@ declare namespace API {
     data?: CurrentLoginUserDTO;
   };
 
-  type ResponseDTOListFileMetadataDTO = {
-    code?: number;
-    message?: string;
-    data?: FileMetadataDTO[];
-  };
-
   type ResponseDTOListRouterDTO = {
     code?: number;
     message?: string;
     data?: RouterDTO[];
-  };
-
-  type ResponseDTOString = {
-    code?: number;
-    message?: string;
-    data?: string;
   };
 
   type ResponseDTOTokenDTO = {
@@ -167,17 +133,6 @@ declare namespace API {
     expire_in?: number;
     refresh_expire_in?: number;
     client_id?: string;
-  };
-
-  type uploadMultipleParams = {
-    files: string[];
-    folder?: string;
-  };
-
-  type uploadSingleParams = {
-    folder?: string;
-    originalName?: string;
-    fileType?: string;
   };
 
   type UserDTO = {

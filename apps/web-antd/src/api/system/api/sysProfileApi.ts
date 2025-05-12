@@ -3,7 +3,7 @@
 import request from '#/api/request';
 
 /** 获取个人信息 GET /system/user/profile */
-export async function profile(options?: { [key: string]: any }) {
+export async function userProfile(options?: { [key: string]: any }) {
   return request<API.ResponseDTOUserProfileDTO>('/system/user/profile', {
     method: 'GET',
     ...(options || {}),
@@ -17,6 +17,18 @@ export async function updateProfile(
 ) {
   return request<API.ResponseDTOVoid>('/system/user/profile', {
     method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 修改个人头像 POST /system/user/profile/avatar */
+export async function updateAvatar(body: {}, options?: { [key: string]: any }) {
+  return request<API.ResponseDTOUploadResult>('/system/user/profile/avatar', {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
