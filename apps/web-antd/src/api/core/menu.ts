@@ -10,7 +10,7 @@ export async function getAllMenusApi() {
 }
 
 export function dictDataInfo(dictType: string) {
-  return requestClient.get<API.SysDictDataDTO[]>(
+  return requestClient.get<SystemAPI.SysDictDataDTO[]>(
     `/system/dict/data/type/${dictType}`,
   );
 }

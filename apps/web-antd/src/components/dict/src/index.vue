@@ -7,7 +7,7 @@ import { Spin, Tag } from 'ant-design-vue';
 import { tagTypes } from './data';
 
 interface Props {
-  dicts: API.SysDictDataDTO[]; // dict数组
+  dicts: SystemAPI.SysDictDataDTO[]; // dict数组
   value: number | string; // value
 }
 

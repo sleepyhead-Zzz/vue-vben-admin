@@ -16,7 +16,7 @@ import {
   editMenu,
   getMenuInfo,
   listMenu,
-} from '#/api/system/api/sysMenuApi';
+} from '#/api/system/sysMenuApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';

@@ -19,12 +19,14 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
   },
 });
 
-const currentLog = shallowRef<API.OperationLogDTO | null>(null);
+const currentLog = shallowRef<MonitorAPI.OperationLogDTO | null>(null);
 function handleOpenChange(open: boolean) {
   if (!open) {
     return null;
   }
-  const { record } = drawerApi.getData() as { record: API.OperationLogDTO };
+  const { record } = drawerApi.getData() as {
+    record: MonitorAPI.OperationLogDTO;
+  };
   currentLog.value = record;
 }
 
@@ -33,7 +35,7 @@ const actionInfo = computed(() => {
     return '-';
   }
   const data = currentLog.value;
-  return `账号: ${data.operName} / ${data.deptName} / ${data.operIp} / ${data.operLocation}`;
+  return `账号: ${data.username} / ${data.deptName} / ${data.operatorIp} / ${data.operatorLocation}`;
 });
 </script>
 
@@ -41,7 +43,7 @@ const actionInfo = computed(() => {
   <BasicDrawer :footer="false" class="w-[600px]" title="查看日志">
     <Descriptions v-if="currentLog" size="small" bordered :column="1">
       <DescriptionsItem label="日志编号" :label-style="{ minWidth: '120px' }">
-        {{ currentLog.operId }}
+        {{ currentLog.operationId }}
       </DescriptionsItem>
       <DescriptionsItem label="操作结果">
         <component
@@ -50,7 +52,7 @@ const actionInfo = computed(() => {
       </DescriptionsItem>
       <DescriptionsItem label="操作模块">
         <div class="flex items-center">
-          <Tag>{{ currentLog.title }}</Tag>
+          <Tag>{{ currentLog.requestModule }}</Tag>
           <component
             :is="renderDict(currentLog.businessType, DictEnum.SYS_OPER_TYPE)"
           />
@@ -61,31 +63,31 @@ const actionInfo = computed(() => {
       </DescriptionsItem>
       <DescriptionsItem label="请求信息">
         <component :is="renderHttpMethodTag(currentLog.requestMethod)" />
-        {{ currentLog.operUrl }}
+        {{ currentLog.requestUrl }}
       </DescriptionsItem>
-      <DescriptionsItem v-if="currentLog.errorMsg" label="异常信息">
+      <DescriptionsItem v-if="currentLog.errorStack" label="异常信息">
         <span class="font-semibold text-red-600">
-          {{ currentLog.errorMsg }}
+          {{ currentLog.errorStack }}
         </span>
       </DescriptionsItem>
       <DescriptionsItem label="方法">
-        {{ currentLog.method }}
+        {{ currentLog.calledMethod }}
       </DescriptionsItem>
       <DescriptionsItem label="请求参数">
         <div class="max-h-[300px] overflow-y-auto">
-          <component :is="renderJsonPreview(currentLog.operParam)" />
+          <component :is="renderJsonPreview(currentLog.operationParam)" />
         </div>
       </DescriptionsItem>
-      <DescriptionsItem v-if="currentLog.jsonResult" label="响应参数">
+      <DescriptionsItem v-if="currentLog.operationResult" label="响应参数">
         <div class="max-h-[300px] overflow-y-auto">
-          <component :is="renderJsonPreview(currentLog.jsonResult)" />
+          <component :is="renderJsonPreview(currentLog.operationResult)" />
         </div>
       </DescriptionsItem>
       <DescriptionsItem label="请求耗时">
         {{ `${currentLog.costTime} ms` }}
       </DescriptionsItem>
       <DescriptionsItem label="操作时间">
-        {{ `${currentLog.operTime}` }}
+        {{ `${currentLog.operationTime}` }}
       </DescriptionsItem>
     </Descriptions>
   </BasicDrawer>

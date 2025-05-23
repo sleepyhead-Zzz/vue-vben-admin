@@ -11,10 +11,10 @@ import {
   Tooltip,
 } from 'ant-design-vue';
 
-import { updateAvatar } from '#/api/system/api/sysProfileApi';
+import { updateAvatar } from '#/api/system/sysProfileApi';
 import { CropperAvatar } from '#/components/cropper';
 
-const props = defineProps<{ profile?: API.UserProfileDTO }>();
+const props = defineProps<{ profile?: SystemAPI.UserProfileDTO }>();
 
 defineEmits<{
   // 头像上传完毕

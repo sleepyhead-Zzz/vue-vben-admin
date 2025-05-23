@@ -9,12 +9,12 @@ import { renderDict } from '#/utils/render';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'title',
+    fieldName: 'requestModule',
     label: '系统模块',
   },
   {
     component: 'Input',
-    fieldName: 'operName',
+    fieldName: 'username',
     label: '操作人员',
   },
   {
@@ -22,12 +22,12 @@ export const querySchema: FormSchemaGetter = () => [
     componentProps: {
       options: getDictOptions(DictEnum.SYS_OPER_TYPE),
     },
-    fieldName: 'businessType',
+    fieldName: 'operatorType',
     label: '操作类型',
   },
   {
     component: 'Input',
-    fieldName: 'operIp',
+    fieldName: 'operatorIp',
     label: '操作IP',
   },
   {
@@ -40,7 +40,7 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'RangePicker',
-    fieldName: 'createTime',
+    fieldName: 'operationTime',
     label: '操作时间',
     componentProps: {
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
@@ -50,19 +50,19 @@ export const querySchema: FormSchemaGetter = () => [
 
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
-  { field: 'title', title: '系统模块' },
+  { field: 'requestModule', title: '系统模块' },
   {
     title: '操作类型',
-    field: 'businessType',
+    field: 'operatorType',
     slots: {
       default: ({ row }) => {
         return renderDict(row.businessType, DictEnum.SYS_OPER_TYPE);
       },
     },
   },
-  { field: 'operName', title: '操作人员' },
-  { field: 'operIp', title: 'IP地址' },
-  { field: 'operLocation', title: 'IP信息' },
+  { field: 'username', title: '操作人员' },
+  { field: 'operatorIp', title: 'IP地址' },
+  { field: 'operatorLocation', title: 'IP信息' },
   {
     field: 'status',
     title: '操作状态',
@@ -72,7 +72,7 @@ export const columns: VxeGridProps['columns'] = [
       },
     },
   },
-  { field: 'operTime', title: '操作日期', sortable: true },
+  { field: 'operationTime', title: '操作日期', sortable: true },
   {
     field: 'costTime',
     title: '操作耗时',

@@ -1,7 +1,5 @@
 import type { Component as ComponentType } from 'vue';
 
-import type { DictData } from '#/api/system/dict/dict-data-model';
-
 import { h } from 'vue';
 
 import { JsonPreview } from '@vben/common-ui';
@@ -101,7 +99,7 @@ export function renderIcon(icon: string) {
  * @param type method类型
  * @returns render
  */
-export function renderHttpMethodTag(type: string) {
+export function renderHttpMethodTag(type: '' | string) {
   const method = type.toUpperCase();
   const colors: { [key: string]: string } = {
     DELETE: 'red',
@@ -116,7 +114,10 @@ export function renderHttpMethodTag(type: string) {
   return <Tag color={color}>{title}</Tag>;
 }
 
-export function renderDictTag(value: number | string, dicts: DictData[]) {
+export function renderDictTag(
+  value: number | string,
+  dicts: SystemAPI.SysDictDataDTO[],
+) {
   return <DictTag dicts={dicts} value={value}></DictTag>;
 }
 
@@ -130,7 +131,7 @@ export function renderDictTag(value: number | string, dicts: DictData[]) {
  */
 export function renderDictTags(
   value: string[],
-  dicts: DictData[],
+  dicts: SystemAPI.SysDictDataDTO[],
   wrap = true,
   gap = 1,
 ) {

@@ -6,7 +6,7 @@ import { useVbenModal, z } from '@vben/common-ui';
 import { Descriptions, DescriptionsItem } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { resetPassword } from '#/api/system/api/sysUserApi';
+import { resetPassword } from '#/api/system/sysUserApi';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -47,14 +47,14 @@ const [BasicForm, formApi] = useVbenForm({
   },
 });
 
-const currentUser = ref<API.UserDTO | null>(null);
+const currentUser = ref<null | SystemAPI.UserDTO>(null);
 async function handleOpenChange(open: boolean) {
   if (!open) {
     return null;
   }
   modalApi.modalLoading(true);
 
-  const { record } = modalApi.getData() as { record: API.UserDTO };
+  const { record } = modalApi.getData() as { record: SystemAPI.UserDTO };
   currentUser.value = record;
   await formApi.setValues({ userId: record.userId });
 

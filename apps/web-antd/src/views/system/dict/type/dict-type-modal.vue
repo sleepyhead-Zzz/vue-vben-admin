@@ -10,7 +10,7 @@ import {
   addDictType,
   editDictType,
   getDictTypeInfo,
-} from '#/api/system/api/zidileixingbiao';
+} from '#/api/system/zidileixingbiao';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

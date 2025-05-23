@@ -3,7 +3,7 @@ import { Modal } from 'ant-design-vue';
 import { omit } from 'lodash-es';
 
 import { useVbenForm, z } from '#/adapter/form';
-import { updatePassword } from '#/api/system/api/sysProfileApi';
+import { updatePassword } from '#/api/system/sysProfileApi';
 import { useAuthStore } from '#/store';
 
 const [BasicForm, formApi] = useVbenForm({
@@ -85,7 +85,7 @@ function handleSubmit(values: any) {
         buttonLoading(true);
         const data = omit(values, [
           'confirmPassword',
-        ]) as API.UpdateUserPasswordCommand;
+        ]) as SystemAPI.UpdateUserPasswordCommand;
         await updatePassword(data);
         await authStore.logout(true);
       } catch (error) {

@@ -4,7 +4,7 @@ import request from '#/api/request';
 
 /** 获取个人信息 GET /system/user/profile */
 export async function userProfile(options?: { [key: string]: any }) {
-  return request<API.ResponseDTOUserProfileDTO>('/system/user/profile', {
+  return request<SystemAPI.ResponseDTOUserProfileDTO>('/system/user/profile', {
     method: 'GET',
     ...(options || {}),
   });
@@ -12,10 +12,10 @@ export async function userProfile(options?: { [key: string]: any }) {
 
 /** 修改个人信息 PUT /system/user/profile */
 export async function updateProfile(
-  body: API.UpdateProfileCommand,
+  body: SystemAPI.UpdateProfileCommand,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseDTOVoid>('/system/user/profile', {
+  return request<SystemAPI.ResponseDTOVoid>('/system/user/profile', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -26,23 +26,29 @@ export async function updateProfile(
 }
 
 /** 修改个人头像 POST /system/user/profile/avatar */
-export async function updateAvatar(body: {}, options?: { [key: string]: any }) {
-  return request<API.ResponseDTOUploadResult>('/system/user/profile/avatar', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+export async function updateAvatar(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: SystemAPI.updateAvatarParams,
+  options?: { [key: string]: any },
+) {
+  return request<SystemAPI.ResponseDTOSysFileDTO>(
+    '/system/user/profile/avatar',
+    {
+      method: 'POST',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
     },
-    data: body,
-    ...(options || {}),
-  });
+  );
 }
 
 /** 重置个人密码 PUT /system/user/profile/password */
 export async function updatePassword(
-  body: API.UpdateUserPasswordCommand,
+  body: SystemAPI.UpdateUserPasswordCommand,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseDTOVoid>('/system/user/profile/password', {
+  return request<SystemAPI.ResponseDTOVoid>('/system/user/profile/password', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

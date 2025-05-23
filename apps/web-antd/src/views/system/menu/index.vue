@@ -12,7 +12,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listMenu, removeMenu } from '#/api/system/api/sysMenuApi';
+import { listMenu, removeMenu } from '#/api/system/sysMenuApi';
 
 import { columns, querySchema } from './data';
 import menuDrawer from './menu-drawer.vue';
@@ -99,18 +99,18 @@ function handleAdd() {
   drawerApi.open();
 }
 
-function handleSubAdd(row: API.SysMenuDTO) {
+function handleSubAdd(row: SystemAPI.SysMenuDTO) {
   const { menuId } = row;
   drawerApi.setData({ id: menuId, update: false });
   drawerApi.open();
 }
 
-async function handleEdit(record: API.SysMenuDTO) {
+async function handleEdit(record: SystemAPI.SysMenuDTO) {
   drawerApi.setData({ id: record.menuId, update: true });
   drawerApi.open();
 }
 
-async function handleDelete(row: API.SysMenuDTO) {
+async function handleDelete(row: SystemAPI.SysMenuDTO) {
   await removeMenu({ menuId: row.menuId });
   await tableApi.query();
 }

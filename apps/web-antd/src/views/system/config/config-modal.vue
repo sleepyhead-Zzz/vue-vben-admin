@@ -10,7 +10,7 @@ import {
   addConfig,
   editConfig,
   getConfigInfo,
-} from '#/api/system/api/canshupeizhibiao';
+} from '#/api/system/canshupeizhibiao';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

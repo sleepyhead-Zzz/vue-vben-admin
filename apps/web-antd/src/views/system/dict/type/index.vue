@@ -15,7 +15,7 @@ import {
   batchRemoveDictType,
   getPagedDictTypes,
   removeDictType,
-} from '#/api/system/api/zidileixingbiao';
+} from '#/api/system/zidileixingbiao';
 
 import { emitter } from '../mitt';
 import { columns, querySchema } from './data';

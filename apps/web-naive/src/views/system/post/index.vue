@@ -13,7 +13,7 @@ import { NPopconfirm, NSpace } from 'naive-ui';
 
 import { modal } from '#/adapter/naive';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { getPagedPost, removePost } from '#/api/system/api/sysPostApi';
+import { getPagedPost, removePost } from '#/api/system/sysPostApi';
 import { GhostButton } from '#/components/global/button';
 import DeptTree from '#/views/system/user/dept-tree.vue';
 

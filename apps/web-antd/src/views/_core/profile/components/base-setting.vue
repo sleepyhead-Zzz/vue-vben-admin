@@ -9,13 +9,13 @@ import { useUserStore } from '@vben/stores';
 import { pick } from 'lodash-es';
 
 import { useVbenForm, z } from '#/adapter/form';
-import { updateProfile } from '#/api/system/api/sysProfileApi';
+import { updateProfile } from '#/api/system/sysProfileApi';
 import { useAuthStore } from '#/store';
 import { getDictOptions } from '#/utils/dict';
 
 import { emitter } from '../mitt';
 
-const props = defineProps<{ profile: API.UserProfileDTO }>();
+const props = defineProps<{ profile: SystemAPI.UserProfileDTO }>();
 
 const userStore = useUserStore();
 const authStore = useAuthStore();

@@ -12,7 +12,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { NButton, NPopconfirm, NSpace } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listMenu, removeMenu } from '#/api/system/api/sysMenuApi';
+import { listMenu, removeMenu } from '#/api/system/sysMenuApi';
 import { GhostButton } from '#/components/global/button';
 
 import { columns, querySchema } from './data';

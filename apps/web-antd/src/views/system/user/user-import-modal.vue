@@ -8,7 +8,7 @@ import { InBoxIcon } from '@vben/icons';
 
 import { Modal, Switch, Upload } from 'ant-design-vue';
 
-import { importUserByExcel } from '#/api/system/api/sysUserApi';
+import { importUserByExcel } from '#/api/system/sysUserApi';
 
 const emit = defineEmits<{ reload: [] }>();
 

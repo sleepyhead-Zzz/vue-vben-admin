@@ -11,7 +11,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listDept } from '#/api/system/api/sysDeptApi';
+import { listDept } from '#/api/system/sysDeptApi';
 
 import { columns, querySchema } from './data';
 import deptDrawer from './dept-drawer.vue';
@@ -100,18 +100,18 @@ function handleAdd() {
   drawerApi.open();
 }
 
-function handleSubAdd(row: API.DeptDTO) {
+function handleSubAdd(row: SystemAPI.DeptDTO) {
   const { deptId } = row;
   drawerApi.setData({ id: deptId, update: false });
   drawerApi.open();
 }
 
-async function handleEdit(record: API.DeptDTO) {
+async function handleEdit(record: SystemAPI.DeptDTO) {
   drawerApi.setData({ id: record.deptId, update: true });
   drawerApi.open();
 }
 
-async function handleDelete(row: API.DeptDTO) {
+async function handleDelete(row: SystemAPI.DeptDTO) {
   await removeDept({ deptId: row.deptId });
   await tableApi.query();
 }

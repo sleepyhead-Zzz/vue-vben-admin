@@ -3,7 +3,6 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { PageQuery } from '#/api/common';
-import type { OperationLog } from '#/api/monitor/operlog/model';
 
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -16,11 +15,11 @@ import {
   vxeCheckboxChecked,
 } from '#/adapter/vxe-table';
 import {
-  operLogClean,
-  operLogDelete,
-  operLogExport,
-  operLogList,
-} from '#/api/monitor/operlog';
+  cleanOperationLog,
+  operationLogs,
+  operationLogsExcel,
+  removeOperationLogs,
+} from '#/api/monitor/sysLogsApi';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { confirmDeleteModal } from '#/utils/modal';
 
@@ -46,7 +45,7 @@ const formOptions: VbenFormProps = {
   ],
 };
 
-const gridOptions: VxeGridProps<OperationLog> = {
+const gridOptions: VxeGridProps<MonitorAPI.OperationLogDTO> = {
   checkboxConfig: {
     // 高亮
     highlight: true,
@@ -69,7 +68,8 @@ const gridOptions: VxeGridProps<OperationLog> = {
         };
         // 添加排序参数
         addSortParams(params, sorts);
-        return await operLogList(params);
+        const { data } = await operationLogs({ ...params });
+        return data;
       },
     },
   },
@@ -102,7 +102,7 @@ const [OperationPreviewDrawer, drawerApi] = useVbenDrawer({
  * 预览
  * @param record 操作日志记录
  */
-function handlePreview(record: OperationLog) {
+function handlePreview(record: MonitorAPI.OperationLogDTO) {
   drawerApi.setData({ record });
   drawerApi.open();
 }
@@ -113,7 +113,7 @@ function handlePreview(record: OperationLog) {
 function handleClear() {
   confirmDeleteModal({
     onValidated: async () => {
-      await operLogClean();
+      await cleanOperationLog();
       await tableApi.reload();
     },
   });
@@ -123,22 +123,27 @@ function handleClear() {
  */
 async function handleDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: OperationLog) => row.operId);
+  const ids = rows.map((row: MonitorAPI.OperationLogDTO) => row.operationId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条操作日志吗？`,
     onOk: async () => {
-      await operLogDelete(ids);
+      await removeOperationLogs({ operationIds: ids });
       await tableApi.query();
     },
   });
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(operLogExport, '操作日志', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
+  commonDownloadExcel(
+    operationLogsExcel,
+    '操作日志',
+    tableApi.formApi.form.values,
+    {
+      fieldMappingTime: formOptions.fieldMappingTime,
+    },
+  );
 }
 </script>
 

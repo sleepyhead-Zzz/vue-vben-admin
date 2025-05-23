@@ -1,4 +1,4 @@
-declare namespace API {
+declare namespace TravelerAPI {
   type AddBookCommand = {
     travelerName?: string;
     documentType?: string;
@@ -31,6 +31,7 @@ declare namespace API {
     serviceAttitude?: number;
     professionalism?: number;
     evaluationContent?: string;
+    fileIds?: number[];
   };
 
   type batchRemoveBookParams = {
@@ -42,11 +43,11 @@ declare namespace API {
   };
 
   type cancelBookParams = {
-    bookingId: number;
+    bookId: number;
   };
 
   type changeBookingStatusParams = {
-    bookingId: number;
+    bookId: number;
     status: number;
   };
 
@@ -63,12 +64,19 @@ declare namespace API {
     bookId: number;
   };
 
+  type getEvaluationInfoByBookIdParams = {
+    /** 预约ID */
+    bookId: number;
+  };
+
   type getEvaluationInfoParams = {
     /** 记录ID */
     evaluationId: number;
   };
 
   type getPagedBooksParams = {
+    keyword?: string;
+    status?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -99,6 +107,8 @@ declare namespace API {
   };
 
   type listBookParams = {
+    keyword?: string;
+    status?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -152,22 +162,10 @@ declare namespace API {
     data?: TravelerBookDTO[];
   };
 
-  type ResponseDTOListTravelerBookVO = {
-    code?: number;
-    message?: string;
-    data?: TravelerBookVO[];
-  };
-
   type ResponseDTOListTravelerEvaluationDTO = {
     code?: number;
     message?: string;
     data?: TravelerEvaluationDTO[];
-  };
-
-  type ResponseDTOListTravelerEvaluationVO = {
-    code?: number;
-    message?: string;
-    data?: TravelerEvaluationVO[];
   };
 
   type ResponseDTOPageDTOTravelerBookDTO = {
@@ -200,40 +198,13 @@ declare namespace API {
     data?: Record<string, any>;
   };
 
-  type TravelerBookDTO = {
-    bookId?: number;
-    travelerName?: string;
-    documentType?: string;
-    documentNumber?: string;
-    gender?: string;
-    language?: string;
-    phoneNumber?: string;
-    service?: string;
-    address?: string;
-    remarks?: string;
-    travelerType?: string;
-    flightNumber?: string;
-    checkedBaggage?: number;
-    handBaggage?: number;
-    companionName?: string;
-    relation?: string;
-    companionPhone?: string;
-    /** 状态 */
-    status?: number;
-    flightTime?: string;
-    createTime?: string;
-    creatorId?: number;
-    updaterId?: number;
-    updateTime?: string;
-    /** 服务人员 */
-    staffId?: string;
-    /** 开始时间 */
-    serviceStartTime?: string;
-    serviceEndTime?: string;
-    createDept?: number;
+  type SysFileUploadDTO = {
+    url?: string;
+    fileName?: string;
+    fileId?: number;
   };
 
-  type TravelerBookVO = {
+  type TravelerBookDTO = {
     bookId?: number;
     travelerName?: string;
     documentType?: string;
@@ -272,24 +243,7 @@ declare namespace API {
     serviceAttitude?: number;
     professionalism?: number;
     evaluationContent?: string;
-    creatorId?: number;
-    updaterId?: number;
-    createTime?: string;
-    updateTime?: string;
-    createDept?: number;
-  };
-
-  type TravelerEvaluationVO = {
-    evaluationId?: number;
-    bookId?: number;
-    serviceAttitude?: number;
-    professionalism?: number;
-    evaluationContent?: string;
-    creatorId?: number;
-    updaterId?: number;
-    createTime?: string;
-    updateTime?: string;
-    createDept?: number;
+    files?: SysFileUploadDTO[];
   };
 
   type UpdateBookCommand = {
@@ -325,6 +279,7 @@ declare namespace API {
     serviceAttitude?: number;
     professionalism?: number;
     evaluationContent?: string;
+    fileIds?: number[];
     evaluationId?: number;
   };
 }

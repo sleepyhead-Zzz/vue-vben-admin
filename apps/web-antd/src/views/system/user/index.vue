@@ -22,7 +22,7 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { getPagedUser, removeUser } from '#/api/system/api/sysUserApi';
+import { getPagedUser, removeUser } from '#/api/system/sysUserApi';
 import { TableSwitch } from '#/components/table';
 
 import { columns, querySchema } from './data';
@@ -131,19 +131,19 @@ function handleAdd() {
   userDrawerApi.open();
 }
 
-function handleEdit(row: API.UserDTO) {
+function handleEdit(row: SystemAPI.UserDTO) {
   userDrawerApi.setData({ id: row.userId });
   userDrawerApi.open();
 }
 
-async function handleDelete(row: API.UserDTO) {
+async function handleDelete(row: SystemAPI.UserDTO) {
   await removeUser({ userIds: [row.userId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.UserDTO) => row.userId);
+  const ids = rows.map((row: SystemAPI.UserDTO) => row.userId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -164,7 +164,7 @@ function handleDownloadExcel() {
 const [UserInfoModal, userInfoModalApi] = useVbenModal({
   connectedComponent: userInfoModal,
 });
-function handleUserInfo(row: API.UserDTO) {
+function handleUserInfo(row: SystemAPI.UserDTO) {
   userInfoModalApi.setData({ userId: row.userId });
   userInfoModalApi.open();
 }
@@ -173,7 +173,7 @@ const [UserResetPwdModal, userResetPwdModalApi] = useVbenModal({
   connectedComponent: userResetPwdModal,
 });
 
-function handleResetPwd(record: API.UserDTO) {
+function handleResetPwd(record: APSystemAPII.UserDTO) {
   userResetPwdModalApi.setData({ record });
   userResetPwdModalApi.open();
 }

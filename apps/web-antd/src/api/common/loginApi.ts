@@ -4,15 +4,18 @@ import request from '#/api/request';
 
 /** 获取当前登录用户信息 GET /getLoginUserInfo */
 export async function getLoginUserInfo(options?: { [key: string]: any }) {
-  return request<API.ResponseDTOCurrentLoginUserDTO>('/getLoginUserInfo', {
-    method: 'GET',
-    ...(options || {}),
-  });
+  return request<CommonAPI.ResponseDTOCurrentLoginUserDTO>(
+    '/getLoginUserInfo',
+    {
+      method: 'GET',
+      ...(options || {}),
+    },
+  );
 }
 
 /** 获取用户对应的菜单路由 用于动态生成路由 GET /getRouters */
 export async function getRouters(options?: { [key: string]: any }) {
-  return request<API.ResponseDTOListRouterDTO>('/getRouters', {
+  return request<CommonAPI.ResponseDTOListRouterDTO>('/getRouters', {
     method: 'GET',
     ...(options || {}),
   });
@@ -20,10 +23,10 @@ export async function getRouters(options?: { [key: string]: any }) {
 
 /** 登录 POST /login */
 export async function login(
-  body: API.LoginCommand,
+  body: CommonAPI.LoginCommand,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseDTOTokenDTO>('/login', {
+  return request<CommonAPI.ResponseDTOTokenDTO>('/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -35,10 +38,10 @@ export async function login(
 
 /** 注册接口 POST /register */
 export async function register(
-  body: API.AddUserCommand,
+  body: CommonAPI.AddUserCommand,
   options?: { [key: string]: any },
 ) {
-  return request<API.ResponseDTOVoid>('/register', {
+  return request<CommonAPI.ResponseDTOVoid>('/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

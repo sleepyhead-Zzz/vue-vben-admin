@@ -24,7 +24,7 @@ import {
   changeRoleStatus,
   getPagedRole,
   removeRole,
-} from '#/api/system/api/sysRoleApi';
+} from '#/api/system/sysRoleApi';
 import { TableSwitch } from '#/components/table';
 
 import { columns, querySchema } from './data';
@@ -95,19 +95,19 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: API.RoleDTO) {
+async function handleEdit(record: SystemAPI.RoleDTO) {
   drawerApi.setData({ id: record.roleId });
   drawerApi.open();
 }
 
-async function handleDelete(row: API.RoleDTO) {
+async function handleDelete(row: SystemAPI.RoleDTO) {
   await removeRole({ roleIds: [row.roleId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.RoleDTO) => row.roleId);
+  const ids = rows.map((row: SystemAPI.RoleDTO) => row.roleId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -133,13 +133,13 @@ const [RoleAuthModal, authModalApi] = useVbenModal({
   connectedComponent: roleAuthModal,
 });
 
-function handleAuthEdit(record: API.RoleDTO) {
+function handleAuthEdit(record: SystemAPI.RoleDTO) {
   authModalApi.setData({ id: record.roleId });
   authModalApi.open();
 }
 
 const router = useRouter();
-function handleAssignRole(record: API.RoleDTO) {
+function handleAssignRole(record: SystemAPI.RoleDTO) {
   router.push(`/system/role-assign/${record.roleId}`);
 }
 </script>

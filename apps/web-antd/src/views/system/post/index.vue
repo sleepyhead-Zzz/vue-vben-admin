@@ -11,7 +11,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { getPagedPost, removePost } from '#/api/system/api/sysPostApi';
+import { getPagedPost, removePost } from '#/api/system/sysPostApi';
 import DeptTree from '#/views/system/user/dept-tree.vue';
 
 import { columns, querySchema } from './data';
@@ -90,19 +90,19 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: API.PostDTO) {
+async function handleEdit(record: SystemAPI.PostDTO) {
   drawerApi.setData({ id: record.postId });
   drawerApi.open();
 }
 
-async function handleDelete(row: API.PostDTO) {
+async function handleDelete(row: SystemAPI.PostDTO) {
   await removePost({ ids: [row.postId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.PostDTO) => row.postId);
+  const ids = rows.map((row: SystemAPI.PostDTO) => row.postId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

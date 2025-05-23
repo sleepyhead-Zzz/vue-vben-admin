@@ -10,7 +10,7 @@ import {
   addDictData,
   editDictData,
   getDictDataInfo,
-} from '#/api/system/api/zidishujubiao';
+} from '#/api/system/zidishujubiao';
 import { tagTypes } from '#/components/dict';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 

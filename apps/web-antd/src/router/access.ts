@@ -10,7 +10,7 @@ import { preferences } from '@vben/preferences';
 import { message } from 'ant-design-vue';
 import { cloneDeep } from 'lodash-es';
 
-import { getRouters } from '#/api/common/api/loginApi';
+import { getRouters } from '#/api/common/loginApi';
 import { BasicLayout, IFrameView } from '#/layouts';
 import { $t } from '#/locales';
 
@@ -26,7 +26,7 @@ const NotFoundComponent = () => import('#/views/_core/fallback/not-found.vue');
  * @returns vben路由
  */
 function backMenuToVbenMenu(
-  menuList: API.RouterDTO[],
+  menuList: SystemAPI.RouterDTO[],
   parentPath = '',
 ): RouteRecordStringComponent[] {
   const resultList: RouteRecordStringComponent[] = [];

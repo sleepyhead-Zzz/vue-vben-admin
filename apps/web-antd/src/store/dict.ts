@@ -8,7 +8,7 @@ import { defineStore } from 'pinia';
  * antd使用 select和radio通用
  * 本质上是对DictData的拓展
  */
-export interface DictOption extends API.SysDictDataDTO {
+export interface DictOption extends SystemAPI.SysDictDataDTO {
   disabled?: boolean;
   label: string;
   value: number | string;
@@ -21,7 +21,7 @@ export interface DictOption extends API.SysDictDataDTO {
  * @returns options
  */
 export function dictToOptions(
-  data: API.SysDictDataDTO[],
+  data: SystemAPI.SysDictDataDTO[],
   formatNumber = false,
 ): DictOption[] {
   return data.map((item) => ({
@@ -44,7 +44,7 @@ export const useDictStore = defineStore('app-dict', () => {
    * 相当于加锁 保证只有第一次请求的结果能拿到
    */
   const dictRequestCache = reactive(
-    new Map<string, Promise<API.SysDictDataDTO[] | undefined>>(),
+    new Map<string, Promise<SystemAPI.SysDictDataDTO[] | undefined>>(),
   );
 
   function getDictOptions(dictName: string): DictOption[] {
@@ -76,7 +76,7 @@ export const useDictStore = defineStore('app-dict', () => {
    */
   function setDictInfo(
     dictName: string,
-    dictValue: API.SysDictDataDTO[],
+    dictValue: SystemAPI.SysDictDataDTO[],
     formatNumber = false,
   ) {
     if (

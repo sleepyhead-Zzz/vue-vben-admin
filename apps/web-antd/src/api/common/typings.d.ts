@@ -1,4 +1,4 @@
-declare namespace API {
+declare namespace CommonAPI {
   type AddUserCommand = {
     deptId?: number;
     userName?: string;
@@ -153,7 +153,9 @@ declare namespace API {
     /** 性别 */
     sex?: string;
     /** 用户头像 */
-    avatar?: string;
+    avatarFileId?: number;
+    /** 用户头像 */
+    avatarFileUrl?: string;
     /** 状态 */
     status?: string;
     /** 最后登录IP */

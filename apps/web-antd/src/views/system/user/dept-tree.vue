@@ -6,7 +6,7 @@ import { onMounted, ref } from 'vue';
 import { SyncOutlined } from '@ant-design/icons-vue';
 import { Empty, InputSearch, Skeleton, Tree } from 'ant-design-vue';
 
-import { dropdownDeptList } from '#/api/system/api/sysDeptApi';
+import { dropdownDeptList } from '#/api/system/sysDeptApi';
 
 defineOptions({ inheritAttrs: false });
 
@@ -34,7 +34,7 @@ const searchValue = defineModel('searchValue', {
 });
 
 /** 部门数据源 */
-type DeptTreeArray = API.DeptDTO[];
+type DeptTreeArray = SystemAPI.DeptDTO[];
 const deptTreeArray = ref<DeptTreeArray>([]);
 /** 骨架屏加载 */
 const showTreeSkeleton = ref<boolean>(true);

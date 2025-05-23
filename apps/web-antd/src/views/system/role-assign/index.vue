@@ -15,7 +15,7 @@ import {
   allocatedUserList,
   cancelAuthUser,
   cancelAuthUserAll,
-} from '#/api/system/api/sysRoleApi';
+} from '#/api/system/sysRoleApi';
 
 import { columns, querySchema } from './data';
 import roleAssignDrawer from './role-assign-drawer.vue';
@@ -82,7 +82,7 @@ function handleAdd() {
 /**
  * 取消授权 一条记录
  */
-async function handleAuthCancel(record: API.UserDTO) {
+async function handleAuthCancel(record: SystemAPI.UserDTO) {
   await cancelAuthUser({ userId: record.userId, roleId });
   await tableApi.query();
 }
@@ -92,7 +92,7 @@ async function handleAuthCancel(record: API.UserDTO) {
  */
 function handleMultipleAuthCancel() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.UserDTO) => row.userId);
+  const ids = rows.map((row: SystemAPI.UserDTO) => row.userId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

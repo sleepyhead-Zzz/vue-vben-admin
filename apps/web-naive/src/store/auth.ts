@@ -10,7 +10,7 @@ import { defineStore } from 'pinia';
 
 import { notification } from '#/adapter/naive';
 import { logoutApi } from '#/api';
-import { getLoginUserInfo, login } from '#/api/common/api/loginApi';
+import { getLoginUserInfo, login } from '#/api/common/loginApi';
 import { router } from '#/router/index';
 
 export const useAuthStore = defineStore('auth', () => {

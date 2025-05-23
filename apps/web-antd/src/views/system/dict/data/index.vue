@@ -16,7 +16,7 @@ import {
   batchRemoveDictData,
   getPagedDictData,
   removeDictData,
-} from '#/api/system/api/zidishujubiao';
+} from '#/api/system/zidishujubiao';
 
 import { emitter } from '../mitt';
 import { columns, querySchema } from './data';
@@ -84,7 +84,7 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: API.SysDictDataDTO) {
+async function handleEdit(record: SystemAPI.SysDictDataDTO) {
   drawerApi.setData({
     dictType: dictType.value,
     dictCode: record.dictCode,
@@ -92,14 +92,14 @@ async function handleEdit(record: API.SysDictDataDTO) {
   drawerApi.open();
 }
 
-async function handleDelete(row: API.SysDictDataDTO) {
+async function handleDelete(row: SystemAPI.SysDictDataDTO) {
   await removeDictData({ dictCode: row.dictCode });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.SysDictDataDTO) => row.dictCode);
+  const ids = rows.map((row: SystemAPI.SysDictDataDTO) => row.dictCode);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue';
 
 import { NButton, NEmpty, NInput, NSwitch, NTree } from 'naive-ui';
 
-import { dropdownDeptList } from '#/api/system/api/sysDeptApi';
+import { dropdownDeptList } from '#/api/system/sysDeptApi';
 
 defineOptions({ inheritAttrs: false });
 

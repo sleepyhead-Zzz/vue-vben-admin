@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { getUserDetailInfo } from '#/api/system/api/sysUserApi';
+import { getUserDetailInfo } from '#/api/system/sysUserApi';
 import { renderDict } from '#/utils/render';
 
 dayjs.extend(duration);
@@ -22,7 +22,7 @@ const [BasicModal, modalApi] = useVbenModal({
   },
 });
 
-interface UserWithNames extends API.UserDTO {
+interface UserWithNames extends SystemAPI.UserDTO {
   postNames: string[];
   roleNames: string[];
 }

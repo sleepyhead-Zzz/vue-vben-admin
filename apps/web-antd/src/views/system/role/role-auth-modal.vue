@@ -9,7 +9,7 @@ import {
   dataScope,
   getRoleInfo,
   roleDeptTreeSelect,
-} from '#/api/system/api/sysRoleApi';
+} from '#/api/system/sysRoleApi';
 import { TreeSelectPanel } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -28,7 +28,7 @@ const [BasicForm, formApi] = useVbenForm({
   showDefaultActions: false,
 });
 
-const deptTree = ref<API.DeptTreeSelectDTO[]>([]);
+const deptTree = ref<SystemAPI.DeptTreeSelectDTO[]>([]);
 async function setupDeptTree(id: number | string) {
   const resp = await roleDeptTreeSelect({ roleId: id });
   formApi.setFieldValue('deptIds', resp.data.checkedKeys);

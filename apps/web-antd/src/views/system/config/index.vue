@@ -14,7 +14,7 @@ import {
   getPagedConfigs,
   refreshCache,
   removeConfig,
-} from '#/api/system/api/canshupeizhibiao';
+} from '#/api/system/canshupeizhibiao';
 
 import configModal from './config-modal.vue';
 import { columns, querySchema } from './data';
@@ -80,19 +80,19 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(record: API.SysConfigDTO) {
+async function handleEdit(record: SystemAPI.SysConfigDTO) {
   modalApi.setData({ id: record.configId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.SysConfigDTO) {
+async function handleDelete(row: SystemAPI.SysConfigDTO) {
   await removeConfig({ configId: row.configId });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.SysConfigDTO) => row.configId);
+  const ids = rows.map((row: SystemAPI.SysConfigDTO) => row.configId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

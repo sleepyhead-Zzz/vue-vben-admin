@@ -18,8 +18,7 @@
         "vunguyentuan.vscode-css-variables",
         "antfu.pnpm-catalog-lens",
         "formulahendry.auto-close-tag",
-        "christian-kohler.path-intellisense",
-        "lihuiwang.vue-alias-skip"
+        "christian-kohler.path-intellisense"
       ],
       "settings": {
         "editor.stickyScroll.scrollWithEditor": true,

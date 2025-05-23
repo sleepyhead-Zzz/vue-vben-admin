@@ -13,7 +13,7 @@ import {
   getDeptInfo,
   listDept,
   listUserByDept,
-} from '#/api/system/api/sysDeptApi';
+} from '#/api/system/sysDeptApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';

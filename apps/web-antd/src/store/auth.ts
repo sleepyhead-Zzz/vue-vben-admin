@@ -10,7 +10,7 @@ import { notification } from 'ant-design-vue';
 import { defineStore } from 'pinia';
 
 import { logoutApi } from '#/api';
-import { getLoginUserInfo, login } from '#/api/common/api/loginApi';
+import { getLoginUserInfo, login } from '#/api/common/loginApi';
 import { router } from '#/router/index';
 
 export const useAuthStore = defineStore('auth', () => {
@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
     onSuccess?: () => Promise<void> | void,
   ) {
     // 异步处理用户登录操作并获取 accessToken
-    let userInfo: API.CurrentLoginUserDTO | null | undefined = null;
+    let userInfo: CommonAPI.CurrentLoginUserDTO | null | undefined = null;
 
     try {
       loginLoading.value = true;
@@ -113,7 +113,7 @@ export const useAuthStore = defineStore('auth', () => {
      * 从后台user -> vben user转换
      */
     const userInfo: UserInfo = {
-      avatar: user.avatar ?? '', // 如果 avatar 为空，则使用默认值 ''
+      avatar: user.avatarFileUrl ?? '', // 如果 avatar 为空，则使用默认值 ''
       permissions,
       realName: user.nickName ?? '',
       roles,

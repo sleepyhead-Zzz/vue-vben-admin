@@ -6,7 +6,8 @@ import { $t } from '@vben/locales';
 import { addFullName, cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { addPost, editPost, getPostInfo } from '#/api/system/api/sysPostApi';
+import { dropdownDeptList } from '#/api/system/sysDeptApi';
+import { addPost, editPost, getPostInfo } from '#/api/system/sysPostApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';

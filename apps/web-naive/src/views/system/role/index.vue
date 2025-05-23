@@ -17,7 +17,7 @@ import {
   changeRoleStatus,
   getPagedRole,
   removeRole,
-} from '#/api/system/api/sysRoleApi';
+} from '#/api/system/sysRoleApi';
 import { GhostButton } from '#/components/global/button';
 import { TableSwitch } from '#/components/table';
 

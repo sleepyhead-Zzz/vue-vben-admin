@@ -11,7 +11,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   selectAuthUserAll,
   unallocatedUserList,
-} from '#/api/system/api/sysRoleApi';
+} from '#/api/system/sysRoleApi';
 
 import { columns, querySchema } from './data';
 

@@ -9,11 +9,8 @@ import { $t } from '@vben/locales';
 import { cloneDeep, eachTree } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  dropdownMenu,
-  getRoleMenuTreeSelect,
-} from '#/api/system/api/sysMenuApi';
-import { addRole, editRole, getRoleInfo } from '#/api/system/api/sysRoleApi';
+import { dropdownMenu, getRoleMenuTreeSelect } from '#/api/system/sysMenuApi';
+import { addRole, editRole, getRoleInfo } from '#/api/system/sysRoleApi';
 import { MenuSelectTable } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -39,7 +36,7 @@ const [BasicForm, formApi] = useVbenForm({
   wrapperClass: 'grid-cols-2 gap-x-4',
 });
 
-const menuTree = ref<API.MenuTreeSelectDTO[]>([]);
+const menuTree = ref<SystemAPI.MenuTreeSelectDTO[]>([]);
 async function setupMenuTree(id?: number | string) {
   if (id) {
     const resp = await getRoleMenuTreeSelect({ roleId: id });

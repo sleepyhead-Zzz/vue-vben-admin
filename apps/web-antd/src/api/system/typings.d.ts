@@ -1,4 +1,4 @@
-declare namespace API {
+declare namespace SystemAPI {
   type AddConfigCommand = {
     /** 参数名称 */
     configName?: string;
@@ -334,6 +334,8 @@ declare namespace API {
   };
 
   type getPagedDictDataParams = {
+    dictType?: string;
+    dictLabel?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -349,6 +351,8 @@ declare namespace API {
   };
 
   type getPagedDictTypesParams = {
+    dictType?: string;
+    dictName?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -364,24 +368,6 @@ declare namespace API {
   };
 
   type getPagedFilesParams = {
-    pageNum?: number;
-    pageSize?: number;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type getPagedLoginInfoParams = {
-    ipAddress?: string;
-    status?: string;
-    username?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -462,6 +448,8 @@ declare namespace API {
   };
 
   type listDictDataParams = {
+    dictType?: string;
+    dictLabel?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -475,6 +463,8 @@ declare namespace API {
   };
 
   type listDictTypeParams = {
+    dictType?: string;
+    dictName?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -533,91 +523,9 @@ declare namespace API {
     deptId: number;
   };
 
-  type LoginLogDTO = {
-    /** ID */
-    logId?: string;
-    /** 用户名 */
-    username?: string;
-    /** ip地址 */
-    ipAddress?: string;
-    /** 登录地点 */
-    loginLocation?: string;
-    /** 操作系统 */
-    operationSystem?: string;
-    /** 浏览器 */
-    browser?: string;
-    status?: number;
-    /** 状态 */
-    statusStr?: string;
-    /** 描述 */
-    msg?: string;
-    /** 登录时间 */
-    loginTime?: string;
-  };
-
   type MenuTreeSelectDTO = {
     checkedKeys?: number[];
     menus?: TreeLong[];
-  };
-
-  type OperationLogDTO = {
-    /** ID */
-    operationId?: number;
-    businessType?: number;
-    /** 操作类型 */
-    businessTypeStr?: string;
-    /** 操作类型 */
-    requestMethod?: string;
-    /** 操作类型 */
-    requestModule?: string;
-    /** 操作类型 */
-    requestUrl?: string;
-    /** 操作类型 */
-    calledMethod?: string;
-    operatorType?: number;
-    /** 操作人类型 */
-    operatorTypeStr?: string;
-    /** 用户ID */
-    userId?: number;
-    /** 用户名 */
-    username?: string;
-    /** ip地址 */
-    operatorIp?: string;
-    /** ip地点 */
-    operatorLocation?: string;
-    /** 部门ID */
-    deptId?: number;
-    /** 部门 */
-    deptName?: string;
-    /** 操作参数 */
-    operationParam?: string;
-    /** 操作结果 */
-    operationResult?: string;
-    status?: number;
-    /** 状态 */
-    statusStr?: string;
-    /** 错误堆栈 */
-    errorStack?: string;
-    /** 操作时间 */
-    operationTime?: string;
-  };
-
-  type OperationLogQuery = {
-    orderColumn?: string;
-    orderDirection?: string;
-    timeRangeColumn?: string;
-    beginTime?: string;
-    endTime?: string;
-    pageNum?: number;
-    pageSize?: number;
-    businessType?: string;
-    status?: string;
-    username?: string;
-    requestModule?: string;
-  };
-
-  type operationLogsParams = {
-    query: OperationLogQuery;
   };
 
   type optionSelectParams = {
@@ -644,20 +552,6 @@ declare namespace API {
     beginTime?: Date;
     /** 结束时间 */
     endTime?: Date;
-  };
-
-  type PageDTOLoginLogDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: LoginLogDTO[];
-  };
-
-  type PageDTOOperationLogDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: OperationLogDTO[];
   };
 
   type PageDTOPostDTO = {
@@ -766,20 +660,12 @@ declare namespace API {
     dictTypeId: number;
   };
 
-  type removeLoginInfosParams = {
-    ids: number[];
-  };
-
   type removeMenuParams = {
     menuId: number;
   };
 
   type removeNoticeParams = {
     noticeId: number;
-  };
-
-  type removeOperationLogsParams = {
-    operationIds: number[];
   };
 
   type removePostParams = {
@@ -911,18 +797,6 @@ declare namespace API {
     data?: MenuTreeSelectDTO;
   };
 
-  type ResponseDTOPageDTOLoginLogDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOLoginLogDTO;
-  };
-
-  type ResponseDTOPageDTOOperationLogDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOOperationLogDTO;
-  };
-
   type ResponseDTOPageDTOPostDTO = {
     code?: number;
     message?: string;
@@ -1007,6 +881,12 @@ declare namespace API {
     data?: SysDictTypeDTO;
   };
 
+  type ResponseDTOSysFileDTO = {
+    code?: number;
+    message?: string;
+    data?: SysFileDTO;
+  };
+
   type ResponseDTOSysFileUploadDTO = {
     code?: number;
     message?: string;
@@ -1023,12 +903,6 @@ declare namespace API {
     code?: number;
     message?: string;
     data?: SysNoticeDTO;
-  };
-
-  type ResponseDTOUploadResult = {
-    code?: number;
-    message?: string;
-    data?: UploadResult;
   };
 
   type ResponseDTOUserDetailDTO = {
@@ -1267,6 +1141,8 @@ declare namespace API {
     fileName?: string;
     /** 文件存储路径 */
     filePath?: string;
+    /** 原始名 */
+    originalName?: string;
     /** 文件大小（单位：字节） */
     fileSize?: number;
     /** 文件类型（如 image/jpeg、application/pdf） */
@@ -1280,15 +1156,6 @@ declare namespace API {
     /** URL */
     url?: string;
     status?: string;
-    createDept?: number;
-    /** 创建者ID */
-    creatorId?: number;
-    /** 创建时间 */
-    createTime?: string;
-    /** 更新者ID */
-    updaterId?: number;
-    /** 更新时间 */
-    updateTime?: string;
   };
 
   type SysFileUploadDTO = {
@@ -1377,6 +1244,10 @@ declare namespace API {
   type unallocatedUserListParams = {
     roleId: number;
     query: UnallocatedRoleQuery;
+  };
+
+  type updateAvatarParams = {
+    file: string;
   };
 
   type UpdateConfigCommand = {
@@ -1486,6 +1357,7 @@ declare namespace API {
 
   type UpdateProfileCommand = {
     userId?: number;
+    userName?: string;
     sex?: string;
     nickName?: string;
     phoneNumber?: string;
@@ -1545,11 +1417,6 @@ declare namespace API {
     fileType?: string;
   };
 
-  type UploadResult = {
-    url?: string;
-    filename?: string;
-  };
-
   type UserDetailDTO = {
     user?: UserDTO;
     roleIds?: number[];
@@ -1576,7 +1443,9 @@ declare namespace API {
     /** 性别 */
     sex?: string;
     /** 用户头像 */
-    avatar?: string;
+    avatarFileId?: number;
+    /** 用户头像 */
+    avatarFileUrl?: string;
     /** 状态 */
     status?: string;
     /** 最后登录IP */

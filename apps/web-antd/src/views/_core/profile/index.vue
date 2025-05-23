@@ -4,14 +4,14 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { useUserStore } from '@vben/stores';
 
-import { userProfile } from '#/api/system/api/sysProfileApi';
+import { userProfile } from '#/api/system/sysProfileApi';
 import { useAuthStore } from '#/store';
 
 import { emitter } from './mitt';
 import ProfilePanel from './profile-panel.vue';
 import SettingPanel from './setting-panel.vue';
 
-const profile = ref<API.UserProfileDTO>();
+const profile = ref<SystemAPI.UserProfileDTO>();
 async function loadProfile() {
   const resp = await userProfile();
   profile.value = resp.data;

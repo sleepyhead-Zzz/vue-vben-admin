@@ -13,7 +13,7 @@ import {
   getDeptInfo,
   listDept,
   listUserByDept,
-} from '#/api/system/api/sysDeptApi';
+} from '#/api/system/sysDeptApi';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -44,7 +44,7 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function getDeptTree(deptId?: number | string, exclude = false) {
-  let ret: API.DeptDTO[] = [];
+  let ret: SystemAPI.DeptDTO[] = [];
   const { data } = await (!deptId || exclude
     ? listDept({})
     : deptNodeList({ deptId }));
