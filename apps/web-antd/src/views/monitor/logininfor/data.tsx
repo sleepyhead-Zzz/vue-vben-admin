@@ -11,7 +11,7 @@ import { renderBrowserIcon, renderDict, renderOsIcon } from '#/utils/render';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'ipaddr',
+    fieldName: 'ipAddress',
     label: 'IP地址',
   },
   {
@@ -29,7 +29,7 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'RangePicker',
-    fieldName: 'dateTime',
+    fieldName: 'loginTime',
     label: '登录日期',
   },
 ];
@@ -41,12 +41,8 @@ export const columns: VxeGridProps['columns'] = [
     field: 'userName',
   },
   {
-    title: '登录平台',
-    field: 'clientKey',
-  },
-  {
     title: 'IP地址',
-    field: 'ipaddr',
+    field: 'ipAddress',
   },
   {
     title: 'IP地点',
@@ -64,13 +60,13 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '系统',
-    field: 'os',
+    field: 'operationSystem',
     slots: {
       default: ({ row }) => {
         /**
          *  Windows 10 or Windows Server 2016 太长了 分割一下 详情依旧能看到详细的
          */
-        let value = row.os;
+        let value = row.operationSystem;
         if (value) {
           const split = value.split(' or ');
           if (split.length === 2) {

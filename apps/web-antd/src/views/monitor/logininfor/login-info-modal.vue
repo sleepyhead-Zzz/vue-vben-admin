@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { LoginLog } from '#/api/monitor/logininfo/model';
-
 import { ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
@@ -10,13 +8,13 @@ import { Descriptions, DescriptionsItem } from 'ant-design-vue';
 
 import { renderBrowserIcon, renderDict, renderOsIcon } from '#/utils/render';
 
-const loginInfo = ref<LoginLog>();
+const loginInfo = ref<MonitorAPI.LoginLogDTO>();
 const [BasicModal, modalApi] = useVbenModal({
   onOpenChange: (isOpen) => {
     if (!isOpen) {
       return null;
     }
-    const record = modalApi.getData() as LoginLog;
+    const record = modalApi.getData() as MonitorAPI.LoginLogDTO;
     loginInfo.value = record;
   },
   onClosed() {
@@ -38,12 +36,9 @@ const [BasicModal, modalApi] = useVbenModal({
           :is="renderDict(loginInfo.status, DictEnum.SYS_COMMON_STATUS)"
         />
       </DescriptionsItem>
-      <DescriptionsItem label="登录平台">
-        {{ loginInfo.clientKey.toLowerCase() }}
-      </DescriptionsItem>
       <DescriptionsItem label="账号信息">
         {{
-          `账号: ${loginInfo.userName} / ${loginInfo.ipaddr} / ${loginInfo.loginLocation}`
+          `账号: ${loginInfo.userName} / ${loginInfo.ipAddress} / ${loginInfo.loginLocation}`
         }}
       </DescriptionsItem>
       <DescriptionsItem label="登录时间">
@@ -58,7 +53,7 @@ const [BasicModal, modalApi] = useVbenModal({
         </span>
       </DescriptionsItem>
       <DescriptionsItem label="登录设备">
-        <component :is="renderOsIcon(loginInfo.os)" />
+        <component :is="renderOsIcon(loginInfo.operationSystem)" />
       </DescriptionsItem>
       <DescriptionsItem label="浏览器">
         <component :is="renderBrowserIcon(loginInfo.browser)" />

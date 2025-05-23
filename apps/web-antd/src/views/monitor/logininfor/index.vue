@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { LoginLog } from '#/api/monitor/logininfo/model';
 
 import { ref } from 'vue';
 
@@ -13,12 +12,11 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  loginInfoClean,
-  loginInfoExport,
-  loginInfoList,
-  loginInfoRemove,
-  userUnlock,
-} from '#/api/monitor/logininfo';
+  cleanLoginInfo,
+  getPagedLoginInfo,
+  loginInfosExcel,
+  removeLoginInfos,
+} from '#/api/monitor/sysLogsApi';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { confirmDeleteModal } from '#/utils/modal';
 
@@ -60,11 +58,12 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await loginInfoList({
+        const { data } = await getPagedLoginInfo({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        return data;
       },
     },
   },
@@ -90,7 +89,7 @@ const [LoginInfoModal, modalApi] = useVbenModal({
   connectedComponent: loginInfoModal,
 });
 
-function handlePreview(record: LoginLog) {
+function handlePreview(record: MonitorAPI.LoginLogDTO) {
   modalApi.setData(record);
   modalApi.open();
 }
@@ -98,26 +97,26 @@ function handlePreview(record: LoginLog) {
 function handleClear() {
   confirmDeleteModal({
     onValidated: async () => {
-      await loginInfoClean();
+      await cleanLoginInfo();
       await tableApi.reload();
     },
   });
 }
 
-async function handleDelete(row: LoginLog) {
-  await loginInfoRemove([row.infoId]);
+async function handleDelete(row: MonitorAPI.LoginLogDTO) {
+  await removeLoginInfos({ ids: [row.infoId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: LoginLog) => row.infoId);
+  const ids = rows.map((row: MonitorAPI.LoginLogDTO) => row.infoId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await loginInfoRemove(ids);
+      await removeLoginInfos({ ids });
       await tableApi.query();
     },
   });
@@ -128,8 +127,8 @@ async function handleUnlock() {
   if (records.length !== 1) {
     return;
   }
-  const { userName } = records[0];
-  await userUnlock(userName);
+  // const { userName } = records[0];
+  // await userUnlock(userName);
   await tableApi.query();
   canUnlock.value = false;
   tableApi.grid.clearCheckboxRow();
@@ -137,7 +136,7 @@ async function handleUnlock() {
 
 function handleDownloadExcel() {
   commonDownloadExcel(
-    loginInfoExport,
+    loginInfosExcel,
     '登录日志',
     tableApi.formApi.form.values,
     {
