@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { GenInfo } from '#/api/tool/gen/model';
-
 import { onMounted, provide, ref, unref, useTemplateRef } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -10,7 +8,7 @@ import { cloneDeep, safeParseNumber } from '@vben/utils';
 
 import { Card, Skeleton, TabPane, Tabs } from 'ant-design-vue';
 
-import { editSave, genInfo } from '#/api/tool/gen';
+import { editSave, getInfo } from '#/api/tool/generatorApi';
 
 import { BasicSetting, GenConfig } from './edit-steps';
 
@@ -19,16 +17,16 @@ const routes = useRoute();
 // 获取路由参数
 const tableId = routes.params.tableId as string;
 
-const genInfoData = ref<GenInfo['info']>();
+const genInfoData = ref<ToolAPI.GenTableDTO['info']>();
 
 provide('genInfoData', genInfoData);
 
 onMounted(async () => {
-  const resp = await genInfo(tableId);
+  const { data } = await getInfo({ tableId });
   // 需要做菜单转换 严格相等 才能选中回显
-  resp.info.parentMenuId = safeParseNumber(resp.info.parentMenuId);
-  genInfoData.value = resp.info;
-  setTabTitle(`生成配置: ${resp.info.tableName}`);
+  data.info.parentMenuId = safeParseNumber(data.info.parentMenuId);
+  genInfoData.value = data.info;
+  setTabTitle(`生成配置: ${data.info.tableName}`);
 });
 
 const currentTab = ref<'fields' | 'setting'>('setting');
@@ -89,7 +87,7 @@ async function handleSave() {
     await editSave(requestData);
     // 关闭 & 跳转
     await closeCurrentTab();
-    router.push({ path: '/tool/gen', replace: true });
+    router.push({ path: '/tool/generator', replace: true });
   } catch (error) {
     console.error(error);
   }

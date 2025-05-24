@@ -22,7 +22,7 @@ import {
 import { useClipboard } from '@vueuse/core';
 import { Alert, Skeleton, Tree } from 'ant-design-vue';
 
-import { previewCode } from '#/api/tool/gen';
+import { preview } from '#/api/tool/generatorApi';
 
 interface TreeNode {
   children: TreeNode[];
@@ -48,7 +48,7 @@ const [BasicModal, modalApi] = useVbenModal({
     modalApi.modalLoading(true);
 
     const { tableId } = modalApi.getData() as { tableId: string };
-    const data = await previewCode(tableId);
+    const data = await preview({ tableId });
     currentCodeData.value = data;
     const tree = convertToTree(Object.keys(data));
     treeData.value = tree;

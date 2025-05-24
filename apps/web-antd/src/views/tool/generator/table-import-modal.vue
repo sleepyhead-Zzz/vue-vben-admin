@@ -6,11 +6,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenModal } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import {
-  getDataSourceNames,
-  importTable,
-  readyToGenList,
-} from '#/api/tool/gen';
+import { dataList, importTableSave } from '#/api/tool/generatorApi';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -77,11 +73,12 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await readyToGenList({
+        const { data } = await dataList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        return data;
       },
     },
   },
@@ -101,8 +98,8 @@ const [BasicModal, modalApi] = useVbenModal({
       tableApi.grid.clearCheckboxRow();
       return null;
     }
-    const ret = await getDataSourceNames();
-    const dataSourceOptions = ret.map((item) => ({ label: item, value: item }));
+
+    const dataSourceOptions = [{ label: 'master', value: 'master' }];
     tableApi.formApi.updateSchema([
       {
         fieldName: 'dataName',
@@ -125,7 +122,11 @@ async function handleSubmit() {
     }
     modalApi.modalLoading(true);
     const { dataName } = await tableApi.formApi.getValues();
-    await importTable(tables.join(','), dataName);
+    await importTableSave({
+      tables: tables.join(','), // 传字符串，如 "sys_user,sys_role"
+      dataName,
+    });
+
     emit('reload');
     modalApi.close();
   } catch (error) {

@@ -109,7 +109,7 @@ export interface DownloadExcelOptions {
  * @param options 下载选项
  */
 export async function commonDownloadExcel(
-  api: (data?: any) => Promise<Blob>,
+  api: (data?: any, options?: any) => Promise<Blob>,
   fileName: string,
   requestData: any = {},
   options: DownloadExcelOptions = {},
@@ -118,7 +118,10 @@ export async function commonDownloadExcel(
   try {
     const { withRandomName = true, fieldMappingTime } = options;
     // 需要处理时间字段映射
-    const data = await api(handleRangeTimeValue(requestData, fieldMappingTime));
+    const data = await api(
+      handleRangeTimeValue(requestData, fieldMappingTime),
+      { responseType: 'blob' },
+    );
     downloadExcelFile(data, fileName, withRandomName);
   } catch (error) {
     console.error(error);

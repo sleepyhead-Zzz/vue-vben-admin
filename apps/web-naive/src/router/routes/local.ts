@@ -35,9 +35,9 @@ const localRoutes: RouteRecordStringComponent[] = [
     path: '/system/oss-config',
   },
   {
-    component: '/tool/gen/edit-gen',
+    component: '/tool/generator/edit-gen',
     meta: {
-      activePath: '/tool/gen',
+      activePath: '/tool/generator',
       icon: 'tabler:code',
       title: '生成配置',
       hideInMenu: true,

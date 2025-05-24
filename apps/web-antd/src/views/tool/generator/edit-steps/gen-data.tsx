@@ -8,7 +8,7 @@ import { getPopupContainer } from '@vben/utils';
 
 import { Checkbox, Input, Select } from 'ant-design-vue';
 
-import { dictOptionSelectList } from '#/api/system/dict/dict-type';
+import { dropdownDictTypeList } from '#/api/system/zidileixingbiao';
 
 const JavaTypes: string[] = [
   'Long',
@@ -52,9 +52,9 @@ const dictOptions = reactive<{ label: string; value: string }[]>([
  * 在这里初始化字典下拉框
  */
 (async function init() {
-  const ret = await dictOptionSelectList();
+  const { data } = await dropdownDictTypeList();
 
-  ret.forEach((dict) => {
+  data.forEach((dict) => {
     const option = {
       label: `${dict.dictName} | ${dict.dictType}`,
       value: dict.dictType,

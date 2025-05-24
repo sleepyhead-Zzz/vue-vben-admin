@@ -90,6 +90,24 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   // 响应拦截器
   client.addResponseInterceptor<HttpResponse>({
     fulfilled: async (response) => {
+      /**
+       * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
+       * 当type为blob且content-type为application/json时 则判断已经下载出错
+       */
+      if (
+        response.config.responseType === 'blob' &&
+        response.headers['content-type']?.includes?.('application/json')
+      ) {
+        // 这时候的data为blob类型
+        const blob = response.data as unknown as Blob;
+        // 拿到字符串转json对象
+        response.data = JSON.parse(await blob.text());
+        // 然后按正常逻辑执行下面的代码(判断业务状态码)
+      } else {
+        // 其他情况 直接返回
+        return response.data;
+      }
+
       const axiosResponseData = response.data;
 
       if (!axiosResponseData) throw new Error($t('http.apiRequestFailed'));
@@ -166,4 +184,5 @@ const request = async <T = any>(
   return await requestClient.request<T>(url, options);
 };
 export const baseRequestClient = new RequestClient({ baseURL: apiURL });
+
 export default request;

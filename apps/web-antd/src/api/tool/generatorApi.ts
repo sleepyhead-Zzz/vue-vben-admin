@@ -35,9 +35,9 @@ export async function getInfo(
 }
 
 /** 删除代码生成 DELETE /tool/generator/${param0} */
-export async function remove(
+export async function removeGenerator(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: ToolAPI.removeParams,
+  params: ToolAPI.removeGeneratorParams,
   options?: { [key: string]: any },
 ) {
   const { tableIds: param0, ...queryParams } = params;
@@ -115,9 +115,9 @@ export async function download(
 }
 
 /** 生成代码（自定义路径） GET /tool/generator/genCode/${param0} */
-export async function genCode(
+export async function generatorCodeWithPath(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: ToolAPI.genCodeParams,
+  params: ToolAPI.generatorCodeWithPathParams,
   options?: { [key: string]: any },
 ) {
   const { tableId: param0, ...queryParams } = params;
@@ -130,15 +130,15 @@ export async function genCode(
 
 /** 导入表结构（保存） POST /tool/generator/importTable */
 export async function importTableSave(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: ToolAPI.importTableSaveParams,
+  body: ToolAPI.ImportTableDTO,
   options?: { [key: string]: any },
 ) {
   return request<ToolAPI.ResponseDTOVoid>('/tool/generator/importTable', {
     method: 'POST',
-    params: {
-      ...params,
+    headers: {
+      'Content-Type': 'application/json',
     },
+    data: body,
     ...(options || {}),
   });
 }
@@ -180,14 +180,14 @@ export async function preview(
   );
 }
 
-/** 同步数据库 GET /tool/generator/synchDb/${param0} */
-export async function synchDb(
+/** 同步数据库 GET /tool/generator/syncDb/${param0} */
+export async function syncDb(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: ToolAPI.synchDbParams,
+  params: ToolAPI.syncDbParams,
   options?: { [key: string]: any },
 ) {
   const { tableId: param0, ...queryParams } = params;
-  return request<ToolAPI.ResponseDTOVoid>(`/tool/generator/synchDb/${param0}`, {
+  return request<ToolAPI.ResponseDTOVoid>(`/tool/generator/syncDb/${param0}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),

@@ -15,7 +15,7 @@ declare namespace ToolAPI {
     tableId: number;
   };
 
-  type genCodeParams = {
+  type generatorCodeWithPathParams = {
     tableId: number;
   };
 
@@ -167,17 +167,17 @@ declare namespace ToolAPI {
     parentMenuId?: number;
     parentMenuName?: string;
     params?: Record<string, any>;
-    crud?: boolean;
     tree?: boolean;
+    crud?: boolean;
   };
 
   type getInfoParams = {
     tableId: number;
   };
 
-  type importTableSaveParams = {
-    tables: string;
-    dataName: string;
+  type ImportTableDTO = {
+    tables?: string;
+    dataName?: string;
   };
 
   type PageDTOGenTableColumnDTO = {
@@ -205,7 +205,7 @@ declare namespace ToolAPI {
     tableId: number;
   };
 
-  type removeParams = {
+  type removeGeneratorParams = {
     tableIds: number[];
   };
 
@@ -245,7 +245,7 @@ declare namespace ToolAPI {
     data?: Record<string, any>;
   };
 
-  type synchDbParams = {
+  type syncDbParams = {
     tableId: number;
   };
 }

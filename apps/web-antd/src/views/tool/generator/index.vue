@@ -16,12 +16,11 @@ import dayjs from 'dayjs';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
   batchGenCode,
-  generatedList,
-  genRemove,
-  genWithPath,
-  getDataSourceNames,
+  generatorCodeWithPath,
+  genList,
+  removeGenerator,
   syncDb,
-} from '#/api/tool/gen';
+} from '#/api/tool/generatorApi';
 import { downloadByData } from '#/utils/file/download';
 
 import codePreviewModal from './code-preview-modal.vue';
@@ -63,11 +62,12 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await generatedList({
+        const { data } = await genList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
+        return data;
       },
     },
   },
@@ -84,9 +84,8 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 
 onMounted(async () => {
   // 获取数据源
-  const ret = await getDataSourceNames();
   const dataSourceOptions = [{ label: '全部', value: '' }];
-  const transOptions = ret.map((item) => ({ label: item, value: item }));
+  const transOptions = [{ label: 'master', value: 'master' }];
   dataSourceOptions.push(...transOptions);
   // 更新selectOptions
   tableApi.formApi.updateSchema([
@@ -144,16 +143,19 @@ async function handleDownload(record: Recordable<any>) {
   try {
     // 路径生成
     if (record.genType === '1' && record.genPath) {
-      await genWithPath(record.tableId);
+      await generatorCodeWithPath({ tableId: record.tableId });
       message.success(`生成成功: ${record.genPath}`);
       return;
     }
     // zip生成
-    const blob = await batchGenCode(record.tableId);
+    const blob = await batchGenCode(
+      { tableIdStr: record.tableId },
+      { responseType: 'blob' },
+    );
     const filename = `代码生成_${record.tableName}_${dayjs().valueOf()}.zip`;
     downloadByData(blob, filename);
   } catch (error) {
-    console.error(error);
+    console.error('捕获异常:', error);
   } finally {
     hideLoading();
   }
@@ -164,7 +166,7 @@ async function handleDownload(record: Recordable<any>) {
  * @param record
  */
 async function handleDelete(record: Recordable<any>) {
-  await genRemove(record.tableId);
+  await removeGenerator(record.tableId);
   await tableApi.query();
 }
 
@@ -176,7 +178,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await genRemove(ids);
+      await removeGenerator(ids);
       await tableApi.query();
     },
   });

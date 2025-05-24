@@ -11,7 +11,7 @@ import { addFullName, listToTree } from '@vben/utils';
 
 import { Col, Row } from 'ant-design-vue';
 
-import { menuList } from '#/api/system/menu';
+import { listMenu } from '#/api/system/sysMenuApi';
 
 import { formSchema } from './basic';
 
@@ -67,12 +67,12 @@ async function initTreeSelect(columns: Column[]) {
  * 加载菜单选择
  */
 async function initMenuSelect() {
-  const list = await menuList();
+  const { data } = await listMenu({});
   // support i18n
-  list.forEach((item) => {
+  data.forEach((item) => {
     item.menuName = $t(item.menuName);
   });
-  const tree = listToTree(list, { id: 'menuId', pid: 'parentId' });
+  const tree = listToTree(data, { id: 'menuId', pid: 'parentId' });
   const treeData = [
     {
       fullName: $t('menu.root'),

@@ -22,8 +22,13 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { getPagedUser, removeUser } from '#/api/system/sysUserApi';
+import {
+  exportUserByExcel,
+  getPagedUser,
+  removeUser,
+} from '#/api/system/sysUserApi';
 import { TableSwitch } from '#/components/table';
+import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
 import DeptTree from './dept-tree.vue';
@@ -156,9 +161,14 @@ function handleMultiDelete() {
 }
 
 function handleDownloadExcel() {
-  // commonDownloadExcel(userExport, '用户管理', tableApi.formApi.form.values, {
-  //   fieldMappingTime: formOptions.fieldMappingTime,
-  // });
+  commonDownloadExcel(
+    exportUserByExcel,
+    '用户管理',
+    tableApi.formApi.form.values,
+    {
+      fieldMappingTime: formOptions.fieldMappingTime,
+    },
+  );
 }
 
 const [UserInfoModal, userInfoModalApi] = useVbenModal({
