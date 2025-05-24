@@ -30,7 +30,7 @@ declare namespace MonitorAPI {
     /** ID */
     logId?: string;
     /** 用户名 */
-    username?: string;
+    userName?: string;
     /** ip地址 */
     ipAddress?: string;
     /** 登录地点 */
@@ -40,8 +40,6 @@ declare namespace MonitorAPI {
     /** 浏览器 */
     browser?: string;
     status?: number;
-    /** 状态 */
-    statusStr?: string;
     /** 描述 */
     msg?: string;
     /** 登录时间 */
@@ -86,8 +84,6 @@ declare namespace MonitorAPI {
     operationId?: number;
     /** 业务类型（0其它 1新增 2修改 3删除） */
     businessType?: number;
-    /** 操作类型 */
-    businessTypeStr?: string;
     /** 请求方式 */
     requestMethod?: string;
     /** 模块标题 */

@@ -33,4 +33,11 @@ export default [
     projectName: 'monitor',
     namespace: 'MonitorAPI',
   },
+  {
+    ...commonConfig,
+    schemaPath: 'http://172.17.0.1:8080/api/v3/api-docs/ToolAPI',
+    serversPath: './src/api',
+    projectName: 'tool',
+    namespace: 'ToolAPI',
+  },
 ];
