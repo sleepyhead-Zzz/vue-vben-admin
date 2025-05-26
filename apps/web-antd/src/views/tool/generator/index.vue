@@ -113,7 +113,7 @@ function handleEdit(record: Recordable<any>) {
 }
 
 async function handleSync(record: Recordable<any>) {
-  await syncDb(record.tableId);
+  await syncDb({ tableId: record.tableId });
   await tableApi.query();
 }
 

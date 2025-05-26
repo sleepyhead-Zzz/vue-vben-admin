@@ -50,3 +50,5 @@ vite.config.ts.*
 *.sw?
 .history
 .pnpm-store
+
+node-compile-cache

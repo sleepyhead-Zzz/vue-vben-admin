@@ -48,7 +48,7 @@ const [BasicModal, modalApi] = useVbenModal({
     modalApi.modalLoading(true);
 
     const { tableId } = modalApi.getData() as { tableId: string };
-    const data = await preview({ tableId });
+    const { data } = await preview({ tableId });
     currentCodeData.value = data;
     const tree = convertToTree(Object.keys(data));
     treeData.value = tree;
