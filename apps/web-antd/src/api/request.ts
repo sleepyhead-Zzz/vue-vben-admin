@@ -103,9 +103,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         // 拿到字符串转json对象
         response.data = JSON.parse(await blob.text());
         // 然后按正常逻辑执行下面的代码(判断业务状态码)
-      } else {
-        // 其他情况 直接返回
-        return response.data;
       }
 
       const axiosResponseData = response.data;
@@ -121,10 +118,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         const successMsg = message;
         notify.success(successMsg);
 
-        // 分页情况下为code msg rows total 并没有data字段
-        // 如果有data 直接返回data 没有data将剩余参数(...other)封装为data返回
-        // 需要考虑data为null的情况(比如查询为空) 所以这里直接判断undefined
-        // 没有data 将其他参数包装为data
         return axiosResponseData;
       }
 
@@ -151,11 +144,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
         throw new Error(message);
       }
-
-      // 如果没有成功的情况，根据业务处理
-      // 可以在这里添加其他的错误处理逻辑
-      const errorMsg = message || $t('http.apiRequestFailed');
-      throw new Error(errorMsg);
     },
   });
 
