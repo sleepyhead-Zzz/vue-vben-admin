@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 添加职位 POST /system/post */
 export async function addPost(
   body: SystemAPI.AddPostCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>("/system/post", {
-    method: "POST",
+  return request<SystemAPI.ResponseDTOVoid>('/system/post', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addPost(
 export async function removePost(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removePostParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>("/system/post", {
-    method: "DELETE",
+  return request<SystemAPI.ResponseDTOVoid>('/system/post', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -36,11 +36,11 @@ export async function removePost(
 export async function getPostInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getPostInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { postId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOPostDTO>(`/system/post/${param0}`, {
-    method: "GET",
+    method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
   });
@@ -51,13 +51,13 @@ export async function editPost(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editPostParams,
   body: SystemAPI.UpdatePostCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { postId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/system/post/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -69,14 +69,14 @@ export async function editPost(
 export async function exportPost(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.exportPostParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/system/post/excel", {
-    method: "GET",
+  return request<any>('/system/post/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -85,12 +85,12 @@ export async function exportPost(
 /** 职位列表 POST /system/post/list */
 export async function getPagedPost(
   body: SystemAPI.PostQuery,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOPageDTOPostDTO>("/system/post/list", {
-    method: "POST",
+  return request<SystemAPI.ResponseDTOPageDTOPostDTO>('/system/post/list', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -101,16 +101,16 @@ export async function getPagedPost(
 export async function optionSelectPost(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.optionSelectPostParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOListPostDTO>(
-    "/system/post/option-select",
+    '/system/post/option-select',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
