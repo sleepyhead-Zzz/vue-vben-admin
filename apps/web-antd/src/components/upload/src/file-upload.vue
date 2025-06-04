@@ -14,7 +14,7 @@ import { $t, I18nT } from '@vben/locales';
 import { InboxOutlined, UploadOutlined } from '@ant-design/icons-vue';
 import { Upload } from 'ant-design-vue';
 
-import { uploadApi } from '#/api';
+import { uploadApi } from '#/api/core/upload';
 
 import { defaultFileAcceptExts, defaultFilePreview } from './helper';
 import { useUpload } from './hook';

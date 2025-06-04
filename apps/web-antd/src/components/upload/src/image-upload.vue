@@ -16,7 +16,7 @@ import { PlusOutlined, UploadOutlined } from '@ant-design/icons-vue';
 import { Image, ImagePreviewGroup, Upload } from 'ant-design-vue';
 import { isFunction } from 'lodash-es';
 
-import { uploadApi } from '#/api';
+import { uploadApi } from '#/api/core/upload';
 
 import { defaultImageAcceptExts } from './helper';
 import { useImagePreview, useUpload } from './hook';

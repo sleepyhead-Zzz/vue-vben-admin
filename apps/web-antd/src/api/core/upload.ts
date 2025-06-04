@@ -13,7 +13,7 @@ export type AxiosProgressEvent = AxiosRequestConfig['onUploadProgress'];
 export interface UploadResult {
   url: string;
   fileName: string;
-  ossId: string;
+  fileId: string;
 }
 
 /**
@@ -35,7 +35,7 @@ export function uploadApi(
 ) {
   const { onUploadProgress, signal, otherData = {} } = options ?? {};
   return requestClient.upload<UploadResult>(
-    '/resource/oss/upload',
+    '/system/file/upload',
     { file, ...otherData },
     { onUploadProgress, signal, timeout: 60_000 },
   );

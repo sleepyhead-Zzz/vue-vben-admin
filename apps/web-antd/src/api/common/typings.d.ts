@@ -95,7 +95,6 @@ declare namespace CommonAPI {
     query?: string;
     alwaysShow?: boolean;
     meta?: RouterMeta;
-    children?: RouterDTO[];
   };
 
   type RouterMeta = {

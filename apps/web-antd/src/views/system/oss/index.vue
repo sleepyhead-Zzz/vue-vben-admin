@@ -3,15 +3,38 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page } from '@vben/common-ui';
+import { onMounted, ref } from 'vue';
+
+import { Page, useVbenModal } from '@vben/common-ui';
 import { getVxePopupContainer } from '@vben/utils';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
+import {
+  Image,
+  message,
+  Modal,
+  Popconfirm,
+  Space,
+  Spin,
+  Switch,
+  Tooltip,
+} from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { batchRemoveFile, getPagedFiles } from '#/api/system/wenjianshangchuan';
+import { getConfigKey } from '#/api/system/canshupeizhibiao';
+import {
+  batchRemoveFile,
+  download,
+  getPagedFiles,
+} from '#/api/system/wenjianshangchuan';
+import { $t } from '#/locales';
+import { calculateFileSize } from '#/utils/file';
+import { downloadByData } from '#/utils/file/download';
 
+import { supportImageList } from './constant';
 import { columns, querySchema } from './data';
+import fallbackImageBase64 from './fallback-image.txt?raw';
+import fileUploadModal from './file-upload-modal.vue';
+import imageUploadModal from './image-upload-modal.vue';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -22,15 +45,14 @@ const formOptions: VbenFormProps = {
   },
   schema: querySchema(),
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-  // 处理区间选择器RangePicker时间格式 将一个字段映射为两个字段 搜索/导出会用到
-  // 不需要直接删除
-  // fieldMappingTime: [
-  //  [
-  //    'createTime',
-  //    ['params[beginTime]', 'params[endTime]'],
-  //    ['YYYY-MM-DD 00:00:00', 'YYYY-MM-DD 23:59:59'],
-  //  ],
-  // ],
+  // 日期选择格式化
+  fieldMappingTime: [
+    [
+      'createTime',
+      ['params[beginCreateTime]', 'params[endCreateTime]'],
+      ['YYYY-MM-DD 00:00:00', 'YYYY-MM-DD 23:59:59'],
+    ],
+  ],
 };
 
 const gridOptions: VxeGridProps = {
@@ -70,10 +92,37 @@ const gridOptions: VxeGridProps = {
 const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
+  gridEvents: {
+    // 排序 重新请求接口
+    sortChange: () => tableApi.query(),
+  },
 });
-async function handleDelete(row) {
-  await batchRemoveFile({ fileIds: [row.fileId] });
+async function handleDelete(row: SystemAPI.SysFileDTO) {
+  await batchRemoveFile({ fileIds: [row.fileId ?? 0] });
   await tableApi.query();
+}
+
+async function handleDownload(row: SystemAPI.SysFileDTO) {
+  const downloadSize = ref($t('pages.common.downloadLoading'));
+  const hideLoading = message.loading({
+    content: () => downloadSize.value,
+    duration: 0,
+  });
+  try {
+    const data = await download({ fileId: row.fileId }, (e) => {
+      // 计算下载进度
+      const percent = Math.floor((e.loaded / e.total!) * 100);
+      // 已经下载
+      const current = calculateFileSize(e.loaded);
+      // 总大小
+      const total = calculateFileSize(e.total!);
+      downloadSize.value = `已下载: ${current}/${total} (${percent}%)`;
+    });
+    downloadByData(data, row.originalName);
+    message.success('下载完成');
+  } finally {
+    hideLoading();
+  }
 }
 
 function handleMultiDelete() {
@@ -89,6 +138,47 @@ function handleMultiDelete() {
     },
   });
 }
+
+const preview = ref(false);
+onMounted(async () => {
+  const { data } = await getConfigKey({
+    configKey: 'sys.oss.previewListResource',
+  });
+  preview.value = data === 'true';
+});
+
+/**
+ * 根据拓展名判断是否是图片
+ * @param ext 拓展名
+ */
+function isImageFile(ext: string) {
+  return supportImageList.some((item) =>
+    ext.toLocaleLowerCase().includes(item),
+  );
+}
+
+/**
+ * 判断是否是pdf文件
+ * @param ext 扩展名
+ */
+function isPdfFile(ext: string) {
+  return ext.toLocaleLowerCase().includes('pdf');
+}
+
+/**
+ * pdf预览 使用浏览器接管
+ * @param url 文件地址
+ */
+function pdfPreview(url: string) {
+  window.open(url);
+}
+const [ImageUploadModal, imageUploadApi] = useVbenModal({
+  connectedComponent: imageUploadModal,
+});
+
+const [FileUploadModal, fileUploadApi] = useVbenModal({
+  connectedComponent: fileUploadModal,
+});
 </script>
 
 <template>
@@ -96,6 +186,9 @@ function handleMultiDelete() {
     <BasicTable table-title="文件上传列表">
       <template #toolbar-tools>
         <Space>
+          <Tooltip title="预览图片">
+            <Switch v-model:checked="preview" />
+          </Tooltip>
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
@@ -106,21 +199,52 @@ function handleMultiDelete() {
             {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
-            type="primary"
-            v-access:code="['domain:file:add']"
-            @click="handleAdd"
+            v-access:code="['system:oss:upload']"
+            @click="fileUploadApi.open"
           >
-            {{ $t('pages.common.add') }}
+            文件上传
+          </a-button>
+          <a-button
+            v-access:code="['system:oss:upload']"
+            @click="imageUploadApi.open"
+          >
+            图片上传
           </a-button>
         </Space>
       </template>
+      <template #url="{ row }">
+        <!-- placeholder为图片未加载时显示的占位图 -->
+        <!-- fallback为图片加载失败时显示 -->
+        <!-- 需要设置key属性 否则切换翻页会有延迟 -->
+        <Image
+          :key="row.ossId"
+          v-if="preview && isImageFile(row.url)"
+          :src="row.url"
+          height="50px"
+          :fallback="fallbackImageBase64"
+        >
+          <template #placeholder>
+            <div class="flex size-full items-center justify-center">
+              <Spin />
+            </div>
+          </template>
+        </Image>
+        <!-- pdf预览 使用浏览器开新窗口 -->
+        <span
+          v-else-if="preview && isPdfFile(row.url)"
+          class="icon-[vscode-icons--file-type-pdf2] size-10 cursor-pointer"
+          @click.stop="pdfPreview(row.url)"
+        ></span>
+        <span v-else>{{ row.url }}</span>
+      </template>
+
       <template #action="{ row }">
         <Space>
           <ghost-button
-            v-access:code="['domain:file:edit']"
-            @click.stop="handleEdit(row)"
+            v-access:code="['system:oss:download']"
+            @click="handleDownload(row)"
           >
-            {{ $t('pages.common.edit') }}
+            {{ $t('pages.common.download') }}
           </ghost-button>
           <Popconfirm
             :get-popup-container="getVxePopupContainer"
@@ -139,6 +263,7 @@ function handleMultiDelete() {
         </Space>
       </template>
     </BasicTable>
-    <FileModal @reload="tableApi.query()" />
+    <ImageUploadModal @reload="tableApi.query" />
+    <FileUploadModal @reload="tableApi.query" />
   </Page>
 </template>

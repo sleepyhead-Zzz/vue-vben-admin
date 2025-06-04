@@ -11,6 +11,7 @@ import { defineStore } from 'pinia';
 
 import { logoutApi } from '#/api';
 import { getLoginUserInfo, login } from '#/api/common/loginApi';
+import { $t } from '#/locales';
 import { router } from '#/router/index';
 
 export const useAuthStore = defineStore('auth', () => {

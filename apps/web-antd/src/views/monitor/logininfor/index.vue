@@ -104,13 +104,13 @@ function handleClear() {
 }
 
 async function handleDelete(row: MonitorAPI.LoginLogDTO) {
-  await removeLoginInfos({ ids: [row.infoId] });
+  await removeLoginInfos({ ids: [row.logId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: MonitorAPI.LoginLogDTO) => row.infoId);
+  const ids = rows.map((row: MonitorAPI.LoginLogDTO) => row.logId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

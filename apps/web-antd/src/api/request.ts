@@ -126,6 +126,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       if (code === 107 || code === 108 || code === 106) {
         if (isLogoutProcessing.value) {
           timeoutMsg = $t('http.loginTimeout'); // 这里给timeoutMsg赋值
+          notify.error(timeoutMsg);
           throw new Error(timeoutMsg);
         }
         isLogoutProcessing.value = true;

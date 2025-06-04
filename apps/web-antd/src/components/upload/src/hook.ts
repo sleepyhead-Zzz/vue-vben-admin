@@ -15,8 +15,7 @@ import type {
   UploadType,
 } from './props';
 
-import type { AxiosProgressEvent, UploadResult } from '#/api';
-import type { OssFile } from '#/api/system/oss/model';
+import type { AxiosProgressEvent, UploadResult } from '#/api/core/upload';
 
 import { computed, onUnmounted, ref, watch } from 'vue';
 
@@ -25,7 +24,7 @@ import { $t } from '@vben/locales';
 import { message, Modal } from 'ant-design-vue';
 import { isFunction, isString } from 'lodash-es';
 
-import { ossInfo } from '#/api/system/oss';
+import { listFileInfoByIds } from '#/api/system/wenjianshangchuan';
 
 /**
  * 图片预览hook
@@ -189,9 +188,9 @@ export function useUpload(
         }
         // 获取返回结果 为customRequest的reslove参数
         // 只有success才会走到这里
-        const { ossId, url } = currentFile.response as UploadResult;
+        const { fileId, url } = currentFile.response as UploadResult;
         currentFile.url = url;
-        currentFile.uid = ossId;
+        currentFile.uid = fileId;
 
         const cb = {
           type: 'upload',
@@ -205,14 +204,14 @@ export function useUpload(
         isUpload = true;
         // ossID添加 单个文件会被当做string
         if (props.maxCount === 1) {
-          bindValue.value = ossId;
+          bindValue.value = fileId;
         } else {
           // 给默认值
           if (!Array.isArray(bindValue.value)) {
             bindValue.value = [];
           }
           // 直接使用.value无法触发useForm的更新(原生是正常的) 需要修改地址
-          bindValue.value = [...bindValue.value, ossId];
+          bindValue.value = [...bindValue.value, fileId];
         }
         break;
       }
@@ -332,12 +331,12 @@ export function useUpload(
         return;
       }
 
-      const resp = await ossInfo(value);
-      function transformFile(info: OssFile) {
+      const resp = await listFileInfoByIds({ ossIds: value });
+      function transformFile(info: SystemAPI.SysFileDTO) {
         const cb = { type: 'info', response: info } as const;
 
         const fileitem: UploadFile = {
-          uid: info.ossId,
+          uid: info.fileId,
           name: transformFilename(cb),
           fileName: transformFilename(cb),
           url: info.url,

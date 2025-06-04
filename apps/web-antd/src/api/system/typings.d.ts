@@ -413,10 +413,6 @@ declare namespace SystemAPI {
     userId: number;
   };
 
-  type listByIdsParams = {
-    ossIds: number[];
-  };
-
   type listConfigParams = {
     /** 排序字段 */
     orderColumn?: string;
@@ -475,6 +471,10 @@ declare namespace SystemAPI {
     beginTime?: Date;
     /** 结束时间 */
     endTime?: Date;
+  };
+
+  type listFileInfoByIdsParams = {
+    ossIds: number[];
   };
 
   type listFileParams = {
@@ -1182,7 +1182,6 @@ declare namespace SystemAPI {
     createDept?: number;
     remark?: string;
     createTime?: string;
-    children?: SysMenuDTO[];
   };
 
   type SysNoticeDTO = {
@@ -1211,11 +1210,11 @@ declare namespace SystemAPI {
   };
 
   type TreeLong = {
-    config?: TreeNodeConfig;
-    parentId?: number;
-    weight?: Record<string, any>;
     name?: { empty?: boolean };
     id?: number;
+    parentId?: number;
+    config?: TreeNodeConfig;
+    weight?: Record<string, any>;
     empty?: boolean;
   };
 

@@ -4,11 +4,6 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'bucketName',
-    label: '',
-  },
-  {
-    component: 'Input',
     fieldName: 'fileName',
     label: '文件名',
   },
@@ -19,43 +14,8 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'originalName',
-    label: '',
-  },
-  {
-    component: 'Input',
-    fieldName: 'fileSize',
-    label: '文件大小',
-  },
-  {
-    component: 'Select',
-    componentProps: {},
-    fieldName: 'fileType',
-    label: '文件类型',
-  },
-  {
-    component: 'Input',
     fieldName: 'fileExtension',
     label: '文件扩展名',
-  },
-  {
-    component: 'Input',
-    fieldName: 'accessPolicy',
-    label: '',
-  },
-  {
-    component: 'Input',
-    fieldName: 'url',
-    label: '',
-  },
-  {
-    component: 'RadioGroup',
-    componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
-    },
-    fieldName: 'status',
-    label: '',
   },
 ];
 
@@ -64,23 +24,11 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: '',
-    field: 'fileId',
-  },
-  {
-    title: '',
-    field: 'bucketName',
-  },
-  {
     title: '文件名',
     field: 'fileName',
   },
   {
-    title: '文件存储路径',
-    field: 'filePath',
-  },
-  {
-    title: '',
+    title: '文件原名',
     field: 'originalName',
   },
   {
@@ -92,20 +40,19 @@ export const columns: VxeGridProps['columns'] = [
     field: 'fileType',
   },
   {
-    title: '文件扩展名',
-    field: 'fileExtension',
-  },
-  {
-    title: '',
-    field: 'accessPolicy',
-  },
-  {
-    title: '',
+    title: '文件预览',
     field: 'url',
+    showOverflow: true,
+    slots: { default: 'url' },
   },
   {
-    title: '',
-    field: 'status',
+    title: '创建时间',
+    field: 'createTime',
+    sortable: true,
+  },
+  {
+    title: '上传人',
+    field: 'creatorId',
   },
   {
     field: 'action',
