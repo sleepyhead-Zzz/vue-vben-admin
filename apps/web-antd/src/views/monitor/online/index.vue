@@ -11,6 +11,10 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Popconfirm } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import {
+  logoutOnlineUser,
+  onlineUsers,
+} from '#/api/monitor/sysUserOnlineController';
 
 import { columns, querySchema } from './data';
 
@@ -56,13 +60,9 @@ const gridOptions: VxeGridProps = {
 
 const [BasicTable, tableApi] = useVbenVxeGrid({ formOptions, gridOptions });
 
-async function handleForceOffline(row: API.OnlineUserDTO) {
-  await logoutOnlineUser(row.tokenId);
+async function handleForceOffline(row: MonitorAPI.OnlineUserDTO) {
+  await logoutOnlineUser({ tokenId: row.tokenId });
   await tableApi.query();
-}
-
-function onlineUsers() {
-  throw new Error('Function not implemented.');
 }
 </script>
 
