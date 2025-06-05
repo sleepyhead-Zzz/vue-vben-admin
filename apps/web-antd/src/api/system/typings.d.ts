@@ -1210,10 +1210,10 @@ declare namespace SystemAPI {
   };
 
   type TreeLong = {
+    config?: TreeNodeConfig;
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;
-    config?: TreeNodeConfig;
     weight?: Record<string, any>;
     empty?: boolean;
   };

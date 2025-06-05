@@ -36,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
       loginLoading.value = true;
 
       const response = await login(params);
+      console.log(response);
       const accessToken = response.data?.access_token;
       // 如果成功获取到 accessToken
       if (accessToken) {

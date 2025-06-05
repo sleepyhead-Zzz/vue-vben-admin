@@ -98,11 +98,8 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         response.config.responseType === 'blob' &&
         response.headers['content-type']?.includes?.('application/json')
       ) {
-        // 这时候的data为blob类型
         const blob = response.data as unknown as Blob;
-        // 拿到字符串转json对象
         response.data = JSON.parse(await blob.text());
-        // 然后按正常逻辑执行下面的代码(判断业务状态码)
       }
 
       const axiosResponseData = response.data;

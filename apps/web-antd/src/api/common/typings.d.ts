@@ -19,6 +19,12 @@ declare namespace CommonAPI {
     code: string;
   };
 
+  type CaptchaDTO = {
+    captchaEnabled?: boolean;
+    uuid?: string;
+    img?: string;
+  };
+
   type CurrentLoginUserDTO = {
     user?: UserDTO;
     permissions?: string[];
@@ -47,6 +53,12 @@ declare namespace CommonAPI {
     remark?: string;
     status?: string;
     createTime?: string;
+  };
+
+  type ResponseDTOCaptchaDTO = {
+    code?: number;
+    message?: string;
+    data?: CaptchaDTO;
   };
 
   type ResponseDTOCurrentLoginUserDTO = {

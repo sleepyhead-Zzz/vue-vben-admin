@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增参数配置表 POST /sysConfig */
 export async function addConfig(
   body: SystemAPI.AddConfigCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/sysConfig', {
-    method: 'POST',
+  return request<SystemAPI.ResponseDTOVoid>("/sysConfig", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,11 +21,11 @@ export async function addConfig(
 export async function getConfigInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getConfigInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { configId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOSysConfigDTO>(`/sysConfig/${param0}`, {
-    method: 'GET',
+    method: "GET",
     params: { ...queryParams },
     ...(options || {}),
   });
@@ -36,13 +36,13 @@ export async function editConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editConfigParams,
   body: SystemAPI.UpdateConfigCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { configId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/sysConfig/${param0}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     params: { ...queryParams },
     data: body,
@@ -54,10 +54,10 @@ export async function editConfig(
 export async function batchRemoveConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.batchRemoveConfigParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/sysConfig/batch-delete', {
-    method: 'DELETE',
+  return request<SystemAPI.ResponseDTOVoid>("/sysConfig/batch-delete", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -69,23 +69,23 @@ export async function batchRemoveConfig(
 export async function getConfigKey(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getConfigKeyParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { configKey: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOString>(
     `/sysConfig/configKey/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** 参数配置表下拉列表 GET /sysConfig/dropdown */
 export async function dropdownConfigList(options?: { [key: string]: any }) {
-  return request<SystemAPI.ResponseDTOListSysConfigVO>('/sysConfig/dropdown', {
-    method: 'GET',
+  return request<SystemAPI.ResponseDTOListSysConfigVO>("/sysConfig/dropdown", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -94,10 +94,10 @@ export async function dropdownConfigList(options?: { [key: string]: any }) {
 export async function listConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.listConfigParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOListSysConfigDTO>('/sysConfig/list', {
-    method: 'GET',
+  return request<SystemAPI.ResponseDTOListSysConfigDTO>("/sysConfig/list", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -109,10 +109,10 @@ export async function listConfig(
 export async function getPagedConfigs(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getPagedConfigsParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOPageDTOSysConfigDTO>('/sysConfig/page', {
-    method: 'GET',
+  return request<SystemAPI.ResponseDTOPageDTOSysConfigDTO>("/sysConfig/page", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -122,8 +122,8 @@ export async function getPagedConfigs(
 
 /** 此处后端没有提供注释 DELETE /sysConfig/refreshCache */
 export async function refreshCache(options?: { [key: string]: any }) {
-  return request<SystemAPI.ResponseDTOVoid>('/sysConfig/refreshCache', {
-    method: 'DELETE',
+  return request<SystemAPI.ResponseDTOVoid>("/sysConfig/refreshCache", {
+    method: "DELETE",
     ...(options || {}),
   });
 }
@@ -132,11 +132,11 @@ export async function refreshCache(options?: { [key: string]: any }) {
 export async function removeConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeConfigParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { configId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/sysConfig/remove/${param0}`, {
-    method: 'DELETE',
+    method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });
