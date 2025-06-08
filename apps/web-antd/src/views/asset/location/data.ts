@@ -1,6 +1,9 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -24,7 +27,10 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
+      options: getDictOptions('asset_location_type'),
+    },
     fieldName: 'locationType',
     label: '位置类型',
   },
@@ -33,11 +39,6 @@ export const querySchema: FormSchemaGetter = () => [
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
-  {
-    title: '位置ID',
-    field: 'locationId',
-    treeNode: true,
-  },
   {
     title: '位置名称',
     field: 'locationName',
@@ -57,6 +58,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '位置类型',
     field: 'locationType',
+    slots: {
+      default: ({ row }) => {
+        // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
+        return renderDict(row.locationType, 'asset_location_type');
+      },
+    },
   },
   {
     field: 'action',
@@ -102,6 +109,9 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '位置类型',
     fieldName: 'locationType',
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
+      options: getDictOptions('asset_location_type'),
+    },
   },
 ];

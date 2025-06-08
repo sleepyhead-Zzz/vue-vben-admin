@@ -69,7 +69,7 @@ export async function batchRemoveDevice(
 }
 
 /** 设备下拉列表 GET /asset/device/dropdown */
-export async function dropdownlistDevice(options?: { [key: string]: any }) {
+export async function dropDownListDevice(options?: { [key: string]: any }) {
   return request<AssetAPI.ResponseDTOListAssetDeviceVO>(
     "/asset/device/dropdown",
     {

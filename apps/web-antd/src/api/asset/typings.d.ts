@@ -1,4 +1,9 @@
 declare namespace AssetAPI {
+  type AddAssetCategoryCommand = {
+    /** 分类名称 */
+    categoryName?: string;
+  };
+
   type AddAssetDeviceCommand = {
     /** 设备名称 */
     deviceName?: string;
@@ -85,6 +90,30 @@ declare namespace AssetAPI {
   type AddAssetSpecificationCommand = {
     /** 规格型号名称 */
     specificationName?: string;
+    /** 资产分类ID */
+    categoryId?: number;
+  };
+
+  type AssetCategoryDTO = {
+    /** 分类ID */
+    categoryId?: number;
+    /** 分类名称 */
+    categoryName?: string;
+  };
+
+  type AssetCategoryQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+  };
+
+  type AssetCategoryVO = {
+    /** 分类ID */
+    categoryId?: number;
+    /** 分类名称 */
+    categoryName?: string;
   };
 
   type AssetDeviceDTO = {
@@ -316,6 +345,8 @@ declare namespace AssetAPI {
     specificationId?: number;
     /** 规格型号名称 */
     specificationName?: string;
+    /** 资产分类ID */
+    categoryId?: number;
   };
 
   type AssetSpecificationQuery = {
@@ -331,6 +362,12 @@ declare namespace AssetAPI {
     specificationId?: number;
     /** 规格型号名称 */
     specificationName?: string;
+    /** 资产分类ID */
+    categoryId?: number;
+  };
+
+  type batchRemoveCategoryParams = {
+    categoryIds: number[];
   };
 
   type batchRemoveDeviceParams = {
@@ -357,6 +394,10 @@ declare namespace AssetAPI {
     specificationIds: number[];
   };
 
+  type editCategoryParams = {
+    categoryId: number;
+  };
+
   type editDeviceParams = {
     deviceId: number;
   };
@@ -379,6 +420,10 @@ declare namespace AssetAPI {
 
   type editSpecificationParams = {
     specificationId: number;
+  };
+
+  type exportCategoryByExcelParams = {
+    query: AssetCategoryQuery;
   };
 
   type exportDeviceByExcelParams = {
@@ -405,6 +450,11 @@ declare namespace AssetAPI {
     query: AssetSpecificationQuery;
   };
 
+  type getCategoryInfoParams = {
+    /** 记录ID */
+    categoryId: number;
+  };
+
   type getDeviceInfoParams = {
     /** 记录ID */
     deviceId: number;
@@ -418,6 +468,21 @@ declare namespace AssetAPI {
   type getManufacturerInfoParams = {
     /** 记录ID */
     manufacturerId: number;
+  };
+
+  type getPagedCategorysParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type getPagedDevicesParams = {
@@ -525,6 +590,19 @@ declare namespace AssetAPI {
     specificationId: number;
   };
 
+  type listCategoryParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type listDeviceParams = {
     /** 排序字段 */
     orderColumn?: string;
@@ -603,6 +681,13 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
+  type PageDTOAssetCategoryDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: AssetCategoryDTO[];
+  };
+
   type PageDTOAssetDeviceDTO = {
     /** 总记录数 */
     total?: number;
@@ -645,6 +730,10 @@ declare namespace AssetAPI {
     rows?: AssetSpecificationDTO[];
   };
 
+  type removeCategoryParams = {
+    categoryId: number;
+  };
+
   type removeDeviceParams = {
     deviceId: number;
   };
@@ -667,6 +756,12 @@ declare namespace AssetAPI {
 
   type removeSpecificationParams = {
     specificationId: number;
+  };
+
+  type ResponseDTOAssetCategoryDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetCategoryDTO;
   };
 
   type ResponseDTOAssetDeviceDTO = {
@@ -703,6 +798,18 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetSpecificationDTO;
+  };
+
+  type ResponseDTOListAssetCategoryDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetCategoryDTO[];
+  };
+
+  type ResponseDTOListAssetCategoryVO = {
+    code?: number;
+    message?: string;
+    data?: AssetCategoryVO[];
   };
 
   type ResponseDTOListAssetDeviceDTO = {
@@ -777,6 +884,12 @@ declare namespace AssetAPI {
     data?: AssetSpecificationVO[];
   };
 
+  type ResponseDTOPageDTOAssetCategoryDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOAssetCategoryDTO;
+  };
+
   type ResponseDTOPageDTOAssetDeviceDTO = {
     code?: number;
     message?: string;
@@ -823,6 +936,12 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: Record<string, any>;
+  };
+
+  type UpdateAssetCategoryCommand = {
+    /** 分类名称 */
+    categoryName?: string;
+    categoryId?: number;
   };
 
   type UpdateAssetDeviceCommand = {
@@ -916,6 +1035,8 @@ declare namespace AssetAPI {
   type UpdateAssetSpecificationCommand = {
     /** 规格型号名称 */
     specificationName?: string;
+    /** 资产分类ID */
+    categoryId?: number;
     specificationId?: number;
   };
 }

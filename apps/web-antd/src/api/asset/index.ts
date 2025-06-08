@@ -8,6 +8,7 @@ import * as xunjianjihua from "./xunjianjihua";
 import * as shengchanchangshang from "./shengchanchangshang";
 import * as weizhi from "./weizhi";
 import * as shebao from "./shebao";
+import * as zichanfenlei from "./zichanfenlei";
 export default {
   guigexinghao,
   xunjianxiangmu,
@@ -15,4 +16,5 @@ export default {
   shengchanchangshang,
   weizhi,
   shebao,
+  zichanfenlei,
 };

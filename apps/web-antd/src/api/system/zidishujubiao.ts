@@ -17,25 +17,6 @@ export async function addDictData(
   });
 }
 
-/** 修改字典数据表 PUT /system/dict/data/${param0} */
-export async function editDictData(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.editDictDataParams,
-  body: SystemAPI.UpdateDictDataCommand,
-  options?: { [key: string]: any }
-) {
-  const { dictDataCode: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOVoid>(`/system/dict/data/${param0}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    params: { ...queryParams },
-    data: body,
-    ...(options || {}),
-  });
-}
-
 /** 获取字典数据表详情 GET /system/dict/data/${param0} */
 export async function getDictDataInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -51,6 +32,25 @@ export async function getDictDataInfo(
       ...(options || {}),
     }
   );
+}
+
+/** 修改字典数据表 PUT /system/dict/data/${param0} */
+export async function editDictData(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: SystemAPI.editDictDataParams,
+  body: SystemAPI.UpdateDictDataCommand,
+  options?: { [key: string]: any }
+) {
+  const { dictCode: param0, ...queryParams } = params;
+  return request<SystemAPI.ResponseDTOVoid>(`/system/dict/data/${param0}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
 }
 
 /** 批量删除字典数据表 DELETE /system/dict/data/batch-delete */

@@ -72,7 +72,7 @@ export async function batchRemoveSpecification(
 }
 
 /** 规格型号下拉列表 GET /asset/specification/dropdown */
-export async function dropdownlistSpecification(options?: {
+export async function dropDownListSpecification(options?: {
   [key: string]: any;
 }) {
   return request<AssetAPI.ResponseDTOListAssetSpecificationVO>(

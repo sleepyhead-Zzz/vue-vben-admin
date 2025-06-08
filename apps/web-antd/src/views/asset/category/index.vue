@@ -11,14 +11,14 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveSpecification,
-  exportSpecificationByExcel,
-  getPagedSpecifications,
-} from '#/api/asset/guigexinghao';
+  batchRemoveCategory,
+  exportCategoryByExcel,
+  getPagedCategorys,
+} from '#/api/asset/zichanfenlei';
 import { commonDownloadExcel } from '#/utils/file/download';
 
+import categoryModal from './category-modal.vue';
 import { columns, querySchema } from './data';
-import specificationModal from './specification-modal.vue';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -58,7 +58,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedSpecifications({
+        const { data } = await getPagedCategorys({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -68,10 +68,10 @@ const gridOptions: VxeGridProps = {
     },
   },
   rowConfig: {
-    keyField: 'specificationId',
+    keyField: 'categoryId',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'asset-specification-index',
+  id: 'asset-category-index',
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -79,8 +79,8 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   gridOptions,
 });
 
-const [SpecificationModal, modalApi] = useVbenModal({
-  connectedComponent: specificationModal,
+const [CategoryModal, modalApi] = useVbenModal({
+  connectedComponent: categoryModal,
 });
 
 function handleAdd() {
@@ -88,27 +88,25 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(row: AssetAPI.AssetSpecificationDTO) {
-  modalApi.setData({ id: row.specificationId });
+async function handleEdit(row: AssetAPI.AssetCategoryDTO) {
+  modalApi.setData({ id: row.categoryId });
   modalApi.open();
 }
 
-async function handleDelete(row: AssetAPI.AssetSpecificationDTO) {
-  await batchRemoveSpecification({ specificationIds: [row.specificationId] });
+async function handleDelete(row: AssetAPI.AssetCategoryDTO) {
+  await batchRemoveCategory({ categoryIds: [row.categoryId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map(
-    (row: AssetAPI.AssetSpecificationDTO) => row.specificationId,
-  );
+  const ids = rows.map((row: AssetAPI.AssetCategoryDTO) => row.categoryId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveSpecification({ specificationIds: ids });
+      await batchRemoveCategory({ categoryIds: ids });
       await tableApi.query();
     },
   });
@@ -116,8 +114,8 @@ function handleMultiDelete() {
 
 function handleDownloadExcel() {
   commonDownloadExcel(
-    exportSpecificationByExcel,
-    '规格型号数据',
+    exportCategoryByExcel,
+    '资产分类数据',
     tableApi.formApi.form.values,
     {
       fieldMappingTime: formOptions.fieldMappingTime,
@@ -128,11 +126,11 @@ function handleDownloadExcel() {
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="规格型号列表">
+    <BasicTable table-title="资产分类列表">
       <template #toolbar-tools>
         <Space>
           <a-button
-            v-access:code="['asset:specification:export']"
+            v-access:code="['asset:category:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
@@ -141,14 +139,14 @@ function handleDownloadExcel() {
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary"
-            v-access:code="['asset:specification:remove']"
+            v-access:code="['asset:category:remove']"
             @click="handleMultiDelete"
           >
             {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
             type="primary"
-            v-access:code="['asset:specification:add']"
+            v-access:code="['asset:category:add']"
             @click="handleAdd"
           >
             {{ $t('pages.common.add') }}
@@ -158,7 +156,7 @@ function handleDownloadExcel() {
       <template #action="{ row }">
         <Space>
           <ghost-button
-            v-access:code="['asset:specification:edit']"
+            v-access:code="['asset:category:edit']"
             @click.stop="handleEdit(row)"
           >
             {{ $t('pages.common.edit') }}
@@ -171,7 +169,7 @@ function handleDownloadExcel() {
           >
             <ghost-button
               danger
-              v-access:code="['asset:specification:remove']"
+              v-access:code="['asset:category:remove']"
               @click.stop=""
             >
               {{ $t('pages.common.delete') }}
@@ -180,6 +178,6 @@ function handleDownloadExcel() {
         </Space>
       </template>
     </BasicTable>
-    <SpecificationModal @reload="tableApi.query()" />
+    <CategoryModal @reload="tableApi.query()" />
   </Page>
 </template>
