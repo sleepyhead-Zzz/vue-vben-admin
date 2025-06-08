@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from "#/api/request";
 
-/** 新增位置 POST /asset/location */
-export async function addLocation(
-  body: AssetAPI.AddAssetLocationCommand,
+/** 新增巡检计划 POST /asset/plan */
+export async function addPlan(
+  body: AssetAPI.AddAssetInspectionPlanCommand,
   options?: { [key: string]: any }
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/location", {
+  return request<AssetAPI.ResponseDTOVoid>("/asset/plan", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,15 +17,15 @@ export async function addLocation(
   });
 }
 
-/** 获取位置详情 GET /asset/location/${param0} */
-export async function getLocationInfo(
+/** 获取巡检计划详情 GET /asset/plan/${param0} */
+export async function getPlanInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getLocationInfoParams,
+  params: AssetAPI.getPlanInfoParams,
   options?: { [key: string]: any }
 ) {
-  const { locationId: param0, ...queryParams } = params;
-  return request<AssetAPI.ResponseDTOAssetLocationDTO>(
-    `/asset/location/${param0}`,
+  const { planId: param0, ...queryParams } = params;
+  return request<AssetAPI.ResponseDTOAssetInspectionPlanDTO>(
+    `/asset/plan/${param0}`,
     {
       method: "GET",
       params: { ...queryParams },
@@ -34,15 +34,15 @@ export async function getLocationInfo(
   );
 }
 
-/** 修改位置 PUT /asset/location/${param0} */
-export async function editLocation(
+/** 修改巡检计划 PUT /asset/plan/${param0} */
+export async function editPlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.editLocationParams,
-  body: AssetAPI.UpdateAssetLocationCommand,
+  params: AssetAPI.editPlanParams,
+  body: AssetAPI.UpdateAssetInspectionPlanCommand,
   options?: { [key: string]: any }
 ) {
-  const { locationId: param0, ...queryParams } = params;
-  return request<AssetAPI.ResponseDTOVoid>(`/asset/location/${param0}`, {
+  const { planId: param0, ...queryParams } = params;
+  return request<AssetAPI.ResponseDTOVoid>(`/asset/plan/${param0}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -53,13 +53,13 @@ export async function editLocation(
   });
 }
 
-/** 批量删除位置 DELETE /asset/location/batch-delete */
-export async function batchRemoveLocation(
+/** 批量删除巡检计划 DELETE /asset/plan/batch-delete */
+export async function batchRemovePlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveLocationParams,
+  params: AssetAPI.batchRemovePlanParams,
   options?: { [key: string]: any }
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/location/batch-delete", {
+  return request<AssetAPI.ResponseDTOVoid>("/asset/plan/batch-delete", {
     method: "DELETE",
     params: {
       ...params,
@@ -68,10 +68,10 @@ export async function batchRemoveLocation(
   });
 }
 
-/** 位置下拉列表 GET /asset/location/dropdown */
-export async function dropdownlistLocation(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetLocationVO>(
-    "/asset/location/dropdown",
+/** 巡检计划下拉列表 GET /asset/plan/dropdown */
+export async function dropdownlistPlan(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListAssetInspectionPlanVO>(
+    "/asset/plan/dropdown",
     {
       method: "GET",
       ...(options || {}),
@@ -79,13 +79,13 @@ export async function dropdownlistLocation(options?: { [key: string]: any }) {
   );
 }
 
-/** 位置列表导出 GET /asset/location/excel */
-export async function exportLocationByExcel(
+/** 巡检计划列表导出 GET /asset/plan/excel */
+export async function exportPlanByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.exportLocationByExcelParams,
+  params: AssetAPI.exportPlanByExcelParams,
   options?: { [key: string]: any }
 ) {
-  return request<any>("/asset/location/excel", {
+  return request<any>("/asset/plan/excel", {
     method: "GET",
     params: {
       ...params,
@@ -96,16 +96,16 @@ export async function exportLocationByExcel(
   });
 }
 
-/** 位置导入excel下载 GET /asset/location/excelTemplate */
-export async function downloadExcelTemplate4(options?: { [key: string]: any }) {
-  return request<any>("/asset/location/excelTemplate", {
+/** 巡检计划导入excel下载 GET /asset/plan/excelTemplate */
+export async function downloadExcelTemplate2(options?: { [key: string]: any }) {
+  return request<any>("/asset/plan/excelTemplate", {
     method: "GET",
     ...(options || {}),
   });
 }
 
-/** 位置列表导入 POST /asset/location/importData */
-export async function importLocationByExcel(
+/** 巡检计划列表导入 POST /asset/plan/importData */
+export async function importPlanByExcel(
   body: {
     updateSupport?: boolean;
   },
@@ -134,7 +134,7 @@ export async function importLocationByExcel(
     }
   });
 
-  return request<AssetAPI.ResponseDTOString>("/asset/location/importData", {
+  return request<AssetAPI.ResponseDTOString>("/asset/plan/importData", {
     method: "POST",
     data: formData,
     requestType: "form",
@@ -142,14 +142,14 @@ export async function importLocationByExcel(
   });
 }
 
-/** 获取位置列表 GET /asset/location/list */
-export async function listLocation(
+/** 获取巡检计划列表 GET /asset/plan/list */
+export async function listPlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listLocationParams,
+  params: AssetAPI.listPlanParams,
   options?: { [key: string]: any }
 ) {
-  return request<AssetAPI.ResponseDTOListAssetLocationDTO>(
-    "/asset/location/list",
+  return request<AssetAPI.ResponseDTOListAssetInspectionPlanDTO>(
+    "/asset/plan/list",
     {
       method: "GET",
       params: {
@@ -160,14 +160,14 @@ export async function listLocation(
   );
 }
 
-/** 分页获取位置列表 GET /asset/location/page */
-export async function getPagedLocations(
+/** 分页获取巡检计划列表 GET /asset/plan/page */
+export async function getPagedPlans(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedLocationsParams,
+  params: AssetAPI.getPagedPlansParams,
   options?: { [key: string]: any }
 ) {
-  return request<AssetAPI.ResponseDTOPageDTOAssetLocationDTO>(
-    "/asset/location/page",
+  return request<AssetAPI.ResponseDTOPageDTOAssetInspectionPlanDTO>(
+    "/asset/plan/page",
     {
       method: "GET",
       params: {
@@ -178,14 +178,14 @@ export async function getPagedLocations(
   );
 }
 
-/** 删除位置 DELETE /asset/location/remove/${param0} */
-export async function removeLocation(
+/** 删除巡检计划 DELETE /asset/plan/remove/${param0} */
+export async function removePlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeLocationParams,
+  params: AssetAPI.removePlanParams,
   options?: { [key: string]: any }
 ) {
-  const { locationId: param0, ...queryParams } = params;
-  return request<AssetAPI.ResponseDTOVoid>(`/asset/location/remove/${param0}`, {
+  const { planId: param0, ...queryParams } = params;
+  return request<AssetAPI.ResponseDTOVoid>(`/asset/plan/remove/${param0}`, {
     method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),

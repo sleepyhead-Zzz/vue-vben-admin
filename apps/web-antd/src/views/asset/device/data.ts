@@ -1,0 +1,231 @@
+import type { FormSchemaGetter } from '#/adapter/form';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+
+export const querySchema: FormSchemaGetter = () => [
+  {
+    component: 'Input',
+    fieldName: 'deviceName',
+    label: '设备名称',
+  },
+  {
+    component: 'Input',
+    fieldName: 'deviceCode',
+    label: '设备编码',
+  },
+  {
+    component: 'RadioGroup',
+    componentProps: {
+      buttonStyle: 'solid',
+      optionType: 'button',
+    },
+    fieldName: 'status',
+    label: '设备状态',
+  },
+
+  {
+    component: 'Input',
+    fieldName: 'specificationId',
+    label: '设备规格型号',
+  },
+  {
+    component: 'Input',
+    fieldName: 'managementDeptId',
+    label: '管理部门',
+  },
+  {
+    component: 'Input',
+    fieldName: 'usageDeptId',
+    label: '使用部门',
+  },
+  {
+    component: 'Input',
+    fieldName: 'manufacturerId',
+    label: '生产厂商',
+  },
+  {
+    component: 'Input',
+    fieldName: 'locationId',
+    label: '设备存放位置',
+  },
+  {
+    component: 'Input',
+    fieldName: 'inspectionPlanId',
+    label: '巡检方案',
+  },
+];
+
+// 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
+// export const columns: () => VxeGridProps['columns'] = () => [
+export const columns: VxeGridProps['columns'] = [
+  { type: 'checkbox', width: 60 },
+  {
+    title: '设备ID',
+    field: 'deviceId',
+  },
+  {
+    title: '设备名称',
+    field: 'deviceName',
+  },
+  {
+    title: '设备编码',
+    field: 'deviceCode',
+  },
+  {
+    title: '设备状态',
+    field: 'status',
+  },
+  {
+    title: '图片文件ID',
+    field: 'imageFileId',
+  },
+  {
+    title: '技术手册文件ID',
+    field: 'manualFileId',
+  },
+  {
+    title: '设备规格型号',
+    field: 'specificationId',
+  },
+  {
+    title: '管理部门',
+    field: 'managementDeptId',
+  },
+  {
+    title: '使用部门',
+    field: 'usageDeptId',
+  },
+  {
+    title: '生产厂商',
+    field: 'manufacturerId',
+  },
+  {
+    title: '设备存放位置',
+    field: 'locationId',
+  },
+  {
+    title: '巡检方案',
+    field: 'inspectionPlanId',
+  },
+  {
+    title: '购买日期',
+    field: 'purchaseDate',
+  },
+  {
+    title: '启用日期',
+    field: 'activationDate',
+  },
+  {
+    title: '最近维修时间',
+    field: 'lastRepaired',
+  },
+  {
+    field: 'action',
+    fixed: 'right',
+    slots: { default: 'action' },
+    title: '操作',
+    width: 180,
+  },
+];
+
+export const modalSchema: FormSchemaGetter = () => [
+  {
+    label: '设备ID',
+    fieldName: 'deviceId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '设备名称',
+    fieldName: 'deviceName',
+    component: 'Input',
+    rules: 'required',
+  },
+  {
+    label: '设备编码',
+    fieldName: 'deviceCode',
+    component: 'Input',
+    rules: 'required',
+  },
+  {
+    label: '设备状态',
+    fieldName: 'status',
+    component: 'RadioGroup',
+    componentProps: {
+      buttonStyle: 'solid',
+      optionType: 'button',
+    },
+  },
+  {
+    label: '图片文件ID',
+    fieldName: 'imageFileId',
+    component: 'Input',
+  },
+  {
+    label: '技术手册文件ID',
+    fieldName: 'manualFileId',
+    component: 'Input',
+  },
+  {
+    label: '设备规格型号',
+    fieldName: 'specificationId',
+    component: 'Input',
+  },
+  {
+    label: '管理部门',
+    fieldName: 'managementDeptId',
+    component: 'Input',
+  },
+  {
+    label: '使用部门',
+    fieldName: 'usageDeptId',
+    component: 'Input',
+  },
+  {
+    label: '生产厂商',
+    fieldName: 'manufacturerId',
+    component: 'Input',
+  },
+  {
+    label: '设备存放位置',
+    fieldName: 'locationId',
+    component: 'Input',
+  },
+  {
+    label: '巡检方案',
+    fieldName: 'inspectionPlanId',
+    component: 'Input',
+  },
+  {
+    label: '购买日期',
+    fieldName: 'purchaseDate',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+    },
+  },
+  {
+    label: '启用日期',
+    fieldName: 'activationDate',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+    },
+  },
+  {
+    label: '最近维修时间',
+    fieldName: 'lastRepaired',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+    },
+  },
+];

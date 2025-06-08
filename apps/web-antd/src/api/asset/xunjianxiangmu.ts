@@ -97,7 +97,7 @@ export async function exportProjectByExcel(
 }
 
 /** 巡检项目导入excel下载 GET /asset/project/excelTemplate */
-export async function downloadExcelTemplate(options?: { [key: string]: any }) {
+export async function downloadExcelTemplate1(options?: { [key: string]: any }) {
   return request<any>("/asset/project/excelTemplate", {
     method: "GET",
     ...(options || {}),
