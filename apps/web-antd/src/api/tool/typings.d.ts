@@ -96,8 +96,8 @@ declare namespace ToolAPI {
     usableColumn?: boolean;
     superColumn?: boolean;
     increment?: boolean;
-    query?: boolean;
     capJavaField?: string;
+    query?: boolean;
   };
 
   type GenTableDTO = {
@@ -126,6 +126,10 @@ declare namespace ToolAPI {
     menuIds?: number[];
     parentMenuId?: number;
     parentMenuName?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新时间 */
+    updateTime?: string;
   };
 
   type GenTableEntity = {

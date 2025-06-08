@@ -40,4 +40,11 @@ export default [
     projectName: 'tool',
     namespace: 'ToolAPI',
   },
+  {
+    ...commonConfig,
+    schemaPath: 'http://192.168.3.144:8080/dev-api/v3/api-docs/AssetAPI',
+    serversPath: './src/api',
+    projectName: 'asset',
+    namespace: 'AssetAPI',
+  },
 ];

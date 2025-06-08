@@ -94,12 +94,24 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
        * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
        * 当type为blob且content-type为application/json时 则判断已经下载出错
        */
-      if (
-        response.config.responseType === 'blob' &&
-        response.headers['content-type']?.includes?.('application/json')
-      ) {
-        const blob = response.data as unknown as Blob;
-        response.data = JSON.parse(await blob.text());
+      // ✅ 检测是否是错误 JSON 而不是实际文件
+      if (response.config.responseType === 'blob') {
+        const contentType = response.headers['content-type'];
+
+        // ✅ 如果返回的是 JSON，说明是错误信息
+        if (contentType && contentType.includes('application/json')) {
+          const blob = response.data as unknown as Blob;
+          const text = await blob.text();
+          try {
+            response.data = JSON.parse(text); // 只在确定是 JSON 时解析
+          } catch (err) {
+            notify.error('JSON 解析失败:' + err);
+            throw new Error('下载失败，且返回的错误信息格式错误');
+          }
+        } else {
+          // ✅ 返回的是正常 blob，直接返回，不再解析为 JSON
+          return response;
+        }
       }
 
       const axiosResponseData = response.data;
@@ -139,7 +151,6 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         throw new Error(_msg);
       } else {
         notify.error(message);
-
         throw new Error(message);
       }
     },

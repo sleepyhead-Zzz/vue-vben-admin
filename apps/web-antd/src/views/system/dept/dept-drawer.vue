@@ -52,6 +52,7 @@ async function getDeptTree(deptId?: number | string, exclude = false) {
   const treeData = listToTree(ret, { id: 'deptId', pid: 'parentId' });
   // 添加部门名称 如 xx-xx-xx
   addFullName(treeData, 'deptName', ' / ');
+
   return treeData;
 }
 
