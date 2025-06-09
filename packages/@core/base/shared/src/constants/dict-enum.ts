@@ -12,7 +12,9 @@ export const DictEnum = {
   SYS_YES_NO: 'sys_yes_no', // 是否
   WF_BUSINESS_STATUS: 'wf_business_status', // 业务状态
   WF_FORM_TYPE: 'wf_form_type', // 表单类型
-  WF_TASK_STATUS: 'wf_task_status', // 任务状态
+  WF_TASK_STATUS: 'wf_task_status', // 任务状态,
+  ASSET_LOCATION_TYPE: 'asset_location_type',
+  ASSET_DEVICE_STATUS: 'asset_device_status',
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;

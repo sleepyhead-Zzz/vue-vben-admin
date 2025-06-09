@@ -1,6 +1,8 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { getPopupContainer } from '@vben/utils';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -27,8 +29,8 @@ export const columns: VxeGridProps['columns'] = [
     field: 'specificationName',
   },
   {
-    title: '资产分类ID',
-    field: 'categoryId',
+    title: '资产分类名称',
+    field: 'categoryName',
   },
   {
     field: 'action',
@@ -56,8 +58,13 @@ export const modalSchema: FormSchemaGetter = () => [
     rules: 'required',
   },
   {
-    label: '资产分类ID',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+    },
     fieldName: 'categoryId',
-    component: 'Input',
+    label: '资产分类ID',
   },
 ];

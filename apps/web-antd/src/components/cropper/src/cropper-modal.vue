@@ -25,7 +25,7 @@ const props = defineProps({
   src: { default: '', type: String },
   uploadApi: {
     required: true,
-    type: Function as PropType<(params: apiFunParams) => Promise<any>>,
+    type: Function as PropType<(formData: FormData) => Promise<any>>,
   },
 });
 
@@ -106,9 +106,11 @@ async function handleOk() {
       return;
     }
     const blob = dataURLtoBlob(previewSource.value);
+    const formData = new FormData();
+    formData.append('file', blob, filename);
     try {
       modalLoading(true);
-      const result = await uploadApi({ file: blob, filename, name: 'file' });
+      const result = await uploadApi(blob);
       emit('uploadSuccess', { data: result.url, source: previewSource.value });
       modalApi.close();
     } finally {

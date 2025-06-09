@@ -21,6 +21,14 @@ import { $t } from '@vben/locales';
 
 import { notification } from 'ant-design-vue';
 
+const FileUpload = defineAsyncComponent(() =>
+  import('#/components/upload').then((res) => res.FileUpload),
+);
+
+const ImageUpload = defineAsyncComponent(() =>
+  import('#/components/upload').then((res) => res.ImageUpload),
+);
+
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
 );
@@ -112,7 +120,9 @@ export type ComponentType =
   | 'DatePicker'
   | 'DefaultButton'
   | 'Divider'
+  | 'FileUpload'
   | 'IconPicker'
+  | 'ImageUpload'
   | 'Input'
   | 'InputNumber'
   | 'InputPassword'
@@ -195,6 +205,8 @@ async function initComponentAdapter() {
     Switch,
     Textarea: withDefaultPlaceholder(Textarea, 'input'),
     TimePicker,
+    ImageUpload,
+    FileUpload,
     TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
     Upload,
   };

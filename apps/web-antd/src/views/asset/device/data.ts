@@ -1,6 +1,11 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -13,10 +18,9 @@ export const querySchema: FormSchemaGetter = () => [
     label: '设备编码',
   },
   {
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.ASSET_DEVICE_STATUS),
     },
     fieldName: 'status',
     label: '设备状态',
@@ -73,6 +77,13 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '设备状态',
     field: 'status',
+    resizable: false,
+    width: 'auto',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.status, DictEnum.ASSET_DEVICE_STATUS);
+      },
+    },
   },
   {
     title: '图片文件ID',
@@ -152,16 +163,19 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '设备状态',
     fieldName: 'status',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.ASSET_DEVICE_STATUS),
     },
   },
+
   {
-    label: '图片文件ID',
+    component: 'ImageUpload',
     fieldName: 'imageFileId',
-    component: 'Input',
+    label: '图片文件ID',
+    componentProps: {
+      maxCount: 1,
+    },
   },
   {
     label: '技术手册文件ID',

@@ -1,6 +1,8 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
@@ -29,7 +31,7 @@ export const querySchema: FormSchemaGetter = () => [
     component: 'Select',
     componentProps: {
       // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
-      options: getDictOptions('asset_location_type'),
+      options: getDictOptions(DictEnum.ASSET_LOCATION_TYPE),
     },
     fieldName: 'locationType',
     label: '位置类型',
@@ -42,18 +44,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '位置名称',
     field: 'locationName',
+    treeNode: true,
   },
-  {
-    title: '父位置ID',
-    field: 'parentLocationId',
-  },
+
   {
     title: '位置编码',
     field: 'locationCode',
-  },
-  {
-    title: '位置描述',
-    field: 'description',
   },
   {
     title: '位置类型',
@@ -61,7 +57,7 @@ export const columns: VxeGridProps['columns'] = [
     slots: {
       default: ({ row }) => {
         // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
-        return renderDict(row.locationType, 'asset_location_type');
+        return renderDict(row.locationType, DictEnum.ASSET_LOCATION_TYPE);
       },
     },
   },
