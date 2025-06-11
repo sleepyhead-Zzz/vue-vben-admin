@@ -94,6 +94,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
        * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
        * 当type为blob且content-type为application/json时 则判断已经下载出错
        */
+
       // ✅ 检测是否是错误 JSON 而不是实际文件
       if (response.config.responseType === 'blob') {
         const contentType = response.headers['content-type'];

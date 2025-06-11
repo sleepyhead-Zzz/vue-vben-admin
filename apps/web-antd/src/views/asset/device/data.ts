@@ -65,6 +65,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '设备ID',
     field: 'deviceId',
+    visible: false,
   },
   {
     title: '设备名称',
@@ -88,6 +89,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '图片文件ID',
     field: 'imageFileId',
+    visible: false,
+  },
+  {
+    title: '设备图片',
+    field: 'imageUrl',
+    slots: { default: 'imageFile' },
   },
   {
     title: '技术手册文件ID',
@@ -144,7 +151,7 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'deviceId',
     component: 'Input',
     dependencies: {
-      show: () => false,
+      show: () => true,
       triggerFields: [''],
     },
   },
@@ -167,6 +174,7 @@ export const modalSchema: FormSchemaGetter = () => [
     componentProps: {
       options: getDictOptions(DictEnum.ASSET_DEVICE_STATUS),
     },
+    rules: 'required',
   },
 
   {
@@ -176,11 +184,17 @@ export const modalSchema: FormSchemaGetter = () => [
     componentProps: {
       maxCount: 1,
     },
+    rules: 'required',
   },
+
   {
-    label: '技术手册文件ID',
+    component: 'FileUpload',
     fieldName: 'manualFileId',
-    component: 'Input',
+    label: '技术手册文件ID',
+    componentProps: {
+      maxCount: 1,
+    },
+    rules: 'required',
   },
   {
     label: '设备规格型号',

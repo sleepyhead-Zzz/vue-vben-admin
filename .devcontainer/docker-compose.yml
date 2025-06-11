@@ -4,6 +4,7 @@ services:
     volumes:
       - ${PNPM_STORE_PATH}/.cache/pnpm-store:/root/.pnpm-store:cached
       - ../:/workspace
+      - /home/sleepyhead/Code/:/Code
     env_file:
       - .env
     network_mode: host

@@ -20,12 +20,9 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import { downloadFile } from '#/api/core/download';
 import { getConfigKey } from '#/api/system/canshupeizhibiao';
-import {
-  batchRemoveFile,
-  download,
-  getPagedFiles,
-} from '#/api/system/wenjianshangchuan';
+import { batchRemoveFile, getPagedFiles } from '#/api/system/wenjianshangchuan';
 import { $t } from '#/locales';
 import { calculateFileSize } from '#/utils/file';
 import { downloadByData } from '#/utils/file/download';
@@ -109,17 +106,17 @@ async function handleDownload(row: SystemAPI.SysFileDTO) {
     duration: 0,
   });
   try {
-    const data = await download({ fileId: row.fileId }, (e) => {
-      // 计算下载进度
+    const { data } = await downloadFile({ fileId: row.fileId }, (e) => {
       const percent = Math.floor((e.loaded / e.total!) * 100);
-      // 已经下载
       const current = calculateFileSize(e.loaded);
-      // 总大小
       const total = calculateFileSize(e.total!);
       downloadSize.value = `已下载: ${current}/${total} (${percent}%)`;
     });
+
     downloadByData(data, row.originalName);
     message.success('下载完成');
+  } catch {
+    message.error('下载失败，请稍后再试');
   } finally {
     hideLoading();
   }

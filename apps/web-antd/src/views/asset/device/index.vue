@@ -6,7 +6,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { getVxePopupContainer } from '@vben/utils';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
+import { Avatar, Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
@@ -152,6 +152,11 @@ function handleDownloadExcel() {
           </a-button>
         </Space>
       </template>
+
+      <template #imageFile="{ row }">
+        <Avatar :src="row.imageUrl" />
+      </template>
+
       <template #action="{ row }">
         <Space>
           <ghost-button

@@ -188,7 +188,7 @@ export function useUpload(
         }
         // 获取返回结果 为customRequest的reslove参数
         // 只有success才会走到这里
-        const { fileId, url } = currentFile.response as UploadResult;
+        const { fileId, url } = currentFile.response.data as UploadResult;
         currentFile.url = url;
         currentFile.uid = fileId;
 

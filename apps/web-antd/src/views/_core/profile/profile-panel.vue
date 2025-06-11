@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from 'ant-design-vue';
 
-import { updateAvatar } from '#/api/system/sysProfileApi';
+import { uploadAvatarApi } from '#/api/core/user';
 import { CropperAvatar } from '#/components/cropper';
 
 const props = defineProps<{ profile?: SystemAPI.UserProfileDTO }>();
@@ -39,7 +39,7 @@ const poetrySrc = computed(() => {
         <Tooltip title="点击上传头像">
           <CropperAvatar
             :show-btn="false"
-            :upload-api="updateAvatar"
+            :upload-api="uploadAvatarApi"
             :value="avatar"
             width="120"
             @change="$emit('uploadFinish')"
