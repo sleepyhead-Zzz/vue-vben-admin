@@ -2,6 +2,7 @@ import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { DictEnum } from '@vben/constants';
+import { getPopupContainer } from '@vben/utils';
 
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
@@ -86,20 +87,13 @@ export const columns: VxeGridProps['columns'] = [
       },
     },
   },
-  {
-    title: '图片文件ID',
-    field: 'imageFileId',
-    visible: false,
-  },
+
   {
     title: '设备图片',
     field: 'imageUrl',
     slots: { default: 'imageFile' },
   },
-  {
-    title: '技术手册文件ID',
-    field: 'manualFileId',
-  },
+
   {
     title: '设备规格型号',
     field: 'specificationId',
@@ -180,7 +174,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     component: 'ImageUpload',
     fieldName: 'imageFileId',
-    label: '图片文件ID',
+    label: '设备封面图片',
     componentProps: {
       maxCount: 1,
     },
@@ -190,16 +184,21 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     component: 'FileUpload',
     fieldName: 'manualFileId',
-    label: '技术手册文件ID',
+    label: '技术手册文件',
     componentProps: {
       maxCount: 1,
     },
     rules: 'required',
   },
   {
-    label: '设备规格型号',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+    },
     fieldName: 'specificationId',
-    component: 'Input',
+    label: '设备规格型号',
   },
   {
     label: '管理部门',
@@ -211,10 +210,16 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'usageDeptId',
     component: 'Input',
   },
+
   {
-    label: '生产厂商',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+    },
     fieldName: 'manufacturerId',
-    component: 'Input',
+    label: '生产厂商',
   },
   {
     label: '设备存放位置',

@@ -6,7 +6,9 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
+import { dropDownListSpecification } from '#/api/asset/guigexinghao';
 import { addDevice, editDevice, getDeviceInfo } from '#/api/asset/shebao';
+import { dropdownlistManufacturer } from '#/api/asset/shengchanchangshang';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -56,6 +58,33 @@ const [BasicModal, modalApi] = useVbenModal({
 
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
+
+    const specificationList = await dropDownListSpecification();
+
+    const manufactureList = await dropdownlistManufacturer();
+
+    formApi.updateSchema([
+      {
+        componentProps: {
+          optionLabelProp: 'label',
+          options: specificationList.data.map((item) => ({
+            label: item.specificationName,
+            value: item.specificationId,
+          })),
+        },
+        fieldName: 'specificationId',
+      },
+      {
+        componentProps: {
+          optionLabelProp: 'label',
+          options: manufactureList.data.map((item) => ({
+            label: item.manufacturerName,
+            value: item.manufacturerId,
+          })),
+        },
+        fieldName: 'manufacturerId',
+      },
+    ]);
 
     if (isUpdate.value && id) {
       const record = await getDeviceInfo({ deviceId: id });
