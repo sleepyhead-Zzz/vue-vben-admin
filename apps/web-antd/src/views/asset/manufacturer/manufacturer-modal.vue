@@ -10,7 +10,7 @@ import {
   addManufacturer,
   editManufacturer,
   getManufacturerInfo,
-} from '#/api/asset/shengchanchangshang';
+} from '#/api/asset/manufacturer';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

@@ -10,7 +10,7 @@ import { notification } from 'ant-design-vue';
 import { defineStore } from 'pinia';
 
 import { logoutApi } from '#/api';
-import { getLoginUserInfo, login } from '#/api/common/loginApi';
+import { getLoginUserInfo, login } from '#/api/common/login';
 import { $t } from '#/locales';
 import { router } from '#/router/index';
 
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
       loginLoading.value = true;
 
       const response = await login(params);
-      console.log(response);
+
       const accessToken = response.data?.access_token;
       // 如果成功获取到 accessToken
       if (accessToken) {

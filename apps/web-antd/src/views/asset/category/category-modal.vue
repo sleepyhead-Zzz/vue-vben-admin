@@ -10,7 +10,7 @@ import {
   addCategory,
   editCategory,
   getCategoryInfo,
-} from '#/api/asset/zichanfenlei';
+} from '#/api/asset/category';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

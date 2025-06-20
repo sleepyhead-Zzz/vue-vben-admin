@@ -16,7 +16,7 @@ import {
   editLocation,
   getLocationInfo,
   listLocation,
-} from '#/api/asset/weizhi';
+} from '#/api/asset/location';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

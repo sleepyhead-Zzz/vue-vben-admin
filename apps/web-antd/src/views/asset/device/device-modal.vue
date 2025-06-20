@@ -6,9 +6,9 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { dropDownListSpecification } from '#/api/asset/guigexinghao';
-import { addDevice, editDevice, getDeviceInfo } from '#/api/asset/shebao';
-import { dropdownlistManufacturer } from '#/api/asset/shengchanchangshang';
+import { dropDownListSpecification } from '#/api/asset/specification';
+import { addDevice, editDevice, getDeviceInfo } from '#/api/asset/device';
+import { dropdownlistManufacturer } from '#/api/asset/manufacturer';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

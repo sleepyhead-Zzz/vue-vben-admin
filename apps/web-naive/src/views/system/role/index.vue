@@ -13,11 +13,7 @@ import { NButton, NSpace } from 'naive-ui';
 
 import { dialog } from '#/adapter/naive';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  changeRoleStatus,
-  getPagedRole,
-  removeRole,
-} from '#/api/system/sysRoleApi';
+import { changeRoleStatus, getPagedRole, removeRole } from '#/api/system/role';
 import { GhostButton } from '#/components/global/button';
 import { TableSwitch } from '#/components/table';
 

@@ -297,21 +297,6 @@ declare namespace AssetAPI {
     endTime?: string;
   };
 
-  type AssetLocationVO = {
-    /** 位置ID */
-    locationId?: number;
-    /** 位置名称 */
-    locationName?: string;
-    /** 父位置ID */
-    parentLocationId?: number;
-    /** 位置编码 */
-    locationCode?: string;
-    /** 位置描述 */
-    description?: string;
-    /** 位置类型 */
-    locationType?: string;
-  };
-
   type AssetManufacturerDTO = {
     /** 生产厂商ID */
     manufacturerId?: number;
@@ -858,12 +843,6 @@ declare namespace AssetAPI {
     data?: AssetLocationDTO[];
   };
 
-  type ResponseDTOListAssetLocationVO = {
-    code?: number;
-    message?: string;
-    data?: AssetLocationVO[];
-  };
-
   type ResponseDTOListAssetManufacturerDTO = {
     code?: number;
     message?: string;
@@ -886,6 +865,12 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetSpecificationVO[];
+  };
+
+  type ResponseDTOListTreeLong = {
+    code?: number;
+    message?: string;
+    data?: TreeLong[];
   };
 
   type ResponseDTOPageDTOAssetCategoryDTO = {
@@ -940,6 +925,24 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: Record<string, any>;
+  };
+
+  type TreeLong = {
+    weight?: Record<string, any>;
+    config?: TreeNodeConfig;
+    name?: { empty?: boolean };
+    id?: number;
+    parentId?: number;
+    empty?: boolean;
+  };
+
+  type TreeNodeConfig = {
+    idKey?: string;
+    parentIdKey?: string;
+    weightKey?: string;
+    nameKey?: string;
+    childrenKey?: string;
+    deep?: number;
   };
 
   type UpdateAssetCategoryCommand = {

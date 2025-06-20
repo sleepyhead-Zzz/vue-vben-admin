@@ -6,7 +6,7 @@ import { useVbenModal, z } from '@vben/common-ui';
 import { Descriptions, DescriptionsItem } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { resetPassword } from '#/api/system/sysUserApi';
+import { resetPassword } from '#/api/system/user';
 
 const emit = defineEmits<{ reload: [] }>();
 

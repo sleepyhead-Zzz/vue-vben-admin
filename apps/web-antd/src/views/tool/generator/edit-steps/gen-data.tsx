@@ -8,7 +8,7 @@ import { getPopupContainer } from '@vben/utils';
 
 import { Checkbox, Input, Select } from 'ant-design-vue';
 
-import { dropdownDictTypeList } from '#/api/system/zidileixingbiao';
+import { dropdownDictTypeList } from '#/api/system/dictType';
 
 const JavaTypes: string[] = [
   'Long',

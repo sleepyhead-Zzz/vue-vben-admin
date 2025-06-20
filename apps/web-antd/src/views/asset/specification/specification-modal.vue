@@ -10,8 +10,8 @@ import {
   addSpecification,
   editSpecification,
   getSpecificationInfo,
-} from '#/api/asset/guigexinghao';
-import { dropDownListCategory } from '#/api/asset/zichanfenlei';
+} from '#/api/asset/specification';
+import { dropDownListCategory } from '#/api/asset/category';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

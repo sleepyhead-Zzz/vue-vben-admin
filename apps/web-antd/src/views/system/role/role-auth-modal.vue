@@ -5,11 +5,7 @@ import { useVbenModal } from '@vben/common-ui';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  dataScope,
-  getRoleInfo,
-  roleDeptTreeSelect,
-} from '#/api/system/sysRoleApi';
+import { dataScope, getRoleInfo, roleDeptTreeSelect } from '#/api/system/role';
 import { TreeSelectPanel } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 

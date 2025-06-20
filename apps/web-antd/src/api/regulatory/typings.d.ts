@@ -7,9 +7,10 @@ declare namespace RegulatoryAPI {
     /** 资产描述，例如材质、颜色等详细信息 */
     description?: string;
     /** 管理部门，例如：物业、办公室 */
-    department?: string;
+    manageDeptId?: number;
     /** 房间号 */
     locationId?: number;
+    creatorId?: number;
   };
 
   type batchRemoveFurnitureParams = {
@@ -74,9 +75,13 @@ declare namespace RegulatoryAPI {
     /** 资产描述，例如材质、颜色等详细信息 */
     description?: string;
     /** 管理部门，例如：物业、办公室 */
-    department?: string;
+    managerDeptId?: number;
+    /** 管理部门，例如：物业、办公室 */
+    manageDeptName?: string;
     /** 房间号 */
     locationId?: number;
+    /** 房间号 */
+    locationName?: string;
   };
 
   type RegFurnitureQuery = {
@@ -150,9 +155,11 @@ declare namespace RegulatoryAPI {
     /** 资产描述，例如材质、颜色等详细信息 */
     description?: string;
     /** 管理部门，例如：物业、办公室 */
-    department?: string;
+    manageDeptId?: number;
     /** 房间号 */
     locationId?: number;
+    creatorId?: number;
     furnitureId?: number;
+    updaterId?: number;
   };
 }

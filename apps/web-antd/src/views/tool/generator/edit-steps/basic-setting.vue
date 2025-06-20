@@ -11,7 +11,7 @@ import { addFullName, listToTree } from '@vben/utils';
 
 import { Col, Row } from 'ant-design-vue';
 
-import { listMenu } from '#/api/system/sysMenuApi';
+import { listMenu } from '#/api/system/menu';
 
 import { formSchema } from './basic';
 

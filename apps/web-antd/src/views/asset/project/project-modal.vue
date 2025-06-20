@@ -6,11 +6,7 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  addProject,
-  editProject,
-  getProjectInfo,
-} from '#/api/asset/xunjianxiangmu';
+import { addProject, editProject, getProjectInfo } from '#/api/asset/project';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

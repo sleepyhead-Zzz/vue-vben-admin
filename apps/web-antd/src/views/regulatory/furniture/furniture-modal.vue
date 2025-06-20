@@ -6,13 +6,13 @@ import { $t } from '@vben/locales';
 import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { dropdownlistLocation } from '#/api/asset/weizhi';
+import { dropdownlistLocation } from '#/api/asset/location';
 import {
   addFurniture,
   editFurniture,
   getFurnitureInfo,
-} from '#/api/regulatory/jiaju';
-import { dropdownDeptList } from '#/api/system/sysDeptApi';
+} from '#/api/regulatory/furniture';
+import { dropdownDeptList } from '#/api/system/dept';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -144,7 +144,7 @@ async function setupDeptSelect() {
         // 选中后显示在输入框的值
         treeNodeLabelProp: 'fullName',
       }),
-      fieldName: 'department',
+      fieldName: 'manageDeptId',
     },
   ]);
 }

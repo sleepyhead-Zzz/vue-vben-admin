@@ -6,11 +6,7 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  addConfig,
-  editConfig,
-  getConfigInfo,
-} from '#/api/system/canshupeizhibiao';
+import { addConfig, editConfig, getConfigInfo } from '#/api/system/config';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

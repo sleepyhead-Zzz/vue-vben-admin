@@ -11,7 +11,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { getPagedPost, removePost } from '#/api/system/sysPostApi';
+import { getPagedPost, removePost } from '#/api/system/post';
 import DeptTree from '#/views/system/user/dept-tree.vue';
 
 import { columns, querySchema } from './data';

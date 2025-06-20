@@ -109,7 +109,8 @@ export interface DownloadExcelOptions {
  * @param options 下载选项
  */
 export async function commonDownloadExcel(
-  api: (data?: any, options?: any) => Promise<Blob>,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  api: Function,
   fileName: string,
   requestData: any = {},
   options: DownloadExcelOptions = {},
@@ -117,14 +118,28 @@ export async function commonDownloadExcel(
   const hideLoading = message.loading($t('pages.common.downloadLoading'), 0);
   try {
     const { withRandomName = true, fieldMappingTime } = options;
-    // 需要处理时间字段映射
-    const data = await api(
-      handleRangeTimeValue(requestData, fieldMappingTime),
-      { responseType: 'blob' },
-    );
+    const params = handleRangeTimeValue(requestData, fieldMappingTime);
+
+    let data;
+    // 判断 api 函数参数数量
+    if (api.length === 1) {
+      // 只有一个参数，接口签名类似：api(options?)
+      data = await api({
+        params,
+        responseType: 'blob',
+      });
+    } else if (api.length >= 2) {
+      // 两个参数，接口签名类似：api(params, options?)
+      data = await api(params, {
+        responseType: 'blob',
+      });
+    } else {
+      throw new Error('不支持的接口签名');
+    }
+
     downloadExcelFile(data, fileName, withRandomName);
   } catch (error) {
-    console.error(error);
+    console.error('下载失败:', error);
   } finally {
     hideLoading();
   }

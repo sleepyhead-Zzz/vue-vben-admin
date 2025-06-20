@@ -4,11 +4,15 @@ import type { UploadFile } from 'ant-design-vue/es/upload/interface';
 import { h, ref, unref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
-import { InBoxIcon } from '@vben/icons';
+import { ExcelIcon, InBoxIcon } from '@vben/icons';
 
 import { Modal, Switch, Upload } from 'ant-design-vue';
 
-import { importUserByExcel } from '#/api/system/sysUserApi';
+import {
+  downloadExcelTemplate,
+  importFurnitureByExcel,
+} from '#/api/regulatory/furniture';
+import { commonDownloadExcel } from '#/utils/file/download';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -29,11 +33,14 @@ async function handleSubmit() {
       handleCancel();
       return;
     }
-    const data = {
-      file: fileList.value[0]!.originFileObj as Blob,
-      updateSupport: unref(checked),
-    };
-    const { code, message } = await importUserByExcel({ file: data });
+    const file = fileList.value[0]!.originFileObj as File; // 注意类型用 File
+    const updateSupport = unref(checked);
+
+    const { code, message } = await importFurnitureByExcel(
+      { updateSupport }, // 这是 body
+      file, // 这是文件
+    );
+
     let modal = Modal.success;
     if (code === 200) {
       emit('reload');
@@ -67,7 +74,7 @@ function handleCancel() {
   <BasicModal
     :close-on-click-modal="false"
     :fullscreen-button="false"
-    title="家具导入"
+    title="用户导入"
   >
     <!-- z-index不设置会遮挡模板下载loading -->
     <!-- 手动处理 而不是放入文件就上传 -->
@@ -86,16 +93,15 @@ function handleCancel() {
     <div class="mt-2 flex flex-col gap-2">
       <div class="flex items-center gap-2">
         <span>允许导入xlsx, xls文件</span>
-        <!-- /todo -->
-        <!-- <a-button
+        <a-button
           type="link"
-          @click="commonDownloadExcel(downloadImportTemplate, '用户导入模板')"
+          @click="commonDownloadExcel(downloadExcelTemplate, '家具导入模板')"
         >
           <div class="flex items-center gap-[4px]">
             <ExcelIcon />
             <span>下载模板</span>
           </div>
-        </a-button> -->
+        </a-button>
       </div>
       <div class="flex items-center gap-2">
         <span :class="{ 'text-red-500': checked }">

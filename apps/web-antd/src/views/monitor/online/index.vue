@@ -11,10 +11,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Popconfirm } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import {
-  logoutOnlineUser,
-  onlineUsers,
-} from '#/api/monitor/sysUserOnlineController';
+import { logoutOnlineUser, onlineUsers } from '#/api/monitor/online';
 
 import { columns, querySchema } from './data';
 

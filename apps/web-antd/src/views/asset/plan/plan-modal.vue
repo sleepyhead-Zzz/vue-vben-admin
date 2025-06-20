@@ -6,7 +6,7 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { addPlan, editPlan, getPlanInfo } from '#/api/asset/xunjianjihua';
+import { addPlan, editPlan, getPlanInfo } from '#/api/asset/plan';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';

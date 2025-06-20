@@ -14,7 +14,7 @@ import {
   batchRemoveSpecification,
   exportSpecificationByExcel,
   getPagedSpecifications,
-} from '#/api/asset/guigexinghao';
+} from '#/api/asset/specification';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';

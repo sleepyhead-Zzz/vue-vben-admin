@@ -11,12 +11,7 @@ import {
 } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import {
-  addMenu,
-  editMenu,
-  getMenuInfo,
-  listMenu,
-} from '#/api/system/sysMenuApi';
+import { addMenu, editMenu, getMenuInfo, listMenu } from '#/api/system/menu';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';

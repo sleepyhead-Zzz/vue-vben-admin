@@ -14,7 +14,7 @@ import {
   batchRemoveCategory,
   exportCategoryByExcel,
   getPagedCategorys,
-} from '#/api/asset/zichanfenlei';
+} from '#/api/asset/category';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import categoryModal from './category-modal.vue';

@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { getUserDetailInfo } from '#/api/system/sysUserApi';
+import { getUserDetailInfo } from '#/api/system/user';
 import { renderDict } from '#/utils/render';
 
 dayjs.extend(duration);

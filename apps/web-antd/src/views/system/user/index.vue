@@ -22,11 +22,7 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  exportUserByExcel,
-  getPagedUser,
-  removeUser,
-} from '#/api/system/sysUserApi';
+import { exportUserByExcel, getPagedUser, removeUser } from '#/api/system/user';
 import { TableSwitch } from '#/components/table';
 import { commonDownloadExcel } from '#/utils/file/download';
 

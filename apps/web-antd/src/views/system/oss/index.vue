@@ -21,8 +21,8 @@ import {
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import { downloadFile } from '#/api/core/download';
-import { getConfigKey } from '#/api/system/canshupeizhibiao';
-import { batchRemoveFile, getPagedFiles } from '#/api/system/wenjianshangchuan';
+import { getConfigKey } from '#/api/system/config';
+import { batchRemoveFile, getPagedFiles } from '#/api/system/file';
 import { $t } from '#/locales';
 import { calculateFileSize } from '#/utils/file';
 import { downloadByData } from '#/utils/file/download';

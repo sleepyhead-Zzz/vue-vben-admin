@@ -12,7 +12,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listMenu, removeMenu } from '#/api/system/sysMenuApi';
+import { listMenu, removeMenu } from '#/api/system/menu';
 
 import { columns, querySchema } from './data';
 import menuDrawer from './menu-drawer.vue';

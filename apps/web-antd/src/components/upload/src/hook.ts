@@ -24,7 +24,7 @@ import { $t } from '@vben/locales';
 import { message, Modal } from 'ant-design-vue';
 import { isFunction, isString } from 'lodash-es';
 
-import { listFileInfoByIds } from '#/api/system/wenjianshangchuan';
+import { listFileInfoByIds } from '#/api/system/file';
 
 /**
  * 图片预览hook

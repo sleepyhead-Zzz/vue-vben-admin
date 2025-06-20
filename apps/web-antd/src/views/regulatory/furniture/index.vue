@@ -14,7 +14,7 @@ import {
   batchRemoveFurniture,
   exportFurnitureByExcel,
   getPagedFurnitures,
-} from '#/api/regulatory/jiaju';
+} from '#/api/regulatory/furniture';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';

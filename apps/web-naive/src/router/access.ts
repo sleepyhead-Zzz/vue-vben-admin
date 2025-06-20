@@ -10,7 +10,7 @@ import { preferences } from '@vben/preferences';
 import { cloneDeep } from 'lodash-es';
 
 import { message } from '#/adapter/naive';
-import { getRouters } from '#/api/common/loginApi';
+import { getRouters } from '#/api/common/login';
 import { BasicLayout, IFrameView } from '#/layouts';
 import { $t } from '#/locales';
 

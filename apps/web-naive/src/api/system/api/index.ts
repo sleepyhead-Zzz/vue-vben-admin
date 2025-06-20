@@ -2,19 +2,19 @@
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
-import * as sysUserApi from './sysUserApi';
+import * as user from './user';
 import * as sysProfileApi from './sysProfileApi';
-import * as sysRoleApi from './sysRoleApi';
+import * as role from './role';
 import * as sysPostApi from './sysPostApi';
-import * as sysMenuApi from './sysMenuApi';
-import * as sysDeptApi from './sysDeptApi';
-import * as sysLogsApi from './sysLogsApi';
+import * as menu from './menu';
+import * as dept from './dept';
+import * as logs from './logs';
 export default {
-  sysUserApi,
+  user,
   sysProfileApi,
-  sysRoleApi,
+  role,
   sysPostApi,
-  sysMenuApi,
-  sysDeptApi,
-  sysLogsApi,
+  menu,
+  dept,
+  logs,
 };

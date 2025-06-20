@@ -6,7 +6,7 @@ import { onMounted, ref } from 'vue';
 import { SyncOutlined } from '@ant-design/icons-vue';
 import { Empty, InputSearch, Skeleton, Tree } from 'ant-design-vue';
 
-import { dropdownDeptList } from '#/api/system/sysDeptApi';
+import { dropdownDeptList } from '#/api/system/dept';
 
 defineOptions({ inheritAttrs: false });
 
@@ -112,7 +112,7 @@ onMounted(loadTree);
             @select="$emit('select')"
           >
             <template #title="{ label }">
-              <span v-if="label.indexOf(searchValue) > -1">
+              <span v-if="label.includes(searchValue)">
                 {{ label.substring(0, label.indexOf(searchValue)) }}
                 <span style="color: #f50">{{ searchValue }}</span>
                 {{

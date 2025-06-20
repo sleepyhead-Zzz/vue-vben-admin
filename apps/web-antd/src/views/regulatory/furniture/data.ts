@@ -15,7 +15,7 @@ export const querySchema: FormSchemaGetter = () => [
 
   {
     component: 'Input',
-    fieldName: 'department',
+    fieldName: 'manageDeptId',
     label: '管理部门',
   },
   {
@@ -31,7 +31,7 @@ export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
     title: '主键ID',
-    field: 'id',
+    field: 'furnitureId',
   },
   {
     title: '资产编号',
@@ -47,7 +47,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '管理部门',
-    field: 'department',
+    field: 'manageDeptId',
   },
   {
     title: '位置',
@@ -65,7 +65,7 @@ export const columns: VxeGridProps['columns'] = [
 export const modalSchema: FormSchemaGetter = () => [
   {
     label: '主键ID',
-    fieldName: 'id',
+    fieldName: 'furnitureId',
     component: 'Input',
     dependencies: {
       show: () => false,
@@ -93,7 +93,7 @@ export const modalSchema: FormSchemaGetter = () => [
     component: 'TreeSelect',
     // 在drawer里更新 这里不需要默认的componentProps
     defaultValue: undefined,
-    fieldName: 'department',
+    fieldName: 'manageDeptId',
     label: '所属部门',
     rules: 'selectRequired',
   },

@@ -15,7 +15,7 @@ import {
   allocatedUserList,
   cancelAuthUser,
   cancelAuthUserAll,
-} from '#/api/system/sysRoleApi';
+} from '#/api/system/role';
 
 import { columns, querySchema } from './data';
 import roleAssignDrawer from './role-assign-drawer.vue';

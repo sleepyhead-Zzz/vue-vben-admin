@@ -8,7 +8,7 @@ import { $t } from '@vben/locales';
 
 import { omit } from 'lodash-es';
 
-import { getCaptchaCode } from '#/api/common/captchaApi';
+import { getCaptchaCode } from '#/api/common/captcha';
 import { useAuthStore } from '#/store';
 
 defineOptions({ name: 'Login' });

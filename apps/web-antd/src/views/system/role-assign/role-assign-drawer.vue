@@ -8,10 +8,7 @@ import { useRoute } from 'vue-router';
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import {
-  selectAuthUserAll,
-  unallocatedUserList,
-} from '#/api/system/sysRoleApi';
+import { selectAuthUserAll, unallocatedUserList } from '#/api/system/role';
 
 import { columns, querySchema } from './data';
 

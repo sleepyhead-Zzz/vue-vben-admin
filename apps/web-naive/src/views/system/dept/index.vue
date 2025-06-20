@@ -11,7 +11,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { NButton, NPopconfirm, NSpace } from 'naive-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listDept, removeDept } from '#/api/system/sysDeptApi';
+import { listDept, removeDept } from '#/api/system/dept';
 import { GhostButton } from '#/components/global/button';
 
 import { columns, querySchema } from './data';

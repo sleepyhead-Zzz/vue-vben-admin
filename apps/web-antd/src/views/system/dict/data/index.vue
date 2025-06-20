@@ -16,7 +16,7 @@ import {
   batchRemoveDictData,
   getPagedDictData,
   removeDictData,
-} from '#/api/system/zidishujubiao';
+} from '#/api/system/dictData';
 
 import { emitter } from '../mitt';
 import { columns, querySchema } from './data';

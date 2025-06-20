@@ -16,7 +16,7 @@ import {
   getPagedLoginInfo,
   loginInfosExcel,
   removeLoginInfos,
-} from '#/api/monitor/sysLogsApi';
+} from '#/api/monitor/logs';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { confirmDeleteModal } from '#/utils/modal';
 

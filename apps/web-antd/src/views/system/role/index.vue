@@ -20,11 +20,7 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  changeRoleStatus,
-  getPagedRole,
-  removeRole,
-} from '#/api/system/sysRoleApi';
+import { changeRoleStatus, getPagedRole, removeRole } from '#/api/system/role';
 import { TableSwitch } from '#/components/table';
 
 import { columns, querySchema } from './data';

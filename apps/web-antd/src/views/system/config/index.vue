@@ -14,7 +14,7 @@ import {
   getPagedConfigs,
   refreshCache,
   removeConfig,
-} from '#/api/system/canshupeizhibiao';
+} from '#/api/system/config';
 
 import configModal from './config-modal.vue';
 import { columns, querySchema } from './data';

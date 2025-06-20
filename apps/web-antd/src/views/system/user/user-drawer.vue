@@ -8,10 +8,10 @@ import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 import { Tag } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { getConfigKey } from '#/api/system/canshupeizhibiao';
-import { dropdownDeptList } from '#/api/system/sysDeptApi';
-import { optionSelectPost } from '#/api/system/sysPostApi';
-import { addUser, editUser, getUserDetailInfo } from '#/api/system/sysUserApi';
+import { getConfigKey } from '#/api/system/config';
+import { dropdownDeptList } from '#/api/system/dept';
+import { optionSelectPost } from '#/api/system/post';
+import { addUser, editUser, getUserDetailInfo } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 import { authScopeOptions } from '#/views/system/role/data';
 

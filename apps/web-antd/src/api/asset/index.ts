@@ -2,19 +2,19 @@
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
-import * as guigexinghao from "./guigexinghao";
-import * as xunjianxiangmu from "./xunjianxiangmu";
-import * as xunjianjihua from "./xunjianjihua";
-import * as shengchanchangshang from "./shengchanchangshang";
-import * as weizhi from "./weizhi";
-import * as shebao from "./shebao";
-import * as zichanfenlei from "./zichanfenlei";
+import * as specification from "./specification";
+import * as project from "./project";
+import * as plan from "./plan";
+import * as manufacturer from "./manufacturer";
+import * as location from "./location";
+import * as device from "./device";
+import * as category from "./category";
 export default {
-  guigexinghao,
-  xunjianxiangmu,
-  xunjianjihua,
-  shengchanchangshang,
-  weizhi,
-  shebao,
-  zichanfenlei,
+  specification,
+  project,
+  plan,
+  manufacturer,
+  location,
+  device,
+  category,
 };

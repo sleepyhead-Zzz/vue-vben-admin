@@ -11,7 +11,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listDept } from '#/api/system/sysDeptApi';
+import { listDept } from '#/api/system/dept';
 
 import { columns, querySchema } from './data';
 import deptDrawer from './dept-drawer.vue';

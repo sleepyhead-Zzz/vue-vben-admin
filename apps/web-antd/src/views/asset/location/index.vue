@@ -11,7 +11,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { batchRemoveLocation, listLocation } from '#/api/asset/weizhi';
+import { batchRemoveLocation, listLocation } from '#/api/asset/location';
 
 import { columns, querySchema } from './data';
 import locationModal from './location-modal.vue';

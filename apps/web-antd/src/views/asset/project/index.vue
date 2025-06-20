@@ -13,7 +13,7 @@ import {
   batchRemoveProject,
   exportProjectByExcel,
   getPagedProjects,
-} from '#/api/asset/xunjianxiangmu';
+} from '#/api/asset/project';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';

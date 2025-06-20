@@ -13,7 +13,7 @@ import {
   batchRemoveManufacturer,
   exportManufacturerByExcel,
   getPagedManufacturers,
-} from '#/api/asset/shengchanchangshang';
+} from '#/api/asset/manufacturer';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';

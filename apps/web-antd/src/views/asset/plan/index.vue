@@ -14,7 +14,7 @@ import {
   batchRemovePlan,
   exportPlanByExcel,
   getPagedPlans,
-} from '#/api/asset/xunjianjihua';
+} from '#/api/asset/plan';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';

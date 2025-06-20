@@ -2,13 +2,13 @@
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
-import * as loginApi from "./loginApi";
+import * as login from "./login";
 import * as weChatMinAppAuthApi from "./weChatMinAppAuthApi";
 import * as weChatOAuthApi from "./weChatOAuthApi";
-import * as captchaApi from "./captchaApi";
+import * as captcha from "./captcha";
 export default {
-  loginApi,
+  login,
   weChatMinAppAuthApi,
   weChatOAuthApi,
-  captchaApi,
+  captcha,
 };

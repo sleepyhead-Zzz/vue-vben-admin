@@ -19,7 +19,7 @@ import {
   operationLogs,
   operationLogsExcel,
   removeOperationLogs,
-} from '#/api/monitor/sysLogsApi';
+} from '#/api/monitor/logs';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { confirmDeleteModal } from '#/utils/modal';
 

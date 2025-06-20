@@ -1,10 +1,8 @@
 import type {
-  AxiosRequestConfig,
   HttpResponse,
+  RequestClientConfig,
   RequestClientOptions,
 } from '@vben/request';
-
-import { ref } from 'vue';
 
 import { useAppConfig } from '@vben/hooks';
 import { $t } from '@vben/locales';
@@ -23,8 +21,7 @@ import { refreshTokenApi } from './core';
 
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
-// 使用 useRef 等管理状态
-const isLogoutProcessing = ref(false);
+let isLogoutProcessing = false;
 
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   const client = new RequestClient({ ...options, baseURL });
@@ -89,13 +86,12 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
 
   // 响应拦截器
   client.addResponseInterceptor<HttpResponse>({
+    //@ts-ignore
     fulfilled: async (response) => {
       /**
        * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
        * 当type为blob且content-type为application/json时 则判断已经下载出错
        */
-
-      // ✅ 检测是否是错误 JSON 而不是实际文件
       if (response.config.responseType === 'blob') {
         const contentType = response.headers['content-type'];
 
@@ -110,8 +106,7 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
             throw new Error('下载失败，且返回的错误信息格式错误');
           }
         } else {
-          // ✅ 返回的是正常 blob，直接返回，不再解析为 JSON
-          return response;
+          return response.data;
         }
       }
 
@@ -134,19 +129,19 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       let timeoutMsg = '';
 
       if (code === 107 || code === 108 || code === 106) {
-        if (isLogoutProcessing.value) {
+        if (isLogoutProcessing) {
           timeoutMsg = $t('http.loginTimeout'); // 这里给timeoutMsg赋值
           notify.error(timeoutMsg);
           throw new Error(timeoutMsg);
         }
-        isLogoutProcessing.value = true;
+        isLogoutProcessing = true;
 
         const _msg = $t('http.loginTimeout');
         const userStore = useAuthStore();
 
         // 注销后处理
         userStore.logout().finally(() => {
-          isLogoutProcessing.value = false; // 正确地设置为false
+          isLogoutProcessing = false; // 正确地设置为false
         });
 
         throw new Error(_msg);
@@ -171,16 +166,13 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   return client;
 }
 
-export const requestClient = createRequestClient(apiURL, {
-  responseReturn: 'data',
-});
+export const requestClient = createRequestClient(apiURL);
 
-const request = async <T = any>(
-  url: string,
-  options: AxiosRequestConfig & { requestType?: 'form' | 'json' } = {},
-) => {
-  return await requestClient.request<T>(url, options);
-};
 export const baseRequestClient = new RequestClient({ baseURL: apiURL });
 
-export default request;
+export default function request<T = any>(
+  url: string,
+  config: RequestClientConfig,
+): Promise<T> {
+  return requestClient.request<T>(url, config);
+}

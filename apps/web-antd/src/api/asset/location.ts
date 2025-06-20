@@ -70,13 +70,10 @@ export async function batchRemoveLocation(
 
 /** 位置下拉列表 GET /asset/location/dropdown */
 export async function dropdownlistLocation(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetLocationVO>(
-    "/asset/location/dropdown",
-    {
-      method: "GET",
-      ...(options || {}),
-    }
-  );
+  return request<AssetAPI.ResponseDTOListTreeLong>("/asset/location/dropdown", {
+    method: "GET",
+    ...(options || {}),
+  });
 }
 
 /** 位置列表导出 GET /asset/location/excel */

@@ -2,11 +2,11 @@
 /* eslint-disable */
 // API 更新时间：
 // API 唯一标识：
-import * as sysUserOnlineController from "./sysUserOnlineController";
-import * as sysLogsApi from "./sysLogsApi";
-import * as cacheController from "./cacheController";
+import * as online from "./online";
+import * as logs from "./logs";
+import * as cache from "./cache";
 export default {
-  sysUserOnlineController,
-  sysLogsApi,
-  cacheController,
+  online,
+  logs,
+  cache,
 };

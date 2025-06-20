@@ -13,7 +13,7 @@ import {
   batchRemoveDevice,
   exportDeviceByExcel,
   getPagedDevices,
-} from '#/api/asset/shebao';
+} from '#/api/asset/device';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
