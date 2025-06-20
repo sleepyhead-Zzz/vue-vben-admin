@@ -1214,11 +1214,11 @@ declare namespace SystemAPI {
   };
 
   type TreeLong = {
+    weight?: Record<string, any>;
     config?: TreeNodeConfig;
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;
-    weight?: Record<string, any>;
     empty?: boolean;
   };
 

@@ -127,6 +127,8 @@ declare namespace AssetAPI {
     status?: string;
     /** 图片文件ID */
     imageFileId?: number;
+    /** 图片文件ID */
+    imageUrl?: string;
     /** 技术手册文件ID */
     manualFileId?: number;
     /** 设备规格型号 */
@@ -347,6 +349,8 @@ declare namespace AssetAPI {
     specificationName?: string;
     /** 资产分类ID */
     categoryId?: number;
+    /** 资产分类名称 */
+    categoryName?: string;
   };
 
   type AssetSpecificationQuery = {
