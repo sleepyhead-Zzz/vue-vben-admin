@@ -6,7 +6,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { useVbenModal } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { dataList, importTableSave } from '#/api/tool/generatorApi';
+import { dataList, importTableSave } from '#/api/tool/generator';
 
 const emit = defineEmits<{ reload: [] }>();
 

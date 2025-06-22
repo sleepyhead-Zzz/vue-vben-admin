@@ -22,7 +22,7 @@ import {
 import { useClipboard } from '@vueuse/core';
 import { Alert, Skeleton, Tree } from 'ant-design-vue';
 
-import { preview } from '#/api/tool/generatorApi';
+import { preview } from '#/api/tool/generator';
 
 interface TreeNode {
   children: TreeNode[];

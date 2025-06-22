@@ -13,6 +13,7 @@ import {
   importFurnitureByExcel,
 } from '#/api/regulatory/furniture';
 import { commonDownloadExcel } from '#/utils/file/download';
+import { commonUploadFile } from '#/utils/file/upload';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -36,27 +37,47 @@ async function handleSubmit() {
     const file = fileList.value[0]!.originFileObj as File; // 注意类型用 File
     const updateSupport = unref(checked);
 
-    const { code, message } = await importFurnitureByExcel(
-      { updateSupport }, // 这是 body
-      file, // 这是文件
+    const response = await commonUploadFile(
+      importFurnitureByExcel,
+      file,
+      {
+        updateSupport,
+      },
+      {
+        onProgress: (percent) => console.log('上传进度:', percent),
+      },
     );
 
-    let modal = Modal.success;
-    if (code === 200) {
-      emit('reload');
-    } else {
-      modal = Modal.error;
-    }
-    handleCancel();
+    const { message } = response.data;
+    const modal = Modal.success;
+
+    emit('reload');
+
     modal({
       content: h('div', {
         class: 'max-h-[260px] overflow-y-auto',
-        innerHTML: message, // 后台已经处理xss问题
+        innerHTML: message,
       }),
       title: '提示',
+      onOk: () => {
+        handleCancel();
+      },
     });
   } catch (error) {
-    console.warn(error);
+    const modal = Modal.error;
+
+    emit('reload');
+
+    modal({
+      content: h('div', {
+        class: 'max-h-[260px] overflow-y-auto',
+        innerHTML: error.message,
+      }),
+      title: '提示',
+      onOk: () => {
+        handleCancel();
+      },
+    });
     modalApi.close();
   } finally {
     modalApi.modalLoading(false);

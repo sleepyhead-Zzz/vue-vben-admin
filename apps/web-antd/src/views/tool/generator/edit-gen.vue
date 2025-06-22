@@ -8,7 +8,7 @@ import { cloneDeep, safeParseNumber } from '@vben/utils';
 
 import { Card, Skeleton, TabPane, Tabs } from 'ant-design-vue';
 
-import { editSave, getInfo } from '#/api/tool/generatorApi';
+import { editSave, getInfo } from '#/api/tool/generator';
 
 import { BasicSetting, GenConfig } from './edit-steps';
 

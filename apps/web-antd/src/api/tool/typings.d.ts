@@ -95,9 +95,9 @@ declare namespace ToolAPI {
     edit?: boolean;
     usableColumn?: boolean;
     superColumn?: boolean;
-    query?: boolean;
     increment?: boolean;
     capJavaField?: string;
+    query?: boolean;
   };
 
   type GenTableDTO = {
@@ -171,8 +171,8 @@ declare namespace ToolAPI {
     parentMenuId?: number;
     parentMenuName?: string;
     params?: Record<string, any>;
-    tree?: boolean;
     crud?: boolean;
+    tree?: boolean;
   };
 
   type getInfoParams = {

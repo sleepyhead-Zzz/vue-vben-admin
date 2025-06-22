@@ -20,7 +20,7 @@ import {
   genList,
   removeGenerator,
   syncDb,
-} from '#/api/tool/generatorApi';
+} from '#/api/tool/generator';
 import { downloadByData } from '#/utils/file/download';
 
 import codePreviewModal from './code-preview-modal.vue';
