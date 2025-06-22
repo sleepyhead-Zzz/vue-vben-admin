@@ -3,10 +3,11 @@ import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import { cloneDeep } from '@vben/utils';
+import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 import { addCard, editCard, getCardInfo } from '#/api/regulatory/card';
+import { dropdownDeptList } from '#/api/system/dept';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -61,6 +62,10 @@ const [BasicModal, modalApi] = useVbenModal({
       const record = await getCardInfo({ cardId: id });
       await formApi.setValues(record.data);
     }
+
+    const promises = [setupDeptSelect()];
+    await Promise.all(promises);
+
     await markInitialized();
 
     modalApi.modalLoading(false);
@@ -92,6 +97,74 @@ async function handleConfirm() {
 async function handleClosed() {
   await formApi.resetForm();
   resetInitialized();
+}
+
+/**
+ * 初始化部门选择
+ */
+async function setupDeptSelect() {
+  // updateSchema
+  const deptTree = await dropdownDeptList({
+    query: {
+      orderColumn: undefined,
+      orderDirection: undefined,
+      timeRangeColumn: undefined,
+      beginTime: undefined,
+      endTime: undefined,
+      deptId: undefined,
+      parentId: undefined,
+      status: undefined,
+      deptName: undefined,
+    },
+  });
+  // 选中后显示在输入框的值 即父节点 / 子节点
+  addFullName(deptTree.data, 'label', ' / ');
+  formApi.updateSchema([
+    {
+      componentProps: () => ({
+        class: 'w-full',
+        fieldNames: {
+          key: 'id',
+          value: 'id',
+          children: 'children',
+        },
+        getPopupContainer,
+
+        placeholder: '请选择',
+        showSearch: true,
+        treeData: deptTree.data,
+        treeDefaultExpandAll: true,
+        treeLine: { showLeafIcon: false },
+        // 筛选的字段
+        treeNodeFilterProp: 'label',
+        // 选中后显示在输入框的值
+        treeNodeLabelProp: 'fullName',
+      }),
+      fieldName: 'managingDepartmentId',
+    },
+    {
+      componentProps: () => ({
+        class: 'w-full',
+        fieldNames: {
+          key: 'id',
+          value: 'id',
+          children: 'children',
+        },
+        getPopupContainer,
+
+        placeholder: '请选择',
+        showSearch: true,
+        treeData: deptTree.data,
+        treeDefaultExpandAll: true,
+        treeLine: { showLeafIcon: false },
+        // 筛选的字段
+        treeNodeFilterProp: 'label',
+        // 选中后显示在输入框的值
+        treeNodeLabelProp: 'fullName',
+      }),
+      fieldName: 'usingDepartmentId',
+    },
+  ]);
 }
 </script>
 

@@ -2,7 +2,7 @@
 /* eslint-disable */
 import request from "#/api/request";
 
-/** 新增资产信息 POST /regulatory/card */
+/** 新增信息卡信息 POST /regulatory/card */
 export async function addCard(
   body: RegulatoryAPI.AddRegCardCommand,
   options?: { [key: string]: any }
@@ -17,7 +17,7 @@ export async function addCard(
   });
 }
 
-/** 获取资产信息详情 GET /regulatory/card/${param0} */
+/** 获取信息卡信息详情 GET /regulatory/card/${param0} */
 export async function getCardInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.getCardInfoParams,
@@ -34,7 +34,7 @@ export async function getCardInfo(
   );
 }
 
-/** 修改资产信息 PUT /regulatory/card/${param0} */
+/** 修改信息卡信息 PUT /regulatory/card/${param0} */
 export async function editCard(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.editCardParams,
@@ -53,7 +53,7 @@ export async function editCard(
   });
 }
 
-/** 批量删除资产信息 DELETE /regulatory/card/batch-delete */
+/** 批量删除信息卡信息 DELETE /regulatory/card/batch-delete */
 export async function batchRemoveCard(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.batchRemoveCardParams,
@@ -71,7 +71,7 @@ export async function batchRemoveCard(
   );
 }
 
-/** 资产信息下拉列表 GET /regulatory/card/dropdown */
+/** 信息卡信息下拉列表 GET /regulatory/card/dropdown */
 export async function dropDownListCard(options?: { [key: string]: any }) {
   return request<RegulatoryAPI.ResponseDTOListRegCardVO>(
     "/regulatory/card/dropdown",
@@ -82,7 +82,7 @@ export async function dropDownListCard(options?: { [key: string]: any }) {
   );
 }
 
-/** 资产信息列表导出 GET /regulatory/card/excel */
+/** 信息卡信息列表导出 GET /regulatory/card/excel */
 export async function exportCardByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.exportCardByExcelParams,
@@ -99,7 +99,7 @@ export async function exportCardByExcel(
   });
 }
 
-/** 资产信息导入excel下载 GET /regulatory/card/excelTemplate */
+/** 信息卡信息导入excel下载 GET /regulatory/card/excelTemplate */
 export async function downloadExcelTemplate1(options?: { [key: string]: any }) {
   return request<any>("/regulatory/card/excelTemplate", {
     method: "GET",
@@ -107,7 +107,7 @@ export async function downloadExcelTemplate1(options?: { [key: string]: any }) {
   });
 }
 
-/** 资产信息列表导入 POST /regulatory/card/importData */
+/** 信息卡信息列表导入 POST /regulatory/card/importData */
 export async function importCardByExcel(
   body: {
     updateSupport?: boolean;
@@ -148,7 +148,7 @@ export async function importCardByExcel(
   );
 }
 
-/** 获取资产信息列表 GET /regulatory/card/list */
+/** 获取信息卡信息列表 GET /regulatory/card/list */
 export async function listCard(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.listCardParams,
@@ -166,7 +166,7 @@ export async function listCard(
   );
 }
 
-/** 分页获取资产信息列表 GET /regulatory/card/page */
+/** 分页获取信息卡信息列表 GET /regulatory/card/page */
 export async function getPagedCards(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.getPagedCardsParams,
@@ -184,7 +184,7 @@ export async function getPagedCards(
   );
 }
 
-/** 删除资产信息 DELETE /regulatory/card/remove/${param0} */
+/** 删除信息卡信息 DELETE /regulatory/card/remove/${param0} */
 export async function removeCard(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.removeCardParams,

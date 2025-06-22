@@ -1,6 +1,11 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -12,15 +17,16 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'assetName',
     label: '资产名称',
   },
+
   {
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.RegulatoryCardAssetStatus),
     },
     fieldName: 'businessStatus',
     label: '业务状态',
   },
+
   {
     component: 'Select',
     componentProps: {},
@@ -67,11 +73,11 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'quantityUnit',
     label: '数量计量单位',
   },
+
   {
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.RegulatoryCardAccountStatus),
     },
     fieldName: 'financialAccountStatus',
     label: '财务入账状态',
@@ -154,10 +160,9 @@ export const querySchema: FormSchemaGetter = () => [
     label: '取得日期',
   },
   {
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.RegulatoryCardAccountStatus),
     },
     fieldName: 'assetStatus',
     label: '资产状态',
@@ -184,6 +189,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '业务状态',
     field: 'businessStatus',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.status, DictEnum.RegulatoryCardBusinessStatus);
+      },
+    },
   },
   {
     title: '卡片类型',
@@ -228,6 +238,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '财务入账状态',
     field: 'financialAccountStatus',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.status, DictEnum.RegulatoryCardAccountStatus);
+      },
+    },
   },
   {
     title: '记账日期',
@@ -319,6 +334,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '资产状态',
     field: 'assetStatus',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.status, DictEnum.RegulatoryCardAssetStatus);
+      },
+    },
   },
   {
     title: '资产用途',
@@ -366,13 +386,12 @@ export const modalSchema: FormSchemaGetter = () => [
     rules: 'required',
   },
   {
-    label: '业务状态',
-    fieldName: 'businessStatus',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.RegulatoryCardAssetStatus),
     },
+    fieldName: 'businessStatus',
+    label: '业务状态',
   },
   {
     label: '卡片类型',
@@ -421,13 +440,12 @@ export const modalSchema: FormSchemaGetter = () => [
     component: 'Input',
   },
   {
-    label: '财务入账状态',
-    fieldName: 'financialAccountStatus',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.RegulatoryCardAccountStatus),
     },
+    fieldName: 'financialAccountStatus',
+    label: '财务入账状态',
   },
   {
     label: '记账日期',
@@ -465,19 +483,24 @@ export const modalSchema: FormSchemaGetter = () => [
     component: 'Input',
   },
   {
-    label: '管理部门',
+    component: 'TreeSelect',
+    defaultValue: undefined,
     fieldName: 'managingDepartmentId',
-    component: 'Input',
+    label: '管理部门',
+    rules: 'selectRequired',
   },
   {
     label: '管理人',
     fieldName: 'manager',
     component: 'Input',
   },
+
   {
-    label: '使用部门',
+    component: 'TreeSelect',
+    defaultValue: undefined,
     fieldName: 'usingDepartmentId',
-    component: 'Input',
+    label: '使用部门',
+    rules: 'selectRequired',
   },
   {
     label: '使用人',
@@ -535,13 +558,12 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '资产状态',
-    fieldName: 'assetStatus',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.RegulatoryCardAccountStatus),
     },
+    fieldName: 'assetStatus',
+    label: '资产状态',
   },
   {
     label: '资产用途',

@@ -95,8 +95,8 @@ declare namespace ToolAPI {
     edit?: boolean;
     usableColumn?: boolean;
     superColumn?: boolean;
-    increment?: boolean;
     capJavaField?: string;
+    increment?: boolean;
     query?: boolean;
   };
 
@@ -171,8 +171,8 @@ declare namespace ToolAPI {
     parentMenuId?: number;
     parentMenuName?: string;
     params?: Record<string, any>;
-    crud?: boolean;
     tree?: boolean;
+    crud?: boolean;
   };
 
   type getInfoParams = {

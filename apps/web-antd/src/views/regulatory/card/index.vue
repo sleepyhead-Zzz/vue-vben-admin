@@ -17,6 +17,7 @@ import {
 } from '#/api/regulatory/card';
 import { commonDownloadExcel } from '#/utils/file/download';
 
+import cardImportModal from './card-import-modal.vue';
 import cardModal from './card-modal.vue';
 import { columns, querySchema } from './data';
 
@@ -122,6 +123,12 @@ function handleDownloadExcel() {
     },
   );
 }
+const [CardImportModal, cardImportModalApi] = useVbenModal({
+  connectedComponent: cardImportModal,
+});
+function handleImportExcel() {
+  cardImportModalApi.open();
+}
 </script>
 
 <template>
@@ -129,6 +136,12 @@ function handleDownloadExcel() {
     <BasicTable table-title="资产信息列表">
       <template #toolbar-tools>
         <Space>
+          <a-button
+            v-access:code="['regulatory:card:import']"
+            @click="handleImportExcel"
+          >
+            {{ $t('pages.common.import') }}
+          </a-button>
           <a-button
             v-access:code="['regulatory:card:export']"
             @click="handleDownloadExcel"
@@ -179,5 +192,6 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <CardModal @reload="tableApi.query()" />
+    <CardImportModal @reload="tableApi.query()" />
   </Page>
 </template>
