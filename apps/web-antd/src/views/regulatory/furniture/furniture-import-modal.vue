@@ -9,7 +9,7 @@ import { ExcelIcon, InBoxIcon } from '@vben/icons';
 import { Modal, Switch, Upload } from 'ant-design-vue';
 
 import {
-  downloadExcelTemplate,
+  downloadFurnitureExcelTemplate,
   importFurnitureByExcel,
 } from '#/api/regulatory/furniture';
 import { commonDownloadExcel } from '#/utils/file/download';
@@ -116,7 +116,9 @@ function handleCancel() {
         <span>允许导入xlsx, xls文件</span>
         <a-button
           type="link"
-          @click="commonDownloadExcel(downloadExcelTemplate, '家具导入模板')"
+          @click="
+            commonDownloadExcel(downloadFurnitureExcelTemplate, '家具导入模板')
+          "
         >
           <div class="flex items-center gap-[4px]">
             <ExcelIcon />

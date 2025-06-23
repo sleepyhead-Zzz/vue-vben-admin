@@ -191,7 +191,10 @@ export const columns: VxeGridProps['columns'] = [
     field: 'businessStatus',
     slots: {
       default: ({ row }) => {
-        return renderDict(row.status, DictEnum.RegulatoryCardBusinessStatus);
+        return renderDict(
+          row.businessStatus,
+          DictEnum.RegulatoryCardBusinessStatus,
+        );
       },
     },
   },
@@ -240,7 +243,10 @@ export const columns: VxeGridProps['columns'] = [
     field: 'financialAccountStatus',
     slots: {
       default: ({ row }) => {
-        return renderDict(row.status, DictEnum.RegulatoryCardAccountStatus);
+        return renderDict(
+          row.financialAccountStatus,
+          DictEnum.RegulatoryCardAccountStatus,
+        );
       },
     },
   },
@@ -336,7 +342,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'assetStatus',
     slots: {
       default: ({ row }) => {
-        return renderDict(row.status, DictEnum.RegulatoryCardAssetStatus);
+        return renderDict(row.assetStatus, DictEnum.RegulatoryCardAssetStatus);
       },
     },
   },

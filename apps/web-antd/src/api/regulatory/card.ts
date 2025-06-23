@@ -100,7 +100,9 @@ export async function exportCardByExcel(
 }
 
 /** 信息卡信息导入excel下载 GET /regulatory/card/excelTemplate */
-export async function downloadExcelTemplate1(options?: { [key: string]: any }) {
+export async function downloadCardExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>("/regulatory/card/excelTemplate", {
     method: "GET",
     ...(options || {}),

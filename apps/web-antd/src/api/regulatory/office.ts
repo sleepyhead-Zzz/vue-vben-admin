@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from "#/api/request";
 
-/** 新增家具 POST /regulatory/furniture */
-export async function addFurniture(
-  body: RegulatoryAPI.AddRegFurnitureCommand,
+/** 新增办公资产信息 POST /regulatory/office */
+export async function addOffice(
+  body: RegulatoryAPI.AddRegOfficeCommand,
   options?: { [key: string]: any }
 ) {
-  return request<RegulatoryAPI.ResponseDTOVoid>("/regulatory/furniture", {
+  return request<RegulatoryAPI.ResponseDTOVoid>("/regulatory/office", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,15 +17,15 @@ export async function addFurniture(
   });
 }
 
-/** 获取家具详情 GET /regulatory/furniture/${param0} */
-export async function getFurnitureInfo(
+/** 获取办公资产信息详情 GET /regulatory/office/${param0} */
+export async function getOfficeInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.getFurnitureInfoParams,
+  params: RegulatoryAPI.getOfficeInfoParams,
   options?: { [key: string]: any }
 ) {
-  const { furnitureId: param0, ...queryParams } = params;
-  return request<RegulatoryAPI.ResponseDTORegFurnitureDTO>(
-    `/regulatory/furniture/${param0}`,
+  const { officeId: param0, ...queryParams } = params;
+  return request<RegulatoryAPI.ResponseDTORegOfficeDTO>(
+    `/regulatory/office/${param0}`,
     {
       method: "GET",
       params: { ...queryParams },
@@ -34,16 +34,16 @@ export async function getFurnitureInfo(
   );
 }
 
-/** 修改家具 PUT /regulatory/furniture/${param0} */
-export async function editFurniture(
+/** 修改办公资产信息 PUT /regulatory/office/${param0} */
+export async function editOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.editFurnitureParams,
-  body: RegulatoryAPI.UpdateRegFurnitureCommand,
+  params: RegulatoryAPI.editOfficeParams,
+  body: RegulatoryAPI.UpdateRegOfficeCommand,
   options?: { [key: string]: any }
 ) {
-  const { furnitureId: param0, ...queryParams } = params;
+  const { officeId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    `/regulatory/furniture/${param0}`,
+    `/regulatory/office/${param0}`,
     {
       method: "PUT",
       headers: {
@@ -56,14 +56,14 @@ export async function editFurniture(
   );
 }
 
-/** 批量删除家具 DELETE /regulatory/furniture/batch-delete */
-export async function batchRemoveFurniture(
+/** 批量删除办公资产信息 DELETE /regulatory/office/batch-delete */
+export async function batchRemoveOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.batchRemoveFurnitureParams,
+  params: RegulatoryAPI.batchRemoveOfficeParams,
   options?: { [key: string]: any }
 ) {
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    "/regulatory/furniture/batch-delete",
+    "/regulatory/office/batch-delete",
     {
       method: "DELETE",
       params: {
@@ -74,10 +74,10 @@ export async function batchRemoveFurniture(
   );
 }
 
-/** 家具下拉列表 GET /regulatory/furniture/dropdown */
-export async function dropDownListFurniture(options?: { [key: string]: any }) {
-  return request<RegulatoryAPI.ResponseDTOListRegFurnitureVO>(
-    "/regulatory/furniture/dropdown",
+/** 办公资产信息下拉列表 GET /regulatory/office/dropdown */
+export async function dropDownListOffice(options?: { [key: string]: any }) {
+  return request<RegulatoryAPI.ResponseDTOListRegOfficeVO>(
+    "/regulatory/office/dropdown",
     {
       method: "GET",
       ...(options || {}),
@@ -85,13 +85,13 @@ export async function dropDownListFurniture(options?: { [key: string]: any }) {
   );
 }
 
-/** 家具列表导出 GET /regulatory/furniture/excel */
-export async function exportFurnitureByExcel(
+/** 办公资产信息列表导出 GET /regulatory/office/excel */
+export async function exportOfficeByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.exportFurnitureByExcelParams,
+  params: RegulatoryAPI.exportOfficeByExcelParams,
   options?: { [key: string]: any }
 ) {
-  return request<any>("/regulatory/furniture/excel", {
+  return request<any>("/regulatory/office/excel", {
     method: "GET",
     params: {
       ...params,
@@ -102,18 +102,18 @@ export async function exportFurnitureByExcel(
   });
 }
 
-/** 家具导入excel下载 GET /regulatory/furniture/excelTemplate */
-export async function downloadFurnitureExcelTemplate(options?: {
+/** 办公资产信息导入excel下载 GET /regulatory/office/excelTemplate */
+export async function downloadtOfficeExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/regulatory/furniture/excelTemplate", {
+  return request<any>("/regulatory/office/excelTemplate", {
     method: "GET",
     ...(options || {}),
   });
 }
 
-/** 家具列表导入 POST /regulatory/furniture/importData */
-export async function importFurnitureByExcel(
+/** 办公资产信息列表导入 POST /regulatory/office/importData */
+export async function importOfficeByExcel(
   body: {
     updateSupport?: boolean;
   },
@@ -143,7 +143,7 @@ export async function importFurnitureByExcel(
   });
 
   return request<RegulatoryAPI.ResponseDTOString>(
-    "/regulatory/furniture/importData",
+    "/regulatory/office/importData",
     {
       method: "POST",
       data: formData,
@@ -153,14 +153,14 @@ export async function importFurnitureByExcel(
   );
 }
 
-/** 获取家具列表 GET /regulatory/furniture/list */
-export async function listFurniture(
+/** 获取办公资产信息列表 GET /regulatory/office/list */
+export async function listOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.listFurnitureParams,
+  params: RegulatoryAPI.listOfficeParams,
   options?: { [key: string]: any }
 ) {
-  return request<RegulatoryAPI.ResponseDTOListRegFurnitureDTO>(
-    "/regulatory/furniture/list",
+  return request<RegulatoryAPI.ResponseDTOListRegOfficeDTO>(
+    "/regulatory/office/list",
     {
       method: "GET",
       params: {
@@ -171,14 +171,14 @@ export async function listFurniture(
   );
 }
 
-/** 分页获取家具列表 GET /regulatory/furniture/page */
-export async function getPagedFurnitures(
+/** 分页获取办公资产信息列表 GET /regulatory/office/page */
+export async function getPagedOffices(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.getPagedFurnituresParams,
+  params: RegulatoryAPI.getPagedOfficesParams,
   options?: { [key: string]: any }
 ) {
-  return request<RegulatoryAPI.ResponseDTOPageDTORegFurnitureDTO>(
-    "/regulatory/furniture/page",
+  return request<RegulatoryAPI.ResponseDTOPageDTORegOfficeDTO>(
+    "/regulatory/office/page",
     {
       method: "GET",
       params: {
@@ -189,15 +189,15 @@ export async function getPagedFurnitures(
   );
 }
 
-/** 删除家具 DELETE /regulatory/furniture/remove/${param0} */
-export async function removeFurniture(
+/** 删除办公资产信息 DELETE /regulatory/office/remove/${param0} */
+export async function removeOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.removeFurnitureParams,
+  params: RegulatoryAPI.removeOfficeParams,
   options?: { [key: string]: any }
 ) {
-  const { furnitureId: param0, ...queryParams } = params;
+  const { officeId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    `/regulatory/furniture/remove/${param0}`,
+    `/regulatory/office/remove/${param0}`,
     {
       method: "DELETE",
       params: { ...queryParams },

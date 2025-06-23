@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from "#/api/request";
 
-/** 新增家具 POST /regulatory/furniture */
-export async function addFurniture(
-  body: RegulatoryAPI.AddRegFurnitureCommand,
+/** 新增房屋和构筑物类固定资产 POST /regulatory/estate */
+export async function addEstate(
+  body: RegulatoryAPI.AddRegEstateCommand,
   options?: { [key: string]: any }
 ) {
-  return request<RegulatoryAPI.ResponseDTOVoid>("/regulatory/furniture", {
+  return request<RegulatoryAPI.ResponseDTOVoid>("/regulatory/estate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -17,15 +17,15 @@ export async function addFurniture(
   });
 }
 
-/** 获取家具详情 GET /regulatory/furniture/${param0} */
-export async function getFurnitureInfo(
+/** 获取房屋和构筑物类固定资产详情 GET /regulatory/estate/${param0} */
+export async function getEstateInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.getFurnitureInfoParams,
+  params: RegulatoryAPI.getEstateInfoParams,
   options?: { [key: string]: any }
 ) {
-  const { furnitureId: param0, ...queryParams } = params;
-  return request<RegulatoryAPI.ResponseDTORegFurnitureDTO>(
-    `/regulatory/furniture/${param0}`,
+  const { estateId: param0, ...queryParams } = params;
+  return request<RegulatoryAPI.ResponseDTORegEstateDTO>(
+    `/regulatory/estate/${param0}`,
     {
       method: "GET",
       params: { ...queryParams },
@@ -34,16 +34,16 @@ export async function getFurnitureInfo(
   );
 }
 
-/** 修改家具 PUT /regulatory/furniture/${param0} */
-export async function editFurniture(
+/** 修改房屋和构筑物类固定资产 PUT /regulatory/estate/${param0} */
+export async function editEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.editFurnitureParams,
-  body: RegulatoryAPI.UpdateRegFurnitureCommand,
+  params: RegulatoryAPI.editEstateParams,
+  body: RegulatoryAPI.UpdateRegEstateCommand,
   options?: { [key: string]: any }
 ) {
-  const { furnitureId: param0, ...queryParams } = params;
+  const { estateId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    `/regulatory/furniture/${param0}`,
+    `/regulatory/estate/${param0}`,
     {
       method: "PUT",
       headers: {
@@ -56,14 +56,14 @@ export async function editFurniture(
   );
 }
 
-/** 批量删除家具 DELETE /regulatory/furniture/batch-delete */
-export async function batchRemoveFurniture(
+/** 批量删除房屋和构筑物类固定资产 DELETE /regulatory/estate/batch-delete */
+export async function batchRemoveEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.batchRemoveFurnitureParams,
+  params: RegulatoryAPI.batchRemoveEstateParams,
   options?: { [key: string]: any }
 ) {
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    "/regulatory/furniture/batch-delete",
+    "/regulatory/estate/batch-delete",
     {
       method: "DELETE",
       params: {
@@ -74,10 +74,10 @@ export async function batchRemoveFurniture(
   );
 }
 
-/** 家具下拉列表 GET /regulatory/furniture/dropdown */
-export async function dropDownListFurniture(options?: { [key: string]: any }) {
-  return request<RegulatoryAPI.ResponseDTOListRegFurnitureVO>(
-    "/regulatory/furniture/dropdown",
+/** 房屋和构筑物类固定资产下拉列表 GET /regulatory/estate/dropdown */
+export async function dropDownListEstate(options?: { [key: string]: any }) {
+  return request<RegulatoryAPI.ResponseDTOListRegEstateVO>(
+    "/regulatory/estate/dropdown",
     {
       method: "GET",
       ...(options || {}),
@@ -85,13 +85,13 @@ export async function dropDownListFurniture(options?: { [key: string]: any }) {
   );
 }
 
-/** 家具列表导出 GET /regulatory/furniture/excel */
-export async function exportFurnitureByExcel(
+/** 房屋和构筑物类固定资产列表导出 GET /regulatory/estate/excel */
+export async function exportEstateByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.exportFurnitureByExcelParams,
+  params: RegulatoryAPI.exportEstateByExcelParams,
   options?: { [key: string]: any }
 ) {
-  return request<any>("/regulatory/furniture/excel", {
+  return request<any>("/regulatory/estate/excel", {
     method: "GET",
     params: {
       ...params,
@@ -102,18 +102,18 @@ export async function exportFurnitureByExcel(
   });
 }
 
-/** 家具导入excel下载 GET /regulatory/furniture/excelTemplate */
-export async function downloadFurnitureExcelTemplate(options?: {
+/** 房屋和构筑物类固定资产导入excel下载 GET /regulatory/estate/excelTemplate */
+export async function downloadtEstateExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/regulatory/furniture/excelTemplate", {
+  return request<any>("/regulatory/estate/excelTemplate", {
     method: "GET",
     ...(options || {}),
   });
 }
 
-/** 家具列表导入 POST /regulatory/furniture/importData */
-export async function importFurnitureByExcel(
+/** 房屋和构筑物类固定资产列表导入 POST /regulatory/estate/importData */
+export async function importEstateByExcel(
   body: {
     updateSupport?: boolean;
   },
@@ -143,7 +143,7 @@ export async function importFurnitureByExcel(
   });
 
   return request<RegulatoryAPI.ResponseDTOString>(
-    "/regulatory/furniture/importData",
+    "/regulatory/estate/importData",
     {
       method: "POST",
       data: formData,
@@ -153,14 +153,14 @@ export async function importFurnitureByExcel(
   );
 }
 
-/** 获取家具列表 GET /regulatory/furniture/list */
-export async function listFurniture(
+/** 获取房屋和构筑物类固定资产列表 GET /regulatory/estate/list */
+export async function listEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.listFurnitureParams,
+  params: RegulatoryAPI.listEstateParams,
   options?: { [key: string]: any }
 ) {
-  return request<RegulatoryAPI.ResponseDTOListRegFurnitureDTO>(
-    "/regulatory/furniture/list",
+  return request<RegulatoryAPI.ResponseDTOListRegEstateDTO>(
+    "/regulatory/estate/list",
     {
       method: "GET",
       params: {
@@ -171,14 +171,14 @@ export async function listFurniture(
   );
 }
 
-/** 分页获取家具列表 GET /regulatory/furniture/page */
-export async function getPagedFurnitures(
+/** 分页获取房屋和构筑物类固定资产列表 GET /regulatory/estate/page */
+export async function getPagedEstates(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.getPagedFurnituresParams,
+  params: RegulatoryAPI.getPagedEstatesParams,
   options?: { [key: string]: any }
 ) {
-  return request<RegulatoryAPI.ResponseDTOPageDTORegFurnitureDTO>(
-    "/regulatory/furniture/page",
+  return request<RegulatoryAPI.ResponseDTOPageDTORegEstateDTO>(
+    "/regulatory/estate/page",
     {
       method: "GET",
       params: {
@@ -189,15 +189,15 @@ export async function getPagedFurnitures(
   );
 }
 
-/** 删除家具 DELETE /regulatory/furniture/remove/${param0} */
-export async function removeFurniture(
+/** 删除房屋和构筑物类固定资产 DELETE /regulatory/estate/remove/${param0} */
+export async function removeEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: RegulatoryAPI.removeFurnitureParams,
+  params: RegulatoryAPI.removeEstateParams,
   options?: { [key: string]: any }
 ) {
-  const { furnitureId: param0, ...queryParams } = params;
+  const { estateId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    `/regulatory/furniture/remove/${param0}`,
+    `/regulatory/estate/remove/${param0}`,
     {
       method: "DELETE",
       params: { ...queryParams },
