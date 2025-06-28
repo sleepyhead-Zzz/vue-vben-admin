@@ -22,6 +22,7 @@ import cardModal from './card-modal.vue';
 import { columns, querySchema } from './data';
 
 const formOptions: VbenFormProps = {
+  collapsed: true,
   commonConfig: {
     labelWidth: 80,
     componentProps: {

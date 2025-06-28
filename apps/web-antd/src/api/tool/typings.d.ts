@@ -171,8 +171,8 @@ declare namespace ToolAPI {
     parentMenuId?: number;
     parentMenuName?: string;
     params?: Record<string, any>;
-    crud?: boolean;
     tree?: boolean;
+    crud?: boolean;
   };
 
   type getInfoParams = {

@@ -365,10 +365,6 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: '主键 ID',
-    field: 'estateId',
-  },
-  {
     title: '资产分类编号',
     field: 'assetCategoryCode',
   },

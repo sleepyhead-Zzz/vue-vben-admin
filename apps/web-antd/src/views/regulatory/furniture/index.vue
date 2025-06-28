@@ -22,6 +22,7 @@ import furnitureImportModal from './furniture-import-modal.vue';
 import furnitureModal from './furniture-modal.vue';
 
 const formOptions: VbenFormProps = {
+  collapsed: true,
   commonConfig: {
     labelWidth: 80,
     componentProps: {

@@ -3,6 +3,8 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { onMounted } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { getVxePopupContainer } from '@vben/utils';
@@ -18,15 +20,18 @@ import {
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
+import estateImportModal from './estate-import-modal.vue';
 import estateModal from './estate-modal.vue';
 
 const formOptions: VbenFormProps = {
+  collapsed: true,
   commonConfig: {
     labelWidth: 80,
     componentProps: {
       allowClear: true,
     },
   },
+
   schema: querySchema(),
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
   // 处理区间选择器RangePicker时间格式 将一个字段映射为两个字段 搜索/导出会用到
@@ -82,25 +87,27 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 const [EstateModal, modalApi] = useVbenModal({
   connectedComponent: estateModal,
 });
-
+onMounted(() => {
+  tableApi.toggleSearchForm(true);
+});
 function handleAdd() {
   modalApi.setData({});
   modalApi.open();
 }
 
-async function handleEdit(row: API.RegEstateDTO) {
+async function handleEdit(row: RegulatoryAPI.RegEstateDTO) {
   modalApi.setData({ id: row.estateId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.RegEstateDTO) {
+async function handleDelete(row: RegulatoryAPI.RegEstateDTO) {
   await batchRemoveEstate({ estateIds: [row.estateId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.RegEstateDTO) => row.estateId);
+  const ids = rows.map((row: RegulatoryAPI.RegEstateDTO) => row.estateId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -122,6 +129,12 @@ function handleDownloadExcel() {
     },
   );
 }
+const [EstateImportModal, estateImportModalApi] = useVbenModal({
+  connectedComponent: estateImportModal,
+});
+function handleImportExcel() {
+  estateImportModalApi.open();
+}
 </script>
 
 <template>
@@ -129,6 +142,12 @@ function handleDownloadExcel() {
     <BasicTable table-title="房屋和构筑物类固定资产列表">
       <template #toolbar-tools>
         <Space>
+          <a-button
+            v-access:code="['regulatory:estate:import']"
+            @click="handleImportExcel"
+          >
+            {{ $t('pages.common.import') }}
+          </a-button>
           <a-button
             v-access:code="['regulatory:estate:export']"
             @click="handleDownloadExcel"
@@ -178,6 +197,7 @@ function handleDownloadExcel() {
         </Space>
       </template>
     </BasicTable>
+    <EstateImportModal @reload="tableApi.query()" />
     <EstateModal @reload="tableApi.query()" />
   </Page>
 </template>

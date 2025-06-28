@@ -206,6 +206,7 @@ declare namespace RegulatoryAPI {
     isAccounted?: number;
     /** 是否未处置（1是，0否） */
     isDisposed?: number;
+    creatorId?: number;
   };
 
   type AddRegFurnitureCommand = {
@@ -1446,7 +1447,9 @@ declare namespace RegulatoryAPI {
     isAccounted?: number;
     /** 是否未处置（1是，0否） */
     isDisposed?: number;
+    creatorId?: number;
     estateId?: number;
+    updaterId?: number;
   };
 
   type UpdateRegFurnitureCommand = {

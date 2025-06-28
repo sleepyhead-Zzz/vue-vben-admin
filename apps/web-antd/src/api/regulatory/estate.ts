@@ -103,7 +103,7 @@ export async function exportEstateByExcel(
 }
 
 /** 房屋和构筑物类固定资产导入excel下载 GET /regulatory/estate/excelTemplate */
-export async function downloadtEstateExcelTemplate(options?: {
+export async function downloadEstateExcelTemplate(options?: {
   [key: string]: any;
 }) {
   return request<any>("/regulatory/estate/excelTemplate", {

@@ -18,9 +18,11 @@ import {
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
+import officeImportModal from './office-import-modal.vue';
 import officeModal from './office-modal.vue';
 
 const formOptions: VbenFormProps = {
+  collapsed: true,
   commonConfig: {
     labelWidth: 80,
     componentProps: {
@@ -122,6 +124,12 @@ function handleDownloadExcel() {
     },
   );
 }
+const [OfficeImportModal, officeImportModalApi] = useVbenModal({
+  connectedComponent: officeImportModal,
+});
+function handleImportExcel() {
+  officeImportModalApi.open();
+}
 </script>
 
 <template>
@@ -129,6 +137,12 @@ function handleDownloadExcel() {
     <BasicTable table-title="办公资产信息列表">
       <template #toolbar-tools>
         <Space>
+          <a-button
+            v-access:code="['regulatory:office:import']"
+            @click="handleImportExcel"
+          >
+            {{ $t('pages.common.import') }}
+          </a-button>
           <a-button
             v-access:code="['regulatory:office:export']"
             @click="handleDownloadExcel"
@@ -178,6 +192,7 @@ function handleDownloadExcel() {
         </Space>
       </template>
     </BasicTable>
+    <OfficeImportModal @reload="tableApi.query()" />
     <OfficeModal @reload="tableApi.query()" />
   </Page>
 </template>
