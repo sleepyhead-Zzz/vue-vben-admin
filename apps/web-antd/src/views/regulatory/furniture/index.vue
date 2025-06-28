@@ -3,18 +3,26 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { onMounted } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import { getVxePopupContainer } from '@vben/utils';
+import {
+  addFullName,
+  getPopupContainer,
+  getVxePopupContainer,
+} from '@vben/utils';
 
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import { dropdownlistLocation } from '#/api/asset/location';
 import {
   batchRemoveFurniture,
   exportFurnitureByExcel,
   getPagedFurnitures,
 } from '#/api/regulatory/furniture';
+import { dropdownDeptList } from '#/api/system/dept';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
@@ -22,7 +30,6 @@ import furnitureImportModal from './furniture-import-modal.vue';
 import furnitureModal from './furniture-modal.vue';
 
 const formOptions: VbenFormProps = {
-  collapsed: true,
   commonConfig: {
     labelWidth: 80,
     componentProps: {
@@ -79,6 +86,93 @@ const gridOptions: VxeGridProps = {
 const [BasicTable, tableApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
+});
+
+/**
+ * 初始化部门选择
+ */
+async function setupDeptSelect() {
+  // updateSchema
+  const deptTree = await dropdownDeptList({
+    query: {
+      orderColumn: undefined,
+      orderDirection: undefined,
+      timeRangeColumn: undefined,
+      beginTime: undefined,
+      endTime: undefined,
+      deptId: undefined,
+      parentId: undefined,
+      status: undefined,
+      deptName: undefined,
+    },
+  });
+  // 选中后显示在输入框的值 即父节点 / 子节点
+  addFullName(deptTree.data, 'label', ' / ');
+  tableApi.formApi.updateSchema([
+    {
+      componentProps: () => ({
+        class: 'w-full',
+        fieldNames: {
+          key: 'id',
+          value: 'id',
+          children: 'children',
+        },
+        getPopupContainer,
+
+        placeholder: '请选择',
+        showSearch: true,
+        treeData: deptTree.data,
+        treeDefaultExpandAll: true,
+        treeLine: { showLeafIcon: false },
+        // 筛选的字段
+        treeNodeFilterProp: 'label',
+        // 选中后显示在输入框的值
+        treeNodeLabelProp: 'fullName',
+      }),
+      fieldName: 'manageDeptId',
+    },
+  ]);
+}
+
+/**
+ * 初始化位置选择
+ */
+async function setupLocationSelect() {
+  // updateSchema
+  const locationTree = await dropdownlistLocation({
+    query: {},
+  });
+  // 选中后显示在输入框的值 即父节点 / 子节点
+  addFullName(locationTree.data, 'label', ' / ');
+  tableApi.formApi.updateSchema([
+    {
+      componentProps: () => ({
+        class: 'w-full',
+        fieldNames: {
+          key: 'id',
+          value: 'id',
+          children: 'children',
+        },
+        getPopupContainer,
+
+        placeholder: '请选择',
+        showSearch: true,
+        treeData: locationTree.data,
+        treeDefaultExpandAll: true,
+        treeLine: { showLeafIcon: false },
+        // 筛选的字段
+        treeNodeFilterProp: 'label',
+        // 选中后显示在输入框的值
+        treeNodeLabelProp: 'label',
+      }),
+      fieldName: 'locationId',
+    },
+  ]);
+}
+
+onMounted(() => {
+  setupDeptSelect();
+  setupLocationSelect();
 });
 
 const [FurnitureModal, modalApi] = useVbenModal({

@@ -14,14 +14,17 @@ export const querySchema: FormSchemaGetter = () => [
   },
 
   {
-    component: 'Input',
+    component: 'TreeSelect',
+    // 在drawer里更新 这里不需要默认的componentProps
+    defaultValue: undefined,
     fieldName: 'manageDeptId',
-    label: '管理部门',
+    label: '所属部门',
   },
   {
-    component: 'Input',
-    fieldName: 'locationId',
     label: '位置',
+    defaultValue: undefined,
+    fieldName: 'locationId',
+    component: 'TreeSelect',
   },
 ];
 
@@ -37,17 +40,28 @@ export const columns: VxeGridProps['columns'] = [
     title: '资产名称',
     field: 'assetName',
   },
+
   {
-    title: '资产描述',
-    field: 'description',
+    title: '所属部门ID',
+    field: 'manageDeptId',
+    visible: false,
   },
   {
-    title: '管理部门',
-    field: 'manageDeptId',
+    title: '所属部门',
+    field: 'manageDeptName',
+  },
+  {
+    title: '位置ID',
+    field: 'locationId',
+    visible: false,
   },
   {
     title: '位置',
-    field: 'locationId',
+    field: 'locationName',
+  },
+  {
+    title: '资产描述',
+    field: 'description',
   },
   {
     field: 'action',
@@ -81,11 +95,6 @@ export const modalSchema: FormSchemaGetter = () => [
     rules: 'required',
   },
   {
-    label: '资产描述',
-    fieldName: 'description',
-    component: 'Textarea',
-  },
-  {
     component: 'TreeSelect',
     // 在drawer里更新 这里不需要默认的componentProps
     defaultValue: undefined,
@@ -99,5 +108,10 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'locationId',
     component: 'TreeSelect',
     rules: 'selectRequired',
+  },
+  {
+    label: '资产描述',
+    fieldName: 'description',
+    component: 'Textarea',
   },
 ];

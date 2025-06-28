@@ -34,19 +34,12 @@ async function handleSubmit() {
       handleCancel();
       return;
     }
-    const file = fileList.value[0]!.originFileObj as File; // 注意类型用 File
+    const file = fileList.value[0]!.originFileObj as File;
     const updateSupport = unref(checked);
 
-    const response = await commonUploadFile(
-      importFurnitureByExcel,
-      file,
-      {
-        updateSupport,
-      },
-      {
-        onProgress: (percent) => console.log('上传进度:', percent),
-      },
-    );
+    const response = await commonUploadFile(importFurnitureByExcel, file, {
+      updateSupport,
+    });
 
     const { message } = response.data;
     const modal = Modal.success;
@@ -128,7 +121,7 @@ function handleCancel() {
       </div>
       <div class="flex items-center gap-2">
         <span :class="{ 'text-red-500': checked }">
-          是否更新/覆盖已存在的用户数据
+          是否更新/覆盖已存在的家具数据
         </span>
         <Switch v-model:checked="checked" />
       </div>
