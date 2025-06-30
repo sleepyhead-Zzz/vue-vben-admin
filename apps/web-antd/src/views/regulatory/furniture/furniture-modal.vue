@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { SelectProps } from 'ant-design-vue';
+
+import { computed, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
+
+import { Select, Spin } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { dropdownlistLocation } from '#/api/asset/location';
@@ -13,6 +17,7 @@ import {
   getFurnitureInfo,
 } from '#/api/regulatory/furniture';
 import { dropdownDeptList } from '#/api/system/dept';
+import { getPagedUser } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -49,7 +54,7 @@ const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
 
 const [BasicModal, modalApi] = useVbenModal({
   // 在这里更改宽度
-  class: 'w-[550px]',
+  class: 'w-[560px] h-[600px]',
   fullscreenButton: false,
   onBeforeClose,
   onClosed: handleClosed,
@@ -79,12 +84,14 @@ const [BasicModal, modalApi] = useVbenModal({
 async function handleConfirm() {
   try {
     modalApi.lock(true);
+    console.log(await formApi.getValues());
     const { valid } = await formApi.validate();
     if (!valid) {
       return;
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
+
     await (isUpdate.value
       ? editFurniture({ furnitureId: data.furnitureId }, data)
       : addFurniture(data));
@@ -184,10 +191,61 @@ async function setupLocationSelect() {
     },
   ]);
 }
+
+// 用户搜索 state
+const state = reactive<{
+  data: SelectProps['options'];
+  fetching: boolean;
+  value: null | SelectProps['value']; // 单选，value不是数组了
+}>({
+  data: [],
+  value: null,
+  fetching: false,
+});
+/**
+ * 远程搜索用户
+ */
+async function fetchUser(value: string) {
+  if (!value) {
+    state.data = [];
+    return;
+  }
+  state.fetching = true;
+  try {
+    const res = await getPagedUser({
+      userName: value,
+    });
+    state.data = res.data?.rows.map((user) => ({
+      label: user.nickName,
+      value: user.userId,
+    }));
+  } finally {
+    state.fetching = false;
+  }
+}
 </script>
 
 <template>
   <BasicModal :title="title">
-    <BasicForm />
+    <BasicForm>
+      <template #userId="slotProps">
+        <Select
+          show-search
+          :value="slotProps.value"
+          placeholder="请输入用户"
+          style="width: 100%"
+          :filter-option="false"
+          :not-found-content="state.fetching ? undefined : null"
+          :options="state.data"
+          @search="fetchUser"
+          @change="(val) => formApi.setFieldValue('userId', val)"
+          allow-clear
+        >
+          <template v-if="state.fetching" #notFoundContent>
+            <Spin size="small" />
+          </template>
+        </Select>
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>

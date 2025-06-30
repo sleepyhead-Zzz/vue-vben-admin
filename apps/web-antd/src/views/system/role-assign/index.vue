@@ -50,12 +50,13 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await allocatedUserList({
+        const { data } = await allocatedUserList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           roleId,
           ...formValues,
         });
+        return data;
       },
     },
   },

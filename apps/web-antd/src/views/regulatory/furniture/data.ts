@@ -12,7 +12,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'assetName',
     label: '资产名称',
   },
-
   {
     component: 'TreeSelect',
     // 在drawer里更新 这里不需要默认的componentProps
@@ -58,6 +57,15 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '位置',
     field: 'locationName',
+  },
+  {
+    title: '使用人',
+    field: 'userId',
+    visible: false,
+  },
+  {
+    title: '使用人',
+    field: 'userName',
   },
   {
     title: '资产描述',
@@ -113,5 +121,11 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '资产描述',
     fieldName: 'description',
     component: 'Textarea',
+  },
+  {
+    label: '使用人',
+    fieldName: 'userId',
+    component: 'Select',
+    rules: 'selectRequired',
   },
 ];
