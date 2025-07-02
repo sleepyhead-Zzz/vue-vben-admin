@@ -71,6 +71,20 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isUpdate.value && id) {
       const record = await getFurnitureInfo({ furnitureId: id });
       await formApi.setValues(record.data);
+      if (record.data.userId) {
+        const userRes = await getPagedUser({ userId: record.data.userId });
+        if (userRes.data?.rows?.length) {
+          const user = userRes.data.rows[0];
+          state.data = [
+            {
+              label: user.nickName,
+              value: user.userId,
+            },
+            ...state.data,
+          ];
+          state.value = user.userId;
+        }
+      }
     }
 
     const promises = [setupDeptSelect(), setupLocationSelect()];
@@ -84,7 +98,6 @@ const [BasicModal, modalApi] = useVbenModal({
 async function handleConfirm() {
   try {
     modalApi.lock(true);
-    console.log(await formApi.getValues());
     const { valid } = await formApi.validate();
     if (!valid) {
       return;

@@ -3,7 +3,7 @@ import { Modal } from 'ant-design-vue';
 import { omit } from 'lodash-es';
 
 import { useVbenForm, z } from '#/adapter/form';
-import { updatePassword } from '#/api/system/sysProfileApi';
+import { updatePassword } from '#/api/system/profile';
 import { useAuthStore } from '#/store';
 
 const [BasicForm, formApi] = useVbenForm({

@@ -118,14 +118,14 @@ export const modalSchema: FormSchemaGetter = () => [
     rules: 'selectRequired',
   },
   {
-    label: '资产描述',
-    fieldName: 'description',
-    component: 'Textarea',
-  },
-  {
     label: '使用人',
     fieldName: 'userId',
     component: 'Select',
     rules: 'selectRequired',
+  },
+  {
+    label: '资产描述',
+    fieldName: 'description',
+    component: 'Textarea',
   },
 ];

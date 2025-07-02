@@ -9,7 +9,7 @@ import { useUserStore } from '@vben/stores';
 import { pick } from 'lodash-es';
 
 import { useVbenForm, z } from '#/adapter/form';
-import { updateProfile } from '#/api/system/sysProfileApi';
+import { updateProfile } from '#/api/system/profile';
 import { useAuthStore } from '#/store';
 import { getDictOptions } from '#/utils/dict';
 

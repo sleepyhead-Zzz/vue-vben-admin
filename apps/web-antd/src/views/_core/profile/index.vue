@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { useUserStore } from '@vben/stores';
 
-import { userProfile } from '#/api/system/sysProfileApi';
+import { userProfile } from '#/api/system/profile';
 import { useAuthStore } from '#/store';
 
 import { emitter } from './mitt';
