@@ -18,6 +18,8 @@ export const DictEnum = {
   RegulatoryCardAssetStatus: 'regulatory_card_asset_status', // 信息卡资产状态
   RegulatoryCardAccountStatus: 'regulatory_card_account_status', // 信息卡财务入账状态
   RegulatoryCardBusinessStatus: 'regulatory_card_business_status', // 信息卡业务状态
+  RegulatoryCardType: 'regulatory_card_type', // 信息卡业务状态
+  OfficeDepreciationStatus: 'office_depreciation_status', // 办公资产折旧状态
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;

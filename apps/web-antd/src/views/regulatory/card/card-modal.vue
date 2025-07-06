@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { SelectProps } from 'ant-design-vue';
+
+import { computed, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 
+import { Select, Spin } from 'ant-design-vue';
+
 import { useVbenForm } from '#/adapter/form';
 import { addCard, editCard, getCardInfo } from '#/api/regulatory/card';
 import { dropdownDeptList } from '#/api/system/dept';
+import { getPagedUser } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -61,6 +66,36 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isUpdate.value && id) {
       const record = await getCardInfo({ cardId: id });
       await formApi.setValues(record.data);
+
+      if (record.data.managerUserId) {
+        const userRes = await getPagedUser({
+          userId: record.data.managerUserId,
+        });
+        if (userRes.data?.rows?.length) {
+          const user = userRes.data.rows[0];
+          states.managerUserId.data = [
+            {
+              label: user.nickName,
+              value: user.userId,
+            },
+          ];
+          states.managerUserId.value = user.userId;
+        }
+      }
+
+      if (record.data.userId) {
+        const userRes = await getPagedUser({ userId: record.data.userId });
+        if (userRes.data?.rows?.length) {
+          const user = userRes.data.rows[0];
+          states.userId.data = [
+            {
+              label: user.nickName,
+              value: user.userId,
+            },
+          ];
+          states.userId.value = user.userId;
+        }
+      }
     }
 
     const promises = [setupDeptSelect()];
@@ -95,6 +130,11 @@ async function handleConfirm() {
 }
 
 async function handleClosed() {
+  states.manager.data = [];
+  states.manager.value = null;
+  states.userId.data = [];
+  states.userId.value = null;
+
   await formApi.resetForm();
   resetInitialized();
 }
@@ -166,10 +206,93 @@ async function setupDeptSelect() {
     },
   ]);
 }
+// 用户搜索 state
+const states = reactive<{
+  managerUserId: {
+    data: SelectProps['options'];
+    fetching: boolean;
+    value: null | SelectProps['value'];
+  };
+  userId: {
+    data: SelectProps['options'];
+    fetching: boolean;
+    value: null | SelectProps['value'];
+  };
+}>({
+  managerUserId: {
+    data: [],
+    fetching: false,
+    value: null,
+  },
+  userId: {
+    data: [],
+    fetching: false,
+    value: null,
+  },
+});
+
+/**
+ * 远程搜索用户
+ */
+async function fetchUser(value: string, field: 'managerUserId' | 'userId') {
+  if (!value) {
+    states[field].data = [];
+    return;
+  }
+  states[field].fetching = true;
+  try {
+    const res = await getPagedUser({
+      userName: value,
+    });
+    states[field].data = res.data?.rows.map((user) => ({
+      label: user.nickName,
+      value: user.userId,
+    }));
+  } finally {
+    states[field].fetching = false;
+  }
+}
 </script>
 
 <template>
   <BasicModal :title="title">
-    <BasicForm />
+    <BasicForm>
+      <template #managerUserId="managerUserId">
+        <Select
+          show-search
+          :value="managerUserId.value"
+          placeholder="请输入用户"
+          style="width: 100%"
+          :filter-option="false"
+          :not-found-content="states.managerUserId.fetching ? undefined : null"
+          :options="states.managerUserId.data"
+          @search="(val) => fetchUser(val, 'managerUserId')"
+          @change="(val) => formApi.setFieldValue('managerUserId', val)"
+          allow-clear
+        >
+          <template v-if="states.managerUserId.fetching" #notFoundContent>
+            <Spin size="small" />
+          </template>
+        </Select>
+      </template>
+      <template #userId="userId">
+        <Select
+          show-search
+          :value="userId.value"
+          placeholder="请输入用户"
+          style="width: 100%"
+          :filter-option="false"
+          :not-found-content="states.userId.fetching ? undefined : null"
+          :options="states.userId.data"
+          @search="(val) => fetchUser(val, 'userId')"
+          @change="(val) => formApi.setFieldValue('userId', val)"
+          allow-clear
+        >
+          <template v-if="states.userId.fetching" #notFoundContent>
+            <Spin size="small" />
+          </template>
+        </Select>
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>

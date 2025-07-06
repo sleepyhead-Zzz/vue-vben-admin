@@ -53,26 +53,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'assetMajorCategory',
     label: '资产门类',
   },
-  {
-    component: 'Input',
-    fieldName: 'originalValue',
-    label: '资产原值(元)',
-  },
-  {
-    component: 'Input',
-    fieldName: 'accumulatedDepreciation',
-    label: '累计折旧/摊销(元)',
-  },
-  {
-    component: 'Input',
-    fieldName: 'quantityArea',
-    label: '数量/面积',
-  },
-  {
-    component: 'Input',
-    fieldName: 'quantityUnit',
-    label: '数量计量单位',
-  },
 
   {
     component: 'Select',
@@ -82,16 +62,7 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'financialAccountStatus',
     label: '财务入账状态',
   },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'accountingDate',
-    label: '记账日期',
-  },
+
   {
     component: 'Input',
     fieldName: 'accountingVoucherNo',
@@ -111,66 +82,6 @@ export const querySchema: FormSchemaGetter = () => [
     component: 'Input',
     fieldName: 'storageLocation',
     label: '存放地点',
-  },
-  {
-    component: 'Input',
-    fieldName: 'licensePlate',
-    label: '车牌号',
-  },
-  {
-    component: 'Input',
-    fieldName: 'managingDepartmentId',
-    label: '管理部门',
-  },
-
-  {
-    component: 'Input',
-    fieldName: 'acquisitionMethod',
-    label: '取得方式',
-  },
-
-  {
-    component: 'Input',
-    fieldName: 'inventoryNo',
-    label: '清查编号',
-  },
-  {
-    component: 'Input',
-    fieldName: 'location',
-    label: '坐落位置',
-  },
-  {
-    component: 'Input',
-    fieldName: 'projectCode',
-    label: '项目代码',
-  },
-  {
-    component: 'Input',
-    fieldName: 'procurementForm',
-    label: '采购组织形式',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'acquisitionDate',
-    label: '取得日期',
-  },
-  {
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions(DictEnum.RegulatoryCardAccountStatus),
-    },
-    fieldName: 'assetStatus',
-    label: '资产状态',
-  },
-  {
-    component: 'Input',
-    fieldName: 'assetUse',
-    label: '资产用途',
   },
 ];
 
@@ -280,22 +191,42 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '管理部门',
     field: 'managingDepartmentId',
+    visible: false,
+  },
+  {
+    title: '管理部门',
+    field: 'managingDepartmentName',
   },
   {
     title: '管理人',
-    field: 'manager',
+    field: 'managerUserName',
+  },
+  {
+    title: '管理人',
+    field: 'managerUserId',
+    visible: false,
   },
   {
     title: '使用部门',
     field: 'usingDepartmentId',
+    visible: false,
+  },
+  {
+    title: '使用部门',
+    field: 'usingDepartmentName',
   },
   {
     title: '使用人',
     field: 'userId',
+    visible: false,
+  },
+  {
+    title: '使用人',
+    field: 'userName',
   },
   {
     title: '创建人',
-    field: 'creator',
+    field: 'creatorName',
     visible: false,
   },
   {
@@ -401,9 +332,11 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '卡片类型',
+    componentProps: {
+      options: getDictOptions(DictEnum.RegulatoryCardType),
+    },
     fieldName: 'cardType',
     component: 'Select',
-    componentProps: {},
   },
   {
     label: '单位会计科目',
@@ -497,10 +430,9 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '管理人',
-    fieldName: 'manager',
-    component: 'Input',
+    fieldName: 'managerUserId',
+    component: 'Select',
   },
-
   {
     component: 'TreeSelect',
     defaultValue: undefined,
@@ -511,7 +443,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '使用人',
     fieldName: 'userId',
-    component: 'Input',
+    component: 'Select',
   },
   {
     label: '创建人',
@@ -579,11 +511,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '接口状态',
     fieldName: 'interfaceStatus',
-    component: 'RadioGroup',
-    componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
-    },
+    component: 'Input',
   },
   {
     label: '备注',

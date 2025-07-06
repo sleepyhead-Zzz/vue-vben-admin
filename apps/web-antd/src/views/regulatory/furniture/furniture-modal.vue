@@ -63,6 +63,9 @@ const [BasicModal, modalApi] = useVbenModal({
     if (!isOpen) {
       return null;
     }
+    state.data = [];
+    state.value = null;
+
     modalApi.modalLoading(true);
 
     const { id } = modalApi.getData() as { id?: number | string };
@@ -80,7 +83,6 @@ const [BasicModal, modalApi] = useVbenModal({
               label: user.nickName,
               value: user.userId,
             },
-            ...state.data,
           ];
           state.value = user.userId;
         }
@@ -121,6 +123,8 @@ async function handleConfirm() {
 async function handleClosed() {
   await formApi.resetForm();
   resetInitialized();
+  state.data = [];
+  state.value = null;
 }
 
 /**
@@ -241,10 +245,10 @@ async function fetchUser(value: string) {
 <template>
   <BasicModal :title="title">
     <BasicForm>
-      <template #userId="slotProps">
+      <template #userId="userId">
         <Select
           show-search
-          :value="slotProps.value"
+          :value="userId.value"
           placeholder="请输入用户"
           style="width: 100%"
           :filter-option="false"

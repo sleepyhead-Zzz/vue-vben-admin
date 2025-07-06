@@ -1,6 +1,10 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'DatePicker',
@@ -79,7 +83,7 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'storageLocation',
+    fieldName: 'locationName',
     label: '存放地点',
   },
   {
@@ -88,8 +92,7 @@ export const querySchema: FormSchemaGetter = () => [
     label: '用途分类',
   },
   {
-    component: 'Select',
-    componentProps: {},
+    component: 'Input',
     fieldName: 'valueType',
     label: '价值类型',
   },
@@ -185,6 +188,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '主键ID',
     field: 'officeId',
+    visible: false,
   },
   {
     title: '单据日期',
@@ -220,7 +224,17 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '管理部门',
-    field: 'manageDept',
+    field: 'manageDeptId',
+    visible: false,
+  },
+  {
+    title: '管理部门',
+    field: 'manageDeptName',
+  },
+  {
+    title: '使用人',
+    field: 'userId',
+    visible: false,
   },
   {
     title: '使用人',
@@ -236,7 +250,11 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '存放地点',
-    field: 'storageLocation',
+    field: 'locationId',
+  },
+  {
+    title: '存放地点',
+    field: 'locationName',
   },
   {
     title: '用途分类',
@@ -277,6 +295,14 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '折旧状态',
     field: 'depreciationStatus',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(
+          row.depreciationStatus,
+          DictEnum.RegulatoryCardBusinessStatus,
+        );
+      },
+    },
   },
   {
     title: '折旧方法',
@@ -372,14 +398,18 @@ export const modalSchema: FormSchemaGetter = () => [
     component: 'Input',
   },
   {
-    label: '管理部门',
-    fieldName: 'manageDept',
-    component: 'Input',
+    component: 'TreeSelect',
+    // 在drawer里更新 这里不需要默认的componentProps
+    defaultValue: undefined,
+    fieldName: 'manageDeptId',
+    label: '所属部门',
+    rules: 'selectRequired',
   },
   {
     label: '使用人',
-    fieldName: 'userName',
-    component: 'Input',
+    fieldName: 'userId',
+    component: 'Select',
+    rules: 'selectRequired',
   },
   {
     label: '取得日期',
@@ -403,7 +433,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '存放地点',
-    fieldName: 'storageLocation',
+    fieldName: 'locationName',
     component: 'Input',
   },
   {
@@ -414,8 +444,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '价值类型',
     fieldName: 'valueType',
-    component: 'Select',
-    componentProps: {},
+    component: 'Input',
   },
   {
     label: '资产原值',
@@ -469,11 +498,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '使用状况',
     fieldName: 'usageStatus',
-    component: 'RadioGroup',
-    componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
-    },
+    component: 'Input',
   },
   {
     label: '使用方向',

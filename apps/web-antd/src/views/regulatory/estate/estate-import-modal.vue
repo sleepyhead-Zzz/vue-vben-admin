@@ -8,7 +8,7 @@ import { ExcelIcon, InBoxIcon } from '@vben/icons';
 
 import { Modal, Switch, Upload } from 'ant-design-vue';
 
-import { importFurnitureByExcel } from '#/api/regulatory/furniture';
+import { importEstateByExcel } from '#/api/regulatory/estate';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
 
@@ -35,7 +35,7 @@ async function handleSubmit() {
     const updateSupport = unref(checked);
 
     const response = await commonUploadFile(
-      importFurnitureByExcel,
+      importEstateByExcel,
       file,
       {
         updateSupport,

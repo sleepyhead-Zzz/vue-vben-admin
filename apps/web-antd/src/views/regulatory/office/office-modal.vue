@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { SelectProps } from 'ant-design-vue';
+
+import { computed, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import { cloneDeep } from '@vben/utils';
+import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
+
+import { Select, Spin } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { addOffice, editOffice, getOfficeInfo } from '#/api/regulatory/office';
+import { dropdownDeptList } from '#/api/system/dept';
+import { getPagedUser } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -60,7 +66,24 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isUpdate.value && id) {
       const record = await getOfficeInfo({ officeId: id });
       await formApi.setValues(record.data);
+
+      if (record.data.userId) {
+        const userRes = await getPagedUser({ userId: record.data.userId });
+        if (userRes.data?.rows?.length) {
+          const user = userRes.data.rows[0];
+          state.data = [
+            {
+              label: user.nickName,
+              value: user.userId,
+            },
+          ];
+          state.value = user.userId;
+        }
+      }
     }
+    const promises = [setupDeptSelect()];
+    await Promise.all(promises);
+
     await markInitialized();
 
     modalApi.modalLoading(false);
@@ -92,11 +115,110 @@ async function handleConfirm() {
 async function handleClosed() {
   await formApi.resetForm();
   resetInitialized();
+  state.data = [];
+  state.value = null;
+}
+
+/**
+ * 初始化部门选择
+ */
+async function setupDeptSelect() {
+  // updateSchema
+  const deptTree = await dropdownDeptList({
+    query: {
+      orderColumn: undefined,
+      orderDirection: undefined,
+      timeRangeColumn: undefined,
+      beginTime: undefined,
+      endTime: undefined,
+      deptId: undefined,
+      parentId: undefined,
+      status: undefined,
+      deptName: undefined,
+    },
+  });
+  // 选中后显示在输入框的值 即父节点 / 子节点
+  addFullName(deptTree.data, 'label', ' / ');
+  formApi.updateSchema([
+    {
+      componentProps: () => ({
+        class: 'w-full',
+        fieldNames: {
+          key: 'id',
+          value: 'id',
+          children: 'children',
+        },
+        getPopupContainer,
+
+        placeholder: '请选择',
+        showSearch: true,
+        treeData: deptTree.data,
+        treeDefaultExpandAll: true,
+        treeLine: { showLeafIcon: false },
+        // 筛选的字段
+        treeNodeFilterProp: 'label',
+        // 选中后显示在输入框的值
+        treeNodeLabelProp: 'fullName',
+      }),
+      fieldName: 'manageDeptId',
+    },
+  ]);
+}
+
+// 用户搜索 state
+const state = reactive<{
+  data: SelectProps['options'];
+  fetching: boolean;
+  value: null | SelectProps['value']; // 单选，value不是数组了
+}>({
+  data: [],
+  value: null,
+  fetching: false,
+});
+/**
+ * 远程搜索用户
+ */
+async function fetchUser(value: string) {
+  if (!value) {
+    state.data = [];
+    return;
+  }
+  state.fetching = true;
+  try {
+    const res = await getPagedUser({
+      userName: value,
+    });
+    state.data = res.data?.rows.map((user) => ({
+      label: user.nickName,
+      value: user.userId,
+    }));
+  } finally {
+    state.fetching = false;
+  }
 }
 </script>
 
 <template>
   <BasicModal :title="title">
-    <BasicForm />
+    <BasicForm>
+      <template #userId="userId">
+        <Select
+          show-search
+          :value="userId.value"
+          placeholder="请输入用户"
+          style="width: 100%"
+          :filter-option="false"
+          :not-found-content="state.fetching ? undefined : null"
+          :options="state.data"
+          @search="fetchUser"
+          @change="(val) => formApi.setFieldValue('userId', val)"
+          allow-clear
+        >
+          <template v-if="state.fetching" #notFoundContent>
+            <Spin size="small" />
+          </template>
+        </Select>
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>

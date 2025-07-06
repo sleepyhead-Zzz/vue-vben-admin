@@ -196,11 +196,7 @@ export const querySchema: FormSchemaGetter = () => [
     label: '会计凭证号',
   },
   {
-    component: 'RadioGroup',
-    componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
-    },
+    component: 'Input',
     fieldName: 'depreciationStatus',
     label: '折旧状态',
   },
@@ -364,6 +360,19 @@ export const querySchema: FormSchemaGetter = () => [
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
+  {
+    title: '单据日期',
+    field: 'documentDate',
+    visible: false,
+  },
+  {
+    title: '清查系统资产编号',
+    field: 'systemAssetCode',
+  },
+  {
+    title: '资产编号',
+    field: 'assetCode',
+  },
   {
     title: '资产分类编号',
     field: 'assetCategoryCode',
@@ -644,6 +653,21 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
+    label: '单据日期',
+    fieldName: 'documentDate',
+    component: 'DateTime',
+  },
+  {
+    label: '清查系统资产编号',
+    fieldName: 'systemAssetCode',
+    component: 'Input',
+  },
+  {
+    label: '资产编号',
+    fieldName: 'assetCode',
+    component: 'Input',
+  },
+  {
     label: '资产分类编号',
     fieldName: 'assetCategoryCode',
     component: 'Input',
@@ -839,11 +863,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '折旧状态',
     fieldName: 'depreciationStatus',
-    component: 'RadioGroup',
-    componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
-    },
+    component: 'Input',
   },
   {
     label: '均价',
@@ -858,11 +878,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '使用状况',
     fieldName: 'usageStatus',
-    component: 'RadioGroup',
-    componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
-    },
+    component: 'Input',
   },
   {
     label: '自用面积',
