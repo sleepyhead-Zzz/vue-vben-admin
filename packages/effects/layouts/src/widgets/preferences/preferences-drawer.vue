@@ -42,7 +42,6 @@ import {
   BuiltinTheme,
   ColorMode,
   Content,
-  Copyright,
   Footer,
   General,
   GlobalShortcutKeys,
@@ -394,7 +393,8 @@ async function handleReset() {
                 v-model:footer-fixed="footerFixed"
               />
             </Block>
-            <Block
+            <!-- 版权设置页 -->
+            <!-- <Block
               v-if="copyrightSettingShow"
               :title="$t('preferences.copyright.title')"
             >
@@ -407,7 +407,7 @@ async function handleReset() {
                 v-model:copyright-icp-link="copyrightIcpLink"
                 :disabled="!footerEnable"
               />
-            </Block>
+            </Block> -->
           </template>
 
           <template #shortcutKey>

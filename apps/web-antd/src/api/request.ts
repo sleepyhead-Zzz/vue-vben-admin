@@ -120,8 +120,9 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
         response.status >= 200 && response.status < 400 && code === 200;
 
       if (hasSuccess) {
-        const successMsg = message;
-        notify.success(successMsg);
+        // 展示响应成功消息
+        // const successMsg = message;
+        // notify.success(successMsg);
 
         return axiosResponseData;
       }

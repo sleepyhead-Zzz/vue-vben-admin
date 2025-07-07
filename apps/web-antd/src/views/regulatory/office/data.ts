@@ -3,6 +3,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { DictEnum } from '@vben/constants';
 
+import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
 export const querySchema: FormSchemaGetter = () => [
@@ -251,6 +252,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '存放地点',
     field: 'locationId',
+    visible: false,
   },
   {
     title: '存放地点',
@@ -299,7 +301,7 @@ export const columns: VxeGridProps['columns'] = [
       default: ({ row }) => {
         return renderDict(
           row.depreciationStatus,
-          DictEnum.RegulatoryCardBusinessStatus,
+          DictEnum.OfficeDepreciationStatus,
         );
       },
     },
@@ -481,14 +483,14 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'accountingVoucher',
     component: 'Input',
   },
+
   {
-    label: '折旧状态',
-    fieldName: 'depreciationStatus',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.RegulatoryCardAssetStatus),
     },
+    fieldName: 'depreciationStatus',
+    label: '折旧状态',
   },
   {
     label: '折旧方法',

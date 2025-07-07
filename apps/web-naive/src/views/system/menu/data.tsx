@@ -230,7 +230,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     renderComponentContent: (model) => ({
       addonBefore: () => <VbenIcon icon={model.icon} />,
       addonAfter: () => (
-        <a href="https://icon-sets.iconify.design/" target="_blank">
+        <a href="https://icones.js.org/collection/all" target="_blank">
           搜索图标
         </a>
       ),
