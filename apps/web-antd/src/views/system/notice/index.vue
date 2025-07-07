@@ -10,7 +10,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { noticeList, noticeRemove } from '#/api/system/notice';
+import { listNotice, removeNotice } from '#/api/system/notice';
 
 import { columns, querySchema } from './data';
 import noticeModal from './notice-modal.vue';
@@ -42,7 +42,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        return await noticeList({
+        return await listNotice({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -76,7 +76,7 @@ async function handleEdit(record: Notice) {
 }
 
 async function handleDelete(row: Notice) {
-  await noticeRemove([row.noticeId]);
+  await removeNotice([row.noticeId]);
   await tableApi.query();
 }
 
@@ -88,7 +88,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await noticeRemove(ids);
+      await removeNotice(ids);
       await tableApi.query();
     },
   });

@@ -38,16 +38,15 @@ const defaultPreferences: Preferences = {
     showIcon: true,
     styleType: 'normal',
   },
-  // 版权信息
-  // copyright: {
-  //   companyName: '烟台蓬莱国际机场',
-  //   companySiteLink: 'https://www.vben.pro',
-  //   date: '2024',
-  //   enable: true,
-  //   icp: '',
-  //   icpLink: '',
-  //   settingShow: true,
-  // },
+  copyright: {
+    companyName: 'system',
+    companySiteLink: '#',
+    date: '2025',
+    enable: true,
+    icp: '',
+    icpLink: '',
+    settingShow: true,
+  },
   footer: {
     enable: false,
     fixed: false,

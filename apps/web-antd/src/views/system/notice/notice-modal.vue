@@ -15,7 +15,7 @@ import { cloneDeep } from '@vben/utils';
 import { Form, FormItem, Input, RadioGroup } from 'ant-design-vue';
 import { pick } from 'lodash-es';
 
-import { noticeAdd, noticeInfo, noticeUpdate } from '#/api/system/notice';
+import { addNotice, editNotice, getNoticeInfo } from '#/api/system/notice';
 import { Tinymce } from '#/components/tinymce';
 import { getDictOptions } from '#/utils/dict';
 import { useBeforeCloseDiff } from '#/utils/popup';
@@ -101,7 +101,7 @@ const [BasicModal, modalApi] = useVbenModal({
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
     if (isUpdate.value && id) {
-      const record = await noticeInfo(id);
+      const record = await getNoticeInfo({ noticeId: id });
       // 只赋值存在的字段
       const filterRecord = pick(record, Object.keys(defaultValues));
       formData.value = filterRecord;
@@ -118,7 +118,9 @@ async function handleConfirm() {
     await validate();
     // 可能会做数据处理 使用cloneDeep深拷贝
     const data = cloneDeep(formData.value);
-    await (isUpdate.value ? noticeUpdate(data) : noticeAdd(data));
+    await (isUpdate.value
+      ? editNotice({ noticeId: data.noticeId }, data)
+      : addNotice(data));
     resetInitialized();
     emit('reload');
     modalApi.close();

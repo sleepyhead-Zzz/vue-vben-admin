@@ -8,7 +8,7 @@ import { CommandLineIcon, MemoryIcon, RedisIcon } from '@vben/icons';
 
 import { Button, Card, Col, Row } from 'ant-design-vue';
 
-import { redisCacheInfo } from '#/api/monitor/cache';
+import { getRedisCacheInfo } from '#/api/monitor/cache';
 
 import { CommandChart, MemoryChart, RedisDescription } from './components';
 
@@ -33,7 +33,7 @@ onMounted(async () => {
 
 async function loadInfo() {
   try {
-    const ret = await redisCacheInfo();
+    const ret = await getRedisCacheInfo();
 
     // 单位MB 保留两位小数
     const usedMemory = (
