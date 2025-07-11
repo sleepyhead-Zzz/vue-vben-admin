@@ -41,13 +41,13 @@ declare namespace RegulatoryAPI {
     /** 管理部门 */
     managingDepartmentId?: number;
     /** 管理人 */
-    manager?: string;
+    managerUserId?: number;
     /** 使用部门 */
     usingDepartmentId?: number;
     /** 使用人 */
-    userId?: string;
+    userId?: number;
     /** 创建人 */
-    creator?: string;
+    creatorName?: string;
     /** 取得方式 */
     acquisitionMethod?: string;
     /** 折旧/摊销年限(月) */
@@ -76,6 +76,12 @@ declare namespace RegulatoryAPI {
   };
 
   type AddRegEstateCommand = {
+    /** 单据日期 */
+    documentDate?: string;
+    /** 清查系统资产编号 */
+    systemAssetCode?: string;
+    /** 资产编号 */
+    assetCode?: string;
     /** 资产分类编号 */
     assetCategoryCode?: string;
     /** 资产分类名称 */
@@ -220,7 +226,9 @@ declare namespace RegulatoryAPI {
     manageDeptId?: number;
     /** 房间号 */
     locationId?: number;
+    userId?: number;
     creatorId?: number;
+    createDept?: number;
   };
 
   type AddRegOfficeCommand = {
@@ -241,15 +249,15 @@ declare namespace RegulatoryAPI {
     /** 取得方式 */
     acquisitionMethod?: string;
     /** 管理部门 */
-    manageDept?: string;
+    manageDeptId?: number;
     /** 使用人 */
-    userName?: string;
+    userId?: number;
     /** 取得日期 */
     acquisitionDate?: string;
     /** 使用日期 */
     usageDate?: string;
     /** 存放地点 */
-    storageLocation?: string;
+    locationName?: string;
     /** 用途分类 */
     usageCategory?: string;
     /** 价值类型 */
@@ -281,9 +289,10 @@ declare namespace RegulatoryAPI {
     /** 审核人 */
     approvedBy?: string;
     /** 是否已入账（1是，0否） */
-    isAccounted?: number;
+    isAccounted?: string;
     /** 是否未处置（1是，0否） */
-    isDisposed?: number;
+    isDisposed?: string;
+    creatorId?: number;
   };
 
   type batchRemoveCardParams = {
@@ -355,6 +364,10 @@ declare namespace RegulatoryAPI {
   };
 
   type getPagedCardsParams = {
+    managerUserId?: number;
+    userId?: number;
+    managingDepartmentId?: number;
+    usingDepartmentId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -385,6 +398,10 @@ declare namespace RegulatoryAPI {
   };
 
   type getPagedFurnituresParams = {
+    assetCode?: string;
+    assetName?: string;
+    manageDeptId?: number;
+    locationId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -441,6 +458,10 @@ declare namespace RegulatoryAPI {
   };
 
   type listFurnitureParams = {
+    assetCode?: string;
+    assetName?: string;
+    manageDeptId?: number;
+    locationId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -537,14 +558,22 @@ declare namespace RegulatoryAPI {
     licensePlate?: string;
     /** 管理部门 */
     managingDepartmentId?: number;
+    /** 管理部门 */
+    managingDepartmentName?: string;
     /** 管理人 */
-    manager?: string;
+    managerUserId?: number;
+    /** 管理人 */
+    managerUserName?: string;
     /** 使用部门 */
     usingDepartmentId?: number;
+    /** 使用部门 */
+    usingDepartmentName?: string;
     /** 使用人 */
     userId?: number;
+    /** 使用人 */
+    userName?: string;
     /** 创建人 */
-    creator_name?: string;
+    creatorName?: string;
     /** 取得方式 */
     acquisitionMethod?: string;
     /** 折旧/摊销年限(月) */
@@ -659,6 +688,12 @@ declare namespace RegulatoryAPI {
   type RegEstateDTO = {
     /** 主键 ID */
     estateId?: number;
+    /** 单据日期 */
+    documentDate?: string;
+    /** 清查系统资产编号 */
+    systemAssetCode?: string;
+    /** 资产编号 */
+    assetCode?: string;
     /** 资产分类编号 */
     assetCategoryCode?: string;
     /** 资产分类名称 */
@@ -937,20 +972,24 @@ declare namespace RegulatoryAPI {
   type RegFurnitureDTO = {
     /** 主键ID */
     furnitureId?: number;
-    /** 资产编号，唯一标识家具资产 */
+    /** 资产编号 */
     assetCode?: string;
-    /** 资产名称，例如：三人位沙发 */
+    /** 资产名称 */
     assetName?: string;
-    /** 资产描述，例如材质、颜色等详细信息 */
+    /** 资产描述 */
     description?: string;
-    /** 管理部门，例如：物业、办公室 */
-    managerDeptId?: number;
-    /** 管理部门，例如：物业、办公室 */
+    /** 所属部门 */
+    manageDeptId?: number;
+    /** 所属部门 */
     manageDeptName?: string;
     /** 房间号 */
     locationId?: number;
     /** 房间号 */
     locationName?: string;
+    /** 使用人 */
+    userId?: number;
+    /** 使用人 */
+    userName?: string;
   };
 
   type RegFurnitureQuery = {
@@ -959,6 +998,10 @@ declare namespace RegulatoryAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    assetCode?: string;
+    assetName?: string;
+    manageDeptId?: number;
+    locationId?: number;
   };
 
   type RegFurnitureVO = {
@@ -996,7 +1039,11 @@ declare namespace RegulatoryAPI {
     /** 取得方式 */
     acquisitionMethod?: string;
     /** 管理部门 */
-    manageDept?: string;
+    manageDeptId?: number;
+    /** 管理部门 */
+    manageDeptName?: string;
+    /** 使用人 */
+    userId?: number;
     /** 使用人 */
     userName?: string;
     /** 取得日期 */
@@ -1004,7 +1051,9 @@ declare namespace RegulatoryAPI {
     /** 使用日期 */
     usageDate?: string;
     /** 存放地点 */
-    storageLocation?: string;
+    locationId?: number;
+    /** 存放地点 */
+    locationName?: string;
     /** 用途分类 */
     usageCategory?: string;
     /** 价值类型 */
@@ -1036,9 +1085,9 @@ declare namespace RegulatoryAPI {
     /** 审核人 */
     approvedBy?: string;
     /** 是否已入账 */
-    isAccounted?: number;
+    isAccounted?: string;
     /** 是否未处置 */
-    isDisposed?: number;
+    isDisposed?: string;
   };
 
   type RegOfficeQuery = {
@@ -1280,13 +1329,13 @@ declare namespace RegulatoryAPI {
     /** 管理部门 */
     managingDepartmentId?: number;
     /** 管理人 */
-    manager?: string;
+    managerUserId?: number;
     /** 使用部门 */
     usingDepartmentId?: number;
     /** 使用人 */
-    userId?: string;
+    userId?: number;
     /** 创建人 */
-    creator?: string;
+    creatorName?: string;
     /** 取得方式 */
     acquisitionMethod?: string;
     /** 折旧/摊销年限(月) */
@@ -1317,6 +1366,12 @@ declare namespace RegulatoryAPI {
   };
 
   type UpdateRegEstateCommand = {
+    /** 单据日期 */
+    documentDate?: string;
+    /** 清查系统资产编号 */
+    systemAssetCode?: string;
+    /** 资产编号 */
+    assetCode?: string;
     /** 资产分类编号 */
     assetCategoryCode?: string;
     /** 资产分类名称 */
@@ -1463,7 +1518,9 @@ declare namespace RegulatoryAPI {
     manageDeptId?: number;
     /** 房间号 */
     locationId?: number;
+    userId?: number;
     creatorId?: number;
+    createDept?: number;
     furnitureId?: number;
     updaterId?: number;
   };
@@ -1486,15 +1543,15 @@ declare namespace RegulatoryAPI {
     /** 取得方式 */
     acquisitionMethod?: string;
     /** 管理部门 */
-    manageDept?: string;
+    manageDeptId?: number;
     /** 使用人 */
-    userName?: string;
+    userId?: number;
     /** 取得日期 */
     acquisitionDate?: string;
     /** 使用日期 */
     usageDate?: string;
     /** 存放地点 */
-    storageLocation?: string;
+    locationName?: string;
     /** 用途分类 */
     usageCategory?: string;
     /** 价值类型 */
@@ -1526,9 +1583,11 @@ declare namespace RegulatoryAPI {
     /** 审核人 */
     approvedBy?: string;
     /** 是否已入账（1是，0否） */
-    isAccounted?: number;
+    isAccounted?: string;
     /** 是否未处置（1是，0否） */
-    isDisposed?: number;
+    isDisposed?: string;
+    creatorId?: number;
     officeId?: number;
+    updaterId?: number;
   };
 }

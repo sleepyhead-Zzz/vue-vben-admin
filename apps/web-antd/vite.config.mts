@@ -27,10 +27,11 @@ export default defineConfig(async () => {
             changeOrigin: true,
             rewrite: (path) => path.replace(/^\/api/, ''),
             // mock代理目标地址
-            target: 'http://192.168.2.169:8080/dev-api',
+            target: 'http://192.168.3.144:8080/dev-api',
             ws: true,
           },
         },
+        allowedHosts: ['sleepyhead.ojlab.top'], // 这里是数组
       },
     },
   };

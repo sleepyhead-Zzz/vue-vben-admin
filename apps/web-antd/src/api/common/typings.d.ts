@@ -32,8 +32,9 @@ declare namespace CommonAPI {
   };
 
   type LoginCommand = {
-    username?: string;
+    identifier?: string;
     password?: string;
+    loginType?: string;
     captchaCode?: string;
     captchaCodeKey?: string;
   };

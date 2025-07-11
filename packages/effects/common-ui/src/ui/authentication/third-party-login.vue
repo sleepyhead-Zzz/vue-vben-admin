@@ -7,6 +7,13 @@ import { VbenIconButton } from '@vben-core/shadcn-ui';
 defineOptions({
   name: 'ThirdPartyLogin',
 });
+
+/**
+ * 跳转到后端微信授权接口
+ */
+function handleWechatLogin() {
+  window.location.href = '/api/login/wx/auth';
+}
 </script>
 
 <template>
@@ -20,7 +27,7 @@ defineOptions({
     </div>
 
     <div class="mt-4 flex flex-wrap justify-center">
-      <VbenIconButton class="mb-3">
+      <VbenIconButton class="mb-3" @click="handleWechatLogin">
         <MdiWechat />
       </VbenIconButton>
       <VbenIconButton class="mb-3">

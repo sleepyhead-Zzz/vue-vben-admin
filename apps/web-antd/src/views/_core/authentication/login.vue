@@ -52,7 +52,7 @@ const formSchema = computed((): VbenFormSchema[] => {
         placeholder: $t('authentication.usernameTip'),
       },
       defaultValue: 'sleepyhead@outlook.com',
-      fieldName: 'username',
+      fieldName: 'identifier',
       label: $t('authentication.username'),
       rules: z.string().min(1, { message: $t('authentication.usernameTip') }),
     },
@@ -96,6 +96,7 @@ async function handleAccountLogin(values) {
     if (captchaInfo.value.captchaEnabled) {
       requestParam.captchaCode = values.captchaCode;
       requestParam.captchaCodeKey = captchaInfo.value.uuid;
+      requestParam.loginType = 'password';
     }
     // 登录
     await authStore.authLogin(requestParam);

@@ -685,8 +685,8 @@ declare namespace SystemAPI {
   };
 
   type ResetPasswordCommand = {
-    userId?: number;
-    password?: string;
+    userId: number;
+    password: string;
   };
 
   type resetPasswordParams = {

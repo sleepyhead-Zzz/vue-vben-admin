@@ -103,7 +103,7 @@ export async function exportOfficeByExcel(
 }
 
 /** 办公资产信息导入excel下载 GET /regulatory/office/excelTemplate */
-export async function downloadtOfficeExcelTemplate(options?: {
+export async function downloadOfficeExcelTemplate(options?: {
   [key: string]: any;
 }) {
   return request<any>("/regulatory/office/excelTemplate", {
