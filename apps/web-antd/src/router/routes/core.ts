@@ -98,6 +98,15 @@ const coreRoutes: RouteRecordRaw[] = [
           title: $t('page.auth.callback'),
         },
       },
+      {
+        name: 'WeChatOAuth2',
+        path: 'wechat-oauth2',
+        component: () =>
+          import('#/views/_core/authentication/wechat-login.vue'),
+        meta: {
+          title: $t('page.auth.callback'),
+        },
+      },
     ],
   },
 ];

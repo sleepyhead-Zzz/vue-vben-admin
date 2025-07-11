@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+
 import { MdiGithub, MdiGoogle, MdiQqchat, MdiWechat } from '@vben/icons';
 import { $t } from '@vben/locales';
 
@@ -7,12 +9,9 @@ import { VbenIconButton } from '@vben-core/shadcn-ui';
 defineOptions({
   name: 'ThirdPartyLogin',
 });
-
-/**
- * 跳转到后端微信授权接口
- */
-function handleWechatLogin() {
-  window.location.href = '/api/login/wx/auth';
+const router = useRouter();
+function handleGo(path: string) {
+  router.push(path);
 }
 </script>
 
@@ -27,7 +26,7 @@ function handleWechatLogin() {
     </div>
 
     <div class="mt-4 flex flex-wrap justify-center">
-      <VbenIconButton class="mb-3" @click="handleWechatLogin">
+      <VbenIconButton class="mb-3" @click="handleGo('/auth/wechat-oauth2')">
         <MdiWechat />
       </VbenIconButton>
       <VbenIconButton class="mb-3">

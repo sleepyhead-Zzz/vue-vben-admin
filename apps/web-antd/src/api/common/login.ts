@@ -36,6 +36,29 @@ export async function login(
   });
 }
 
+/** 此处后端没有提供注释 GET /login/wx/auth */
+export async function getAuthorizeUrl(options?: { [key: string]: any }) {
+  return request<CommonAPI.ResponseDTOCaptchaDTO>("/login/wx/auth", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
+/** 此处后端没有提供注释 GET /login/wx/status */
+export async function getWxLoginStatus(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: CommonAPI.getWxLoginStatusParams,
+  options?: { [key: string]: any }
+) {
+  return request<CommonAPI.ResponseDTOString>("/login/wx/status", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 注册接口 POST /register */
 export async function register(
   body: CommonAPI.AddUserCommand,

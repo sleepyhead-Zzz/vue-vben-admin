@@ -15,10 +15,6 @@ declare namespace CommonAPI {
     creatorId?: number;
   };
 
-  type callbackParams = {
-    code: string;
-  };
-
   type CaptchaDTO = {
     captchaEnabled?: boolean;
     uuid?: string;
@@ -29,6 +25,10 @@ declare namespace CommonAPI {
     user?: UserDTO;
     permissions?: string[];
     roles?: string[];
+  };
+
+  type getWxLoginStatusParams = {
+    uuid: string;
   };
 
   type LoginCommand = {
@@ -72,6 +72,12 @@ declare namespace CommonAPI {
     code?: number;
     message?: string;
     data?: RouterDTO[];
+  };
+
+  type ResponseDTOString = {
+    code?: number;
+    message?: string;
+    data?: string;
   };
 
   type ResponseDTOTokenDTO = {
