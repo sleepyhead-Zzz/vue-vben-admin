@@ -490,9 +490,9 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'acquisitionDate',
     component: 'DatePicker',
     componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      showTime: false,
+      format: 'YYYY-MM-DD',
+      valueFormat: 'YYYY-MM-DD',
     },
   },
   {
