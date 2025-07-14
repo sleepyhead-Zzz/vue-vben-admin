@@ -118,6 +118,7 @@ declare namespace SystemAPI {
     postIds?: number[];
     remark?: string;
     creatorId?: number;
+    createDeptId?: number;
   };
 
   type AllocatedRoleQuery = {
@@ -280,6 +281,10 @@ declare namespace SystemAPI {
 
   type exportPostParams = {
     query: PostQuery;
+  };
+
+  type exportRoleByExcelParams = {
+    query: RoleQuery;
   };
 
   type exportUserByExcelParams = {
@@ -1400,7 +1405,9 @@ declare namespace SystemAPI {
     postIds?: number[];
     remark?: string;
     creatorId?: number;
+    createDeptId?: number;
     userId?: number;
+    updaterId?: number;
   };
 
   type UpdateUserPasswordCommand = {

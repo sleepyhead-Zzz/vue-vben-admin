@@ -32,7 +32,7 @@ const gridOptions: VxeGridProps = {
   height: 'auto',
   keepSource: true,
   pagerConfig: {
-    enabled: false,
+    enabled: true,
   },
   proxyConfig: {
     ajax: {

@@ -13,6 +13,7 @@ declare namespace CommonAPI {
     postIds?: number[];
     remark?: string;
     creatorId?: number;
+    createDeptId?: number;
   };
 
   type CaptchaDTO = {
@@ -74,10 +75,10 @@ declare namespace CommonAPI {
     data?: RouterDTO[];
   };
 
-  type ResponseDTOString = {
+  type ResponseDTOMapStringString = {
     code?: number;
     message?: string;
-    data?: string;
+    data?: Record<string, any>;
   };
 
   type ResponseDTOTokenDTO = {
@@ -198,6 +199,11 @@ declare namespace CommonAPI {
     updaterId?: number;
     /** 修改时间 */
     updateTime?: string;
+  };
+
+  type wxLoginCallbackParams = {
+    code: string;
+    state: string;
   };
 
   type WxUserProfileCommand = {

@@ -44,13 +44,28 @@ export async function getAuthorizeUrl(options?: { [key: string]: any }) {
   });
 }
 
+/** 此处后端没有提供注释 GET /login/wx/callback */
+export async function wxLoginCallback(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: CommonAPI.wxLoginCallbackParams,
+  options?: { [key: string]: any }
+) {
+  return request<string>("/login/wx/callback", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** 此处后端没有提供注释 GET /login/wx/status */
 export async function getWxLoginStatus(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: CommonAPI.getWxLoginStatusParams,
   options?: { [key: string]: any }
 ) {
-  return request<CommonAPI.ResponseDTOString>("/login/wx/status", {
+  return request<CommonAPI.ResponseDTOMapStringString>("/login/wx/status", {
     method: "GET",
     params: {
       ...params,

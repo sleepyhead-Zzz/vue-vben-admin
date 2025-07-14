@@ -10,18 +10,17 @@ import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { getVxePopupContainer } from '@vben/utils';
 
-import {
-  Dropdown,
-  Menu,
-  MenuItem,
-  Modal,
-  Popconfirm,
-  Space,
-} from 'ant-design-vue';
+import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { changeRoleStatus, getPagedRole, removeRole } from '#/api/system/role';
+import {
+  changeRoleStatus,
+  exportRoleByExcel,
+  getPagedRole,
+  removeRole,
+} from '#/api/system/role';
 import { TableSwitch } from '#/components/table';
+import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
 import roleAuthModal from './role-auth-modal.vue';
@@ -116,9 +115,14 @@ function handleMultiDelete() {
 }
 
 function handleDownloadExcel() {
-  // commonDownloadExcel(roleExport, '角色数据', tableApi.formApi.form.values, {
-  //   fieldMappingTime: formOptions.fieldMappingTime,
-  // });
+  commonDownloadExcel(
+    exportRoleByExcel,
+    '角色数据',
+    tableApi.formApi.form.values,
+    {
+      fieldMappingTime: formOptions.fieldMappingTime,
+    },
+  );
 }
 
 const { hasAccessByCodes, hasAccessByRoles } = useAccess();
@@ -136,7 +140,7 @@ function handleAuthEdit(record: SystemAPI.RoleDTO) {
 
 const router = useRouter();
 function handleAssignRole(record: SystemAPI.RoleDTO) {
-  router.push(`/system/role-assign/${record.roleId}`);
+  router.push(`/system/role-auth/user/${record.roleId}`);
 }
 </script>
 
@@ -194,6 +198,18 @@ function handleAssignRole(record: SystemAPI.RoleDTO) {
             >
               {{ $t('pages.common.edit') }}
             </ghost-button>
+            <ghost-button
+              v-access:code="['system:role:edit']"
+              @click.stop="handleAuthEdit(row)"
+            >
+              权限
+            </ghost-button>
+            <ghost-button
+              v-access:code="['system:role:edit']"
+              @click.stop="handleAssignRole(row)"
+            >
+              分配
+            </ghost-button>
             <Popconfirm
               :get-popup-container="getVxePopupContainer"
               placement="left"
@@ -209,25 +225,6 @@ function handleAssignRole(record: SystemAPI.RoleDTO) {
               </ghost-button>
             </Popconfirm>
           </Space>
-          <Dropdown placement="bottomRight">
-            <template #overlay>
-              <Menu>
-                <MenuItem key="1" @click="handleAuthEdit(row)">
-                  数据权限
-                </MenuItem>
-                <MenuItem key="2" @click="handleAssignRole(row)">
-                  分配用户
-                </MenuItem>
-              </Menu>
-            </template>
-            <a-button
-              size="small"
-              type="link"
-              v-access:code="'system:role:edit'"
-            >
-              {{ $t('pages.common.more') }}
-            </a-button>
-          </Dropdown>
         </template>
       </template>
     </BasicTable>

@@ -22,7 +22,7 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.SYS_COMMON_STATUS),
+      options: getDictOptions(DictEnum.SYS_LOGIN_LOG_STATUS),
     },
     fieldName: 'status',
     label: '登录状态',
@@ -82,7 +82,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'status',
     slots: {
       default: ({ row }) => {
-        return renderDict(row.status, DictEnum.SYS_COMMON_STATUS);
+        return renderDict(row.status, DictEnum.SYS_LOGIN_LOG_STATUS);
       },
     },
   },

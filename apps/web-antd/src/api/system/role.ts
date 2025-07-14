@@ -215,6 +215,23 @@ export async function roleDeptTreeSelect(
   );
 }
 
+/** 角色列表导出 POST /system/role/export */
+export async function exportRoleByExcel(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: SystemAPI.exportRoleByExcelParams,
+  options?: { [key: string]: any }
+) {
+  return request<any>("/system/role/export", {
+    method: "POST",
+    params: {
+      ...params,
+      query: undefined,
+      ...params["query"],
+    },
+    ...(options || {}),
+  });
+}
+
 /** 角色列表 POST /system/role/list */
 export async function getPagedRole(
   body: SystemAPI.RoleQuery,
