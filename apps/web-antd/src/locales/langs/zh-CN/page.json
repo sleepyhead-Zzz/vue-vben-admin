@@ -5,7 +5,8 @@
     "codeLogin": "验证码登录",
     "qrcodeLogin": "二维码登录",
     "forgetPassword": "忘记密码",
-    "callback": "微信登录"
+    "wechat": "微信登录",
+    "wechatQRCode": "微信扫码登录"
   },
   "dashboard": {
     "title": "概览",

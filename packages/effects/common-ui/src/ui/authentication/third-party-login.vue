@@ -26,7 +26,7 @@ function handleGo(path: string) {
     </div>
 
     <div class="mt-4 flex flex-wrap justify-center">
-      <VbenIconButton class="mb-3" @click="handleGo('/auth/wechat-oauth2')">
+      <VbenIconButton class="mb-3" @click="handleGo('/auth/wechat-qrcode')">
         <MdiWechat />
       </VbenIconButton>
       <VbenIconButton class="mb-3">

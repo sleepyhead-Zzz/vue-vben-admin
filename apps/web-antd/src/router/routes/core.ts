@@ -95,7 +95,7 @@ const coreRoutes: RouteRecordRaw[] = [
         path: 'callback',
         component: () => import('#/views/_core/authentication/callback.vue'),
         meta: {
-          title: $t('page.auth.callback'),
+          title: $t('page.auth.wechat'),
         },
       },
       {
@@ -104,7 +104,16 @@ const coreRoutes: RouteRecordRaw[] = [
         component: () =>
           import('#/views/_core/authentication/wechat-login.vue'),
         meta: {
-          title: $t('page.auth.callback'),
+          title: $t('page.auth.wechat'),
+        },
+      },
+      {
+        name: 'WeChatQRCode',
+        path: 'wechat-qrcode',
+        component: () =>
+          import('#/views/_core/authentication/qrcode-login.vue'),
+        meta: {
+          title: $t('page.auth.wechatQRCode'),
         },
       },
     ],

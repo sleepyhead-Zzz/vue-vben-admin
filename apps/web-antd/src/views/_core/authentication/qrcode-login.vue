@@ -6,8 +6,12 @@ import { useAuthStore } from '#/store';
 
 const authStore = useAuthStore();
 
-async function handleLoginSuccess(code: string) {
-  await authStore.authLogin({ code });
+async function handleLoginSuccess(code: string, uuid: string) {
+  await authStore.authLogin({
+    identifier: uuid,
+    password: code,
+    loginType: 'wechatmp',
+  });
 }
 
 async function getQrCode() {
@@ -27,7 +31,7 @@ async function getStatus(sessionId: string) {
         code: res.data.code,
       }
     : {
-        status: undefined,
+        status: 'expired',
         code: undefined,
       };
 }
