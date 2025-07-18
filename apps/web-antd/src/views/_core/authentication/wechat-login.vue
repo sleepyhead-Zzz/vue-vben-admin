@@ -8,7 +8,7 @@ const router = useRouter();
 
 onMounted(async () => {
   try {
-    const { data } = await getAuthorizeUrl();
+    const { data } = await getAuthorizeUrl({ pc: true });
     if (data) {
       window.location.replace(data.img);
     } else {
