@@ -10,12 +10,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  batchRemoveBook,
-  exportBookByExcel,
-  getPagedBooks,
-} from '#/api/traveler/book';
-import { commonDownloadExcel } from '#/utils/file/download';
+import { batchRemoveBook, getPagedBooks } from '#/api/traveler/book';
 
 import bookModal from './book-modal.vue';
 import { columns, querySchema } from './data';
@@ -88,19 +83,19 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(row: API.TravelerBookDTO) {
+async function handleEdit(row: TravelerAPI.TravelerBookDTO) {
   modalApi.setData({ id: row.bookId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.TravelerBookDTO) {
+async function handleDelete(row: TravelerAPI.TravelerBookDTO) {
   await batchRemoveBook({ bookIds: [row.bookId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.TravelerBookDTO) => row.bookId);
+  const ids = rows.map((row: TravelerAPI.TravelerBookDTO) => row.bookId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -113,14 +108,14 @@ function handleMultiDelete() {
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(
-    exportBookByExcel,
-    '预约数据',
-    tableApi.formApi.form.values,
-    {
-      fieldMappingTime: formOptions.fieldMappingTime,
-    },
-  );
+  // commonDownloadExcel(
+  //   exportBookByExcel,
+  //   '预约数据',
+  //   tableApi.formApi.form.values,
+  //   {
+  //     fieldMappingTime: formOptions.fieldMappingTime,
+  //   },
+  // );
 }
 </script>
 
