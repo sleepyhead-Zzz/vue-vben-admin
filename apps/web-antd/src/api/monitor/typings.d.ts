@@ -44,6 +44,7 @@ declare namespace MonitorAPI {
     msg?: string;
     /** 登录时间 */
     loginTime?: string;
+    clientKey?: string;
   };
 
   type LoginLogQuery = {

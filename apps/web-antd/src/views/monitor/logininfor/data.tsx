@@ -41,6 +41,10 @@ export const columns: VxeGridProps['columns'] = [
     field: 'userName',
   },
   {
+    title: '登录平台',
+    field: 'clientKey',
+  },
+  {
     title: 'IP地址',
     field: 'ipAddress',
   },
@@ -94,6 +98,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '日期',
     field: 'loginTime',
   },
+
   {
     field: 'action',
     fixed: 'right',

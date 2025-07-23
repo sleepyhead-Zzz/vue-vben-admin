@@ -38,19 +38,9 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'service',
     label: '服务项目',
   },
+
   {
     component: 'Input',
-    fieldName: 'address',
-    label: '地址',
-  },
-  {
-    component: 'Textarea',
-    fieldName: 'remarks',
-    label: '备注',
-  },
-  {
-    component: 'Select',
-    componentProps: {},
     fieldName: 'travelerType',
     label: '旅客类型',
   },
@@ -59,31 +49,7 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'flightNumber',
     label: '航班号',
   },
-  {
-    component: 'Input',
-    fieldName: 'checkedBaggage',
-    label: '托运行李数量',
-  },
-  {
-    component: 'Input',
-    fieldName: 'handBaggage',
-    label: '手提行李数量',
-  },
-  {
-    component: 'Input',
-    fieldName: 'companionName',
-    label: '陪同人姓名',
-  },
-  {
-    component: 'Input',
-    fieldName: 'relation',
-    label: '与乘机人关系',
-  },
-  {
-    component: 'Input',
-    fieldName: 'companionPhone',
-    label: '陪同人联系方式',
-  },
+
   {
     component: 'RadioGroup',
     componentProps: {
@@ -117,36 +83,6 @@ export const querySchema: FormSchemaGetter = () => [
     },
     fieldName: 'orderTime',
     label: '接单时间',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'serviceStartTime',
-    label: '服务开始时间',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'serviceEndTime',
-    label: '服务结束时间',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'cancelTime',
-    label: '取消时间',
   },
 ];
 
@@ -187,14 +123,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '服务类型',
     field: 'service',
   },
-  {
-    title: '地址',
-    field: 'address',
-  },
-  {
-    title: '备注',
-    field: 'remarks',
-  },
+
   {
     title: '旅客类型',
     field: 'travelerType',
@@ -211,18 +140,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '手提行李数量',
     field: 'handBaggage',
   },
-  {
-    title: '陪同人姓名',
-    field: 'companionName',
-  },
-  {
-    title: '与乘机人关系',
-    field: 'relation',
-  },
-  {
-    title: '陪同人联系方式',
-    field: 'companionPhone',
-  },
+
   {
     title: '状态',
     field: 'status',
@@ -239,18 +157,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '接单时间',
     field: 'orderTime',
   },
-  {
-    title: '服务开始时间',
-    field: 'serviceStartTime',
-  },
-  {
-    title: '服务结束时间',
-    field: 'serviceEndTime',
-  },
-  {
-    title: '取消时间',
-    field: 'cancelTime',
-  },
+
   {
     field: 'action',
     fixed: 'right',
@@ -320,8 +227,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '旅客类型',
     fieldName: 'travelerType',
-    component: 'Select',
-    componentProps: {},
+    component: 'Input',
   },
   {
     label: '航班号',

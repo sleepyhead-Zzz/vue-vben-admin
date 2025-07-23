@@ -4,6 +4,7 @@ import type { VbenFormSchema } from '@vben/common-ui';
 import { computed, onMounted, ref, useTemplateRef } from 'vue';
 
 import { AuthenticationLogin, z } from '@vben/common-ui';
+import { useAppConfig } from '@vben/hooks';
 import { $t } from '@vben/locales';
 
 import { omit } from 'lodash-es';
@@ -12,6 +13,8 @@ import { getCaptchaCode } from '#/api/common/captcha';
 import { useAuthStore } from '#/store';
 
 defineOptions({ name: 'Login' });
+
+const { clientId } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
 const authStore = useAuthStore();
 
@@ -96,7 +99,8 @@ async function handleAccountLogin(values) {
     if (captchaInfo.value.captchaEnabled) {
       requestParam.captchaCode = values.captchaCode;
       requestParam.captchaCodeKey = captchaInfo.value.uuid;
-      requestParam.loginType = 'password';
+      requestParam.grantType = 'password';
+      requestParam.clientId = clientId;
     }
     // 登录
     await authStore.authLogin(requestParam);

@@ -8,6 +8,10 @@ declare namespace TravelerAPI {
     phoneNumber?: string;
     service?: string;
     address?: string;
+    /** 血压是否正常 */
+    bloodPressureNormal?: string;
+    /** 心脏是否正常 */
+    heartNormal?: string;
     remarks?: string;
     travelerType?: string;
     flightNumber?: string;
@@ -16,8 +20,6 @@ declare namespace TravelerAPI {
     companionName?: string;
     relation?: string;
     companionPhone?: string;
-    /** 状态 */
-    status?: number;
     flightTime?: string;
     /** 服务人员 */
     staffId?: string;
@@ -214,6 +216,10 @@ declare namespace TravelerAPI {
     phoneNumber?: string;
     service?: string;
     address?: string;
+    /** 血压是否正常 */
+    bloodPressureNormal?: string;
+    /** 心脏是否正常 */
+    heartNormal?: string;
     remarks?: string;
     travelerType?: string;
     flightNumber?: string;
@@ -226,14 +232,18 @@ declare namespace TravelerAPI {
     status?: number;
     flightTime?: string;
     createTime?: string;
-    creatorId?: number;
-    updaterId?: number;
-    updateTime?: string;
     /** 服务人员 */
-    staffId?: string;
+    staffId?: number;
+    staffName?: string;
+    staffPhone?: string;
     /** 开始时间 */
     serviceStartTime?: string;
+    /** 接单时间 */
+    orderTime?: string;
+    /** 服务结束时间 */
     serviceEndTime?: string;
+    /** 取消时间 */
+    cancelTime?: string;
     createDept?: number;
   };
 
@@ -255,6 +265,10 @@ declare namespace TravelerAPI {
     phoneNumber?: string;
     service?: string;
     address?: string;
+    /** 血压是否正常 */
+    bloodPressureNormal?: string;
+    /** 心脏是否正常 */
+    heartNormal?: string;
     remarks?: string;
     travelerType?: string;
     flightNumber?: string;
@@ -263,8 +277,6 @@ declare namespace TravelerAPI {
     companionName?: string;
     relation?: string;
     companionPhone?: string;
-    /** 状态 */
-    status?: number;
     flightTime?: string;
     /** 服务人员 */
     staffId?: string;

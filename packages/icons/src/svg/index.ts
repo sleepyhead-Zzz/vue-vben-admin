@@ -34,3 +34,4 @@ export {
   SvgTopiamIcon,
   SvgWechatIcon,
 };
+export { default as SvgMessageUrl } from './icons/message.svg';

@@ -1,28 +1,19 @@
-<!--
-使用antd原生Form生成 详细用法参考ant-design-vue Form组件文档
-vscode默认配置文件会自动格式化/移除未使用依赖
--->
 <script setup lang="ts">
-import type { RuleObject } from 'ant-design-vue/es/form';
-
-import type { EvaluationForm } from '#/api/domain/evaluation/model';
-
 import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
-import { Form, FormItem, Input } from 'ant-design-vue';
-import { pick } from 'lodash-es';
-
+import { useVbenForm } from '#/adapter/form';
 import {
   addEvaluation,
   editEvaluation,
   getEvaluationInfo,
-} from '#/api/domain/evaluation';
-import { Tinymce } from '#/components/tinymce';
-import { useBeforeCloseDiff } from '#/utils/popup';
+} from '#/api/traveler/evaluation';
+import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
+
+import { modalSchema } from './data';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -31,50 +22,31 @@ const title = computed(() => {
   return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
 });
 
-/**
- * 定义默认值 用于reset
- */
-const defaultValues: Partial<EvaluationForm> = {
-  evaluationId: undefined,
-  bookId: undefined,
-  serviceAttitude: undefined,
-  professionalism: undefined,
-  evaluationContent: undefined,
-};
-
-/**
- * 表单数据ref
- */
-const formData = ref(defaultValues);
-
-type AntdFormRules<T> = Partial<Record<keyof T, RuleObject[]>> & {
-  [key: string]: RuleObject[];
-};
-/**
- * 表单校验规则
- */
-const formRules = ref<AntdFormRules<EvaluationForm>>({});
-
-/**
- * useForm解构出表单方法
- */
-const { validate, validateInfos, resetFields } = Form.useForm(
-  formData,
-  formRules,
-);
-
-function customFormValueGetter() {
-  return JSON.stringify(formData.value);
-}
+const [BasicForm, formApi] = useVbenForm({
+  commonConfig: {
+    // 默认占满两列
+    formItemClass: 'col-span-2',
+    // 默认label宽度 px
+    labelWidth: 80,
+    // 通用配置项 会影响到所有表单项
+    componentProps: {
+      class: 'w-full',
+    },
+  },
+  schema: modalSchema(),
+  showDefaultActions: false,
+  wrapperClass: 'grid-cols-2',
+});
 
 const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
   {
-    initializedGetter: customFormValueGetter,
-    currentGetter: customFormValueGetter,
+    initializedGetter: defaultFormValueGetter(formApi),
+    currentGetter: defaultFormValueGetter(formApi),
   },
 );
 
 const [BasicModal, modalApi] = useVbenModal({
+  // 在这里更改宽度
   class: 'w-[550px]',
   fullscreenButton: false,
   onBeforeClose,
@@ -90,10 +62,8 @@ const [BasicModal, modalApi] = useVbenModal({
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
-      const record = await getEvaluationInfo(id);
-      // 只赋值存在的字段
-      const filterRecord = pick(record, Object.keys(defaultValues));
-      formData.value = filterRecord;
+      const record = await getEvaluationInfo({ evaluationId: id });
+      await formApi.setValues(record.data);
     }
     await markInitialized();
 
@@ -104,10 +74,15 @@ const [BasicModal, modalApi] = useVbenModal({
 async function handleConfirm() {
   try {
     modalApi.lock(true);
-    await validate();
-    // 可能会做数据处理 使用cloneDeep深拷贝
-    const data = cloneDeep(formData.value);
-    await (isUpdate.value ? editEvaluation(data) : addEvaluation(data));
+    const { valid } = await formApi.validate();
+    if (!valid) {
+      return;
+    }
+    // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
+    const data = cloneDeep(await formApi.getValues());
+    await (isUpdate.value
+      ? editEvaluation({ evaluationId: data.evaluationId }, data)
+      : addEvaluation(data));
     resetInitialized();
     emit('reload');
     modalApi.close();
@@ -119,36 +94,13 @@ async function handleConfirm() {
 }
 
 async function handleClosed() {
-  formData.value = defaultValues;
-  resetFields();
+  await formApi.resetForm();
   resetInitialized();
 }
 </script>
 
 <template>
   <BasicModal :title="title">
-    <Form :label-col="{ span: 4 }">
-      <FormItem label="" v-bind="validateInfos.bookId">
-        <Input
-          v-model:value="formData.bookId"
-          :placeholder="$t('ui.formRules.required')"
-        />
-      </FormItem>
-      <FormItem label="" v-bind="validateInfos.serviceAttitude">
-        <Input
-          v-model:value="formData.serviceAttitude"
-          :placeholder="$t('ui.formRules.required')"
-        />
-      </FormItem>
-      <FormItem label="" v-bind="validateInfos.professionalism">
-        <Input
-          v-model:value="formData.professionalism"
-          :placeholder="$t('ui.formRules.required')"
-        />
-      </FormItem>
-      <FormItem label="" v-bind="validateInfos.evaluationContent">
-        <Tinymce :disabled="false" v-model="formData.evaluationContent" />
-      </FormItem>
-    </Form>
+    <BasicForm />
   </BasicModal>
 </template>

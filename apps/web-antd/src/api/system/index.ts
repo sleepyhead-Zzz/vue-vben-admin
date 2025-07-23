@@ -10,6 +10,7 @@ import * as menu from "./menu";
 import * as dictType from "./dictType";
 import * as dictData from "./dictData";
 import * as dept from "./dept";
+import * as client from "./client";
 import * as config from "./config";
 import * as notice from "./notice";
 import * as file from "./file";
@@ -22,6 +23,7 @@ export default {
   dictType,
   dictData,
   dept,
+  client,
   config,
   notice,
   file,

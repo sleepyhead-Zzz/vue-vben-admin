@@ -12,10 +12,8 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
   batchRemoveEvaluation,
-  exportEvaluationByExcel,
   getPagedEvaluations,
-} from '#/api/domain/evaluation';
-import { commonDownloadExcel } from '#/utils/file/download';
+} from '#/api/traveler/evaluation';
 
 import { columns, querySchema } from './data';
 import evaluationModal from './evaluation-modal.vue';
@@ -71,7 +69,7 @@ const gridOptions: VxeGridProps = {
     keyField: 'evaluationId',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'domain-evaluation-index',
+  id: 'traveler-evaluation-index',
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -88,19 +86,21 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(row: API.TravelerEvaluationDTO) {
+async function handleEdit(row: TravelerAPI.TravelerEvaluationDTO) {
   modalApi.setData({ id: row.evaluationId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.TravelerEvaluationDTO) {
+async function handleDelete(row: TravelerAPI.TravelerEvaluationDTO) {
   await batchRemoveEvaluation({ evaluationIds: [row.evaluationId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.TravelerEvaluationDTO) => row.evaluationId);
+  const ids = rows.map(
+    (row: TravelerAPI.TravelerEvaluationDTO) => row.evaluationId,
+  );
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -113,14 +113,14 @@ function handleMultiDelete() {
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(
-    exportEvaluationByExcel,
-    '评价数据',
-    tableApi.formApi.form.values,
-    {
-      fieldMappingTime: formOptions.fieldMappingTime,
-    },
-  );
+  // commonDownloadExcel(
+  //   exportEvaluationByExcel,
+  //   '评价数据',
+  //   tableApi.formApi.form.values,
+  //   {
+  //     fieldMappingTime: formOptions.fieldMappingTime,
+  //   },
+  // );
 }
 </script>
 
@@ -130,7 +130,7 @@ function handleDownloadExcel() {
       <template #toolbar-tools>
         <Space>
           <a-button
-            v-access:code="['domain:evaluation:export']"
+            v-access:code="['traveler:evaluation:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
@@ -139,14 +139,14 @@ function handleDownloadExcel() {
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary"
-            v-access:code="['domain:evaluation:remove']"
+            v-access:code="['traveler:evaluation:remove']"
             @click="handleMultiDelete"
           >
             {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
             type="primary"
-            v-access:code="['domain:evaluation:add']"
+            v-access:code="['traveler:evaluation:add']"
             @click="handleAdd"
           >
             {{ $t('pages.common.add') }}
@@ -156,7 +156,7 @@ function handleDownloadExcel() {
       <template #action="{ row }">
         <Space>
           <ghost-button
-            v-access:code="['domain:evaluation:edit']"
+            v-access:code="['traveler:evaluation:edit']"
             @click.stop="handleEdit(row)"
           >
             {{ $t('pages.common.edit') }}
@@ -169,7 +169,7 @@ function handleDownloadExcel() {
           >
             <ghost-button
               danger
-              v-access:code="['domain:evaluation:remove']"
+              v-access:code="['traveler:evaluation:remove']"
               @click.stop=""
             >
               {{ $t('pages.common.delete') }}

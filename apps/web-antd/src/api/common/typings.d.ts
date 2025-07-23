@@ -28,6 +28,10 @@ declare namespace CommonAPI {
     roles?: string[];
   };
 
+  type getAuthorizeUrlParams = {
+    pc?: boolean;
+  };
+
   type getWxLoginStatusParams = {
     uuid: string;
   };
@@ -35,7 +39,8 @@ declare namespace CommonAPI {
   type LoginCommand = {
     identifier?: string;
     password?: string;
-    loginType?: string;
+    clientId?: string;
+    grantType?: string;
     captchaCode?: string;
     captchaCodeKey?: string;
   };

@@ -104,6 +104,25 @@ declare namespace SystemAPI {
     deptIds?: number[];
   };
 
+  type AddSysClientCommand = {
+    /** 客户端id */
+    clientId?: string;
+    /** 客户端key */
+    clientKey?: string;
+    /** 客户端秘钥 */
+    clientSecret?: string;
+    /** 授权类型 */
+    grantTypeList: string[];
+    /** 设备类型 */
+    deviceType?: string;
+    /** token活跃超时时间 */
+    activeTimeout?: number;
+    /** token固定超时 */
+    timeout?: number;
+    /** 状态（0正常 1停用） */
+    status?: string;
+  };
+
   type AddUserCommand = {
     deptId?: number;
     userName?: string;
@@ -137,6 +156,10 @@ declare namespace SystemAPI {
   type allocatedUserListParams = {
     roleId: number;
     query: AllocatedRoleQuery;
+  };
+
+  type batchRemoveClientParams = {
+    ids: number[];
   };
 
   type batchRemoveConfigParams = {
@@ -243,6 +266,10 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
+  type editClientParams = {
+    id: number;
+  };
+
   type editConfigParams = {
     configId: number;
   };
@@ -279,6 +306,10 @@ declare namespace SystemAPI {
     userId: number;
   };
 
+  type exportClientByExcelParams = {
+    query: SysClientQuery;
+  };
+
   type exportPostParams = {
     query: PostQuery;
   };
@@ -289,6 +320,11 @@ declare namespace SystemAPI {
 
   type exportUserByExcelParams = {
     query: SearchUserQuerySearchUserDO;
+  };
+
+  type getClientInfoParams = {
+    /** 记录ID */
+    id: number;
   };
 
   type getConfigInfoParams = {
@@ -325,6 +361,21 @@ declare namespace SystemAPI {
   type getNoticeInfoParams = {
     /** 记录ID */
     noticeId: number;
+  };
+
+  type getPagedClientsParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type getPagedConfigsParams = {
@@ -420,6 +471,19 @@ declare namespace SystemAPI {
 
   type getUserDetailInfoParams = {
     userId: number;
+  };
+
+  type listClientParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type listConfigParams = {
@@ -577,6 +641,13 @@ declare namespace SystemAPI {
     rows?: RoleDTO[];
   };
 
+  type PageDTOSysClientDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysClientDTO[];
+  };
+
   type PageDTOSysConfigDTO = {
     /** 总记录数 */
     total?: number;
@@ -651,6 +722,10 @@ declare namespace SystemAPI {
     deptId?: number;
     postIds?: number[];
     postCategory?: string;
+  };
+
+  type removeClientParams = {
+    id: number;
   };
 
   type removeConfigParams = {
@@ -732,6 +807,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: RoleDTO[];
+  };
+
+  type ResponseDTOListSysClientDTO = {
+    code?: number;
+    message?: string;
+    data?: SysClientDTO[];
   };
 
   type ResponseDTOListSysConfigDTO = {
@@ -818,6 +899,12 @@ declare namespace SystemAPI {
     data?: PageDTORoleDTO;
   };
 
+  type ResponseDTOPageDTOSysClientDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOSysClientDTO;
+  };
+
   type ResponseDTOPageDTOSysConfigDTO = {
     code?: number;
     message?: string;
@@ -870,6 +957,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: string;
+  };
+
+  type ResponseDTOSysClientDTO = {
+    code?: number;
+    message?: string;
+    data?: SysClientDTO;
   };
 
   type ResponseDTOSysConfigDTO = {
@@ -988,6 +1081,35 @@ declare namespace SystemAPI {
   type selectAuthUserAllParams = {
     roleId: number;
     userIds: number[];
+  };
+
+  type SysClientDTO = {
+    /** id */
+    id?: number;
+    /** 客户端id */
+    clientId?: string;
+    /** 客户端key */
+    clientKey?: string;
+    /** 客户端秘钥 */
+    clientSecret?: string;
+    /** 授权类型 */
+    grantTypeList?: string[];
+    /** 设备类型 */
+    deviceType?: string;
+    /** token活跃超时时间 */
+    activeTimeout?: number;
+    /** token固定超时 */
+    timeout?: number;
+    /** 状态 */
+    status?: string;
+  };
+
+  type SysClientQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
   };
 
   type SysConfigDTO = {
@@ -1165,6 +1287,8 @@ declare namespace SystemAPI {
     /** URL */
     url?: string;
     status?: string;
+    creatorId?: number;
+    createTime?: string;
   };
 
   type SysFileUploadDTO = {
@@ -1389,6 +1513,26 @@ declare namespace SystemAPI {
   type UpdateStatusCommand = {
     roleId?: number;
     status?: string;
+  };
+
+  type UpdateSysClientCommand = {
+    /** 客户端id */
+    clientId?: string;
+    /** 客户端key */
+    clientKey?: string;
+    /** 客户端秘钥 */
+    clientSecret?: string;
+    /** 授权类型 */
+    grantTypeList: string[];
+    /** 设备类型 */
+    deviceType?: string;
+    /** token活跃超时时间 */
+    activeTimeout?: number;
+    /** token固定超时 */
+    timeout?: number;
+    /** 状态（0正常 1停用） */
+    status?: string;
+    id?: number;
   };
 
   type UpdateUserCommand = {

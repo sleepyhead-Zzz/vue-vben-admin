@@ -1,7 +1,5 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import { getDictOptions } from '#/utils/dict';
-import { renderDict } from '#/utils/render';
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -56,5 +54,41 @@ export const columns: VxeGridProps['columns'] = [
     slots: { default: 'action' },
     title: '操作',
     width: 180,
+  },
+];
+
+export const modalSchema: FormSchemaGetter = () => [
+  {
+    label: '',
+    fieldName: 'evaluationId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '',
+    fieldName: 'bookId',
+    component: 'Input',
+  },
+  {
+    label: '',
+    fieldName: 'serviceAttitude',
+    component: 'Input',
+  },
+  {
+    label: '',
+    fieldName: 'professionalism',
+    component: 'Input',
+  },
+  {
+    label: '',
+    fieldName: 'evaluationContent',
+    component: 'RichTextarea',
+    componentProps: {
+      // disabled: false, // 是否只读
+      // height: 400 // 高度 默认400
+    },
   },
 ];
