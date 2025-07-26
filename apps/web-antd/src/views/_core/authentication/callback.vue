@@ -2,6 +2,8 @@
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { useAppConfig } from '@vben/hooks';
+
 import { useAuthStore } from '#/store';
 
 const route = useRoute();
@@ -9,11 +11,12 @@ const authStore = useAuthStore();
 
 onMounted(async () => {
   const code = route.query.code as string;
-
+  const { clientId } = useAppConfig(import.meta.env, import.meta.env.PROD);
   if (code) {
     const requestParam = {
-      loginType: 'wechatmp',
+      grantType: 'wechatmp',
       password: code,
+      clientId,
     };
 
     try {
