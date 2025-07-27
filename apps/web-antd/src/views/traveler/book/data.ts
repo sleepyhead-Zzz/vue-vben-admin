@@ -1,6 +1,11 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -53,8 +58,7 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'RadioGroup',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.TravelerBookStatus),
     },
     fieldName: 'status',
     label: '状态',
@@ -144,6 +148,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '状态',
     field: 'status',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.status, DictEnum.TravelerBookStatus);
+      },
+    },
   },
   {
     title: '航班时间',
@@ -262,10 +271,9 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '状态',
     fieldName: 'status',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.TravelerBookStatus),
     },
   },
   {

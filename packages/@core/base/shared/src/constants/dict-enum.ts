@@ -22,6 +22,8 @@ export const DictEnum = {
   RegulatoryCardBusinessStatus: 'regulatory_card_business_status', // 信息卡业务状态
   RegulatoryCardType: 'regulatory_card_type', // 信息卡业务状态
   OfficeDepreciationStatus: 'office_depreciation_status', // 办公资产折旧状态
+
+  TravelerBookStatus: 'traveler_book_status',
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;
