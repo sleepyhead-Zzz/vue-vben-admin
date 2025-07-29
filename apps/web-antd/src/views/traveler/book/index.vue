@@ -3,7 +3,7 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { Page, useVbenModal } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { getVxePopupContainer } from '@vben/utils';
 
@@ -11,6 +11,7 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import { batchRemoveBook, getPagedBooks } from '#/api/traveler/book';
+import evaluationDrawer from '#/views/traveler/evaluation/evaluation-drawer.vue';
 
 import bookModal from './book-modal.vue';
 import { columns, querySchema } from './data';
@@ -78,10 +79,18 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 const [BookModal, modalApi] = useVbenModal({
   connectedComponent: bookModal,
 });
+const [EvaluationDrawer, drawerApi] = useVbenDrawer({
+  connectedComponent: evaluationDrawer,
+});
 
 function handleAdd() {
   modalApi.setData({});
   modalApi.open();
+}
+
+function handleViewEvaluation(row: TravelerAPI.TravelerBookDTO) {
+  drawerApi.setData({ id: row.bookId });
+  drawerApi.open();
 }
 
 async function handleEdit(row: TravelerAPI.TravelerBookDTO) {
@@ -159,7 +168,7 @@ function handleDownloadExcel() {
           </ghost-button>
           <ghost-button
             v-access:code="['traveler:book:edit']"
-            @click.stop="handleEdit(row)"
+            @click.stop="handleViewEvaluation(row)"
           >
             {{ $t('traveler.evaluation.view') }}
           </ghost-button>
@@ -181,5 +190,6 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <BookModal @reload="tableApi.query()" />
+    <EvaluationDrawer />
   </Page>
 </template>

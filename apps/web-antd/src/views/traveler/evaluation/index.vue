@@ -137,7 +137,7 @@ function handleDownloadExcel() {
           </a-button>
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
+            776859
             type="primary"
             v-access:code="['traveler:evaluation:remove']"
             @click="handleMultiDelete"

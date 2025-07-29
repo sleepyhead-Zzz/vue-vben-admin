@@ -14,7 +14,27 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      options: [
+        {
+          label: '中国居民身份证',
+          value: '中国居民身份证',
+        },
+        {
+          label: '港澳居民来往内地通行证',
+          value: '港澳居民来往内地通行证',
+        },
+        {
+          label: '护照',
+          value: '护照',
+        },
+        {
+          label: '台湾居民来往大陆通行证',
+          value: '台湾居民来往大陆通行证',
+        },
+      ],
+      placeholder: '请选择',
+    },
     fieldName: 'documentType',
     label: '证件类型',
   },
@@ -23,16 +43,7 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'documentNumber',
     label: '证件号',
   },
-  {
-    component: 'Input',
-    fieldName: 'gender',
-    label: '性别',
-  },
-  {
-    component: 'Input',
-    fieldName: 'language',
-    label: '语言',
-  },
+
   {
     component: 'Input',
     fieldName: 'phoneNumber',
@@ -56,19 +67,18 @@ export const querySchema: FormSchemaGetter = () => [
   },
 
   {
-    component: 'RadioGroup',
-    componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus),
-    },
-    fieldName: 'status',
     label: '状态',
+    fieldName: 'status',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookStatus, true),
+    },
   },
   {
     component: 'DatePicker',
     componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      format: 'YYYY-MM-DD ',
+      valueFormat: 'YYYY-MM-DD',
     },
     fieldName: 'flightTime',
     label: '航班时间',
@@ -81,9 +91,8 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'DatePicker',
     componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      format: 'YYYY-MM-DD',
+      valueFormat: 'YYYY-MM-DD',
     },
     fieldName: 'orderTime',
     label: '接单时间',
@@ -161,6 +170,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '服务人员',
     field: 'staffId',
+    visible: false,
+  },
+  {
+    title: '服务人员',
+    field: 'staffName',
   },
   {
     title: '接单时间',
@@ -172,7 +186,7 @@ export const columns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 180,
+    width: 200,
   },
 ];
 
@@ -273,7 +287,7 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'status',
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus),
+      options: getDictOptions(DictEnum.TravelerBookStatus, true),
     },
   },
   {
@@ -289,7 +303,7 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '服务人员',
     fieldName: 'staffId',
-    component: 'Input',
+    component: 'Select',
   },
   {
     label: '接单时间',

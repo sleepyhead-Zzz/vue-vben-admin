@@ -210,13 +210,4 @@ declare namespace CommonAPI {
     code: string;
     state: string;
   };
-
-  type WxUserProfileCommand = {
-    code?: string;
-    cloudId?: string;
-    encryptedData?: string;
-    iv?: string;
-    rawData?: string;
-    signature?: string;
-  };
 }

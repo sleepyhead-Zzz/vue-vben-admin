@@ -30,7 +30,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '手机号',
-    field: 'phonenumber',
+    field: 'phoneNumber',
   },
   {
     field: 'action',

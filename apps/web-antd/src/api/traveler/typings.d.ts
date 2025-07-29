@@ -44,6 +44,21 @@ declare namespace TravelerAPI {
     evaluationIds: number[];
   };
 
+  type BookAnalyticsDataDTO = {
+    bookStatusDTOList?: BookStatusDTO[];
+    bookTrendDTOList?: BookTrendDTO;
+  };
+
+  type BookStatusDTO = {
+    status?: string;
+    count?: number;
+  };
+
+  type BookTrendDTO = {
+    dates?: string[];
+    counts?: number[];
+  };
+
   type cancelBookParams = {
     bookId: number;
   };
@@ -156,6 +171,12 @@ declare namespace TravelerAPI {
 
   type removeEvaluationParams = {
     evaluationId: number;
+  };
+
+  type ResponseDTOBookAnalyticsDataDTO = {
+    code?: number;
+    message?: string;
+    data?: BookAnalyticsDataDTO;
   };
 
   type ResponseDTOListTravelerBookDTO = {

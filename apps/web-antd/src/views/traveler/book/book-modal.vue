@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { SelectProps } from 'ant-design-vue';
+
+import { computed, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
+import { Select } from 'ant-design-vue';
+
 import { useVbenForm } from '#/adapter/form';
+import { getPagedUser } from '#/api/system/user';
 import { addBook, editBook, getBookInfo } from '#/api/traveler/book';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -60,7 +65,22 @@ const [BasicModal, modalApi] = useVbenModal({
     if (isUpdate.value && id) {
       const record = await getBookInfo({ bookId: id });
       await formApi.setValues(record.data);
+
+      if (record.data.staffId) {
+        const userRes = await getPagedUser({ userId: record.data.staffId });
+        if (userRes.data?.rows?.length) {
+          const user = userRes.data.rows[0];
+          states.staffId.data = [
+            {
+              label: user.nickName,
+              value: user.userId,
+            },
+          ];
+          states.staffId.value = user.userId;
+        }
+      }
     }
+
     await markInitialized();
 
     modalApi.modalLoading(false);
@@ -93,10 +113,66 @@ async function handleClosed() {
   await formApi.resetForm();
   resetInitialized();
 }
+
+// 用户搜索 state
+const states = reactive<{
+  staffId: {
+    data: SelectProps['options'];
+    fetching: boolean;
+    value: null | SelectProps['value'];
+  };
+}>({
+  staffId: {
+    data: [],
+    fetching: false,
+    value: null,
+  },
+});
+
+/**
+ * 远程搜索用户
+ */
+async function fetchUser(value: string, field: 'staffId') {
+  if (!value) {
+    states[field].data = [];
+    return;
+  }
+  states[field].fetching = true;
+  try {
+    const res = await getPagedUser({
+      userName: value,
+    });
+    states[field].data = res.data?.rows.map((user) => ({
+      label: user.nickName,
+      value: user.userId,
+    }));
+  } finally {
+    states[field].fetching = false;
+  }
+}
 </script>
 
 <template>
   <BasicModal :title="title">
-    <BasicForm />
+    <BasicForm>
+      <template #staffId="staffId">
+        <Select
+          show-search
+          :value="staffId.value"
+          placeholder="请输入用户"
+          style="width: 100%"
+          :filter-option="false"
+          :not-found-content="states.staffId.fetching ? undefined : null"
+          :options="states.staffId.data"
+          @search="(val) => fetchUser(val, 'staffId')"
+          @change="(val) => formApi.setFieldValue('staffId', val)"
+          allow-clear
+        >
+          <template v-if="states.staffId.fetching" #notFoundContent>
+            <Spin size="small" />
+          </template>
+        </Select>
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>

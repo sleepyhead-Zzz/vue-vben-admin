@@ -53,6 +53,17 @@ export async function editBook(
   });
 }
 
+/** 获取预约单分析数据 GET /traveler/book/analytics */
+export async function getAnalyticsData(options?: { [key: string]: any }) {
+  return request<TravelerAPI.ResponseDTOBookAnalyticsDataDTO>(
+    "/traveler/book/analytics",
+    {
+      method: "GET",
+      ...(options || {}),
+    }
+  );
+}
+
 /** 批量删除预约表 DELETE /traveler/book/batch-delete */
 export async function batchRemoveBook(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
