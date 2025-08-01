@@ -299,6 +299,7 @@ export const modalSchema: FormSchemaGetter = () => [
     componentProps: {
       options: getDictOptions(DictEnum.TravelerBookStatus, true),
     },
+    disabled: true,
   },
   {
     label: '航班时间',
