@@ -15,7 +15,7 @@ async function handleLoginSuccess(code: string, uuid: string) {
 }
 
 async function getQrCode() {
-  const res = await getAuthorizeUrl();
+  const res = await getAuthorizeUrl({ pc: true });
   if (res.code !== 200 || !res.data) throw new Error('获取二维码失败');
   return {
     qrUrl: res.data.img,
