@@ -177,11 +177,13 @@ function handleDownloadExcel() {
             {{ $t('pages.common.edit') }}
           </ghost-button>
           <ghost-button
-            v-access:code="['traveler:book:edit']"
+            v-if="row.status === 5"
+            v-access:code="['traveler:evaluation:query']"
             @click.stop="handleViewEvaluation(row)"
           >
             {{ $t('traveler.evaluation.view') }}
           </ghost-button>
+
           <ghost-button
             v-access:code="['traveler:book:editStatus']"
             @click.stop="changeStatus(row)"
