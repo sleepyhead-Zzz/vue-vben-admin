@@ -9,7 +9,7 @@ import { ExcelIcon, InBoxIcon } from '@vben/icons';
 import { Modal, Switch, Upload } from 'ant-design-vue';
 
 import {
-  downloadtOfficeExcelTemplate,
+  downloadOfficeExcelTemplate,
   importOfficeByExcel,
 } from '#/api/regulatory/office';
 import { commonDownloadExcel } from '#/utils/file/download';
@@ -117,7 +117,7 @@ function handleCancel() {
         <a-button
           type="link"
           @click="
-            commonDownloadExcel(downloadtOfficeExcelTemplate, '家具导入模板')
+            commonDownloadExcel(downloadOfficeExcelTemplate, '家具导入模板')
           "
         >
           <div class="flex items-center gap-[4px]">

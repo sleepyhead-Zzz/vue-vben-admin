@@ -42,6 +42,6 @@ async function getStatus(sessionId: string) {
     :qr-code-api="getQrCode"
     :polling-api="getStatus"
     :on-login-success="handleLoginSuccess"
-    login-path="/home"
+    login-path="/"
   />
 </template>

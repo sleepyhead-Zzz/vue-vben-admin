@@ -39,6 +39,14 @@ const coreRoutes: RouteRecordRaw[] = [
     children: [],
   },
   {
+    name: 'WeChatCallback',
+    path: '/auth/callback',
+    component: () => import('#/views/_core/authentication/callback.vue'),
+    meta: {
+      title: $t('page.auth.wechat'),
+    },
+  },
+  {
     component: AuthPageLayout,
     meta: {
       hideInTab: true,
@@ -90,14 +98,7 @@ const coreRoutes: RouteRecordRaw[] = [
           title: $t('page.auth.register'),
         },
       },
-      {
-        name: 'WeChatCallback',
-        path: 'callback',
-        component: () => import('#/views/_core/authentication/callback.vue'),
-        meta: {
-          title: $t('page.auth.wechat'),
-        },
-      },
+
       {
         name: 'WeChatOAuth2',
         path: 'wechat-oauth2',

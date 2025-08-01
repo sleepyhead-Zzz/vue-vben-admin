@@ -7,7 +7,7 @@ import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
-import { Select } from 'ant-design-vue';
+import { Select, Spin } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { getPagedUser } from '#/api/system/user';

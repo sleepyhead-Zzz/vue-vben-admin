@@ -40,7 +40,6 @@ export const useNotifyStore = defineStore(
      * 开始监听sse消息
      */
     function startListeningMessage() {
-      console.log(`${sseEnable}值`);
       /**
        * 未开启 不监听
        */
