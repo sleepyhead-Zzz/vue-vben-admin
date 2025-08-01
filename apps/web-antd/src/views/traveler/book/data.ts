@@ -6,6 +6,13 @@ import { DictEnum } from '@vben/constants';
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
+const certTypes = [
+  { value: 1, label: '中国居民身份证' },
+  { value: 2, label: '港澳居民来往内地通行证' },
+  { value: 3, label: '护照' },
+  { value: 4, label: '台湾居民来往大陆通行证' },
+];
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -186,7 +193,8 @@ export const columns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 200,
+    className: 'action-column-wrap',
+    width: 300,
   },
 ];
 
@@ -210,7 +218,9 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '证件类型',
     fieldName: 'documentType',
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      options: certTypes,
+    },
   },
   {
     label: '证件号',
@@ -343,6 +353,53 @@ export const modalSchema: FormSchemaGetter = () => [
       showTime: true,
       format: 'YYYY-MM-DD HH:mm:ss',
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
+    },
+  },
+];
+
+export const statusModalSchema: FormSchemaGetter = () => [
+  {
+    label: '',
+    fieldName: 'bookId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '旅客姓名',
+    fieldName: 'travelerName',
+    component: 'Input',
+    rules: 'required',
+    disabled: true,
+  },
+  {
+    label: '证件类型',
+    fieldName: 'documentType',
+    component: 'Select',
+    componentProps: {
+      options: [
+        { value: 1, label: '中国居民身份证' },
+        { value: 2, label: '港澳居民来往内地通行证' },
+        { value: 3, label: '护照' },
+        { value: 4, label: '台湾居民来往大陆通行证' },
+      ],
+    },
+    disabled: true,
+  },
+  {
+    label: '证件号',
+    fieldName: 'documentNumber',
+    component: 'Input',
+    disabled: true,
+  },
+  {
+    label: '状态',
+    fieldName: 'status',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookStatus, true),
     },
   },
 ];

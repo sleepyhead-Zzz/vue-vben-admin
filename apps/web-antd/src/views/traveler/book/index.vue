@@ -14,6 +14,7 @@ import { batchRemoveBook, getPagedBooks } from '#/api/traveler/book';
 import evaluationDrawer from '#/views/traveler/evaluation/evaluation-drawer.vue';
 
 import bookModal from './book-modal.vue';
+import ChangeStatusBookModal from './change-status-book-modal.vue';
 import { columns, querySchema } from './data';
 
 const formOptions: VbenFormProps = {
@@ -83,6 +84,10 @@ const [EvaluationDrawer, drawerApi] = useVbenDrawer({
   connectedComponent: evaluationDrawer,
 });
 
+const [StatusModal, statusModalApi] = useVbenModal({
+  connectedComponent: ChangeStatusBookModal,
+});
+
 function handleAdd() {
   modalApi.setData({});
   modalApi.open();
@@ -91,6 +96,11 @@ function handleAdd() {
 function handleViewEvaluation(row: TravelerAPI.TravelerBookDTO) {
   drawerApi.setData({ id: row.bookId });
   drawerApi.open();
+}
+
+function changeStatus(row: TravelerAPI.TravelerBookDTO) {
+  statusModalApi.setData({ id: row.bookId });
+  statusModalApi.open();
 }
 
 async function handleEdit(row: TravelerAPI.TravelerBookDTO) {
@@ -172,6 +182,12 @@ function handleDownloadExcel() {
           >
             {{ $t('traveler.evaluation.view') }}
           </ghost-button>
+          <ghost-button
+            v-access:code="['traveler:book:editStatus']"
+            @click.stop="changeStatus(row)"
+          >
+            {{ $t('traveler.evaluation.changeStatus') }}
+          </ghost-button>
           <Popconfirm
             :get-popup-container="getVxePopupContainer"
             placement="left"
@@ -190,6 +206,7 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <BookModal @reload="tableApi.query()" />
+    <StatusModal @reload="tableApi.query()" />
     <EvaluationDrawer />
   </Page>
 </template>
