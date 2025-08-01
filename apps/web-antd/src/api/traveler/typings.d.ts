@@ -94,6 +94,16 @@ declare namespace TravelerAPI {
   type getPagedBooksParams = {
     keyword?: string;
     status?: string;
+    travelerName?: string;
+    documentType?: string;
+    documentNumber?: string;
+    phoneNumber?: string;
+    service?: string;
+    travelerType?: string;
+    flightNumber?: string;
+    flightTime?: string;
+    staffId?: number;
+    orderTime?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -126,6 +136,16 @@ declare namespace TravelerAPI {
   type listBookParams = {
     keyword?: string;
     status?: string;
+    travelerName?: string;
+    documentType?: string;
+    documentNumber?: string;
+    phoneNumber?: string;
+    service?: string;
+    travelerType?: string;
+    flightNumber?: string;
+    flightTime?: string;
+    staffId?: number;
+    orderTime?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -266,6 +286,7 @@ declare namespace TravelerAPI {
     /** 取消时间 */
     cancelTime?: string;
     createDept?: number;
+    creatorId?: number;
   };
 
   type TravelerEvaluationDTO = {

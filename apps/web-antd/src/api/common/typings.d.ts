@@ -86,6 +86,12 @@ declare namespace CommonAPI {
     data?: Record<string, any>;
   };
 
+  type ResponseDTOString = {
+    code?: number;
+    message?: string;
+    data?: string;
+  };
+
   type ResponseDTOTokenDTO = {
     code?: number;
     message?: string;

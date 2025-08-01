@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import { AuthenticationQrCodeLogin } from '@vben/common-ui';
+import { useAppConfig } from '@vben/hooks';
 
 import { getAuthorizeUrl, getWxLoginStatus } from '#/api/common/login';
 import { useAuthStore } from '#/store';
 
 const authStore = useAuthStore();
-
+const { clientId } = useAppConfig(import.meta.env, import.meta.env.PROD);
 async function handleLoginSuccess(code: string, uuid: string) {
   await authStore.authLogin({
     identifier: uuid,
     password: code,
-    loginType: 'wechatmp',
+    grantType: 'wechatmp',
+    clientId,
   });
 }
 

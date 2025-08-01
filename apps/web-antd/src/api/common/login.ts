@@ -57,7 +57,7 @@ export async function wxLoginCallback(
   params: CommonAPI.wxLoginCallbackParams,
   options?: { [key: string]: any }
 ) {
-  return request<string>("/login/wx/callback", {
+  return request<CommonAPI.ResponseDTOString>("/login/wx/callback", {
     method: "GET",
     params: {
       ...params,
