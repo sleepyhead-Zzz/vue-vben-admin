@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 
 import { useAppConfig } from '@vben/hooks';
 
 import { useAuthStore } from '#/store';
 
-const route = useRoute();
 const authStore = useAuthStore();
 
 onMounted(async () => {
-  const code = route.query.code as string;
+  // 提取 ? 和 # 之间的 query 参数部分
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+
   const { clientId } = useAppConfig(import.meta.env, import.meta.env.PROD);
+
   if (code) {
     const requestParam = {
       grantType: 'wechatmp',
