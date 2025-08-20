@@ -2,16 +2,19 @@
 import type { VbenFormSchema } from '@vben/common-ui';
 import type { Recordable } from '@vben/types';
 
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 
 import { AuthenticationCodeLogin, z } from '@vben/common-ui';
 import { $t } from '@vben/locales';
+
+import { smsCode } from '#/api/common/captcha';
 
 defineOptions({ name: 'CodeLogin' });
 
 const loading = ref(false);
 const CODE_LENGTH = 6;
-
+const loginRef =
+  useTemplateRef<InstanceType<typeof AuthenticationCodeLogin>>('loginRef');
 const formSchema = computed((): VbenFormSchema[] => {
   return [
     {
@@ -39,6 +42,24 @@ const formSchema = computed((): VbenFormSchema[] => {
               : $t('authentication.sendCode');
           return text;
         },
+
+        handleSendCode: async () => {
+          loading.value = true;
+          const formApi = loginRef.value?.getFormApi();
+          if (!formApi) {
+            loading.value = false;
+            throw new Error('formApi is not ready');
+          }
+          await formApi.validateField('phoneNumber');
+          const isPhoneReady = await formApi.isFieldValid('phoneNumber');
+          if (!isPhoneReady) {
+            loading.value = false;
+            throw new Error('Phone number is not Ready');
+          }
+          const { phoneNumber } = await formApi.getValues();
+          await smsCode({ phoneNumber });
+          loading.value = false;
+        },
         placeholder: $t('authentication.code'),
       },
       fieldName: 'code',
@@ -62,6 +83,7 @@ async function handleLogin(values: Recordable<any>) {
 
 <template>
   <AuthenticationCodeLogin
+    ref="loginRef"
     :form-schema="formSchema"
     :loading="loading"
     @submit="handleLogin"

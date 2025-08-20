@@ -155,6 +155,10 @@ declare namespace CommonAPI {
     query?: Record<string, any>;
   };
 
+  type smsCodeParams = {
+    phoneNumber: string;
+  };
+
   type TokenDTO = {
     scope?: string;
     openid?: string;

@@ -5,6 +5,8 @@ import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
+import { InputNumber, Select, Space } from 'ant-design-vue';
+
 import { useVbenForm } from '#/adapter/form';
 import { addPlan, editPlan, getPlanInfo } from '#/api/asset/plan';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
@@ -59,13 +61,26 @@ const [BasicModal, modalApi] = useVbenModal({
 
     if (isUpdate.value && id) {
       const record = await getPlanInfo({ planId: id });
-      await formApi.setValues(record.data);
+      // 后端返回的 frequency + intervalValue 合并成一个表单值
+      await formApi.setValues({
+        ...record.data,
+        frequencyIntervalValue: {
+          intervalValue: record.data.intervalValue,
+          frequency: record.data.frequency,
+        },
+      });
     }
     await markInitialized();
 
     modalApi.modalLoading(false);
   },
 });
+
+const options = [
+  { label: '天', value: 'day' },
+  { label: '周', value: 'week' },
+  { label: '月', value: 'month' },
+];
 
 async function handleConfirm() {
   try {
@@ -76,6 +91,13 @@ async function handleConfirm() {
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
+
+    if (data.frequencyIntervalValue) {
+      data.intervalValue = data.frequencyIntervalValue.intervalValue;
+      data.frequency = data.frequencyIntervalValue.frequency;
+      delete data.frequencyIntervalValue;
+    }
+
     await (isUpdate.value
       ? editPlan({ planId: data.planId }, data)
       : addPlan(data));
@@ -97,6 +119,23 @@ async function handleClosed() {
 
 <template>
   <BasicModal :title="title">
-    <BasicForm />
+    <BasicForm>
+      <template #frequencyIntervalValue="slotProps">
+        <Space>
+          <span>每</span>
+          <InputNumber
+            v-model:value="slotProps.intervalValue"
+            min="1"
+            style="width: 100px"
+          />
+          <Select
+            v-model:value="slotProps.frequency"
+            :options="options"
+            placeholder="请选择周期"
+            style="width: 120px"
+          />
+        </Space>
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>
