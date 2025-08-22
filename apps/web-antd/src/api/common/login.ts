@@ -80,18 +80,3 @@ export async function getWxLoginStatus(
     ...(options || {}),
   });
 }
-
-/** 注册接口 POST /register */
-export async function register(
-  body: CommonAPI.AddUserCommand,
-  options?: { [key: string]: any }
-) {
-  return request<CommonAPI.ResponseDTOVoid>("/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    data: body,
-    ...(options || {}),
-  });
-}

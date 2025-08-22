@@ -1,21 +1,4 @@
 declare namespace CommonAPI {
-  type AddUserCommand = {
-    deptId?: number;
-    userName?: string;
-    nickName?: string;
-    email?: string;
-    phoneNumber?: string;
-    sex?: number;
-    avatar?: string;
-    password?: string;
-    status?: number;
-    roleIds?: number[];
-    postIds?: number[];
-    remark?: string;
-    creatorId?: number;
-    createDeptId?: number;
-  };
-
   type CaptchaDTO = {
     captchaEnabled?: boolean;
     uuid?: string;

@@ -95,9 +95,9 @@ declare namespace ToolAPI {
     edit?: boolean;
     usableColumn?: boolean;
     superColumn?: boolean;
-    capJavaField?: string;
     query?: boolean;
     increment?: boolean;
+    capJavaField?: string;
   };
 
   type GenTableDTO = {
