@@ -6,13 +6,6 @@ import { DictEnum } from '@vben/constants';
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
-const certTypes = [
-  { value: 1, label: '中国居民身份证' },
-  { value: 2, label: '港澳居民来往内地通行证' },
-  { value: 3, label: '护照' },
-  { value: 4, label: '台湾居民来往大陆通行证' },
-];
-
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -22,25 +15,7 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Select',
     componentProps: {
-      options: [
-        {
-          label: '中国居民身份证',
-          value: '中国居民身份证',
-        },
-        {
-          label: '港澳居民来往内地通行证',
-          value: '港澳居民来往内地通行证',
-        },
-        {
-          label: '护照',
-          value: '护照',
-        },
-        {
-          label: '台湾居民来往大陆通行证',
-          value: '台湾居民来往大陆通行证',
-        },
-      ],
-      placeholder: '请选择',
+      options: getDictOptions(DictEnum.TravelerBookCertTypes),
     },
     fieldName: 'documentType',
     label: '证件类型',
@@ -57,7 +32,10 @@ export const querySchema: FormSchemaGetter = () => [
     label: '手机号',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookServices),
+    },
     fieldName: 'service',
     label: '服务项目',
   },
@@ -78,7 +56,7 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'status',
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus, true),
+      options: getDictOptions(DictEnum.TravelerBookStatus),
     },
   },
   {
@@ -122,6 +100,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '证件类型',
     field: 'documentType',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.documentType, DictEnum.TravelerBookCertTypes);
+      },
+    },
   },
   {
     title: '证件号',
@@ -130,10 +113,20 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '性别',
     field: 'gender',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.gender, DictEnum.TravelerBookGenders);
+      },
+    },
   },
   {
     title: '语言',
     field: 'language',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.language, DictEnum.TravelerBookLanguages);
+      },
+    },
   },
   {
     title: '手机号',
@@ -142,6 +135,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '服务类型',
     field: 'service',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.service, DictEnum.TravelerBookServices);
+      },
+    },
   },
 
   {
@@ -219,7 +217,7 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'documentType',
     component: 'Select',
     componentProps: {
-      options: certTypes,
+      options: getDictOptions(DictEnum.TravelerBookCertTypes),
     },
   },
   {
@@ -230,12 +228,18 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '性别',
     fieldName: 'gender',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookGenders),
+    },
   },
   {
     label: '语言',
     fieldName: 'language',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookLanguages),
+    },
   },
   {
     label: '手机号',
@@ -245,7 +249,10 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '服务类型',
     fieldName: 'service',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookServices),
+    },
   },
   {
     label: '地址',
@@ -261,6 +268,22 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '旅客类型',
     fieldName: 'travelerType',
     component: 'Input',
+  },
+  {
+    label: '血压是否正常',
+    fieldName: 'bloodPressureNormal',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookHeartNormals),
+    },
+  },
+  {
+    label: '心脏是否正常',
+    fieldName: 'heartNormal',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookHeartNormals),
+    },
   },
   {
     label: '航班号',
@@ -285,7 +308,10 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '与乘机人关系',
     fieldName: 'relation',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookRelations),
+    },
   },
   {
     label: '陪同人联系方式',
@@ -297,7 +323,7 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'status',
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus, true),
+      options: getDictOptions(DictEnum.TravelerBookStatus),
     },
     disabled: true,
   },
@@ -380,12 +406,7 @@ export const statusModalSchema: FormSchemaGetter = () => [
     fieldName: 'documentType',
     component: 'Select',
     componentProps: {
-      options: [
-        { value: 1, label: '中国居民身份证' },
-        { value: 2, label: '港澳居民来往内地通行证' },
-        { value: 3, label: '护照' },
-        { value: 4, label: '台湾居民来往大陆通行证' },
-      ],
+      options: getDictOptions(DictEnum.TravelerBookCertTypes),
     },
     disabled: true,
   },
@@ -400,7 +421,7 @@ export const statusModalSchema: FormSchemaGetter = () => [
     fieldName: 'status',
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus, true),
+      options: getDictOptions(DictEnum.TravelerBookStatus),
     },
   },
 ];

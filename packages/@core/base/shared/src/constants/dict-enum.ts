@@ -25,6 +25,12 @@ export const DictEnum = {
   OfficeDepreciationStatus: 'office_depreciation_status', // 办公资产折旧状态
 
   TravelerBookStatus: 'traveler_book_status',
+  TravelerBookCertTypes: 'traveler_book_cert_types',
+  TravelerBookGenders: 'traveler_book_genders',
+  TravelerBookLanguages: 'traveler_book_languages',
+  TravelerBookServices: 'traveler_book_services',
+  TravelerBookRelations: 'traveler_book_relations',
+  TravelerBookHeartNormals: 'traveler_book_normals',
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;
