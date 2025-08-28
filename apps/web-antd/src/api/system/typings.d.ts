@@ -1489,7 +1489,6 @@ declare namespace SystemAPI {
 
   type UpdateProfileCommand = {
     userId?: number;
-    userName?: string;
     sex?: string;
     nickName?: string;
     phoneNumber?: string;
