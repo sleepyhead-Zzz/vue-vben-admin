@@ -30,7 +30,7 @@ export const DictEnum = {
   TravelerBookLanguages: 'traveler_book_languages',
   TravelerBookServices: 'traveler_book_services',
   TravelerBookRelations: 'traveler_book_relations',
-  TravelerBookHeartNormals: 'traveler_book_normals',
+  TravelerBookHeartNormals: 'traveler_book_heart_normals',
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;

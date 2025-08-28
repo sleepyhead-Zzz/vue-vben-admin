@@ -95,8 +95,8 @@ declare namespace ToolAPI {
     edit?: boolean;
     usableColumn?: boolean;
     superColumn?: boolean;
-    query?: boolean;
     increment?: boolean;
+    query?: boolean;
     capJavaField?: string;
   };
 

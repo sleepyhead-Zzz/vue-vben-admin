@@ -15,8 +15,8 @@ declare namespace TravelerAPI {
     remarks?: string;
     travelerType?: string;
     flightNumber?: string;
-    checkedBaggage?: number;
-    handBaggage?: number;
+    checkedBaggage?: string;
+    handBaggage?: string;
     companionName?: string;
     relation?: string;
     companionPhone?: string;
@@ -65,7 +65,7 @@ declare namespace TravelerAPI {
 
   type changeBookingStatusParams = {
     bookId: number;
-    status: number;
+    status: string;
   };
 
   type editBookParams = {
@@ -264,13 +264,13 @@ declare namespace TravelerAPI {
     remarks?: string;
     travelerType?: string;
     flightNumber?: string;
-    checkedBaggage?: number;
-    handBaggage?: number;
+    checkedBaggage?: string;
+    handBaggage?: string;
     companionName?: string;
     relation?: string;
     companionPhone?: string;
     /** 状态 */
-    status?: number;
+    status?: string;
     flightTime?: string;
     createTime?: string;
     /** 服务人员 */
@@ -314,8 +314,8 @@ declare namespace TravelerAPI {
     remarks?: string;
     travelerType?: string;
     flightNumber?: string;
-    checkedBaggage?: number;
-    handBaggage?: number;
+    checkedBaggage?: string;
+    handBaggage?: string;
     companionName?: string;
     relation?: string;
     companionPhone?: string;

@@ -1226,7 +1226,7 @@ declare namespace SystemAPI {
 
   type SysDictTypeDTO = {
     /** 字典主键 */
-    dictId?: number;
+    dictTypeId?: number;
     /** 字典名称 */
     dictName?: string;
     /** 字典类型 */
