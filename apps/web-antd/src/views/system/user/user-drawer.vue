@@ -129,7 +129,7 @@ const defaultPassword = ref('');
 onMounted(async () => {
   const { data } = await getConfigKey({ configKey: 'sys.user.initPassword' });
   if (data) {
-    defaultPassword.value = data;
+    // defaultPassword.value = data;
   }
 });
 

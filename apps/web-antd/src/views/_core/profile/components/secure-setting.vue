@@ -30,9 +30,12 @@ const [BasicForm, formApi] = useVbenForm({
       dependencies: {
         rules(values) {
           return z
-            .string({ message: '请输入新密码' })
-            .min(5, '密码长度不能少于5个字符')
-            .max(20, '密码长度不能超过20个字符')
+            .string()
+            .min(8, { message: '密码至少 8 位' })
+            .regex(/[a-z]/, { message: '必须包含小写字母' })
+            .regex(/[A-Z]/, { message: '必须包含大写字母' })
+            .regex(/\d/, { message: '必须包含数字' })
+            .regex(/[\W_]/, { message: '必须包含特殊字符' })
             .refine(
               (value) => value !== values.oldPassword,
               '新旧密码不能相同',
@@ -49,9 +52,12 @@ const [BasicForm, formApi] = useVbenForm({
       dependencies: {
         rules(values) {
           return z
-            .string({ message: '请输入确认密码' })
-            .min(5, '密码长度不能少于5个字符')
-            .max(20, '密码长度不能超过20个字符')
+            .string()
+            .min(8, { message: '密码至少 8 位' })
+            .regex(/[a-z]/, { message: '必须包含小写字母' })
+            .regex(/[A-Z]/, { message: '必须包含大写字母' })
+            .regex(/\d/, { message: '必须包含数字' })
+            .regex(/[\W_]/, { message: '必须包含特殊字符' })
             .refine(
               (value) => value === values.newPassword,
               '新密码和确认密码不一致',

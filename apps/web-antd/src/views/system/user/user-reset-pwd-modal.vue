@@ -31,14 +31,18 @@ const [BasicForm, formApi] = useVbenForm({
     {
       component: 'InputPassword',
       componentProps: {
-        placeholder: '请输入新的密码, 密码长度为5 - 20',
+        placeholder:
+          '请输入新的密码, 密码至少8位，必须包含大写字母、小写字母、数字和特殊字符',
       },
       fieldName: 'password',
       label: '新的密码',
       rules: z
         .string()
-        .min(5, { message: '密码长度为5 - 20' })
-        .max(20, { message: '密码长度为5 - 20' }),
+        .min(8, { message: '密码至少 8 位' })
+        .regex(/[a-z]/, { message: '必须包含小写字母' })
+        .regex(/[A-Z]/, { message: '必须包含大写字母' })
+        .regex(/\d/, { message: '必须包含数字' })
+        .regex(/[\W_]/, { message: '必须包含特殊字符' }),
     },
   ],
   showDefaultActions: false,

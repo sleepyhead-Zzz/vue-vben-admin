@@ -110,7 +110,13 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'InputPassword',
     fieldName: 'password',
     label: '用户密码',
-    rules: 'required',
+    rules: z
+      .string()
+      .min(8, { message: '密码至少 8 位' })
+      .regex(/[a-z]/, { message: '必须包含小写字母' })
+      .regex(/[A-Z]/, { message: '必须包含大写字母' })
+      .regex(/\d/, { message: '必须包含数字' })
+      .regex(/[\W_]/, { message: '必须包含特殊字符' }),
   },
   {
     component: 'Input',
