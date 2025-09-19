@@ -65,7 +65,7 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'monthDays',
     label: '月日执行',
     componentProps: {
-      mode: 'multiple', // 支持多选
+      mode: 'multiple',
       allowClear: true,
       style: { width: '100%' },
       placeholder: '请选择每月执行的日期',
@@ -163,23 +163,40 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'endDate',
     label: '结束日期',
   },
+
   {
-    component: 'Input',
+    component: 'Select',
     fieldName: 'frequency',
     label: '巡检频率',
+    componentProps: {
+      placeholder: '请选择巡检周期',
+      options: [
+        { label: '天', value: 1 },
+        { label: '周', value: 2 },
+        { label: '月', value: 3 },
+      ],
+    },
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
+
   {
     component: 'Input',
     fieldName: 'intervalValue',
     label: '周期间隔',
     componentProps: { placeholder: '如每2天、每3周、每1月' },
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
   {
     component: 'Input',
     label: '巡检周期',
     fieldName: 'frequencyIntervalValue',
   },
-
   {
     component: 'Select',
     fieldName: 'weekdays',
@@ -198,13 +215,19 @@ export const modalSchema: FormSchemaGetter = () => [
         { label: '周日', value: '7' },
       ],
     },
+    dependencies: {
+      show(values) {
+        return values.frequency === 2;
+      },
+      triggerFields: ['frequency'],
+    },
   },
   {
     component: 'Select',
     fieldName: 'monthDays',
     label: '月日执行',
     componentProps: {
-      mode: 'multiple', // 支持多选
+      mode: 'multiple',
       allowClear: true,
       style: { width: '100%' },
       placeholder: '请选择每月执行的日期',
@@ -212,6 +235,12 @@ export const modalSchema: FormSchemaGetter = () => [
         label: `${i + 1}日`,
         value: String(i + 1),
       })),
+    },
+    dependencies: {
+      show(values) {
+        return values.frequency === 3;
+      },
+      triggerFields: ['frequency'],
     },
   },
 

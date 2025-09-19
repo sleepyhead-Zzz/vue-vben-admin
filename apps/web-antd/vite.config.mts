@@ -31,7 +31,7 @@ export default defineConfig(async () => {
             ws: true,
           },
         },
-        allowedHosts: ['develop.hcishu.top'], // 这里是数组
+        allowedHosts: ['develop.hcishu.top'],
       },
     },
   };

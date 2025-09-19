@@ -16,20 +16,15 @@ import { modalSchema } from './data';
 const emit = defineEmits<{ reload: [] }>();
 
 const isUpdate = ref(false);
-const title = computed(() => {
-  return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
-});
+const title = computed(() =>
+  isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add'),
+);
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
-    // 默认占满两列
     formItemClass: 'col-span-2',
-    // 默认label宽度 px
     labelWidth: 80,
-    // 通用配置项 会影响到所有表单项
-    componentProps: {
-      class: 'w-full',
-    },
+    componentProps: { class: 'w-full' },
   },
   schema: modalSchema(),
   showDefaultActions: false,
@@ -44,16 +39,14 @@ const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
 );
 
 const [BasicModal, modalApi] = useVbenModal({
-  // 在这里更改宽度
   class: 'w-[550px]',
   fullscreenButton: false,
   onBeforeClose,
   onClosed: handleClosed,
   onConfirm: handleConfirm,
   onOpenChange: async (isOpen) => {
-    if (!isOpen) {
-      return null;
-    }
+    if (!isOpen) return;
+
     modalApi.modalLoading(true);
 
     const { id } = modalApi.getData() as { id?: number | string };
@@ -61,46 +54,31 @@ const [BasicModal, modalApi] = useVbenModal({
 
     if (isUpdate.value && id) {
       const record = await getPlanInfo({ planId: id });
-      // 后端返回的 frequency + intervalValue 合并成一个表单值
-      await formApi.setValues({
-        ...record.data,
-        frequencyIntervalValue: {
-          intervalValue: record.data.intervalValue,
-          frequency: record.data.frequency,
-        },
-      });
+      await formApi.setValues({ ...record.data });
     }
-    await markInitialized();
 
+    await markInitialized();
     modalApi.modalLoading(false);
   },
 });
 
 const options = [
-  { label: '天', value: 'day' },
-  { label: '周', value: 'week' },
-  { label: '月', value: 'month' },
+  { label: '天', value: 1 },
+  { label: '周', value: 2 },
+  { label: '月', value: 3 },
 ];
 
 async function handleConfirm() {
   try {
     modalApi.lock(true);
     const { valid } = await formApi.validate();
-    if (!valid) {
-      return;
-    }
-    // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
+    if (!valid) return;
+
     const data = cloneDeep(await formApi.getValues());
-
-    if (data.frequencyIntervalValue) {
-      data.intervalValue = data.frequencyIntervalValue.intervalValue;
-      data.frequency = data.frequencyIntervalValue.frequency;
-      delete data.frequencyIntervalValue;
-    }
-
     await (isUpdate.value
       ? editPlan({ planId: data.planId }, data)
       : addPlan(data));
+
     resetInitialized();
     emit('reload');
     modalApi.close();
@@ -116,20 +94,21 @@ async function handleClosed() {
   resetInitialized();
 }
 </script>
-
 <template>
   <BasicModal :title="title">
     <BasicForm>
-      <template #frequencyIntervalValue="slotProps">
+      <template #frequencyIntervalValue="">
         <Space>
           <span>每</span>
           <InputNumber
-            v-model:value="slotProps.intervalValue"
+            :value="formApi.form.values.intervalValue"
+            @input="(val: any) => formApi.setValues({ intervalValue: val })"
             min="1"
             style="width: 100px"
           />
           <Select
-            v-model:value="slotProps.frequency"
+            :value="formApi.form.values.frequency"
+            @change="(val) => formApi.setValues({ frequency: val })"
             :options="options"
             placeholder="请选择周期"
             style="width: 120px"
