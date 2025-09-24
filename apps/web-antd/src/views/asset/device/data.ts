@@ -34,7 +34,7 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'managementDeptId',
+    fieldName: 'manageDeptId',
     label: '管理部门',
   },
   {
@@ -100,7 +100,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '管理部门',
-    field: 'managementDeptId',
+    field: 'manageDeptId',
   },
   {
     title: '使用部门',
@@ -145,7 +145,7 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'deviceId',
     component: 'Input',
     dependencies: {
-      show: () => true,
+      show: () => false,
       triggerFields: [''],
     },
   },
@@ -201,16 +201,19 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '设备规格型号',
   },
   {
+    component: 'TreeSelect',
+    defaultValue: undefined,
+    fieldName: 'manageDeptId',
     label: '管理部门',
-    fieldName: 'managementDeptId',
-    component: 'Input',
+    rules: 'selectRequired',
   },
   {
-    label: '使用部门',
+    component: 'TreeSelect',
+    defaultValue: undefined,
     fieldName: 'usageDeptId',
-    component: 'Input',
+    label: '使用部门',
+    rules: 'selectRequired',
   },
-
   {
     component: 'Select',
     componentProps: {
@@ -223,22 +226,27 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '设备存放位置',
+    defaultValue: undefined,
     fieldName: 'locationId',
-    component: 'Input',
+    component: 'TreeSelect',
   },
   {
-    label: '巡检方案',
+    label: '巡检项目',
     fieldName: 'inspectionPlanId',
-    component: 'Input',
+    componentProps: {
+      getPopupContainer,
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+    },
+    component: 'Select',
   },
   {
     label: '购买日期',
     fieldName: 'purchaseDate',
     component: 'DatePicker',
     componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      format: 'YYYY-MM-DD',
+      valueFormat: 'YYYY-MM-DD',
     },
   },
   {
@@ -246,19 +254,8 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'activationDate',
     component: 'DatePicker',
     componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-  },
-  {
-    label: '最近维修时间',
-    fieldName: 'lastRepaired',
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      format: 'YYYY-MM-DD',
+      valueFormat: 'YYYY-MM-DD',
     },
   },
 ];

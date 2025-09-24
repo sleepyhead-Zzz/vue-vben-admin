@@ -1056,6 +1056,7 @@ declare namespace SystemAPI {
     roleKey?: string;
     /** 角色状态 */
     status?: string;
+    roleId?: number;
   };
 
   type SearchUserQuerySearchUserDO = {
@@ -1400,6 +1401,7 @@ declare namespace SystemAPI {
     roleId: number;
     deptIds: number[];
     dataScope?: string;
+    deptCheckStrictly?: boolean;
   };
 
   type UpdateDeptCommand = {

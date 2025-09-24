@@ -18,7 +18,7 @@ declare namespace AssetAPI {
     /** 设备规格型号 */
     specificationId?: number;
     /** 管理部门 */
-    managementDeptId?: string;
+    manageDeptId?: string;
     /** 使用部门 */
     usageDeptId?: string;
     /** 生产厂商 */
@@ -42,16 +42,15 @@ declare namespace AssetAPI {
     startDate?: string;
     /** 结束日期 */
     endDate?: string;
-    /** 巡检频率 */
+    /** 巡检频率 1 天 2 周 3 月 */
     frequency?: number;
     /** 每隔多少单位周期执行一次，如每2天、每3周、每1月 */
     intervalValue?: number;
-    /** 适用于weekly，1~7，逗号分隔，如1,3,5表示周一三五 */
-    weekdays?: string;
+    weekdayList?: string[];
     /** 适用于monthly，1~31，逗号分隔，如1,15 */
-    monthDays?: string;
+    monthDayList?: string[];
     /** 状态 */
-    status?: number;
+    status?: string;
   };
 
   type AddAssetInspectionProjectCommand = {
@@ -134,7 +133,7 @@ declare namespace AssetAPI {
     /** 设备规格型号 */
     specificationId?: number;
     /** 管理部门 */
-    managementDeptId?: string;
+    manageDeptId?: string;
     /** 使用部门 */
     usageDeptId?: string;
     /** 生产厂商 */
@@ -205,11 +204,11 @@ declare namespace AssetAPI {
     /** 每隔多少单位周期执行一次，如每2天、每3周、每1月 */
     intervalValue?: number;
     /** 适用于weekly，1~7，逗号分隔，如1,3,5表示周一三五 */
-    weekdays?: string;
+    weekdayList?: string[];
     /** 适用于monthly，1~31，逗号分隔，如1,15 */
-    monthDays?: string;
+    monthDayList?: string[];
     /** 状态 */
-    status?: number;
+    status?: string;
   };
 
   type AssetInspectionPlanQuery = {
@@ -965,7 +964,7 @@ declare namespace AssetAPI {
     /** 设备规格型号 */
     specificationId?: number;
     /** 管理部门 */
-    managementDeptId?: string;
+    manageDeptId?: string;
     /** 使用部门 */
     usageDeptId?: string;
     /** 生产厂商 */
@@ -990,16 +989,15 @@ declare namespace AssetAPI {
     startDate?: string;
     /** 结束日期 */
     endDate?: string;
-    /** 巡检频率 */
+    /** 巡检频率 1 天 2 周 3 月 */
     frequency?: number;
     /** 每隔多少单位周期执行一次，如每2天、每3周、每1月 */
     intervalValue?: number;
-    /** 适用于weekly，1~7，逗号分隔，如1,3,5表示周一三五 */
-    weekdays?: string;
+    weekdayList?: string[];
     /** 适用于monthly，1~31，逗号分隔，如1,15 */
-    monthDays?: string;
+    monthDayList?: string[];
     /** 状态 */
-    status?: number;
+    status?: string;
     planId?: number;
   };
 

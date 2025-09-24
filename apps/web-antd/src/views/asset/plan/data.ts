@@ -93,6 +93,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '',
     field: 'planId',
+    visible: false,
   },
   {
     title: '计划名称',
@@ -106,12 +107,48 @@ export const columns: VxeGridProps['columns'] = [
     title: '结束日期',
     field: 'endDate',
   },
-  { title: '巡检频率', field: 'frequency', width: 100 },
-  { title: '周期间隔', field: 'intervalValue', width: 120 },
-  { title: '周几执行', field: 'weekdays', minWidth: 120 },
-  { title: '月日执行', field: 'monthDays', minWidth: 120 },
   {
-    title: '位置类型',
+    title: '巡检频率',
+    field: 'frequency',
+    width: 100,
+    formatter: ({ cellValue }) => {
+      if (cellValue === 1) return '天';
+      if (cellValue === 2) return '周';
+      if (cellValue === 3) return '月';
+      return cellValue ?? '-';
+    },
+  },
+  { title: '周期间隔', field: 'intervalValue', width: 120 },
+  {
+    title: '周几执行',
+    field: 'weekdayList',
+    minWidth: 140,
+    formatter: ({ cellValue }) => {
+      if (!cellValue || cellValue.length === 0) return '-';
+      const map: Record<string, string> = {
+        '1': '周一',
+        '2': '周二',
+        '3': '周三',
+        '4': '周四',
+        '5': '周五',
+        '6': '周六',
+        '7': '周日',
+      };
+      return cellValue.map((v: string) => map[v] || v).join('、');
+    },
+  },
+  {
+    title: '月日执行',
+    field: 'monthDayList',
+    minWidth: 140,
+    formatter: ({ cellValue }) => {
+      if (!cellValue || cellValue.length === 0) return '-';
+      return cellValue.map((d: string) => `${d}日`).join('、');
+    },
+  },
+
+  {
+    title: '状态',
     field: 'status',
     slots: {
       default: ({ row }) => {
@@ -199,7 +236,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     component: 'Select',
-    fieldName: 'weekdays',
+    fieldName: 'weekdayList',
     label: '周几执行',
     componentProps: {
       mode: 'multiple',
@@ -224,7 +261,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     component: 'Select',
-    fieldName: 'monthDays',
+    fieldName: 'monthDayList',
     label: '月日执行',
     componentProps: {
       mode: 'multiple',
