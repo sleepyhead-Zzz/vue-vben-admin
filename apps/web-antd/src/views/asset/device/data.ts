@@ -178,7 +178,6 @@ export const modalSchema: FormSchemaGetter = () => [
     componentProps: {
       maxCount: 1,
     },
-    rules: 'required',
   },
 
   {
@@ -188,7 +187,6 @@ export const modalSchema: FormSchemaGetter = () => [
     componentProps: {
       maxCount: 1,
     },
-    rules: 'required',
   },
   {
     component: 'Select',
@@ -232,9 +230,10 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '巡检项目',
-    fieldName: 'inspectionPlanId',
+    fieldName: 'inspectionProjectIds',
     componentProps: {
       getPopupContainer,
+      mode: 'multiple',
       optionFilterProp: 'label',
       optionLabelProp: 'label',
     },

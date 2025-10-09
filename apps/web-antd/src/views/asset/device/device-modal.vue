@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, h, ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -9,12 +9,11 @@ import { useVbenForm } from '#/adapter/form';
 import { addDevice, editDevice, getDeviceInfo } from '#/api/asset/device';
 import { dropdownlistLocation } from '#/api/asset/location';
 import { dropdownlistManufacturer } from '#/api/asset/manufacturer';
-import { dropdownProjectList } from '#/api/asset/project';
+import { dropDownProjectList } from '#/api/asset/project';
 import { dropDownListSpecification } from '#/api/asset/specification';
 import { dropdownDeptList } from '#/api/system/dept';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
-import InspectionProjectModal from '../project/project-modal.vue';
 import { modalSchema } from './data';
 
 const emit = defineEmits<{ reload: [] }>();
@@ -89,35 +88,20 @@ async function setupLocationSelect() {
   ]);
 }
 
-/** 巡检项目选择（带新增按钮） */
-const projectModalRef = ref<InstanceType<typeof InspectionProjectModal>>();
-
+/** 巡检项目选择 */
 async function setupInspectionProjectSelect() {
-  const list = await dropdownProjectList();
+  const projectList = await dropDownProjectList();
   formApi.updateSchema([
     {
-      label: '巡检项目',
       fieldName: 'inspectionProjectIds',
-      component: 'Select',
       componentProps: {
-        mode: 'multiple',
-        showSearch: true,
-        placeholder: '请选择巡检项目',
+        getPopupContainer,
+        optionFilterProp: 'label',
         optionLabelProp: 'label',
-        options: list.data.map((item) => ({
+        options: projectList.data.map((item) => ({
           label: item.projectName,
           value: item.projectId,
         })),
-        addonAfter: () =>
-          h(
-            'a',
-            {
-              style:
-                'margin-left: 8px; color: var(--primary-color); cursor: pointer;',
-              onClick: () => projectModalRef.value?.open({}),
-            },
-            '+ 新建',
-          ),
       },
     },
   ]);
@@ -208,15 +192,7 @@ async function handleClosed() {
 </script>
 
 <template>
-  <!-- 设备表单弹窗 -->
   <BasicModal :title="title">
     <BasicForm />
   </BasicModal>
-
-  <!-- 巡检项目新增弹窗（子组件） -->
-  <InspectionProjectModal
-    ref="projectModalRef"
-    title="新增巡检项目"
-    @reload="setupInspectionProjectSelect"
-  />
 </template>

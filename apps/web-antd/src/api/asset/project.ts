@@ -69,7 +69,7 @@ export async function batchRemoveProject(
 }
 
 /** 巡检项目下拉列表 GET /asset/project/dropdown */
-export async function dropdownProjectList(options?: { [key: string]: any }) {
+export async function dropDownProjectList(options?: { [key: string]: any }) {
   return request<AssetAPI.ResponseDTOListAssetInspectionProjectVO>(
     "/asset/project/dropdown",
     {

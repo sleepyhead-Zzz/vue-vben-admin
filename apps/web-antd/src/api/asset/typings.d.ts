@@ -27,6 +27,8 @@ declare namespace AssetAPI {
     locationId?: number;
     /** 巡检方案 */
     inspectionPlanId?: number;
+    /** 巡检项目 */
+    inspectionProjectIds?: number[];
     /** 购买日期 */
     purchaseDate?: string;
     /** 启用日期 */
@@ -140,8 +142,8 @@ declare namespace AssetAPI {
     manufacturerId?: number;
     /** 设备存放位置 */
     locationId?: number;
-    /** 巡检方案 */
-    inspectionPlanId?: number;
+    /** 巡检项目 */
+    inspectionProjectIds?: number;
     /** 购买日期 */
     purchaseDate?: string;
     /** 启用日期 */
@@ -973,6 +975,8 @@ declare namespace AssetAPI {
     locationId?: number;
     /** 巡检方案 */
     inspectionPlanId?: number;
+    /** 巡检项目 */
+    inspectionProjectIds?: number[];
     /** 购买日期 */
     purchaseDate?: string;
     /** 启用日期 */
