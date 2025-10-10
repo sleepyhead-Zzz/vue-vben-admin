@@ -143,7 +143,7 @@ declare namespace AssetAPI {
     /** 设备存放位置 */
     locationId?: number;
     /** 巡检项目 */
-    inspectionProjectIds?: number;
+    inspectionProjectIds?: number[];
     /** 购买日期 */
     purchaseDate?: string;
     /** 启用日期 */
@@ -354,6 +354,24 @@ declare namespace AssetAPI {
     specificationName?: string;
     /** 资产分类ID */
     categoryId?: number;
+  };
+
+  type AssociatedDeviceQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+    pageNum?: number;
+    pageSize?: number;
+    planId?: number;
+    deviceName?: string;
+    deviceCode?: string;
+  };
+
+  type associatedInspectionDevicesParams = {
+    planId: number;
+    query: AssociatedDeviceQuery;
   };
 
   type batchRemoveCategoryParams = {
@@ -790,6 +808,12 @@ declare namespace AssetAPI {
     data?: AssetSpecificationDTO;
   };
 
+  type ResponseDTOInteger = {
+    code?: number;
+    message?: string;
+    data?: number;
+  };
+
   type ResponseDTOListAssetCategoryDTO = {
     code?: number;
     message?: string;
@@ -946,6 +970,24 @@ declare namespace AssetAPI {
     deep?: number;
   };
 
+  type UnassociatedDeviceQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+    pageNum?: number;
+    pageSize?: number;
+    planId: number;
+    deviceName?: string;
+    deviceCode?: string;
+  };
+
+  type unAssociatedInspectionDevicesParams = {
+    planId: number;
+    query: UnassociatedDeviceQuery;
+  };
+
   type UpdateAssetCategoryCommand = {
     /** 分类名称 */
     categoryName?: string;
@@ -1047,5 +1089,10 @@ declare namespace AssetAPI {
     /** 资产分类ID */
     categoryId?: number;
     specificationId?: number;
+  };
+
+  type UpdateDeviceAssociationCommand = {
+    planId?: number;
+    deviceIds?: number[];
   };
 }

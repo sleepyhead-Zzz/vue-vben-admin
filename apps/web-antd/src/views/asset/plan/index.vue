@@ -3,6 +3,8 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { useRouter } from 'vue-router';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { getVxePopupContainer } from '@vben/utils';
@@ -122,6 +124,10 @@ function handleDownloadExcel() {
     },
   );
 }
+const router = useRouter();
+function associatedInspectionDevice(record: AssetAPI.AssetInspectionPlanDTO) {
+  router.push(`/asset/plan-associate/device/${record.planId}`);
+}
 </script>
 
 <template>
@@ -160,6 +166,12 @@ function handleDownloadExcel() {
             @click.stop="handleEdit(row)"
           >
             {{ $t('pages.common.edit') }}
+          </ghost-button>
+          <ghost-button
+            v-access:code="['asset:plan:edit']"
+            @click.stop="associatedInspectionDevice(row)"
+          >
+            分配
           </ghost-button>
           <Popconfirm
             :get-popup-container="getVxePopupContainer"

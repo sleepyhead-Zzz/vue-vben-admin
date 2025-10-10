@@ -53,6 +53,42 @@ export async function editPlan(
   });
 }
 
+/** 新增巡检方案与设备的关联 POST /asset/plan/associate-device */
+export async function associateDevices(
+  body: AssetAPI.UpdateDeviceAssociationCommand,
+  options?: { [key: string]: any }
+) {
+  return request<AssetAPI.ResponseDTOInteger>("/asset/plan/associate-device", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 获取巡检方案关联的巡检设备 GET /asset/plan/associated-device/${param0}/list */
+export async function associatedInspectionDevices(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: AssetAPI.associatedInspectionDevicesParams,
+  options?: { [key: string]: any }
+) {
+  const { planId: param0, ...queryParams } = params;
+  return request<AssetAPI.ResponseDTOPageDTOAssetDeviceDTO>(
+    `/asset/plan/associated-device/${param0}/list`,
+    {
+      method: "GET",
+      params: {
+        ...queryParams,
+        query: undefined,
+        ...queryParams["query"],
+      },
+      ...(options || {}),
+    }
+  );
+}
+
 /** 批量删除巡检计划 DELETE /asset/plan/batch-delete */
 export async function batchRemovePlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -69,7 +105,7 @@ export async function batchRemovePlan(
 }
 
 /** 巡检计划下拉列表 GET /asset/plan/dropdown */
-export async function dropdownlistPlan(options?: { [key: string]: any }) {
+export async function dropdownListPlan(options?: { [key: string]: any }) {
   return request<AssetAPI.ResponseDTOListAssetInspectionPlanVO>(
     "/asset/plan/dropdown",
     {
@@ -190,4 +226,43 @@ export async function removePlan(
     params: { ...queryParams },
     ...(options || {}),
   });
+}
+
+/** 取消巡检方案与设备的关联 PUT /asset/plan/unassociate-device */
+export async function cancelAssociatedDevices(
+  body: AssetAPI.UpdateDeviceAssociationCommand,
+  options?: { [key: string]: any }
+) {
+  return request<AssetAPI.ResponseDTOInteger>(
+    "/asset/plan/unassociate-device",
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
+}
+
+/** 获取巡检方案未关联的巡检设备 GET /asset/plan/unassociated-device/${param0}/list */
+export async function unAssociatedInspectionDevices(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: AssetAPI.unAssociatedInspectionDevicesParams,
+  options?: { [key: string]: any }
+) {
+  const { planId: param0, ...queryParams } = params;
+  return request<AssetAPI.ResponseDTOPageDTOAssetDeviceDTO>(
+    `/asset/plan/unassociated-device/${param0}/list`,
+    {
+      method: "GET",
+      params: {
+        ...queryParams,
+        query: undefined,
+        ...queryParams["query"],
+      },
+      ...(options || {}),
+    }
+  );
 }

@@ -8,7 +8,10 @@ import { useRoute } from 'vue-router';
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { selectAuthUserAll, unallocatedUserList } from '#/api/system/role';
+import {
+  associateDevices,
+  unAssociatedInspectionDevices,
+} from '#/api/asset/plan';
 
 import { columns, querySchema } from './data';
 
@@ -21,7 +24,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
 });
 
 const route = useRoute();
-const roleId = route.params.roleId as string;
+const planId = route.params.planId as string;
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -47,10 +50,10 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await unallocatedUserList({
+        const { data } = await unAssociatedInspectionDevices({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
-          roleId,
+          planId,
           ...formValues,
         });
         return data;
@@ -58,7 +61,7 @@ const gridOptions: VxeGridProps = {
     },
   },
   rowConfig: {
-    keyField: 'userId',
+    keyField: 'planId',
   },
 };
 
@@ -69,9 +72,9 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 
 async function handleSubmit() {
   const records = tableApi.grid.getCheckboxRecords();
-  const userIds = records.map((item) => item.userId);
-  if (userIds.length > 0) {
-    await selectAuthUserAll({ roleId, userIds });
+  const deviceIds = records.map((item) => item.deviceId);
+  if (deviceIds.length > 0) {
+    await associateDevices({ planId, deviceIds });
   }
   handleReset();
   emit('reload');
@@ -83,7 +86,7 @@ function handleReset() {
 </script>
 
 <template>
-  <BasicDrawer class="w-[800px]" title="选择用户">
+  <BasicDrawer class="w-[800px]" title="选择设备">
     <BasicTable />
   </BasicDrawer>
 </template>
