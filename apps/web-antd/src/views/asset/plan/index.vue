@@ -128,6 +128,10 @@ const router = useRouter();
 function associatedInspectionDevice(record: AssetAPI.AssetInspectionPlanDTO) {
   router.push(`/asset/plan-associate/device/${record.planId}`);
 }
+
+function ViewInspectionRecord(record: AssetAPI.AssetInspectionPlanDTO) {
+  router.push(`/asset/plan-record/device/${record.planId}`);
+}
 </script>
 
 <template>
@@ -172,6 +176,12 @@ function associatedInspectionDevice(record: AssetAPI.AssetInspectionPlanDTO) {
             @click.stop="associatedInspectionDevice(row)"
           >
             分配
+          </ghost-button>
+          <ghost-button
+            v-access:code="['asset:plan:query']"
+            @click.stop="ViewInspectionRecord(row)"
+          >
+            记录
           </ghost-button>
           <Popconfirm
             :get-popup-container="getVxePopupContainer"

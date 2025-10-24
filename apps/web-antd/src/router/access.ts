@@ -33,6 +33,10 @@ const routeMetaMapping: Record<string, Omit<RouteMeta, 'title'>> = {
     activePath: '/asset/plan',
     requireHomeRedirect: true,
   },
+  '/asset/plan-record/device/:planId': {
+    activePath: '/asset/plan',
+    requireHomeRedirect: true,
+  },
   '/tool/gen-edit/index/:tableId': {
     activePath: '/tool/gen',
     requireHomeRedirect: true,
