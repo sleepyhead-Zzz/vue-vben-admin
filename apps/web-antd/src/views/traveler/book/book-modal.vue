@@ -96,7 +96,6 @@ async function handleConfirm() {
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    console.log(data);
     await (isUpdate.value
       ? editBook({ bookId: data.bookId }, data)
       : addBook(data));

@@ -318,6 +318,26 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'companionPhone',
     component: 'Input',
   },
+
+  {
+    label: '接机人姓名',
+    fieldName: 'pickupName',
+    component: 'Input',
+  },
+  {
+    label: '与乘机人关系',
+    fieldName: 'pickupRelation',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.TravelerBookRelations),
+    },
+  },
+  {
+    label: '接机人联系方式',
+    fieldName: 'pickupPhone',
+    component: 'Input',
+  },
+
   {
     label: '状态',
     fieldName: 'status',
