@@ -177,6 +177,15 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
+    label: '',
+    fieldName: 'jobId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
     label: '计划名称',
     fieldName: 'planName',
     component: 'Input',
