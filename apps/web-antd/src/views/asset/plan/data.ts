@@ -192,6 +192,13 @@ export const modalSchema: FormSchemaGetter = () => [
     rules: 'required',
   },
   {
+    component: 'TreeSelect',
+    defaultValue: undefined,
+    fieldName: 'deptId',
+    label: '执行部门',
+    rules: 'selectRequired',
+  },
+  {
     component: 'DatePicker',
     componentProps: {
       format: 'YYYY-MM-DD',

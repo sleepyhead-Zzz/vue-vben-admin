@@ -3,12 +3,13 @@ import { computed, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import { cloneDeep } from '@vben/utils';
+import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 
 import { InputNumber, Select, Space } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { addPlan, editPlan, getPlanInfo } from '#/api/asset/plan';
+import { dropdownDeptList } from '#/api/system/dept';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -38,6 +39,39 @@ const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
   },
 );
 
+/**
+ * 初始化部门选择
+ */
+async function setupDeptSelect() {
+  // updateSchema
+  const deptTree = await dropdownDeptList({ query: {} });
+  // 选中后显示在输入框的值 即父节点 / 子节点
+  addFullName(deptTree.data, 'label', ' / ');
+  formApi.updateSchema([
+    {
+      componentProps: () => ({
+        class: 'w-full',
+        fieldNames: {
+          key: 'id',
+          value: 'id',
+          children: 'children',
+        },
+        getPopupContainer,
+        placeholder: '请选择',
+        showSearch: true,
+        treeData: deptTree.data,
+        treeDefaultExpandAll: true,
+        treeLine: { showLeafIcon: false },
+        // 筛选的字段
+        treeNodeFilterProp: 'label',
+        // 选中后显示在输入框的值
+        treeNodeLabelProp: 'fullName',
+      }),
+      fieldName: 'deptId',
+    },
+  ]);
+}
+
 const [BasicModal, modalApi] = useVbenModal({
   class: 'w-[550px]',
   fullscreenButton: false,
@@ -57,6 +91,8 @@ const [BasicModal, modalApi] = useVbenModal({
       await formApi.setValues({ ...record.data });
     }
 
+    const promises = [setupDeptSelect()];
+    await Promise.all(promises);
     await markInitialized();
     modalApi.modalLoading(false);
   },
