@@ -20,6 +20,12 @@ declare namespace TravelerAPI {
     companionName?: string;
     relation?: string;
     companionPhone?: string;
+    /** 接机人姓名 */
+    pickupName?: string;
+    /** 接机人联系方式 */
+    pickupPhone?: string;
+    /** 接机人与乘机人关系 */
+    pickupRelation?: string;
     flightTime?: string;
     /** 服务人员 */
     staffId?: string;
@@ -269,6 +275,12 @@ declare namespace TravelerAPI {
     companionName?: string;
     relation?: string;
     companionPhone?: string;
+    /** 接机人姓名 */
+    pickupName?: string;
+    /** 接机人联系方式 */
+    pickupPhone?: string;
+    /** 接机人与乘机人关系 */
+    pickupRelation?: string;
     /** 状态 */
     status?: string;
     flightTime?: string;
@@ -319,6 +331,12 @@ declare namespace TravelerAPI {
     companionName?: string;
     relation?: string;
     companionPhone?: string;
+    /** 接机人姓名 */
+    pickupName?: string;
+    /** 接机人联系方式 */
+    pickupPhone?: string;
+    /** 接机人与乘机人关系 */
+    pickupRelation?: string;
     flightTime?: string;
     /** 服务人员 */
     staffId?: string;

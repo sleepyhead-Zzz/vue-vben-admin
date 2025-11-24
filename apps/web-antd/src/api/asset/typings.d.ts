@@ -37,9 +37,25 @@ declare namespace AssetAPI {
     lastRepaired?: string;
   };
 
+  type AddAssetInspectionCommand = {
+    /** 关联的巡检方案ID */
+    planId?: number;
+    /** 巡检状态：         1进行中         2完成         3异常         4中断' */
+    taskId?: number;
+    status?: number;
+    /** 巡检实际开始时间 */
+    startDate?: string;
+    /** 巡检实际结束时间 */
+    endDate?: string;
+    /** 巡检结果简述 */
+    description?: string;
+  };
+
   type AddAssetInspectionPlanCommand = {
     /** 计划名称 */
     planName?: string;
+    /** 执行部门 */
+    deptId?: number;
     /** 开始日期 */
     startDate?: string;
     /** 结束日期 */
@@ -64,6 +80,25 @@ declare namespace AssetAPI {
     minValue?: number;
     /** 数值上限 */
     maxValue?: number;
+  };
+
+  type AddAssetInspectionTaskCommand = {
+    /** 来源巡检计划ID */
+    planId?: number;
+    /** 任务名称 */
+    taskName?: string;
+    /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
+    status?: number;
+    /** 巡检设备ID */
+    deviceId?: number;
+    /** 巡检地点ID */
+    locationId?: number;
+    /** 指派给的部门ID */
+    assignDeptId?: number;
+    /** 指派给的负责人ID（可选） */
+    assignUserId?: number;
+    /** 任务截止时间 */
+    executeDeadline?: string;
   };
 
   type AddAssetLocationCommand = {
@@ -122,6 +157,8 @@ declare namespace AssetAPI {
     deviceId?: number;
     /** 设备名称 */
     deviceName?: string;
+    /** 执行部门 */
+    deptId?: number;
     /** 设备编码 */
     deviceCode?: string;
     /** 设备状态 */
@@ -193,10 +230,28 @@ declare namespace AssetAPI {
     lastRepaired?: string;
   };
 
+  type AssetInspectionDTO = {
+    /** 巡检记录ID */
+    inspectionId?: number;
+    /** 关联的巡检方案ID */
+    planId?: number;
+    /** 巡检状态：         1进行中         2完成         3异常         4中断' */
+    taskId?: number;
+    status?: number;
+    /** 巡检实际开始时间 */
+    startDate?: string;
+    /** 巡检实际结束时间 */
+    endDate?: string;
+    /** 巡检结果简述 */
+    description?: string;
+  };
+
   type AssetInspectionPlanDTO = {
     planId?: number;
     /** 计划名称 */
     planName?: string;
+    /** 执行部门ID */
+    deptId?: number;
     /** 开始日期 */
     startDate?: string;
     /** 结束日期 */
@@ -211,6 +266,7 @@ declare namespace AssetAPI {
     monthDayList?: string[];
     /** 状态 */
     status?: string;
+    jobId?: number;
   };
 
   type AssetInspectionPlanQuery = {
@@ -273,6 +329,76 @@ declare namespace AssetAPI {
     minValue?: number;
     /** 数值上限 */
     maxValue?: number;
+  };
+
+  type AssetInspectionQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+  };
+
+  type AssetInspectionTaskDTO = {
+    /** 巡检任务ID */
+    taskId?: number;
+    /** 来源巡检计划ID */
+    planId?: number;
+    /** 任务名称 */
+    taskName?: string;
+    /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
+    status?: number;
+    /** 巡检设备ID */
+    deviceId?: number;
+    /** 巡检地点ID */
+    locationId?: number;
+    /** 指派给的部门ID */
+    assignDeptId?: number;
+    /** 指派给的负责人ID */
+    assignUserId?: number;
+    /** 任务截止时间 */
+    executeDeadline?: string;
+  };
+
+  type AssetInspectionTaskQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+  };
+
+  type AssetInspectionTaskVO = {
+    /** 巡检任务ID */
+    taskId?: number;
+    /** 来源巡检计划ID */
+    planId?: number;
+    /** 任务名称 */
+    taskName?: string;
+    /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
+    status?: number;
+    /** 指派给的部门ID */
+    assignDeptId?: number;
+    /** 指派给的负责人ID */
+    assignUserId?: number;
+    /** 任务截止时间 */
+    executeDeadline?: string;
+  };
+
+  type AssetInspectionVO = {
+    /** 巡检记录ID */
+    inspectionId?: number;
+    /** 关联的巡检方案ID */
+    planId?: number;
+    /** 巡检状态：         1进行中         2完成         3异常         4中断' */
+    taskId?: number;
+    status?: number;
+    /** 巡检实际开始时间 */
+    startDate?: string;
+    /** 巡检实际结束时间 */
+    endDate?: string;
+    /** 巡检结果简述 */
+    description?: string;
   };
 
   type AssetLocationDTO = {
@@ -382,6 +508,10 @@ declare namespace AssetAPI {
     deviceIds: number[];
   };
 
+  type batchRemoveInspectionParams = {
+    inspectionIds: number[];
+  };
+
   type batchRemoveLocationParams = {
     locationIds: number[];
   };
@@ -402,12 +532,20 @@ declare namespace AssetAPI {
     specificationIds: number[];
   };
 
+  type batchRemoveTaskParams = {
+    taskIds: number[];
+  };
+
   type editCategoryParams = {
     categoryId: number;
   };
 
   type editDeviceParams = {
     deviceId: number;
+  };
+
+  type editInspectionParams = {
+    inspectionId: number;
   };
 
   type editLocationParams = {
@@ -430,12 +568,20 @@ declare namespace AssetAPI {
     specificationId: number;
   };
 
+  type editTaskParams = {
+    taskId: number;
+  };
+
   type exportCategoryByExcelParams = {
     query: AssetCategoryQuery;
   };
 
   type exportDeviceByExcelParams = {
     query: AssetDeviceQuery;
+  };
+
+  type exportInspectionByExcelParams = {
+    query: AssetInspectionQuery;
   };
 
   type exportLocationByExcelParams = {
@@ -458,6 +604,10 @@ declare namespace AssetAPI {
     query: AssetSpecificationQuery;
   };
 
+  type exportTaskByExcelParams = {
+    query: AssetInspectionTaskQuery;
+  };
+
   type getCategoryInfoParams = {
     /** 记录ID */
     categoryId: number;
@@ -466,6 +616,11 @@ declare namespace AssetAPI {
   type getDeviceInfoParams = {
     /** 记录ID */
     deviceId: number;
+  };
+
+  type getInspectionInfoParams = {
+    /** 记录ID */
+    inspectionId: number;
   };
 
   type getLocationInfoParams = {
@@ -494,6 +649,21 @@ declare namespace AssetAPI {
   };
 
   type getPagedDevicesParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
+  type getPagedInspectionsParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -583,6 +753,21 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
+  type getPagedTasksParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getPlanInfoParams = {
     /** 记录ID */
     planId: number;
@@ -596,6 +781,11 @@ declare namespace AssetAPI {
   type getSpecificationInfoParams = {
     /** 记录ID */
     specificationId: number;
+  };
+
+  type getTaskInfoParams = {
+    /** 记录ID */
+    taskId: number;
   };
 
   type listCategoryParams = {
@@ -612,6 +802,19 @@ declare namespace AssetAPI {
   };
 
   type listDeviceParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
+  type listInspectionParams = {
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -689,6 +892,19 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
+  type listTaskParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type PageDTOAssetCategoryDTO = {
     /** 总记录数 */
     total?: number;
@@ -703,6 +919,13 @@ declare namespace AssetAPI {
     rows?: AssetDeviceDTO[];
   };
 
+  type PageDTOAssetInspectionDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: AssetInspectionDTO[];
+  };
+
   type PageDTOAssetInspectionPlanDTO = {
     /** 总记录数 */
     total?: number;
@@ -715,6 +938,13 @@ declare namespace AssetAPI {
     total?: number;
     /** 列表数据 */
     rows?: AssetInspectionProjectDTO[];
+  };
+
+  type PageDTOAssetInspectionTaskDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: AssetInspectionTaskDTO[];
   };
 
   type PageDTOAssetLocationDTO = {
@@ -746,6 +976,10 @@ declare namespace AssetAPI {
     deviceId: number;
   };
 
+  type removeInspectionParams = {
+    inspectionId: number;
+  };
+
   type removeLocationParams = {
     locationId: number;
   };
@@ -766,6 +1000,10 @@ declare namespace AssetAPI {
     specificationId: number;
   };
 
+  type removeTaskParams = {
+    taskId: number;
+  };
+
   type ResponseDTOAssetCategoryDTO = {
     code?: number;
     message?: string;
@@ -778,6 +1016,12 @@ declare namespace AssetAPI {
     data?: AssetDeviceDTO;
   };
 
+  type ResponseDTOAssetInspectionDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetInspectionDTO;
+  };
+
   type ResponseDTOAssetInspectionPlanDTO = {
     code?: number;
     message?: string;
@@ -788,6 +1032,12 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetInspectionProjectDTO;
+  };
+
+  type ResponseDTOAssetInspectionTaskDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetInspectionTaskDTO;
   };
 
   type ResponseDTOAssetLocationDTO = {
@@ -838,6 +1088,12 @@ declare namespace AssetAPI {
     data?: AssetDeviceVO[];
   };
 
+  type ResponseDTOListAssetInspectionDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetInspectionDTO[];
+  };
+
   type ResponseDTOListAssetInspectionPlanDTO = {
     code?: number;
     message?: string;
@@ -860,6 +1116,24 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetInspectionProjectVO[];
+  };
+
+  type ResponseDTOListAssetInspectionTaskDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetInspectionTaskDTO[];
+  };
+
+  type ResponseDTOListAssetInspectionTaskVO = {
+    code?: number;
+    message?: string;
+    data?: AssetInspectionTaskVO[];
+  };
+
+  type ResponseDTOListAssetInspectionVO = {
+    code?: number;
+    message?: string;
+    data?: AssetInspectionVO[];
   };
 
   type ResponseDTOListAssetLocationDTO = {
@@ -910,6 +1184,12 @@ declare namespace AssetAPI {
     data?: PageDTOAssetDeviceDTO;
   };
 
+  type ResponseDTOPageDTOAssetInspectionDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOAssetInspectionDTO;
+  };
+
   type ResponseDTOPageDTOAssetInspectionPlanDTO = {
     code?: number;
     message?: string;
@@ -920,6 +1200,12 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: PageDTOAssetInspectionProjectDTO;
+  };
+
+  type ResponseDTOPageDTOAssetInspectionTaskDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOAssetInspectionTaskDTO;
   };
 
   type ResponseDTOPageDTOAssetLocationDTO = {
@@ -1028,9 +1314,26 @@ declare namespace AssetAPI {
     deviceId?: number;
   };
 
+  type UpdateAssetInspectionCommand = {
+    /** 关联的巡检方案ID */
+    planId?: number;
+    /** 巡检状态：         1进行中         2完成         3异常         4中断' */
+    taskId?: number;
+    status?: number;
+    /** 巡检实际开始时间 */
+    startDate?: string;
+    /** 巡检实际结束时间 */
+    endDate?: string;
+    /** 巡检结果简述 */
+    description?: string;
+    inspectionId?: number;
+  };
+
   type UpdateAssetInspectionPlanCommand = {
     /** 计划名称 */
     planName?: string;
+    /** 执行部门 */
+    deptId?: number;
     /** 开始日期 */
     startDate?: string;
     /** 结束日期 */
@@ -1045,6 +1348,7 @@ declare namespace AssetAPI {
     /** 状态 */
     status?: string;
     planId?: number;
+    jobId?: number;
   };
 
   type UpdateAssetInspectionProjectCommand = {
@@ -1057,6 +1361,26 @@ declare namespace AssetAPI {
     /** 数值上限 */
     maxValue?: number;
     projectId?: number;
+  };
+
+  type UpdateAssetInspectionTaskCommand = {
+    /** 来源巡检计划ID */
+    planId?: number;
+    /** 任务名称 */
+    taskName?: string;
+    /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
+    status?: number;
+    /** 巡检设备ID */
+    deviceId?: number;
+    /** 巡检地点ID */
+    locationId?: number;
+    /** 指派给的部门ID */
+    assignDeptId?: number;
+    /** 指派给的负责人ID（可选） */
+    assignUserId?: number;
+    /** 任务截止时间 */
+    executeDeadline?: string;
+    taskId?: number;
   };
 
   type UpdateAssetLocationCommand = {
