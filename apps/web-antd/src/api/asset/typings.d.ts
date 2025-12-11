@@ -49,6 +49,7 @@ declare namespace AssetAPI {
     endDate?: string;
     /** 巡检结果简述 */
     description?: string;
+    results?: AddAssetInspectionResultCommand[];
   };
 
   type AddAssetInspectionPlanCommand = {
@@ -80,6 +81,13 @@ declare namespace AssetAPI {
     minValue?: number;
     /** 数值上限 */
     maxValue?: number;
+  };
+
+  type AddAssetInspectionResultCommand = {
+    inspectionId?: number;
+    projectId?: number;
+    status?: number;
+    value?: string;
   };
 
   type AddAssetInspectionTaskCommand = {
@@ -621,6 +629,11 @@ declare namespace AssetAPI {
   type getInspectionInfoParams = {
     /** 记录ID */
     inspectionId: number;
+  };
+
+  type getInspectionItemByDeviceIdParams = {
+    /** 设备ID */
+    deviceId: number;
   };
 
   type getLocationInfoParams = {
@@ -1326,6 +1339,7 @@ declare namespace AssetAPI {
     endDate?: string;
     /** 巡检结果简述 */
     description?: string;
+    results?: AddAssetInspectionResultCommand[];
     inspectionId?: number;
   };
 

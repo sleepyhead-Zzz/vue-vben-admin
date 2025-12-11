@@ -88,6 +88,9 @@ declare namespace ToolAPI {
     htmlType?: string;
     dictType?: string;
     sort?: number;
+    increment?: boolean;
+    query?: boolean;
+    capJavaField?: string;
     list?: boolean;
     required?: boolean;
     pk?: boolean;
@@ -95,9 +98,6 @@ declare namespace ToolAPI {
     edit?: boolean;
     usableColumn?: boolean;
     superColumn?: boolean;
-    capJavaField?: string;
-    increment?: boolean;
-    query?: boolean;
   };
 
   type GenTableDTO = {

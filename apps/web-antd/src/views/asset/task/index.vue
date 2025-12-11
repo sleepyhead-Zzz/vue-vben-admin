@@ -1,18 +1,26 @@
 <script setup lang="ts">
-import {useVbenModal, Page, type VbenFormProps} from '@vben/common-ui';
-import {Modal, Popconfirm, Space} from 'ant-design-vue';
-import {getVxePopupContainer} from '@vben/utils';
+import type { VbenFormProps } from '@vben/common-ui';
 
-import {useVbenVxeGrid, vxeCheckboxChecked, type VxeGridProps} from '#/adapter/vxe-table';
+import type { VxeGridProps } from '#/adapter/vxe-table';
+
+import { useRouter } from 'vue-router';
+
+import { Page, useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+import { getVxePopupContainer } from '@vben/utils';
+
+import { Modal, Popconfirm, Space } from 'ant-design-vue';
+
+import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
   batchRemoveTask,
+  exportTaskByExcel,
   getPagedTasks,
-  exportTaskByExcel
 } from '#/api/asset/task';
-import {commonDownloadExcel} from '#/utils/file/download';
-import {columns, querySchema} from './data';
+import { commonDownloadExcel } from '#/utils/file/download';
+
+import { columns, querySchema } from './data';
 import taskModal from './task-modal.vue';
-import {$t} from '@vben/locales';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -51,13 +59,13 @@ const gridOptions: VxeGridProps = {
   pagerConfig: {},
   proxyConfig: {
     ajax: {
-      query: async ({page}, formValues = {}) => {
-        const {data} = await getPagedTasks({
+      query: async ({ page }, formValues = {}) => {
+        const { data } = await getPagedTasks({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
         });
-        return data
+        return data;
       },
     },
   },
@@ -65,7 +73,7 @@ const gridOptions: VxeGridProps = {
     keyField: 'taskId',
   },
   // 表格全局唯一表示 保存列配置需要用到
-  id: 'asset-task-index'
+  id: 'asset-task-index',
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -82,34 +90,43 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(row: API.AssetInspectionTaskDTO) {
-  modalApi.setData({id: row.taskId});
+async function handleEdit(row: AssetAPI.AssetInspectionTaskDTO) {
+  modalApi.setData({ id: row.taskId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.AssetInspectionTaskDTO) {
-  await batchRemoveTask({taskIds: [row.taskId]});
+async function handleDelete(row: AssetAPI.AssetInspectionTaskDTO) {
+  await batchRemoveTask({ taskIds: [row.taskId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.AssetInspectionTaskDTO) => row.taskId);
+  const ids = rows.map((row: AssetAPI.AssetInspectionTaskDTO) => row.taskId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveTask({taskIds: ids});
+      await batchRemoveTask({ taskIds: ids });
       await tableApi.query();
     },
   });
 }
 
 function handleDownloadExcel() {
-  commonDownloadExcel(exportTaskByExcel, '巡检任务数据', tableApi.formApi.form.values, {
-    fieldMappingTime: formOptions.fieldMappingTime,
-  });
+  commonDownloadExcel(
+    exportTaskByExcel,
+    '巡检任务数据',
+    tableApi.formApi.form.values,
+    {
+      fieldMappingTime: formOptions.fieldMappingTime,
+    },
+  );
+}
+const router = useRouter();
+function executorTask(record: AssetAPI.AssetInspectionTaskDTO) {
+  router.push(`/asset/task-executor/device/${record.taskId}`);
 }
 </script>
 
@@ -119,23 +136,24 @@ function handleDownloadExcel() {
       <template #toolbar-tools>
         <Space>
           <a-button
-              v-access:code="['asset:task:export']"
-              @click="handleDownloadExcel"
+            v-access:code="['asset:task:export']"
+            @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
           </a-button>
           <a-button
-              :disabled="!vxeCheckboxChecked(tableApi)"
-              danger
-              type="primary"
-              v-access:code="['asset:task:remove']"
-              @click="handleMultiDelete">
+            :disabled="!vxeCheckboxChecked(tableApi)"
+            danger
+            type="primary"
+            v-access:code="['asset:task:remove']"
+            @click="handleMultiDelete"
+          >
             {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
-              type="primary"
-              v-access:code="['asset:task:add']"
-              @click="handleAdd"
+            type="primary"
+            v-access:code="['asset:task:add']"
+            @click="handleAdd"
           >
             {{ $t('pages.common.add') }}
           </a-button>
@@ -144,21 +162,27 @@ function handleDownloadExcel() {
       <template #action="{ row }">
         <Space>
           <ghost-button
-              v-access:code="['asset:task:edit']"
-              @click.stop="handleEdit(row)"
+            v-access:code="['asset:task:edit']"
+            @click.stop="handleEdit(row)"
           >
             {{ $t('pages.common.edit') }}
           </ghost-button>
+          <ghost-button
+            v-access:code="['asset:plan:edit']"
+            @click.stop="executorTask(row)"
+          >
+            执行任务
+          </ghost-button>
           <Popconfirm
-              :get-popup-container="getVxePopupContainer"
-              placement="left"
-              title="确认删除？"
-              @confirm="handleDelete(row)"
+            :get-popup-container="getVxePopupContainer"
+            placement="left"
+            title="确认删除？"
+            @confirm="handleDelete(row)"
           >
             <ghost-button
-                danger
-                v-access:code="['asset:task:remove']"
-                @click.stop=""
+              danger
+              v-access:code="['asset:task:remove']"
+              @click.stop=""
             >
               {{ $t('pages.common.delete') }}
             </ghost-button>
@@ -166,6 +190,6 @@ function handleDownloadExcel() {
         </Space>
       </template>
     </BasicTable>
-    <TaskModal @reload="tableApi.query()"/>
+    <TaskModal @reload="tableApi.query()" />
   </Page>
 </template>

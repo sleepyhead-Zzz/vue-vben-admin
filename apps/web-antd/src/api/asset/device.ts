@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增设备 POST /asset/device */
 export async function addDevice(
   body: AssetAPI.AddAssetDeviceCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/device", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/device', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addDevice(
 export async function getDeviceInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getDeviceInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { deviceId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOAssetDeviceDTO>(
     `/asset/device/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,13 +39,13 @@ export async function editDevice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.editDeviceParams,
   body: AssetAPI.UpdateAssetDeviceCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { deviceId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/device/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -57,10 +57,10 @@ export async function editDevice(
 export async function batchRemoveDevice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.batchRemoveDeviceParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/device/batch-delete", {
-    method: "DELETE",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/device/batch-delete', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -71,11 +71,11 @@ export async function batchRemoveDevice(
 /** 设备下拉列表 GET /asset/device/dropdown */
 export async function dropDownListDevice(options?: { [key: string]: any }) {
   return request<AssetAPI.ResponseDTOListAssetDeviceVO>(
-    "/asset/device/dropdown",
+    '/asset/device/dropdown',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -83,14 +83,14 @@ export async function dropDownListDevice(options?: { [key: string]: any }) {
 export async function exportDeviceByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.exportDeviceByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/asset/device/excel", {
-    method: "GET",
+  return request<any>('/asset/device/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -98,8 +98,8 @@ export async function exportDeviceByExcel(
 
 /** 设备导入excel下载 GET /asset/device/excelTemplate */
 export async function downloadExcelTemplate5(options?: { [key: string]: any }) {
-  return request<any>("/asset/device/excelTemplate", {
-    method: "GET",
+  return request<any>('/asset/device/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -110,21 +110,21 @@ export async function importDeviceByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(ele, JSON.stringify(item));
         }
@@ -134,22 +134,39 @@ export async function importDeviceByExcel(
     }
   });
 
-  return request<AssetAPI.ResponseDTOString>("/asset/device/importData", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOString>('/asset/device/importData', {
+    method: 'POST',
     data: formData,
-    requestType: "form",
+    requestType: 'form',
     ...(options || {}),
   });
+}
+
+/** 获取设备的巡检项目详情 GET /asset/device/inspection/${param0} */
+export async function getInspectionItemByDeviceId(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: AssetAPI.getInspectionItemByDeviceIdParams,
+  options?: { [key: string]: any },
+) {
+  const { deviceId: param0, ...queryParams } = params;
+  return request<AssetAPI.ResponseDTOListAssetInspectionProjectDTO>(
+    `/asset/device/inspection/${param0}`,
+    {
+      method: 'GET',
+      params: { ...queryParams },
+      ...(options || {}),
+    },
+  );
 }
 
 /** 获取设备列表 GET /asset/device/list */
 export async function listDevice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.listDeviceParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOListAssetDeviceDTO>("/asset/device/list", {
-    method: "GET",
+  return request<AssetAPI.ResponseDTOListAssetDeviceDTO>('/asset/device/list', {
+    method: 'GET',
     params: {
       ...params,
     },
@@ -161,17 +178,17 @@ export async function listDevice(
 export async function getPagedDevices(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getPagedDevicesParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetDeviceDTO>(
-    "/asset/device/page",
+    '/asset/device/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -179,11 +196,11 @@ export async function getPagedDevices(
 export async function removeDevice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeDeviceParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { deviceId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/device/remove/${param0}`, {
-    method: "DELETE",
+    method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),
   });
