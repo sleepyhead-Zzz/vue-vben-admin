@@ -13,8 +13,10 @@ import {
   Input as AInput,
   Select as ASelect,
 } from 'ant-design-vue';
+import dayjs from 'dayjs';
 
 import { getDeviceInfo, getInspectionItemByDeviceId } from '#/api/asset/device';
+import { addInspection } from '#/api/asset/inspection';
 import { getTaskInfo } from '#/api/asset/task';
 
 // ---------------------------------------------------------------------
@@ -23,19 +25,12 @@ import { getTaskInfo } from '#/api/asset/task';
 const route = useRoute();
 const taskId = String(route.params.taskId);
 
-// ---------------------------------------------------------------------
-// Reactive data
-// ---------------------------------------------------------------------
 const taskInfo = ref<AssetAPI.AssetInspectionTaskDTO | null>(null);
 const deviceInfo = ref<AssetAPI.AssetDeviceDTO | null>(null);
-
-// 巡检项目定义
 const inspectionItems = ref<AssetAPI.AssetInspectionProjectDTO[]>([]);
 
-// 准备标志：当数据与 results 初始化完毕后设为 true，才渲染项目输入区
 const isReady = ref(false);
 
-// 使用 reactive 保证 AForm 能正确读取深层字段
 const inspectionForm = reactive<AssetAPI.UpdateAssetInspectionCommand>({
   inspectionId: undefined,
   planId: undefined,
@@ -44,20 +39,16 @@ const inspectionForm = reactive<AssetAPI.UpdateAssetInspectionCommand>({
   startDate: '',
   endDate: '',
   description: '',
-  results: [], // 保证存在，避免模板访问 undefined
+  results: [],
 });
 
-// ---------------------------------------------------------------------
-// Lifecycle & data loading
-// ---------------------------------------------------------------------
 onMounted(async () => {
   await loadTaskInfo(taskId);
 
   if (taskInfo.value?.deviceId) {
     await loadInspectionItem(String(taskInfo.value.deviceId));
   }
-
-  // 数据加载完毕后标记 ready（如果需要额外条件，可调整这里）
+  inspectionForm.startDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
   isReady.value = true;
 });
 
@@ -92,8 +83,8 @@ async function loadInspectionItem(deviceId: string) {
       resultId: undefined,
       inspectionId: inspectionForm.inspectionId, // 可以先填，后端以实际值为准
       projectId: project.projectId!,
-      status: 3, // 3 = 未检查（默认）
-      value: '', // 字符串形式保存，兼容后端 varchar(255)
+      status: 3,
+      value: '',
     }));
   } catch (error) {
     console.error('加载巡检项失败：', error);
@@ -104,13 +95,16 @@ async function loadInspectionItem(deviceId: string) {
 // Submit
 // ---------------------------------------------------------------------
 const onFinish = async () => {
+  // 若用户未填写结束时间，则自动写入当前时间
+  if (!inspectionForm.endDate) {
+    inspectionForm.endDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
+  }
   // 最好在提交前再把 inspectionId 回写到每条 result（如需要）
   inspectionForm.results = inspectionForm.results.map((r) => ({
     ...r,
     inspectionId: inspectionForm.inspectionId,
   }));
-
-  // TODO: 在这里调用保存 API：例如 await saveInspection(inspectionForm)
+  await addInspection(inspectionForm);
 };
 </script>
 

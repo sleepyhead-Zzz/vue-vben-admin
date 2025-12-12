@@ -49,6 +49,7 @@ declare namespace AssetAPI {
     endDate?: string;
     /** 巡检结果简述 */
     description?: string;
+    ossIds?: number[];
     results?: AddAssetInspectionResultCommand[];
   };
 
@@ -1339,6 +1340,7 @@ declare namespace AssetAPI {
     endDate?: string;
     /** 巡检结果简述 */
     description?: string;
+    ossIds?: number[];
     results?: AddAssetInspectionResultCommand[];
     inspectionId?: number;
   };
