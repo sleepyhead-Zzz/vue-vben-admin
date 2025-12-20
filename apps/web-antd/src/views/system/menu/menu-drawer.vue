@@ -10,6 +10,8 @@ import {
   listToTree,
 } from '@vben/utils';
 
+import { Skeleton } from 'ant-design-vue';
+
 import { useVbenForm } from '#/adapter/form';
 import { addMenu, editMenu, getMenuInfo, listMenu } from '#/api/system/menu';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
@@ -27,6 +29,7 @@ const isUpdate = ref(false);
 const title = computed(() => {
   return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
 });
+const loading = ref(false);
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
@@ -107,22 +110,31 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
       return null;
     }
     drawerApi.drawerLoading(true);
+    loading.value = true;
 
     const { id, update } = drawerApi.getData() as ModalProps;
     isUpdate.value = update;
 
-    // 加载菜单树选择
-    await setupMenuSelect();
-    if (id) {
-      await formApi.setFieldValue('parentId', id);
-      if (update) {
-        const { data } = await getMenuInfo({ menuId: id });
-        await formApi.setValues(data);
-      }
+    if (!id) {
+      await setupMenuSelect();
+      return;
     }
+
+    await formApi.setFieldValue('parentId', id);
+
+    const [record] = await Promise.all([
+      update && getMenuInfo({ menuId: id }).then((res) => res.data),
+      setupMenuSelect(),
+    ]);
+
+    if (record) {
+      await formApi.setValues(record);
+    }
+
     await markInitialized();
 
     drawerApi.drawerLoading(false);
+    loading.value = false;
   },
 });
 
@@ -155,6 +167,7 @@ async function handleClosed() {
 
 <template>
   <BasicDrawer :title="title" class="w-[600px]">
-    <BasicForm />
+    <Skeleton active v-if="loading" />
+    <BasicForm v-show="!loading" />
   </BasicDrawer>
 </template>
