@@ -121,6 +121,8 @@ declare namespace AssetAPI {
     description?: string;
     /** 位置类型 */
     locationType?: string;
+    /** 显示顺序 */
+    orderNum?: number;
   };
 
   type AddAssetManufacturerCommand = {
@@ -423,6 +425,8 @@ declare namespace AssetAPI {
     description?: string;
     /** 位置类型 */
     locationType?: string;
+    /** 显示顺序 */
+    orderNum?: number;
   };
 
   type AssetLocationQuery = {
@@ -431,6 +435,10 @@ declare namespace AssetAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    locationName?: string;
+    locationType?: string;
+    parentLocationId?: string;
+    locationCode?: string;
   };
 
   type AssetManufacturerDTO = {
@@ -842,6 +850,10 @@ declare namespace AssetAPI {
   };
 
   type listLocationParams = {
+    locationName?: string;
+    locationType?: string;
+    parentLocationId?: string;
+    locationCode?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -1410,6 +1422,8 @@ declare namespace AssetAPI {
     description?: string;
     /** 位置类型 */
     locationType?: string;
+    /** 显示顺序 */
+    orderNum?: number;
     locationId?: number;
   };
 

@@ -1,15 +1,15 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 批量删除文件上传 DELETE /system/file/batch-delete */
 export async function batchRemoveFile(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.batchRemoveFileParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>("/system/file/batch-delete", {
-    method: "DELETE",
+  return request<SystemAPI.ResponseDTOVoid>('/system/file/batch-delete', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -21,11 +21,11 @@ export async function batchRemoveFile(
 export async function download(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.downloadParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { fileId: param0, ...queryParams } = params;
   return request<any>(`/system/file/download/${param0}`, {
-    method: "GET",
+    method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
   });
@@ -35,10 +35,10 @@ export async function download(
 export async function listFile(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.listFileParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOListSysFileDTO>("/system/file/list", {
-    method: "GET",
+  return request<SystemAPI.ResponseDTOListSysFileDTO>('/system/file/list', {
+    method: 'GET',
     params: {
       ...params,
     },
@@ -50,16 +50,16 @@ export async function listFile(
 export async function listFileInfoByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.listFileInfoByIdsParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { ossIds: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOListSysFileDTO>(
     `/system/file/listByIds/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -67,10 +67,10 @@ export async function listFileInfoByIds(
 export async function getPagedFiles(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getPagedFilesParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOPageDTOSysFileDTO>("/system/file/page", {
-    method: "GET",
+  return request<SystemAPI.ResponseDTOPageDTOSysFileDTO>('/system/file/page', {
+    method: 'GET',
     params: {
       ...params,
     },
@@ -84,23 +84,26 @@ export async function upload(
   params: SystemAPI.uploadParams,
   body: {},
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
-          formData.append(ele, JSON.stringify(item));
+          formData.append(
+            ele,
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+          );
         }
       } else {
         formData.append(ele, item);
@@ -108,13 +111,13 @@ export async function upload(
     }
   });
 
-  return request<SystemAPI.ResponseDTOSysFileUploadDTO>("/system/file/upload", {
-    method: "POST",
+  return request<SystemAPI.ResponseDTOSysFileUploadDTO>('/system/file/upload', {
+    method: 'POST',
     params: {
       ...params,
     },
     data: formData,
-    requestType: "form",
+    requestType: 'form',
     ...(options || {}),
   });
 }

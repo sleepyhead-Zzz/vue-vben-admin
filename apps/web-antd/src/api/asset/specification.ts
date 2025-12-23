@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增规格型号 POST /asset/specification */
 export async function addSpecification(
   body: AssetAPI.AddAssetSpecificationCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/specification", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/specification', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addSpecification(
 export async function getSpecificationInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getSpecificationInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { specificationId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOAssetSpecificationDTO>(
     `/asset/specification/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,13 +39,13 @@ export async function editSpecification(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.editSpecificationParams,
   body: AssetAPI.UpdateAssetSpecificationCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { specificationId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/specification/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -57,17 +57,17 @@ export async function editSpecification(
 export async function batchRemoveSpecification(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.batchRemoveSpecificationParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>(
-    "/asset/specification/batch-delete",
+    '/asset/specification/batch-delete',
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -76,11 +76,11 @@ export async function dropDownListSpecification(options?: {
   [key: string]: any;
 }) {
   return request<AssetAPI.ResponseDTOListAssetSpecificationVO>(
-    "/asset/specification/dropdown",
+    '/asset/specification/dropdown',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -88,14 +88,14 @@ export async function dropDownListSpecification(options?: {
 export async function exportSpecificationByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.exportSpecificationByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/asset/specification/excel", {
-    method: "GET",
+  return request<any>('/asset/specification/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -103,8 +103,8 @@ export async function exportSpecificationByExcel(
 
 /** 规格型号导入excel下载 GET /asset/specification/excelTemplate */
 export async function downloadExcelTemplate(options?: { [key: string]: any }) {
-  return request<any>("/asset/specification/excelTemplate", {
-    method: "GET",
+  return request<any>('/asset/specification/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -115,23 +115,26 @@ export async function importSpecificationByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
-          formData.append(ele, JSON.stringify(item));
+          formData.append(
+            ele,
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+          );
         }
       } else {
         formData.append(ele, item);
@@ -140,13 +143,13 @@ export async function importSpecificationByExcel(
   });
 
   return request<AssetAPI.ResponseDTOString>(
-    "/asset/specification/importData",
+    '/asset/specification/importData',
     {
-      method: "POST",
+      method: 'POST',
       data: formData,
-      requestType: "form",
+      requestType: 'form',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -154,17 +157,17 @@ export async function importSpecificationByExcel(
 export async function listSpecification(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.listSpecificationParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOListAssetSpecificationDTO>(
-    "/asset/specification/list",
+    '/asset/specification/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -172,17 +175,17 @@ export async function listSpecification(
 export async function getPagedSpecifications(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getPagedSpecificationsParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetSpecificationDTO>(
-    "/asset/specification/page",
+    '/asset/specification/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -190,15 +193,15 @@ export async function getPagedSpecifications(
 export async function removeSpecification(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeSpecificationParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { specificationId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(
     `/asset/specification/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }

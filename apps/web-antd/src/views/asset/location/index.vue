@@ -3,8 +3,6 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { nextTick } from 'vue';
-
 import { Page, useVbenModal } from '@vben/common-ui';
 import { getVxePopupContainer } from '@vben/utils';
 
@@ -39,19 +37,17 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async (_, formValues = {}) => {
+        // 默认只加载根节点
         const resp = await listLocation({
           ...formValues,
+          parentLocationId: '0',
         });
-        return { rows: resp.data };
-      },
-      // 默认请求接口后展开全部 不需要可以删除这段
-      querySuccess: () => {
-        nextTick(() => {
-          expandAll();
-        });
+
+        return { rows: resp.data || [] };
       },
     },
   },
+
   rowConfig: {
     keyField: 'locationId',
   },
@@ -61,15 +57,34 @@ const gridOptions: VxeGridProps = {
    * 如果遇到样式问题(空白、错位 滚动等)可以选择关闭虚拟滚动
    */
   scrollY: {
-    enabled: false,
+    enabled: true,
     gt: 0,
   },
   treeConfig: {
     parentField: 'parentLocationId',
     rowField: 'locationId',
-    // 自动转换为tree 由vxe处理 无需手动转换
+    hasChildField: 'hasChild',
     transform: true,
+    lazy: true,
+    loadMethod: async ({ row }): Promise<AssetAPI.AssetLocationDTO[]> => {
+      try {
+        // 根节点懒加载
+        if (row) {
+          // 子节点懒加载
+          const resp = await listLocation({ parentLocationId: row.locationId });
+          return resp.data || [];
+        } else {
+          // 传 0 表示根节点
+          const resp = await listLocation({ parentLocationId: '0' });
+          return resp.data || [];
+        }
+      } catch (error) {
+        console.error('loadMethod error:', error);
+        return []; // 避免返回 undefined，保证 TS 类型
+      }
+    },
   },
+
   // 表格全局唯一表示 保存列配置需要用到
   id: 'asset-location-index',
 };

@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增办公资产信息 POST /regulatory/office */
 export async function addOffice(
   body: RegulatoryAPI.AddRegOfficeCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<RegulatoryAPI.ResponseDTOVoid>("/regulatory/office", {
-    method: "POST",
+  return request<RegulatoryAPI.ResponseDTOVoid>('/regulatory/office', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addOffice(
 export async function getOfficeInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.getOfficeInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { officeId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTORegOfficeDTO>(
     `/regulatory/office/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,20 +39,20 @@ export async function editOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.editOfficeParams,
   body: RegulatoryAPI.UpdateRegOfficeCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { officeId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
     `/regulatory/office/${param0}`,
     {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       params: { ...queryParams },
       data: body,
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -60,28 +60,28 @@ export async function editOffice(
 export async function batchRemoveOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.batchRemoveOfficeParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    "/regulatory/office/batch-delete",
+    '/regulatory/office/batch-delete',
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
 /** 办公资产信息下拉列表 GET /regulatory/office/dropdown */
 export async function dropDownListOffice(options?: { [key: string]: any }) {
   return request<RegulatoryAPI.ResponseDTOListRegOfficeVO>(
-    "/regulatory/office/dropdown",
+    '/regulatory/office/dropdown',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -89,14 +89,14 @@ export async function dropDownListOffice(options?: { [key: string]: any }) {
 export async function exportOfficeByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.exportOfficeByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/regulatory/office/excel", {
-    method: "GET",
+  return request<any>('/regulatory/office/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -106,8 +106,8 @@ export async function exportOfficeByExcel(
 export async function downloadOfficeExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/regulatory/office/excelTemplate", {
-    method: "GET",
+  return request<any>('/regulatory/office/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -118,23 +118,26 @@ export async function importOfficeByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
-          formData.append(ele, JSON.stringify(item));
+          formData.append(
+            ele,
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+          );
         }
       } else {
         formData.append(ele, item);
@@ -143,13 +146,13 @@ export async function importOfficeByExcel(
   });
 
   return request<RegulatoryAPI.ResponseDTOString>(
-    "/regulatory/office/importData",
+    '/regulatory/office/importData',
     {
-      method: "POST",
+      method: 'POST',
       data: formData,
-      requestType: "form",
+      requestType: 'form',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -157,17 +160,17 @@ export async function importOfficeByExcel(
 export async function listOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.listOfficeParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<RegulatoryAPI.ResponseDTOListRegOfficeDTO>(
-    "/regulatory/office/list",
+    '/regulatory/office/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -175,17 +178,17 @@ export async function listOffice(
 export async function getPagedOffices(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.getPagedOfficesParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<RegulatoryAPI.ResponseDTOPageDTORegOfficeDTO>(
-    "/regulatory/office/page",
+    '/regulatory/office/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -193,15 +196,15 @@ export async function getPagedOffices(
 export async function removeOffice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.removeOfficeParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { officeId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
     `/regulatory/office/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }

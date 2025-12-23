@@ -57,7 +57,7 @@ const gridOptions: VxeGridProps = {
    * 虚拟滚动  默认关闭
    */
   scrollY: {
-    enabled: false,
+    enabled: true,
     gt: 0,
   },
   rowConfig: {
