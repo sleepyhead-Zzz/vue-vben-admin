@@ -14,18 +14,8 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'parentLocationId',
-    label: '父位置ID',
-  },
-  {
-    component: 'Input',
     fieldName: 'locationCode',
     label: '位置编码',
-  },
-  {
-    component: 'Input',
-    fieldName: 'description',
-    label: '位置描述',
   },
   {
     component: 'Select',
@@ -46,7 +36,6 @@ export const columns: VxeGridProps['columns'] = [
     field: 'locationName',
     treeNode: true,
   },
-
   {
     title: '位置编码',
     field: 'locationCode',

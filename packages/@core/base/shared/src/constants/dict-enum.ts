@@ -18,6 +18,8 @@ export const DictEnum = {
   ASSET_LOCATION_TYPE: 'asset_location_type', // 设备所在位置类型
   ASSET_DEVICE_STATUS: 'asset_device_status', // 设备状态
   ASSET_INSPECTION_PLAN_STATUS: 'asset_inspection_plan_status', // 巡检计划状态
+  ASSET_INSPECTION_TASK_STATUS: 'asset_inspection_task_status', // 巡检任务状态
+  ASSET_INSPECTION_STATUS: 'asset_inspection_status', // 巡检状态
   RegulatoryCardAssetStatus: 'regulatory_card_asset_status', // 信息卡资产状态
   RegulatoryCardAccountStatus: 'regulatory_card_account_status', // 信息卡财务入账状态
   RegulatoryCardBusinessStatus: 'regulatory_card_business_status', // 信息卡业务状态

@@ -13,67 +13,9 @@ export const querySchema: FormSchemaGetter = () => [
     label: '计划名称',
   },
   {
-    component: 'DatePicker',
-    componentProps: {
-      format: 'YYYY-MM-DD',
-      valueFormat: 'YYYY-MM-DD',
-    },
-    fieldName: 'startDate',
-    label: '开始日期',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      format: 'YYYY-MM-DD',
-      valueFormat: 'YYYY-MM-DD',
-    },
-    fieldName: 'endDate',
-    label: '结束日期',
-  },
-  {
     component: 'Input',
     fieldName: 'frequency',
     label: '巡检频率',
-  },
-  {
-    component: 'Input',
-    fieldName: 'intervalValue',
-    label: '周期间隔',
-    componentProps: { placeholder: '如每2天、每3周、每1月' },
-  },
-  {
-    component: 'Select',
-    fieldName: 'weekdays',
-    label: '周几执行',
-    componentProps: {
-      mode: 'multiple',
-      placeholder: '请选择执行的星期',
-      allowClear: true,
-      options: [
-        { label: '周一', value: '1' },
-        { label: '周二', value: '2' },
-        { label: '周三', value: '3' },
-        { label: '周四', value: '4' },
-        { label: '周五', value: '5' },
-        { label: '周六', value: '6' },
-        { label: '周日', value: '7' },
-      ],
-    },
-  },
-  {
-    component: 'Select',
-    fieldName: 'monthDays',
-    label: '月日执行',
-    componentProps: {
-      mode: 'multiple',
-      allowClear: true,
-      style: { width: '100%' },
-      placeholder: '请选择每月执行的日期',
-      options: Array.from({ length: 31 }, (_, i) => ({
-        label: `${i + 1}日`,
-        value: String(i + 1),
-      })),
-    },
   },
 
   {
@@ -110,7 +52,6 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '巡检频率',
     field: 'frequency',
-    width: 100,
     formatter: ({ cellValue }) => {
       if (cellValue === 1) return '天';
       if (cellValue === 2) return '周';
@@ -118,11 +59,14 @@ export const columns: VxeGridProps['columns'] = [
       return cellValue ?? '-';
     },
   },
-  { title: '周期间隔', field: 'intervalValue', width: 120 },
+  {
+    title: '周期间隔',
+    field: 'intervalValue',
+  },
   {
     title: '周几执行',
     field: 'weekdayList',
-    minWidth: 140,
+
     formatter: ({ cellValue }) => {
       if (!cellValue || cellValue.length === 0) return '-';
       const map: Record<string, string> = {
@@ -140,7 +84,6 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '月日执行',
     field: 'monthDayList',
-    minWidth: 140,
     formatter: ({ cellValue }) => {
       if (!cellValue || cellValue.length === 0) return '-';
       return cellValue.map((d: string) => `${d}日`).join('、');

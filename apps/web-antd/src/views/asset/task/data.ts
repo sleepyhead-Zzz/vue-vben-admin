@@ -1,45 +1,24 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
-  {
-    component: 'Input',
-    fieldName: 'planId',
-    label: '来源巡检计划ID',
-  },
   {
     component: 'Input',
     fieldName: 'taskName',
     label: '任务名称',
   },
   {
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.ASSET_INSPECTION_TASK_STATUS),
     },
     fieldName: 'status',
     label: '任务状态',
-  },
-  {
-    component: 'Input',
-    fieldName: 'assignDeptId',
-    label: '指派给的部门ID',
-  },
-  {
-    component: 'Input',
-    fieldName: 'assignUserId',
-    label: '指派给的负责人ID',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'executeDeadline',
-    label: '任务截止时间',
   },
 ];
 
@@ -50,10 +29,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '巡检任务ID',
     field: 'taskId',
+    visible: false,
   },
   {
     title: '来源巡检计划ID',
     field: 'planId',
+    visible: false,
   },
   {
     title: '任务名称',
@@ -62,6 +43,13 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '任务状态',
     field: 'status',
+    slots: {
+      default: ({ row }) => {
+        // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
+        return renderDict(row.status, DictEnum.ASSET_INSPECTION_TASK_STATUS);
+      },
+    },
+    width: 70,
   },
   {
     title: '指派给的部门ID',
@@ -80,7 +68,6 @@ export const columns: VxeGridProps['columns'] = [
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 180,
   },
 ];
 
@@ -106,13 +93,12 @@ export const modalSchema: FormSchemaGetter = () => [
     component: 'Input',
   },
   {
-    label: '任务状态',
-    fieldName: 'status',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.ASSET_INSPECTION_TASK_STATUS),
     },
+    fieldName: 'status',
+    label: '任务状态',
   },
   {
     label: '指派给的部门ID',

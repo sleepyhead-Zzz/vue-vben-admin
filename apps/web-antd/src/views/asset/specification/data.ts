@@ -9,11 +9,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'specificationName',
     label: '规格型号名称',
   },
-  {
-    component: 'Input',
-    fieldName: 'categoryId',
-    label: '资产分类ID',
-  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
@@ -25,12 +20,12 @@ export const columns: VxeGridProps['columns'] = [
     field: 'specificationId',
   },
   {
-    title: '规格型号名称',
-    field: 'specificationName',
-  },
-  {
     title: '资产分类名称',
     field: 'categoryName',
+  },
+  {
+    title: '规格型号名称',
+    field: 'specificationName',
   },
   {
     field: 'action',
@@ -52,12 +47,6 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '规格型号名称',
-    fieldName: 'specificationName',
-    component: 'Input',
-    rules: 'required',
-  },
-  {
     component: 'Select',
     componentProps: {
       getPopupContainer,
@@ -65,6 +54,13 @@ export const modalSchema: FormSchemaGetter = () => [
       optionLabelProp: 'label',
     },
     fieldName: 'categoryId',
-    label: '资产分类ID',
+    label: '资产分类',
+    rules: 'required',
+  },
+  {
+    label: '规格型号名称',
+    fieldName: 'specificationName',
+    component: 'Input',
+    rules: 'required',
   },
 ];

@@ -1,6 +1,11 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -8,43 +13,12 @@ export const querySchema: FormSchemaGetter = () => [
     label: '关联的巡检方案ID',
   },
   {
-    component: 'Input',
-    fieldName: 'taskId',
-    label: '巡检状态',
-  },
-  {
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.ASSET_INSPECTION_STATUS),
     },
     fieldName: 'status',
-    label: '',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'startDate',
-    label: '巡检实际开始时间',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'endDate',
-    label: '巡检实际结束时间',
-  },
-  {
-    component: 'Input',
-    fieldName: 'description',
-    label: '巡检结果简述',
+    label: '巡检状态',
   },
 ];
 
@@ -63,6 +37,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '巡检状态',
     field: 'status',
+    slots: {
+      default: ({ row }) => {
+        // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
+        return renderDict(row.status, DictEnum.ASSET_INSPECTION_STATUS);
+      },
+    },
   },
   {
     title: '巡检实际开始时间',
@@ -107,13 +87,12 @@ export const modalSchema: FormSchemaGetter = () => [
     rules: 'required',
   },
   {
-    label: '巡检状态',
-    fieldName: 'status',
-    component: 'RadioGroup',
+    component: 'Select',
     componentProps: {
-      buttonStyle: 'solid',
-      optionType: 'button',
+      options: getDictOptions(DictEnum.ASSET_INSPECTION_STATUS),
     },
+    fieldName: 'status',
+    label: '巡检状态',
   },
   {
     label: '巡检实际开始时间',

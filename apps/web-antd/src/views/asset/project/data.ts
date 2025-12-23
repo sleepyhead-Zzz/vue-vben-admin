@@ -12,16 +12,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'projectType',
     label: '检查方法',
   },
-  {
-    component: 'Input',
-    fieldName: 'minValue',
-    label: '数值下限',
-  },
-  {
-    component: 'Input',
-    fieldName: 'maxValue',
-    label: '数值上限',
-  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
@@ -31,6 +21,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '检查项ID',
     field: 'projectId',
+    visible: false,
   },
   {
     title: '检查项名称',
@@ -47,6 +38,10 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '数值上限',
     field: 'maxValue',
+  },
+  {
+    title: '单位',
+    field: 'unit',
   },
   {
     field: 'action',
@@ -86,6 +81,11 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '数值上限',
     fieldName: 'maxValue',
+    component: 'Input',
+  },
+  {
+    label: '单位',
+    fieldName: 'unit',
     component: 'Input',
   },
 ];
