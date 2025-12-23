@@ -13,10 +13,8 @@ setupVbenVxeTable({
     vxeUI.setConfig({
       grid: {
         align: 'center',
-        border: false,
-        columnConfig: {
-          resizable: true,
-        },
+        // https://vxetable.cn/#/component/table/base/border
+        border: 'inner',
         minHeight: 180,
         formConfig: {
           // 全局禁用vxe-table的表单配置，使用formOptions
@@ -46,22 +44,30 @@ setupVbenVxeTable({
           // 点击行高亮
           isCurrent: false,
         },
+        columnConfig: {
+          // 可拖拽列宽
+          resizable: true,
+        },
         // 右上角工具栏
         toolbarConfig: {
           // 自定义列
-          custom: {
+          custom: true,
+          customOptions: {
             icon: 'vxe-icon-setting',
           },
           // 最大化
           zoom: true,
           // 刷新
-          refresh: {
+          refresh: true,
+          refreshOptions: {
             // 默认为reload 修改为在当前页刷新
             code: 'query',
           },
         },
+        // 圆角按钮
         round: true,
-        size: 'small',
+        // 表格尺寸
+        size: 'medium',
         customConfig: {
           // 表格右上角自定义列配置 是否保存到localStorage
           // 必须存在id参数才能使用
@@ -99,6 +105,7 @@ setupVbenVxeTable({
 export { useVbenVxeGrid };
 
 export type * from '@vben/plugins/vxe-table';
+
 /**
  * 判断vxe-table的复选框是否选中
  * @param tableApi api

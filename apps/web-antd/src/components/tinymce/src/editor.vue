@@ -2,7 +2,7 @@
 import type { IPropTypes } from '@tinymce/tinymce-vue/lib/cjs/main/ts/components/EditorPropTypes';
 import type { Editor as EditorType } from 'tinymce/tinymce';
 
-import type { AxiosProgressEvent, UploadResult } from '#/api/core/upload';
+import type { AxiosProgressEvent, UploadResult } from '#/api';
 
 import { computed, nextTick, ref, shallowRef, useAttrs, watch } from 'vue';
 
@@ -12,7 +12,7 @@ import Editor from '@tinymce/tinymce-vue';
 import { Spin } from 'ant-design-vue';
 import { camelCase } from 'lodash-es';
 
-import { uploadApi } from '#/api/core/upload';
+import { uploadApi } from '#/api';
 import {
   plugins as defaultPlugins,
   toolbar as defaultToolbar,
@@ -57,6 +57,9 @@ const content = defineModel<string>('modelValue', {
 });
 
 const editorRef = shallowRef<EditorType | null>(null);
+
+// 存储上传图片的 url -> ossId 映射，用于后续附加 data-oss-id
+const pendingImageMap = new Map<string, string>();
 
 const { isDark, locale } = usePreferences();
 const skinName = computed(() => {
@@ -128,6 +131,13 @@ const initOptions = computed((): InitOptions => {
     skin: skinName.value,
     toolbar,
     toolbar_mode: 'sliding',
+    // 隐藏下面的 按xxx获取帮助
+    help_accessibility: false,
+    // https://blog.csdn.net/qq_46380656/article/details/122171418
+    // 避免图片地址和链接地址转换成相对路径
+    relative_urls: false,
+    remove_script_host: false,
+    convert_urls: false,
     ...options,
     /**
      * 覆盖默认的base64行为
@@ -147,7 +157,10 @@ const initOptions = computed((): InitOptions => {
         };
         uploadApi(file, { onUploadProgress: progressEvent })
           .then((response) => {
-            const { url } = response as unknown as UploadResult;
+            const { url, ossId } = response as unknown as UploadResult;
+            // console.log('tinymce上传图片:', url);
+            // 将 url -> ossId 映射存储起来，等待图片插入后再附加
+            pendingImageMap.set(url, ossId);
             resolve(url);
           })
           .catch((error) => {
@@ -162,6 +175,27 @@ const initOptions = computed((): InitOptions => {
       editor.on('init', () => {
         emit('mounted');
         loading.value = false;
+      });
+
+      // 监听内容变化，处理待附加 data-oss-id 的图片
+      editor.on('change', () => {
+        if (pendingImageMap.size === 0) {
+          return;
+        }
+
+        pendingImageMap.forEach((ossId, url) => {
+          const imgDoms = editor.dom.select(`img[src="${url}"]`);
+          if (imgDoms && imgDoms.length > 0) {
+            imgDoms.forEach((imgDom) => {
+              // 只处理还没有 data-oss-id 属性的图片
+              if (!editor.dom.getAttrib(imgDom, 'data-oss-id')) {
+                editor.dom.setAttrib(imgDom, 'data-oss-id', ossId);
+                // console.log('已附加 data-oss-id:', url, ossId);
+              }
+            });
+            pendingImageMap.delete(url);
+          }
+        });
       });
     },
   };
@@ -201,13 +235,31 @@ const events = computed(() => {
 </template>
 
 <style lang="scss">
-/***
-由于modal/drawer的zIndex升级后为2000
-这里会造成遮挡 修改为更高的zIndex
-*/
+// 展开层元素z-index
+$dropdown-index: 2025;
+
+@mixin tinymce-valid-fail($color) {
+  .app-tinymce {
+    // 最外层的tinymce容器
+    .tox-tinymce {
+      border-color: $color;
+    }
+    // focus样式
+    .tox .tox-edit-area::before {
+      border-color: $color;
+      border-right: none;
+      border-left: none;
+    }
+  }
+}
+
 .tox.tox-silver-sink.tox-tinymce-aux {
   /** 该样式默认为1300的zIndex  */
-  z-index: 2025;
+  z-index: $dropdown-index;
+}
+
+.tox-fullscreen .tox.tox-tinymce-aux {
+  z-index: $dropdown-index !important;
 }
 
 .app-tinymce {
@@ -217,5 +269,29 @@ const events = computed(() => {
   .tox-promotion {
     display: none;
   }
+
+  /** 保持focus时与primary色一致 */
+  .tox .tox-edit-area::before {
+    border-color: hsl(var(--primary));
+  }
+}
+
+// antd原生表单 校验失败样式
+.ant-form-item:has(.ant-form-item-explain-error) {
+  $error-color: #ff3860;
+
+  @include tinymce-valid-fail($error-color);
+}
+
+// useVbenForm 校验失败样式
+.form-valid-error {
+  $error-color: hsl(var(--destructive));
+
+  @include tinymce-valid-fail($error-color);
+}
+
+// 全屏下样式处理 不去掉transform位置会异常
+div[role='dialog']:has(.tox.tox-tinymce.tox-fullscreen) {
+  transform: none !important;
 }
 </style>
