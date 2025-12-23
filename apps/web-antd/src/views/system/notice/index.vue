@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { Notice } from '#/api/system/notice/model';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { getVxePopupContainer } from '@vben/utils';
@@ -70,19 +69,19 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(record: Notice) {
+async function handleEdit(record: SystemAPI.SysNoticeDTO) {
   modalApi.setData({ id: record.noticeId });
   modalApi.open();
 }
 
-async function handleDelete(row: Notice) {
+async function handleDelete(row: SystemAPI.SysNoticeDTO) {
   await removeNotice([row.noticeId]);
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Notice) => row.noticeId);
+  const ids = rows.map((row: SystemAPI.SysNoticeDTO) => row.noticeId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

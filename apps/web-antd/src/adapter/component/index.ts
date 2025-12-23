@@ -29,6 +29,10 @@ const ImageUpload = defineAsyncComponent(() =>
   import('#/components/upload').then((res) => res.ImageUpload),
 );
 
+const RichTextarea = defineAsyncComponent(() =>
+  import('#/components/tinymce/index').then((res) => res.Tinymce),
+);
+
 const AutoComplete = defineAsyncComponent(
   () => import('ant-design-vue/es/auto-complete'),
 );
@@ -132,6 +136,7 @@ export type ComponentType =
   | 'RadioGroup'
   | 'RangePicker'
   | 'Rate'
+  | 'RichTextarea'
   | 'Select'
   | 'Space'
   | 'Switch'
@@ -207,6 +212,7 @@ async function initComponentAdapter() {
     TimePicker,
     ImageUpload,
     FileUpload,
+    RichTextarea,
     TreeSelect: withDefaultPlaceholder(TreeSelect, 'select'),
     Upload,
   };
