@@ -6,6 +6,8 @@ import { $t } from '@vben/locales';
 
 import { VbenIconButton } from '@vben-core/shadcn-ui';
 
+import DingdingLogin from './dingding-login.vue';
+
 defineOptions({
   name: 'ThirdPartyLogin',
 });
@@ -29,15 +31,33 @@ function handleGo(path: string) {
       <VbenIconButton class="mb-3" @click="handleGo('/auth/wechat-qrcode')">
         <MdiWechat />
       </VbenIconButton>
-      <VbenIconButton class="mb-3">
+      <VbenIconButton
+        :tooltip="$t('authentication.qqLogin')"
+        tooltip-side="top"
+        class="mb-3"
+      >
         <MdiQqchat />
       </VbenIconButton>
-      <VbenIconButton class="mb-3">
+      <VbenIconButton
+        :tooltip="$t('authentication.githubLogin')"
+        tooltip-side="top"
+        class="mb-3"
+      >
         <MdiGithub />
       </VbenIconButton>
-      <VbenIconButton class="mb-3">
+      <VbenIconButton
+        :tooltip="$t('authentication.googleLogin')"
+        tooltip-side="top"
+        class="mb-3"
+      >
         <MdiGoogle />
       </VbenIconButton>
+      <DingdingLogin
+        v-if="dingdingAuthConfig"
+        :corp-id="dingdingAuthConfig.corpId"
+        :client-id="dingdingAuthConfig.clientId"
+        class="mb-3"
+      />
     </div>
   </div>
 </template>
