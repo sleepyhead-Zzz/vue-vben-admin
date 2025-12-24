@@ -52,11 +52,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'locationId',
     label: '设备存放位置',
   },
-  {
-    component: 'Input',
-    fieldName: 'inspectionPlanId',
-    label: '巡检方案',
-  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
@@ -96,35 +91,23 @@ export const columns: VxeGridProps['columns'] = [
 
   {
     title: '设备规格型号',
-    field: 'specificationId',
+    field: 'specificationName',
   },
   {
     title: '管理部门',
-    field: 'manageDeptId',
+    field: 'manageDeptName',
   },
   {
     title: '使用部门',
-    field: 'usageDeptId',
+    field: 'usageDeptName',
   },
   {
     title: '生产厂商',
-    field: 'manufacturerId',
+    field: 'manufacturerName',
   },
   {
     title: '设备存放位置',
-    field: 'locationId',
-  },
-  {
-    title: '巡检方案',
-    field: 'inspectionPlanId',
-  },
-  {
-    title: '购买日期',
-    field: 'purchaseDate',
-  },
-  {
-    title: '启用日期',
-    field: 'activationDate',
+    field: 'locationName',
   },
   {
     title: '最近维修时间',
@@ -190,6 +173,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     component: 'Select',
+    defaultValue: undefined,
     componentProps: {
       getPopupContainer,
       optionFilterProp: 'label',
@@ -214,6 +198,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     component: 'Select',
+    defaultValue: undefined,
     componentProps: {
       getPopupContainer,
       optionFilterProp: 'label',

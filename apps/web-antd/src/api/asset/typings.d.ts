@@ -25,8 +25,6 @@ declare namespace AssetAPI {
     manufacturerId?: number;
     /** 设备存放位置 */
     locationId?: number;
-    /** 巡检方案 */
-    inspectionPlanId?: number;
     /** 巡检项目 */
     inspectionProjectIds?: number[];
     /** 购买日期 */
@@ -82,6 +80,8 @@ declare namespace AssetAPI {
     minValue?: number;
     /** 数值上限 */
     maxValue?: number;
+    /** 单位 */
+    unit?: string;
   };
 
   type AddAssetInspectionResultCommand = {
@@ -168,8 +168,6 @@ declare namespace AssetAPI {
     deviceId?: number;
     /** 设备名称 */
     deviceName?: string;
-    /** 执行部门 */
-    deptId?: number;
     /** 设备编码 */
     deviceCode?: string;
     /** 设备状态 */
@@ -182,14 +180,24 @@ declare namespace AssetAPI {
     manualFileId?: number;
     /** 设备规格型号 */
     specificationId?: number;
+    /** 设备规格型号 */
+    specificationName?: string;
     /** 管理部门 */
-    manageDeptId?: string;
+    manageDeptId?: number;
+    /** 管理部门 */
+    manageDeptName?: string;
     /** 使用部门 */
-    usageDeptId?: string;
+    usageDeptId?: number;
+    /** 使用部门 */
+    usageDeptName?: string;
     /** 生产厂商 */
     manufacturerId?: number;
+    /** 生产厂商 */
+    manufacturerName?: string;
     /** 设备存放位置 */
     locationId?: number;
+    /** 设备存放位置 */
+    locationName?: string;
     /** 巡检项目 */
     inspectionProjectIds?: number[];
     /** 购买日期 */
@@ -319,6 +327,8 @@ declare namespace AssetAPI {
     minValue?: number;
     /** 数值上限 */
     maxValue?: number;
+    /** 单位 */
+    unit?: string;
   };
 
   type AssetInspectionProjectQuery = {
@@ -427,6 +437,7 @@ declare namespace AssetAPI {
     locationType?: string;
     /** 显示顺序 */
     orderNum?: number;
+    hasChild?: boolean;
   };
 
   type AssetLocationQuery = {
@@ -1265,8 +1276,8 @@ declare namespace AssetAPI {
   };
 
   type TreeLong = {
-    weight?: Record<string, any>;
     config?: TreeNodeConfig;
+    weight?: Record<string, any>;
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;
@@ -1327,8 +1338,6 @@ declare namespace AssetAPI {
     manufacturerId?: number;
     /** 设备存放位置 */
     locationId?: number;
-    /** 巡检方案 */
-    inspectionPlanId?: number;
     /** 巡检项目 */
     inspectionProjectIds?: number[];
     /** 购买日期 */
@@ -1388,6 +1397,8 @@ declare namespace AssetAPI {
     minValue?: number;
     /** 数值上限 */
     maxValue?: number;
+    /** 单位 */
+    unit?: string;
     projectId?: number;
   };
 

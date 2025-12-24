@@ -88,10 +88,10 @@ declare namespace ToolAPI {
     htmlType?: string;
     dictType?: string;
     sort?: number;
-    increment?: boolean;
+    list?: boolean;
     capJavaField?: string;
     query?: boolean;
-    list?: boolean;
+    increment?: boolean;
     required?: boolean;
     pk?: boolean;
     insert?: boolean;

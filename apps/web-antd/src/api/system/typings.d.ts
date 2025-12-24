@@ -12,16 +12,6 @@ declare namespace SystemAPI {
     remark?: string;
   };
 
-  type AddDeptCommand = {
-    parentId: number;
-    deptName?: string;
-    orderNum: number;
-    leaderId?: number;
-    phone?: string;
-    email?: string;
-    status?: string;
-  };
-
   type AddDictDataCommand = {
     /** 字典排序 */
     dictSort?: number;
@@ -50,23 +40,6 @@ declare namespace SystemAPI {
     remark?: string;
   };
 
-  type AddMenuCommand = {
-    parentId?: number;
-    menuName?: string;
-    orderNum: number;
-    path?: string;
-    component?: string;
-    queryParam?: string;
-    isFrame?: string;
-    isCache?: string;
-    menuType?: string;
-    visible?: string;
-    status?: string;
-    perms?: string;
-    icon?: string;
-    remark?: string;
-  };
-
   type AddNoticeCommand = {
     /** 公告标题 */
     noticeTitle?: string;
@@ -78,30 +51,6 @@ declare namespace SystemAPI {
     status?: string;
     /** 备注 */
     remark?: string;
-  };
-
-  type AddPostCommand = {
-    deptId: number;
-    belongDeptId?: number;
-    postCode?: string;
-    postName?: string;
-    postCategory?: string;
-    postSort: number;
-    status?: string;
-    remark?: string;
-  };
-
-  type AddRoleCommand = {
-    roleName?: string;
-    roleKey?: string;
-    roleSort: number;
-    dataScope?: string;
-    menuCheckStrictly?: boolean;
-    deptCheckStrictly?: boolean;
-    status?: string;
-    remark?: string;
-    menuIds?: number[];
-    deptIds?: number[];
   };
 
   type AddSysClientCommand = {
@@ -121,6 +70,57 @@ declare namespace SystemAPI {
     timeout?: number;
     /** 状态（0正常 1停用） */
     status?: string;
+  };
+
+  type AddSysDeptCommand = {
+    parentId: number;
+    deptName?: string;
+    orderNum: number;
+    leaderId?: number;
+    phone?: string;
+    email?: string;
+    status?: string;
+  };
+
+  type AddSysMenuCommand = {
+    parentId?: number;
+    menuName?: string;
+    orderNum: number;
+    path?: string;
+    component?: string;
+    queryParam?: string;
+    isFrame?: string;
+    isCache?: string;
+    menuType?: string;
+    visible?: string;
+    status?: string;
+    perms?: string;
+    icon?: string;
+    remark?: string;
+  };
+
+  type AddSysPostCommand = {
+    deptId: number;
+    belongDeptId?: number;
+    postCode?: string;
+    postName?: string;
+    postCategory?: string;
+    postSort: number;
+    status?: string;
+    remark?: string;
+  };
+
+  type AddSysRoleCommand = {
+    roleName?: string;
+    roleKey?: string;
+    roleSort: number;
+    dataScope?: string;
+    menuCheckStrictly?: boolean;
+    deptCheckStrictly?: boolean;
+    status?: string;
+    remark?: string;
+    menuIds?: number[];
+    deptIds?: number[];
   };
 
   type AddUserCommand = {
@@ -204,37 +204,8 @@ declare namespace SystemAPI {
     roleId: number;
   };
 
-  type DeptDTO = {
-    deptId?: number;
-    deptName?: string;
-    parentId?: number;
-    parentName?: string;
-    ancestors?: string;
-    deptCategory?: string;
-    orderNum?: number;
-    leaderId?: number;
-    leaderName?: string;
-    phone?: string;
-    email?: string;
-    status?: string;
-    createTime?: string;
-    children?: DeptDTO[];
-  };
-
   type deptNodeListParams = {
     deptId: number;
-  };
-
-  type DeptQuery = {
-    orderColumn?: string;
-    orderDirection?: string;
-    timeRangeColumn?: string;
-    beginTime?: string;
-    endTime?: string;
-    deptId?: number;
-    parentId?: number;
-    status?: string;
-    deptName?: string;
   };
 
   type DeptTreeSelectDTO = {
@@ -247,7 +218,7 @@ declare namespace SystemAPI {
   };
 
   type dropdownDeptListParams = {
-    query: DeptQuery;
+    query: SysDeptQuery;
   };
 
   type dropdownMenuParams = {
@@ -311,7 +282,7 @@ declare namespace SystemAPI {
   };
 
   type exportPostParams = {
-    query: PostQuery;
+    query: SysPostQuery;
   };
 
   type exportRoleByExcelParams = {
@@ -627,20 +598,6 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
-  type PageDTOPostDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: PostDTO[];
-  };
-
-  type PageDTORoleDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: RoleDTO[];
-  };
-
   type PageDTOSysClientDTO = {
     /** 总记录数 */
     total?: number;
@@ -683,45 +640,25 @@ declare namespace SystemAPI {
     rows?: SysNoticeDTO[];
   };
 
-  type PageDTOUserDTO = {
+  type PageDTOSysPostDTO = {
     /** 总记录数 */
     total?: number;
     /** 列表数据 */
-    rows?: UserDTO[];
+    rows?: SysPostDTO[];
   };
 
-  type PostDTO = {
-    /** 岗位ID */
-    postId?: number;
-    /** 部门ID */
-    deptId?: number;
-    /** 岗位编码 */
-    postCode?: string;
-    /** 岗位名称 */
-    postName?: string;
-    /** 岗位排序 */
-    postSort?: number;
-    /** 备注 */
-    remark?: string;
-    status?: string;
-    createTime?: string;
+  type PageDTOSysRoleDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysRoleDTO[];
   };
 
-  type PostQuery = {
-    orderColumn?: string;
-    orderDirection?: string;
-    timeRangeColumn?: string;
-    beginTime?: string;
-    endTime?: string;
-    pageNum?: number;
-    pageSize?: number;
-    postCode?: string;
-    postName?: string;
-    status?: string;
-    belongDeptId?: number;
-    deptId?: number;
-    postIds?: number[];
-    postCategory?: string;
+  type PageDTOSysUserDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysUserDTO[];
   };
 
   type removeClientParams = {
@@ -773,12 +710,6 @@ declare namespace SystemAPI {
     userId: number;
   };
 
-  type ResponseDTODeptDTO = {
-    code?: number;
-    message?: string;
-    data?: DeptDTO;
-  };
-
   type ResponseDTODeptTreeSelectDTO = {
     code?: number;
     message?: string;
@@ -789,24 +720,6 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: number;
-  };
-
-  type ResponseDTOListDeptDTO = {
-    code?: number;
-    message?: string;
-    data?: DeptDTO[];
-  };
-
-  type ResponseDTOListPostDTO = {
-    code?: number;
-    message?: string;
-    data?: PostDTO[];
-  };
-
-  type ResponseDTOListRoleDTO = {
-    code?: number;
-    message?: string;
-    data?: RoleDTO[];
   };
 
   type ResponseDTOListSysClientDTO = {
@@ -825,6 +738,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysConfigVO[];
+  };
+
+  type ResponseDTOListSysDeptDTO = {
+    code?: number;
+    message?: string;
+    data?: SysDeptDTO[];
   };
 
   type ResponseDTOListSysDictDataDTO = {
@@ -869,34 +788,34 @@ declare namespace SystemAPI {
     data?: SysNoticeDTO[];
   };
 
+  type ResponseDTOListSysPostDTO = {
+    code?: number;
+    message?: string;
+    data?: SysPostDTO[];
+  };
+
+  type ResponseDTOListSysRoleDTO = {
+    code?: number;
+    message?: string;
+    data?: SysRoleDTO[];
+  };
+
+  type ResponseDTOListSysUserDTO = {
+    code?: number;
+    message?: string;
+    data?: SysUserDTO[];
+  };
+
   type ResponseDTOListTreeLong = {
     code?: number;
     message?: string;
     data?: TreeLong[];
   };
 
-  type ResponseDTOListUserDTO = {
-    code?: number;
-    message?: string;
-    data?: UserDTO[];
-  };
-
   type ResponseDTOMenuTreeSelectDTO = {
     code?: number;
     message?: string;
     data?: MenuTreeSelectDTO;
-  };
-
-  type ResponseDTOPageDTOPostDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOPostDTO;
-  };
-
-  type ResponseDTOPageDTORoleDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTORoleDTO;
   };
 
   type ResponseDTOPageDTOSysClientDTO = {
@@ -935,22 +854,22 @@ declare namespace SystemAPI {
     data?: PageDTOSysNoticeDTO;
   };
 
-  type ResponseDTOPageDTOUserDTO = {
+  type ResponseDTOPageDTOSysPostDTO = {
     code?: number;
     message?: string;
-    data?: PageDTOUserDTO;
+    data?: PageDTOSysPostDTO;
   };
 
-  type ResponseDTOPostDTO = {
+  type ResponseDTOPageDTOSysRoleDTO = {
     code?: number;
     message?: string;
-    data?: PostDTO;
+    data?: PageDTOSysRoleDTO;
   };
 
-  type ResponseDTORoleDTO = {
+  type ResponseDTOPageDTOSysUserDTO = {
     code?: number;
     message?: string;
-    data?: RoleDTO;
+    data?: PageDTOSysUserDTO;
   };
 
   type ResponseDTOString = {
@@ -969,6 +888,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysConfigDTO;
+  };
+
+  type ResponseDTOSysDeptDTO = {
+    code?: number;
+    message?: string;
+    data?: SysDeptDTO;
   };
 
   type ResponseDTOSysDictDataDTO = {
@@ -1007,6 +932,18 @@ declare namespace SystemAPI {
     data?: SysNoticeDTO;
   };
 
+  type ResponseDTOSysPostDTO = {
+    code?: number;
+    message?: string;
+    data?: SysPostDTO;
+  };
+
+  type ResponseDTOSysRoleDTO = {
+    code?: number;
+    message?: string;
+    data?: SysRoleDTO;
+  };
+
   type ResponseDTOUserDetailDTO = {
     code?: number;
     message?: string;
@@ -1027,19 +964,6 @@ declare namespace SystemAPI {
 
   type roleDeptTreeSelectParams = {
     roleId: number;
-  };
-
-  type RoleDTO = {
-    roleId?: number;
-    roleName?: string;
-    roleKey?: string;
-    roleSort?: number;
-    dataScope?: string;
-    menuCheckStrictly?: boolean;
-    deptCheckStrictly?: boolean;
-    status?: string;
-    remark?: string;
-    createTime?: string;
   };
 
   type RoleQuery = {
@@ -1161,6 +1085,35 @@ declare namespace SystemAPI {
     updateTime?: string;
     /** 备注 */
     remark?: string;
+  };
+
+  type SysDeptDTO = {
+    deptId?: number;
+    deptName?: string;
+    parentId?: number;
+    parentName?: string;
+    ancestors?: string;
+    deptCategory?: string;
+    orderNum?: number;
+    leaderId?: number;
+    leaderName?: string;
+    phone?: string;
+    email?: string;
+    status?: string;
+    createTime?: string;
+    children?: SysDeptDTO[];
+  };
+
+  type SysDeptQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+    deptId?: number;
+    parentId?: number;
+    status?: string;
+    deptName?: string;
   };
 
   type SysDictDataDTO = {
@@ -1343,9 +1296,103 @@ declare namespace SystemAPI {
     remark?: string;
   };
 
+  type SysPostDTO = {
+    /** 岗位ID */
+    postId?: number;
+    /** 部门ID */
+    deptId?: number;
+    /** 岗位编码 */
+    postCode?: string;
+    /** 岗位名称 */
+    postName?: string;
+    /** 岗位排序 */
+    postSort?: number;
+    /** 备注 */
+    remark?: string;
+    status?: string;
+    createTime?: string;
+  };
+
+  type SysPostQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+    pageNum?: number;
+    pageSize?: number;
+    postCode?: string;
+    postName?: string;
+    status?: string;
+    belongDeptId?: number;
+    deptId?: number;
+    postIds?: number[];
+    postCategory?: string;
+  };
+
+  type SysRoleDTO = {
+    roleId?: number;
+    roleName?: string;
+    roleKey?: string;
+    roleSort?: number;
+    dataScope?: string;
+    menuCheckStrictly?: boolean;
+    deptCheckStrictly?: boolean;
+    status?: string;
+    remark?: string;
+    createTime?: string;
+  };
+
+  type SysUserDTO = {
+    /** 用户ID */
+    userId?: number;
+    /** 部门ID */
+    deptId?: number;
+    /** 用户名 */
+    userName?: string;
+    /** 用户昵称 */
+    nickName?: string;
+    /** 用户类型 */
+    userType?: string;
+    /** 邮件 */
+    email?: string;
+    /** 号码 */
+    phoneNumber?: string;
+    /** 性别 */
+    sex?: string;
+    /** 用户头像 */
+    avatarFileId?: number;
+    /** 用户头像 */
+    avatarFileUrl?: string;
+    /** 状态 */
+    status?: string;
+    /** 最后登录IP */
+    loginIp?: string;
+    /** 最后登录时间 */
+    loginDate?: string;
+    /** 备注 */
+    remark?: string;
+    /** 部门名称 */
+    deptName?: string;
+    roles?: SysRoleDTO[];
+    posts?: SysPostDTO[];
+    roleIds?: number[];
+    postIds?: number[];
+    /** 创建部门 */
+    creatDept?: number;
+    /** 创建者ID */
+    creatorId?: number;
+    /** 创建时间 */
+    createTime?: string;
+    /** 修改者ID */
+    updaterId?: number;
+    /** 修改时间 */
+    updateTime?: string;
+  };
+
   type TreeLong = {
-    weight?: Record<string, any>;
     config?: TreeNodeConfig;
+    weight?: Record<string, any>;
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;
@@ -1397,24 +1444,6 @@ declare namespace SystemAPI {
     configId?: number;
   };
 
-  type UpdateDataScopeCommand = {
-    roleId: number;
-    deptIds: number[];
-    dataScope?: string;
-    deptCheckStrictly?: boolean;
-  };
-
-  type UpdateDeptCommand = {
-    parentId: number;
-    deptName?: string;
-    orderNum: number;
-    leaderId?: number;
-    phone?: string;
-    email?: string;
-    status?: string;
-    deptId: number;
-  };
-
   type UpdateDictDataCommand = {
     /** 字典排序 */
     dictSort?: number;
@@ -1445,24 +1474,6 @@ declare namespace SystemAPI {
     dictTypeId?: number;
   };
 
-  type UpdateMenuCommand = {
-    parentId?: number;
-    menuName?: string;
-    orderNum: number;
-    path?: string;
-    component?: string;
-    queryParam?: string;
-    isFrame?: string;
-    isCache?: string;
-    menuType?: string;
-    visible?: string;
-    status?: string;
-    perms?: string;
-    icon?: string;
-    remark?: string;
-    menuId: number;
-  };
-
   type UpdateNoticeCommand = {
     /** 公告标题 */
     noticeTitle?: string;
@@ -1477,43 +1488,12 @@ declare namespace SystemAPI {
     noticeId?: number;
   };
 
-  type UpdatePostCommand = {
-    deptId: number;
-    belongDeptId?: number;
-    postCode?: string;
-    postName?: string;
-    postCategory?: string;
-    postSort: number;
-    status?: string;
-    remark?: string;
-    postId: number;
-  };
-
   type UpdateProfileCommand = {
     userId?: number;
     sex?: string;
     nickName?: string;
     phoneNumber?: string;
     email?: string;
-  };
-
-  type UpdateRoleCommand = {
-    roleName?: string;
-    roleKey?: string;
-    roleSort: number;
-    dataScope?: string;
-    menuCheckStrictly?: boolean;
-    deptCheckStrictly?: boolean;
-    status?: string;
-    remark?: string;
-    menuIds?: number[];
-    deptIds?: number[];
-    roleId: number;
-  };
-
-  type UpdateStatusCommand = {
-    roleId?: number;
-    status?: string;
   };
 
   type UpdateSysClientCommand = {
@@ -1534,6 +1514,73 @@ declare namespace SystemAPI {
     /** 状态（0正常 1停用） */
     status?: string;
     id?: number;
+  };
+
+  type UpdateSysDeptCommand = {
+    parentId: number;
+    deptName?: string;
+    orderNum: number;
+    leaderId?: number;
+    phone?: string;
+    email?: string;
+    status?: string;
+    deptId: number;
+  };
+
+  type UpdateSysMenuCommand = {
+    parentId?: number;
+    menuName?: string;
+    orderNum: number;
+    path?: string;
+    component?: string;
+    queryParam?: string;
+    isFrame?: string;
+    isCache?: string;
+    menuType?: string;
+    visible?: string;
+    status?: string;
+    perms?: string;
+    icon?: string;
+    remark?: string;
+    menuId: number;
+  };
+
+  type UpdateSysPostCommand = {
+    deptId: number;
+    belongDeptId?: number;
+    postCode?: string;
+    postName?: string;
+    postCategory?: string;
+    postSort: number;
+    status?: string;
+    remark?: string;
+    postId: number;
+  };
+
+  type UpdateSysRoleCommand = {
+    roleName?: string;
+    roleKey?: string;
+    roleSort: number;
+    dataScope?: string;
+    menuCheckStrictly?: boolean;
+    deptCheckStrictly?: boolean;
+    status?: string;
+    remark?: string;
+    menuIds?: number[];
+    deptIds?: number[];
+    roleId: number;
+  };
+
+  type UpdateSysRoleDataScopeCommand = {
+    roleId: number;
+    deptIds: number[];
+    dataScope?: string;
+    deptCheckStrictly?: boolean;
+  };
+
+  type UpdateSysRoleStatusCommand = {
+    roleId?: number;
+    status?: string;
   };
 
   type UpdateUserCommand = {
@@ -1573,62 +1620,15 @@ declare namespace SystemAPI {
   };
 
   type UserDetailDTO = {
-    user?: UserDTO;
+    user?: SysUserDTO;
     roleIds?: number[];
-    roles?: RoleDTO[];
+    roles?: SysRoleDTO[];
     postIds?: number[];
-    posts?: PostDTO[];
-  };
-
-  type UserDTO = {
-    /** 用户ID */
-    userId?: number;
-    /** 部门ID */
-    deptId?: number;
-    /** 用户名 */
-    userName?: string;
-    /** 用户昵称 */
-    nickName?: string;
-    /** 用户类型 */
-    userType?: string;
-    /** 邮件 */
-    email?: string;
-    /** 号码 */
-    phoneNumber?: string;
-    /** 性别 */
-    sex?: string;
-    /** 用户头像 */
-    avatarFileId?: number;
-    /** 用户头像 */
-    avatarFileUrl?: string;
-    /** 状态 */
-    status?: string;
-    /** 最后登录IP */
-    loginIp?: string;
-    /** 最后登录时间 */
-    loginDate?: string;
-    /** 备注 */
-    remark?: string;
-    /** 部门名称 */
-    deptName?: string;
-    roles?: RoleDTO[];
-    posts?: PostDTO[];
-    roleIds?: number[];
-    postIds?: number[];
-    /** 创建部门 */
-    creatDept?: number;
-    /** 创建者ID */
-    creatorId?: number;
-    /** 创建时间 */
-    createTime?: string;
-    /** 修改者ID */
-    updaterId?: number;
-    /** 修改时间 */
-    updateTime?: string;
+    posts?: SysPostDTO[];
   };
 
   type UserProfileDTO = {
-    user?: UserDTO;
+    user?: SysUserDTO;
     roleGroup?: string;
     postGroup?: string;
   };

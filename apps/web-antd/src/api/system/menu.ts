@@ -4,7 +4,7 @@ import request from "#/api/request";
 
 /** 添加菜单 POST /system/menu */
 export async function addMenu(
-  body: SystemAPI.AddMenuCommand,
+  body: SystemAPI.AddSysMenuCommand,
   options?: { [key: string]: any }
 ) {
   return request<SystemAPI.ResponseDTOVoid>("/system/menu", {
@@ -35,7 +35,7 @@ export async function getMenuInfo(
 export async function editMenu(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editMenuParams,
-  body: SystemAPI.UpdateMenuCommand,
+  body: SystemAPI.UpdateSysMenuCommand,
   options?: { [key: string]: any }
 ) {
   const { menuId: param0, ...queryParams } = params;

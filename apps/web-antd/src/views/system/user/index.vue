@@ -132,19 +132,19 @@ function handleAdd() {
   userDrawerApi.open();
 }
 
-function handleEdit(row: SystemAPI.UserDTO) {
+function handleEdit(row: SystemAPI.SysUserDTO) {
   userDrawerApi.setData({ id: row.userId });
   userDrawerApi.open();
 }
 
-async function handleDelete(row: SystemAPI.UserDTO) {
+async function handleDelete(row: SystemAPI.SysUserDTO) {
   await removeUser({ userIds: [row.userId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: SystemAPI.UserDTO) => row.userId);
+  const ids = rows.map((row: SystemAPI.SysUserDTO) => row.userId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -170,7 +170,7 @@ function handleDownloadExcel() {
 const [UserInfoModal, userInfoModalApi] = useVbenModal({
   connectedComponent: userInfoModal,
 });
-function handleUserInfo(row: SystemAPI.UserDTO) {
+function handleUserInfo(row: SystemAPI.SysUserDTO) {
   userInfoModalApi.setData({ userId: row.userId });
   userInfoModalApi.open();
 }
@@ -179,7 +179,7 @@ const [UserResetPwdModal, userResetPwdModalApi] = useVbenModal({
   connectedComponent: userResetPwdModal,
 });
 
-function handleResetPwd(record: APSystemAPII.UserDTO) {
+function handleResetPwd(record: APSystemAPII.SysUserDTO) {
   userResetPwdModalApi.setData({ record });
   userResetPwdModalApi.open();
 }

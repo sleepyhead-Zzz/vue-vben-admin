@@ -90,19 +90,19 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: SystemAPI.RoleDTO) {
+async function handleEdit(record: SystemAPI.SysRoleDTO) {
   drawerApi.setData({ id: record.roleId });
   drawerApi.open();
 }
 
-async function handleDelete(row: SystemAPI.RoleDTO) {
+async function handleDelete(row: SystemAPI.SysRoleDTO) {
   await removeRole({ roleIds: [row.roleId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: SystemAPI.RoleDTO) => row.roleId);
+  const ids = rows.map((row: SystemAPI.SysRoleDTO) => row.roleId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -133,13 +133,13 @@ const [RoleAuthModal, authModalApi] = useVbenModal({
   connectedComponent: roleAuthModal,
 });
 
-function handleAuthEdit(record: SystemAPI.RoleDTO) {
+function handleAuthEdit(record: SystemAPI.SysRoleDTO) {
   authModalApi.setData({ id: record.roleId });
   authModalApi.open();
 }
 
 const router = useRouter();
-function handleAssignRole(record: SystemAPI.RoleDTO) {
+function handleAssignRole(record: SystemAPI.SysRoleDTO) {
   router.push(`/system/role-auth/user/${record.roleId}`);
 }
 </script>

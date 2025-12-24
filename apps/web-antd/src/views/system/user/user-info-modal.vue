@@ -22,7 +22,7 @@ const [BasicModal, modalApi] = useVbenModal({
   },
 });
 
-interface UserWithNames extends SystemAPI.UserDTO {
+interface UserWithNames extends SystemAPI.SysUserDTO {
   postNames: string[];
   roleNames: string[];
 }

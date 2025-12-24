@@ -4,7 +4,7 @@ import request from "#/api/request";
 
 /** 新增部门 POST /system/dept/ */
 export async function addDept(
-  body: SystemAPI.AddDeptCommand,
+  body: SystemAPI.AddSysDeptCommand,
   options?: { [key: string]: any }
 ) {
   return request<SystemAPI.ResponseDTOVoid>("/system/dept/", {
@@ -24,7 +24,7 @@ export async function getDeptInfo(
   options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTODeptDTO>(`/system/dept/${param0}`, {
+  return request<SystemAPI.ResponseDTOSysDeptDTO>(`/system/dept/${param0}`, {
     method: "GET",
     params: { ...queryParams },
     ...(options || {}),
@@ -35,7 +35,7 @@ export async function getDeptInfo(
 export async function editDept(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editDeptParams,
-  body: SystemAPI.UpdateDeptCommand,
+  body: SystemAPI.UpdateSysDeptCommand,
   options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
@@ -87,7 +87,7 @@ export async function listDept(
   params: SystemAPI.listDeptParams,
   options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOListDeptDTO>("/system/dept/list", {
+  return request<SystemAPI.ResponseDTOListSysDeptDTO>("/system/dept/list", {
     method: "GET",
     params: {
       ...params,
@@ -103,7 +103,7 @@ export async function deptNodeList(
   options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOListDeptDTO>(
+  return request<SystemAPI.ResponseDTOListSysDeptDTO>(
     `/system/dept/list/exclude/${param0}`,
     {
       method: "GET",
@@ -120,7 +120,7 @@ export async function listUserByDept(
   options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOListUserDTO>(
+  return request<SystemAPI.ResponseDTOListSysUserDTO>(
     `/system/dept/list/user/${param0}`,
     {
       method: "GET",

@@ -44,7 +44,7 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function getDeptTree(deptId?: number | string, exclude = false) {
-  let ret: SystemAPI.DeptDTO[] = [];
+  let ret: SystemAPI.SysDeptDTO[] = [];
   const { data } = await (!deptId || exclude
     ? listDept({})
     : deptNodeList({ deptId }));

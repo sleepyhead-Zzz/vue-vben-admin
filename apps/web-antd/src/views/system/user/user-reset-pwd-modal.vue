@@ -51,14 +51,14 @@ const [BasicForm, formApi] = useVbenForm({
   },
 });
 
-const currentUser = ref<null | SystemAPI.UserDTO>(null);
+const currentUser = ref<null | SystemAPI.SysUserDTO>(null);
 async function handleOpenChange(open: boolean) {
   if (!open) {
     return null;
   }
   modalApi.modalLoading(true);
 
-  const { record } = modalApi.getData() as { record: SystemAPI.UserDTO };
+  const { record } = modalApi.getData() as { record: SystemAPI.SysUserDTO };
   currentUser.value = record;
   await formApi.setValues({ userId: record.userId });
 

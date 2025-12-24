@@ -100,18 +100,18 @@ function handleAdd() {
   drawerApi.open();
 }
 
-function handleSubAdd(row: SystemAPI.DeptDTO) {
+function handleSubAdd(row: SystemAPI.SysDeptDTO) {
   const { deptId } = row;
   drawerApi.setData({ id: deptId, update: false });
   drawerApi.open();
 }
 
-async function handleEdit(record: SystemAPI.DeptDTO) {
+async function handleEdit(record: SystemAPI.SysDeptDTO) {
   drawerApi.setData({ id: record.deptId, update: true });
   drawerApi.open();
 }
 
-async function handleDelete(row: SystemAPI.DeptDTO) {
+async function handleDelete(row: SystemAPI.SysDeptDTO) {
   await removeDept({ deptId: row.deptId });
   await tableApi.query();
 }

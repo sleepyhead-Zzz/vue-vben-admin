@@ -83,7 +83,7 @@ function handleAdd() {
 /**
  * 取消授权 一条记录
  */
-async function handleAuthCancel(record: SystemAPI.UserDTO) {
+async function handleAuthCancel(record: SystemAPI.SysUserDTO) {
   await cancelAuthUser({ userId: record.userId, roleId });
   await tableApi.query();
 }
@@ -93,7 +93,7 @@ async function handleAuthCancel(record: SystemAPI.UserDTO) {
  */
 function handleMultipleAuthCancel() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: SystemAPI.UserDTO) => row.userId);
+  const ids = rows.map((row: SystemAPI.SysUserDTO) => row.userId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

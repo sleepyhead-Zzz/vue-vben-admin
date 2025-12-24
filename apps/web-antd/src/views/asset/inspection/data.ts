@@ -10,7 +10,7 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'planId',
-    label: '关联的巡检方案ID',
+    label: '关联的巡检计划ID',
   },
   {
     component: 'Select',
@@ -31,7 +31,7 @@ export const columns: VxeGridProps['columns'] = [
     field: 'inspectionId',
   },
   {
-    title: '关联的巡检方案ID',
+    title: '关联的巡检计划ID',
     field: 'planId',
   },
   {
@@ -76,7 +76,7 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '关联的巡检方案ID',
+    label: '关联的巡检计划ID',
     fieldName: 'planId',
     component: 'Input',
   },

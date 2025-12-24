@@ -34,7 +34,7 @@ const searchValue = defineModel('searchValue', {
 });
 
 /** 部门数据源 */
-type DeptTreeArray = SystemAPI.DeptDTO[];
+type DeptTreeArray = SystemAPI.SysDeptDTO[];
 const deptTreeArray = ref<DeptTreeArray>([]);
 /** 骨架屏加载 */
 const showTreeSkeleton = ref<boolean>(true);

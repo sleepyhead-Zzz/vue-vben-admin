@@ -6,7 +6,7 @@ declare namespace CommonAPI {
   };
 
   type CurrentLoginUserDTO = {
-    user?: UserDTO;
+    user?: SysUserDTO;
     permissions?: string[];
     roles?: string[];
   };
@@ -26,23 +26,6 @@ declare namespace CommonAPI {
     grantType?: string;
     captchaCode?: string;
     captchaCodeKey?: string;
-  };
-
-  type PostDTO = {
-    /** 岗位ID */
-    postId?: number;
-    /** 部门ID */
-    deptId?: number;
-    /** 岗位编码 */
-    postCode?: string;
-    /** 岗位名称 */
-    postName?: string;
-    /** 岗位排序 */
-    postSort?: number;
-    /** 备注 */
-    remark?: string;
-    status?: string;
-    createTime?: string;
   };
 
   type ResponseDTOCaptchaDTO = {
@@ -87,19 +70,6 @@ declare namespace CommonAPI {
     data?: Record<string, any>;
   };
 
-  type RoleDTO = {
-    roleId?: number;
-    roleName?: string;
-    roleKey?: string;
-    roleSort?: number;
-    dataScope?: string;
-    menuCheckStrictly?: boolean;
-    deptCheckStrictly?: boolean;
-    status?: string;
-    remark?: string;
-    createTime?: string;
-  };
-
   type RouterDTO = {
     name?: string;
     path?: string;
@@ -142,17 +112,37 @@ declare namespace CommonAPI {
     phoneNumber: string;
   };
 
-  type TokenDTO = {
-    scope?: string;
-    openid?: string;
-    access_token?: string;
-    refresh_token?: string;
-    expire_in?: number;
-    refresh_expire_in?: number;
-    client_id?: string;
+  type SysPostDTO = {
+    /** 岗位ID */
+    postId?: number;
+    /** 部门ID */
+    deptId?: number;
+    /** 岗位编码 */
+    postCode?: string;
+    /** 岗位名称 */
+    postName?: string;
+    /** 岗位排序 */
+    postSort?: number;
+    /** 备注 */
+    remark?: string;
+    status?: string;
+    createTime?: string;
   };
 
-  type UserDTO = {
+  type SysRoleDTO = {
+    roleId?: number;
+    roleName?: string;
+    roleKey?: string;
+    roleSort?: number;
+    dataScope?: string;
+    menuCheckStrictly?: boolean;
+    deptCheckStrictly?: boolean;
+    status?: string;
+    remark?: string;
+    createTime?: string;
+  };
+
+  type SysUserDTO = {
     /** 用户ID */
     userId?: number;
     /** 部门ID */
@@ -183,8 +173,8 @@ declare namespace CommonAPI {
     remark?: string;
     /** 部门名称 */
     deptName?: string;
-    roles?: RoleDTO[];
-    posts?: PostDTO[];
+    roles?: SysRoleDTO[];
+    posts?: SysPostDTO[];
     roleIds?: number[];
     postIds?: number[];
     /** 创建部门 */
@@ -197,6 +187,16 @@ declare namespace CommonAPI {
     updaterId?: number;
     /** 修改时间 */
     updateTime?: string;
+  };
+
+  type TokenDTO = {
+    scope?: string;
+    openid?: string;
+    access_token?: string;
+    refresh_token?: string;
+    expire_in?: number;
+    refresh_expire_in?: number;
+    client_id?: string;
   };
 
   type wxLoginCallbackParams = {

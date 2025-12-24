@@ -4,7 +4,7 @@ import request from "#/api/request";
 
 /** 添加角色 POST /system/role */
 export async function addRole(
-  body: SystemAPI.AddRoleCommand,
+  body: SystemAPI.AddSysRoleCommand,
   options?: { [key: string]: any }
 ) {
   return request<SystemAPI.ResponseDTOVoid>("/system/role", {
@@ -24,7 +24,7 @@ export async function getRoleInfo(
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTORoleDTO>(`/system/role/${param0}`, {
+  return request<SystemAPI.ResponseDTOSysRoleDTO>(`/system/role/${param0}`, {
     method: "GET",
     params: { ...queryParams },
     ...(options || {}),
@@ -35,7 +35,7 @@ export async function getRoleInfo(
 export async function editRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editRoleParams,
-  body: SystemAPI.UpdateRoleCommand,
+  body: SystemAPI.UpdateSysRoleCommand,
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
@@ -71,7 +71,7 @@ export async function allocatedUserList(
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOPageDTOUserDTO>(
+  return request<SystemAPI.ResponseDTOPageDTOSysUserDTO>(
     `/system/role/${param0}/allocated/list`,
     {
       method: "GET",
@@ -89,7 +89,7 @@ export async function allocatedUserList(
 export async function dataScope(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.dataScopeParams,
-  body: SystemAPI.UpdateDataScopeCommand,
+  body: SystemAPI.UpdateSysRoleDataScopeCommand,
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
@@ -111,7 +111,7 @@ export async function dataScope(
 export async function changeRoleStatus(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.changeRoleStatusParams,
-  body: SystemAPI.UpdateStatusCommand,
+  body: SystemAPI.UpdateSysRoleStatusCommand,
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
@@ -133,7 +133,7 @@ export async function unallocatedUserList(
   options?: { [key: string]: any }
 ) {
   const { roleId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOPageDTOUserDTO>(
+  return request<SystemAPI.ResponseDTOPageDTOSysUserDTO>(
     `/system/role/${param0}/unallocated/list`,
     {
       method: "GET",
@@ -237,7 +237,7 @@ export async function getPagedRole(
   body: SystemAPI.RoleQuery,
   options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOPageDTORoleDTO>("/system/role/list", {
+  return request<SystemAPI.ResponseDTOPageDTOSysRoleDTO>("/system/role/list", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -253,7 +253,7 @@ export async function optionSelect(
   params: SystemAPI.optionSelectParams,
   options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOListRoleDTO>(
+  return request<SystemAPI.ResponseDTOListSysRoleDTO>(
     "/system/role/option-select",
     {
       method: "GET",

@@ -44,7 +44,7 @@ const [BasicForm, formApi] = useVbenForm({
     option: ({value, label, [disabled, key, title]}) => '',
   }),
  */
-function genRoleOptionlabel(role: API.RoleDTO) {
+function genRoleOptionlabel(role: API.SysRoleDTO) {
   const found = authScopeOptions.find((item) => item.value === role.dataScope);
   if (!found) {
     return role.roleName;
