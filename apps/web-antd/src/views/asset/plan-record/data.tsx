@@ -3,52 +3,120 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { DictEnum } from '@vben/constants';
 
+import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'deviceName',
-    label: '设备名称',
+    fieldName: 'planId',
+    label: '关联的巡检计划ID',
   },
   {
-    component: 'Input',
-    fieldName: 'deviceCode',
-    label: '设备编码',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_INSPECTION_STATUS),
+    },
+    fieldName: 'status',
+    label: '巡检状态',
   },
 ];
 
+// 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
+// export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: '设备名称',
-    field: 'deviceName',
+    title: '巡检记录ID',
+    field: 'inspectionId',
   },
   {
-    title: '设备编码',
-    field: 'deviceCode',
+    title: '关联的巡检计划ID',
+    field: 'planId',
   },
   {
-    title: '设备状态',
+    title: '巡检状态',
     field: 'status',
-    resizable: false,
-    width: 'auto',
     slots: {
       default: ({ row }) => {
-        return renderDict(row.status, DictEnum.ASSET_DEVICE_STATUS);
+        // 可选从DictEnum中获取 DictEnum.ASSET_LOCATION_TYPE 便于维护
+        return renderDict(row.status, DictEnum.ASSET_INSPECTION_STATUS);
       },
     },
   },
   {
-    title: '设备规格型号',
-    field: 'specificationId',
+    title: '巡检实际开始时间',
+    field: 'startDate',
+  },
+  {
+    title: '巡检实际结束时间',
+    field: 'endDate',
+  },
+  {
+    title: '巡检结果简述',
+    field: 'description',
   },
   {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    resizable: false,
-    width: 'auto',
+    width: 180,
+  },
+];
+
+export const modalSchema: FormSchemaGetter = () => [
+  {
+    label: '巡检记录ID',
+    fieldName: 'inspectionId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '关联的巡检计划ID',
+    fieldName: 'planId',
+    component: 'Input',
+  },
+  {
+    label: '巡检任务ID',
+    fieldName: 'taskId',
+    component: 'Input',
+    rules: 'required',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_INSPECTION_STATUS),
+    },
+    fieldName: 'status',
+    label: '巡检状态',
+  },
+  {
+    label: '巡检实际开始时间',
+    fieldName: 'startDate',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+    },
+  },
+  {
+    label: '巡检实际结束时间',
+    fieldName: 'endDate',
+    component: 'DatePicker',
+    componentProps: {
+      showTime: true,
+      format: 'YYYY-MM-DD HH:mm:ss',
+      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+    },
+  },
+  {
+    label: '巡检结果简述',
+    fieldName: 'description',
+    component: 'Input',
   },
 ];

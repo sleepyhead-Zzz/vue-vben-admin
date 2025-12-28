@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增部门 POST /system/dept/ */
 export async function addDept(
   body: SystemAPI.AddSysDeptCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/system/dept/', {
-    method: 'POST',
+  return request<SystemAPI.ResponseDTOVoid>("/system/dept/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,11 +21,11 @@ export async function addDept(
 export async function getDeptInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getDeptInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOSysDeptDTO>(`/system/dept/${param0}`, {
-    method: 'GET',
+    method: "GET",
     params: { ...queryParams },
     ...(options || {}),
   });
@@ -36,13 +36,13 @@ export async function editDept(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editDeptParams,
   body: SystemAPI.UpdateSysDeptCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/system/dept/${param0}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     params: { ...queryParams },
     data: body,
@@ -54,11 +54,11 @@ export async function editDept(
 export async function removeDept(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeDeptParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/system/dept/${param0}`, {
-    method: 'DELETE',
+    method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });
@@ -68,14 +68,14 @@ export async function removeDept(
 export async function dropdownDeptList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.dropdownDeptListParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOListTreeLong>('/system/dept/dept-tree', {
-    method: 'GET',
+  return request<SystemAPI.ResponseDTOListTreeLong>("/system/dept/dept-tree", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -85,10 +85,10 @@ export async function dropdownDeptList(
 export async function listDept(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.listDeptParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOListSysDeptDTO>('/system/dept/list', {
-    method: 'GET',
+  return request<SystemAPI.ResponseDTOListSysDeptDTO>("/system/dept/list", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -100,16 +100,16 @@ export async function listDept(
 export async function deptNodeList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.deptNodeListParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOListSysDeptDTO>(
     `/system/dept/list/exclude/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -117,15 +117,15 @@ export async function deptNodeList(
 export async function listUserByDept(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.listUserByDeptParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { deptId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOListSysUserDTO>(
     `/system/dept/list/user/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }

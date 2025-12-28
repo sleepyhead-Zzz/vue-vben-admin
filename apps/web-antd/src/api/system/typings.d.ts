@@ -567,6 +567,10 @@ declare namespace SystemAPI {
     deptId: number;
   };
 
+  type MenuCascadeRemoveCommand = {
+    menuIds?: number[];
+  };
+
   type MenuTreeSelectDTO = {
     checkedKeys?: number[];
     menus?: TreeLong[];
@@ -1391,8 +1395,8 @@ declare namespace SystemAPI {
   };
 
   type TreeLong = {
-    config?: TreeNodeConfig;
     weight?: Record<string, any>;
+    config?: TreeNodeConfig;
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;

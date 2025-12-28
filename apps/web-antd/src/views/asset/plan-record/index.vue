@@ -5,23 +5,25 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { useRoute } from 'vue-router';
 
-import { Page, useVbenDrawer } from '@vben/common-ui';
+import { Page, useVbenDrawer, useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
 import { getVxePopupContainer } from '@vben/utils';
 
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  associatedInspectionDevices,
-  cancelAssociatedDevices,
-} from '#/api/asset/plan';
+  batchRemoveInspection,
+  exportInspectionByExcel,
+  getPagedInspections,
+} from '#/api/asset/inspection';
+import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
-import roleAssignDrawer from './plan-associate-drawer.vue';
+import planRecordDrawer from './plan-record-drawer.vue';
 
 const route = useRoute();
 const planId = route.params.planId as string;
-
 const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 80,
@@ -31,6 +33,15 @@ const formOptions: VbenFormProps = {
   },
   schema: querySchema(),
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+  // 处理区间选择器RangePicker时间格式 将一个字段映射为两个字段 搜索/导出会用到
+  // 不需要直接删除
+  // fieldMappingTime: [
+  //  [
+  //    'createTime',
+  //    ['params[beginTime]', 'params[endTime]'],
+  //    ['YYYY-MM-DD 00:00:00', 'YYYY-MM-DD 23:59:59'],
+  //  ],
+  // ],
 };
 
 const gridOptions: VxeGridProps = {
@@ -42,6 +53,8 @@ const gridOptions: VxeGridProps = {
     // 点击行选中
     // trigger: 'row',
   },
+  // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
+  // columns: columns(),
   columns,
   height: 'auto',
   keepSource: true,
@@ -49,7 +62,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await associatedInspectionDevices({
+        const { data } = await getPagedInspections({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           planId,
@@ -60,9 +73,10 @@ const gridOptions: VxeGridProps = {
     },
   },
   rowConfig: {
-    keyField: 'deviceId',
+    keyField: 'inspectionId',
   },
-  id: 'asset-plan-associate-index',
+  // 表格全局唯一表示 保存列配置需要用到
+  id: 'asset-inspection-index',
 };
 
 const [BasicTable, tableApi] = useVbenVxeGrid({
@@ -70,59 +84,74 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   gridOptions,
 });
 
-const [RoleAssignDrawer, drawerApi] = useVbenDrawer({
-  connectedComponent: roleAssignDrawer,
+const [PlanRecordDrawer, modalApi] = useVbenModal({
+  connectedComponent: planRecordDrawer,
 });
 
 function handleAdd() {
-  drawerApi.setData({});
-  drawerApi.open();
+  modalApi.setData({});
+  modalApi.open();
 }
 
-/**
- * 取消授权 一条记录
- */
-async function handleAuthCancel(record: AssetAPI.AssetDeviceDTO) {
-  await cancelAssociatedDevices({ deviceIds: [record.deviceId], planId });
+async function handleEdit(row: AssetAPI.AssetInspectionDTO) {
+  modalApi.setData({ id: row.inspectionId });
+  modalApi.open();
+}
+
+async function handleDelete(row: AssetAPI.AssetInspectionDTO) {
+  await batchRemoveInspection({ inspectionIds: [row.inspectionId] });
   await tableApi.query();
 }
 
-/**
- * 批量取消授权
- */
-function handleMultipleAuthCancel() {
+function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: AssetAPI.AssetDeviceDTO) => row.deviceId);
+  const ids = rows.map((row: AssetAPI.AssetInspectionDTO) => row.inspectionId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
-    content: `确认取消选中的${ids.length}条授权记录吗？`,
+    content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await cancelAssociatedDevices({ planId, deviceIds: ids });
+      await batchRemoveInspection({ inspectionIds: ids });
       await tableApi.query();
-      tableApi.grid.clearCheckboxRow();
     },
   });
+}
+
+function handleDownloadExcel() {
+  commonDownloadExcel(
+    exportInspectionByExcel,
+    '巡检记录数据',
+    tableApi.formApi.form.values,
+    {
+      fieldMappingTime: formOptions.fieldMappingTime,
+    },
+  );
 }
 </script>
 
 <template>
   <Page :auto-content-height="true">
-    <BasicTable table-title="已关联的巡检设备列表">
+    <BasicTable table-title="巡检记录列表">
       <template #toolbar-tools>
         <Space>
+          <a-button
+            v-access:code="['asset:inspection:export']"
+            @click="handleDownloadExcel"
+          >
+            {{ $t('pages.common.export') }}
+          </a-button>
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger
             type="primary"
-            v-access:code="['asset:plan:remove']"
-            @click="handleMultipleAuthCancel"
+            v-access:code="['asset:inspection:remove']"
+            @click="handleMultiDelete"
           >
-            取消授权
+            {{ $t('pages.common.delete') }}
           </a-button>
           <a-button
             type="primary"
-            v-access:code="['asset:plan:add']"
+            v-access:code="['asset:inspection:add']"
             @click="handleAdd"
           >
             {{ $t('pages.common.add') }}
@@ -130,22 +159,30 @@ function handleMultipleAuthCancel() {
         </Space>
       </template>
       <template #action="{ row }">
-        <Popconfirm
-          :get-popup-container="getVxePopupContainer"
-          :title="`是否取消关联巡检设备[${row.deviceName} - ${row.deviceCode}]?`"
-          placement="left"
-          @confirm="handleAuthCancel(row)"
-        >
+        <Space>
           <ghost-button
-            danger
-            v-access:code="['asset:plan:remove']"
-            @click.stop=""
+            v-access:code="['asset:inspection:edit']"
+            @click.stop="handleEdit(row)"
           >
-            取消授权
+            {{ $t('pages.common.edit') }}
           </ghost-button>
-        </Popconfirm>
+          <Popconfirm
+            :get-popup-container="getVxePopupContainer"
+            placement="left"
+            title="确认删除？"
+            @confirm="handleDelete(row)"
+          >
+            <ghost-button
+              danger
+              v-access:code="['asset:inspection:remove']"
+              @click.stop=""
+            >
+              {{ $t('pages.common.delete') }}
+            </ghost-button>
+          </Popconfirm>
+        </Space>
       </template>
     </BasicTable>
-    <RoleAssignDrawer @reload="tableApi.query()" />
+    <PlanRecordDrawer @reload="tableApi.query()" />
   </Page>
 </template>

@@ -36,7 +36,7 @@ declare namespace AssetAPI {
   };
 
   type AddAssetInspectionCommand = {
-    /** 关联的巡检方案ID */
+    /** 关联的巡检计划ID */
     planId?: number;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
@@ -239,7 +239,7 @@ declare namespace AssetAPI {
     manufacturerId?: number;
     /** 设备存放位置 */
     locationId?: number;
-    /** 巡检方案 */
+    /** 巡检计划 */
     inspectionPlanId?: number;
     /** 购买日期 */
     purchaseDate?: string;
@@ -252,7 +252,7 @@ declare namespace AssetAPI {
   type AssetInspectionDTO = {
     /** 巡检记录ID */
     inspectionId?: number;
-    /** 关联的巡检方案ID */
+    /** 关联的巡检计划ID */
     planId?: number;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
@@ -409,7 +409,7 @@ declare namespace AssetAPI {
   type AssetInspectionVO = {
     /** 巡检记录ID */
     inspectionId?: number;
-    /** 关联的巡检方案ID */
+    /** 关联的巡检计划ID */
     planId?: number;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
@@ -697,6 +697,7 @@ declare namespace AssetAPI {
   };
 
   type getPagedInspectionsParams = {
+    planId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -1276,8 +1277,8 @@ declare namespace AssetAPI {
   };
 
   type TreeLong = {
-    config?: TreeNodeConfig;
     weight?: Record<string, any>;
+    config?: TreeNodeConfig;
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;
@@ -1350,7 +1351,7 @@ declare namespace AssetAPI {
   };
 
   type UpdateAssetInspectionCommand = {
-    /** 关联的巡检方案ID */
+    /** 关联的巡检计划ID */
     planId?: number;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;

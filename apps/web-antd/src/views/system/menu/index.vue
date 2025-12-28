@@ -18,7 +18,7 @@ import {
 import { Button, Popconfirm, Space, Switch, Tooltip } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listMenu, removeMenu } from '#/api/system/menu';
+import { listMenu, menuCascadeRemove, removeMenu } from '#/api/system/menu';
 
 import { columns, querySchema } from './data';
 import menuDrawer from './menu-drawer.vue';
@@ -73,6 +73,8 @@ const gridOptions: VxeGridProps = {
    * 开启虚拟滚动
    * 数据量小可以选择关闭
    * 如果遇到样式问题(空白、错位 滚动等)可以选择关闭虚拟滚动
+   *
+   * 由于已经重构为懒加载 不需要虚拟滚动(如果你觉得卡顿 依旧可以选择开启)
    */
   // scrollY: {
   //   enabled: true,
@@ -142,13 +144,15 @@ const cascadingDeletion = ref(false);
 async function handleDelete(row: SystemAPI.SysMenuDTO) {
   if (cascadingDeletion.value) {
     // 级联删除
-    // const menuAndChildren: SystemAPI.SysMenuDTO[] = treeToList([row], {
-    //   id: 'menuId',
-    // });
-    // await menuCascadeRemove(menuAndChildren.map((item) => item.menuId));
+    const menuAndChildren: SystemAPI.SysMenuDTO[] = treeToList([row], {
+      id: 'menuId',
+    });
+    await menuCascadeRemove({
+      menuIds: menuAndChildren.map((item) => item.menuId),
+    });
   } else {
     // 单删除
-    await removeMenu([row.menuId]);
+    await removeMenu({ menuId: row.menuId });
   }
   await tableApi.query();
 }
