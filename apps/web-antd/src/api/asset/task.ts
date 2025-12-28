@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增巡检任务 POST /asset/task */
 export async function addTask(
   body: AssetAPI.AddAssetInspectionTaskCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/task", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/task', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addTask(
 export async function getTaskInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getTaskInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { taskId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOAssetInspectionTaskDTO>(
     `/asset/task/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,13 +39,13 @@ export async function editTask(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.editTaskParams,
   body: AssetAPI.UpdateAssetInspectionTaskCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { taskId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/task/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -57,10 +57,10 @@ export async function editTask(
 export async function batchRemoveTask(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.batchRemoveTaskParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/task/batch-delete", {
-    method: "DELETE",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/task/batch-delete', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -71,11 +71,11 @@ export async function batchRemoveTask(
 /** 巡检任务下拉列表 GET /asset/task/dropdown */
 export async function dropDownListTask(options?: { [key: string]: any }) {
   return request<AssetAPI.ResponseDTOListAssetInspectionTaskVO>(
-    "/asset/task/dropdown",
+    '/asset/task/dropdown',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -83,14 +83,14 @@ export async function dropDownListTask(options?: { [key: string]: any }) {
 export async function exportTaskByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.exportTaskByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/asset/task/excel", {
-    method: "GET",
+  return request<any>('/asset/task/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -100,8 +100,8 @@ export async function exportTaskByExcel(
 export async function downloadTaskExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/asset/task/excelTemplate", {
-    method: "GET",
+  return request<any>('/asset/task/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -112,25 +112,25 @@ export async function importTaskByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -139,10 +139,10 @@ export async function importTaskByExcel(
     }
   });
 
-  return request<AssetAPI.ResponseDTOString>("/asset/task/importData", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOString>('/asset/task/importData', {
+    method: 'POST',
     data: formData,
-    requestType: "form",
+    requestType: 'form',
     ...(options || {}),
   });
 }
@@ -151,17 +151,17 @@ export async function importTaskByExcel(
 export async function listTask(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.listTaskParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOListAssetInspectionTaskDTO>(
-    "/asset/task/list",
+    '/asset/task/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -169,17 +169,17 @@ export async function listTask(
 export async function getPagedTasks(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getPagedTasksParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetInspectionTaskDTO>(
-    "/asset/task/page",
+    '/asset/task/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -187,11 +187,11 @@ export async function getPagedTasks(
 export async function removeTask(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeTaskParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { taskId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/task/remove/${param0}`, {
-    method: "DELETE",
+    method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),
   });
