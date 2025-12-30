@@ -7,16 +7,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'manufacturerName',
     label: '厂商名称',
   },
-  {
-    component: 'Input',
-    fieldName: 'manufacturerPeople',
-    label: '厂商联系人',
-  },
-  {
-    component: 'Input',
-    fieldName: 'manufacturerContact',
-    label: '联系方式',
-  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新

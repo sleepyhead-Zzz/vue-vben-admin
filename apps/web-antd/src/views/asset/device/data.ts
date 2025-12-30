@@ -26,32 +26,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'status',
     label: '设备状态',
   },
-
-  {
-    component: 'Input',
-    fieldName: 'specificationId',
-    label: '设备规格型号',
-  },
-  {
-    component: 'Input',
-    fieldName: 'manageDeptId',
-    label: '管理部门',
-  },
-  {
-    component: 'Input',
-    fieldName: 'usageDeptId',
-    label: '使用部门',
-  },
-  {
-    component: 'Input',
-    fieldName: 'manufacturerId',
-    label: '生产厂商',
-  },
-  {
-    component: 'Input',
-    fieldName: 'locationId',
-    label: '设备存放位置',
-  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新

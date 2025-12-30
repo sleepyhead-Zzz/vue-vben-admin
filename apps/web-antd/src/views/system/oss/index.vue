@@ -2,8 +2,10 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { PageQuery } from '#/api/common';
 
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { getVxePopupContainer } from '@vben/utils';
@@ -19,7 +21,11 @@ import {
   Tooltip,
 } from 'ant-design-vue';
 
-import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import {
+  addSortParams,
+  useVbenVxeGrid,
+  vxeCheckboxChecked,
+} from '#/adapter/vxe-table';
 import { downloadFile } from '#/api/core/download';
 import { getConfigKey } from '#/api/system/config';
 import { batchRemoveFile, getPagedFiles } from '#/api/system/file';
@@ -69,18 +75,32 @@ const gridOptions: VxeGridProps = {
   pagerConfig: {},
   proxyConfig: {
     ajax: {
-      query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedFiles({
+      query: async ({ page, sorts }, formValues = {}) => {
+        const params: PageQuery = {
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
-        });
+        };
+        addSortParams(params, sorts);
+        const { data } = await getPagedFiles(params);
         return data;
       },
     },
   },
+  headerCellConfig: {
+    height: 44,
+  },
+  cellConfig: {
+    height: 65,
+  },
   rowConfig: {
     keyField: 'fileId',
+  },
+  sortConfig: {
+    // 远程排序
+    remote: true,
+    // 支持多字段排序 默认关闭
+    multiple: false,
   },
   // 表格全局唯一表示 保存列配置需要用到
   id: 'domain-file-index',
@@ -120,6 +140,11 @@ async function handleDownload(row: SystemAPI.SysFileDTO) {
   } finally {
     hideLoading();
   }
+}
+
+const router = useRouter();
+function handleToSettings() {
+  router.push('/system/oss-config/index');
 }
 
 function handleMultiDelete() {
@@ -186,6 +211,12 @@ const [FileUploadModal, fileUploadApi] = useVbenModal({
           <Tooltip title="预览图片">
             <Switch v-model:checked="preview" />
           </Tooltip>
+          <a-button
+            v-access:code="['system:ossConfig:list']"
+            @click="handleToSettings"
+          >
+            配置管理
+          </a-button>
           <a-button
             :disabled="!vxeCheckboxChecked(tableApi)"
             danger

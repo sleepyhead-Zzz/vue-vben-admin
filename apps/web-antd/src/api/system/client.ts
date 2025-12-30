@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增系统授权 POST /system/client */
 export async function addClient(
   body: SystemAPI.AddSysClientCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/system/client', {
-    method: 'POST',
+  return request<SystemAPI.ResponseDTOVoid>("/system/client", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addClient(
 export async function getClientInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getClientInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOSysClientDTO>(
     `/system/client/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -39,13 +39,13 @@ export async function editClient(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editClientParams,
   body: SystemAPI.UpdateSysClientCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/system/client/${param0}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     params: { ...queryParams },
     data: body,
@@ -57,10 +57,10 @@ export async function editClient(
 export async function batchRemoveClient(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.batchRemoveClientParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/system/client/batch-delete', {
-    method: 'DELETE',
+  return request<SystemAPI.ResponseDTOVoid>("/system/client/batch-delete", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -71,12 +71,12 @@ export async function batchRemoveClient(
 /** 状态修改 PUT /system/client/changeStatus */
 export async function changeClientStatus(
   body: SystemAPI.UpdateSysClientCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOInteger>('/system/client/changeStatus', {
-    method: 'PUT',
+  return request<SystemAPI.ResponseDTOInteger>("/system/client/changeStatus", {
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -87,14 +87,14 @@ export async function changeClientStatus(
 export async function exportClientByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.exportClientByExcelParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<any>('/system/client/excel', {
-    method: 'GET',
+  return request<any>("/system/client/excel", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -104,8 +104,8 @@ export async function exportClientByExcel(
 export async function downloadClientExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>('/system/client/excelTemplate', {
-    method: 'GET',
+  return request<any>("/system/client/excelTemplate", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -116,25 +116,25 @@ export async function importClientByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -143,10 +143,10 @@ export async function importClientByExcel(
     }
   });
 
-  return request<SystemAPI.ResponseDTOString>('/system/client/importData', {
-    method: 'POST',
+  return request<SystemAPI.ResponseDTOString>("/system/client/importData", {
+    method: "POST",
     data: formData,
-    requestType: 'form',
+    requestType: "form",
     ...(options || {}),
   });
 }
@@ -155,10 +155,10 @@ export async function importClientByExcel(
 export async function listClient(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.listClientParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOListSysClientDTO>('/system/client/list', {
-    method: 'GET',
+  return request<SystemAPI.ResponseDTOListSysClientDTO>("/system/client/list", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -170,17 +170,17 @@ export async function listClient(
 export async function getPagedClients(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getPagedClientsParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<SystemAPI.ResponseDTOPageDTOSysClientDTO>(
-    '/system/client/page',
+    "/system/client/page",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -188,11 +188,11 @@ export async function getPagedClients(
 export async function removeClient(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeClientParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { id: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/system/client/remove/${param0}`, {
-    method: 'DELETE',
+    method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });

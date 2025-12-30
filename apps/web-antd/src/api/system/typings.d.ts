@@ -99,6 +99,33 @@ declare namespace SystemAPI {
     remark?: string;
   };
 
+  type AddSysOssConfigCommand = {
+    /** 配置key */
+    configKey?: string;
+    /** accessKey */
+    accessKey?: string;
+    /** 秘钥 */
+    secretKey?: string;
+    /** 桶名称 */
+    bucketName?: string;
+    /** 前缀 */
+    prefix?: string;
+    /** 访问站点 */
+    endpoint?: string;
+    /** 自定义域名 */
+    domain?: string;
+    /** 是否https（Y=是,N=否） */
+    isHttps?: string;
+    /** 域 */
+    region?: string;
+    /** 桶权限类型(0=private 1=public 2=custom) */
+    accessPolicy?: string;
+    /** 是否默认（0=是,1=否） */
+    status?: string;
+    /** 扩展字段 */
+    ext1?: string;
+  };
+
   type AddSysPostCommand = {
     deptId: number;
     belongDeptId?: number;
@@ -180,6 +207,10 @@ declare namespace SystemAPI {
 
   type batchRemoveNoticeParams = {
     noticeIds: number[];
+  };
+
+  type batchRemoveOssConfigParams = {
+    oss_configIds: number[];
   };
 
   type cancelAuthUserAllParams = {
@@ -265,6 +296,10 @@ declare namespace SystemAPI {
     noticeId: number;
   };
 
+  type editOssConfigParams = {
+    ossConfigId: number;
+  };
+
   type editPostParams = {
     postId: number;
   };
@@ -279,6 +314,10 @@ declare namespace SystemAPI {
 
   type exportClientByExcelParams = {
     query: SysClientQuery;
+  };
+
+  type exportOssConfigByExcelParams = {
+    query: SysOssConfigQuery;
   };
 
   type exportPostParams = {
@@ -332,6 +371,11 @@ declare namespace SystemAPI {
   type getNoticeInfoParams = {
     /** 记录ID */
     noticeId: number;
+  };
+
+  type getOssConfigInfoParams = {
+    /** 记录ID */
+    ossConfigId: number;
   };
 
   type getPagedClientsParams = {
@@ -414,6 +458,21 @@ declare namespace SystemAPI {
   };
 
   type getPagedNoticesParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
+  type getPagedOssConfigsParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -563,6 +622,19 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
+  type listOssConfigParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type listUserByDeptParams = {
     deptId: number;
   };
@@ -644,6 +716,13 @@ declare namespace SystemAPI {
     rows?: SysNoticeDTO[];
   };
 
+  type PageDTOSysOssConfigDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysOssConfigDTO[];
+  };
+
   type PageDTOSysPostDTO = {
     /** 总记录数 */
     total?: number;
@@ -691,6 +770,10 @@ declare namespace SystemAPI {
 
   type removeNoticeParams = {
     noticeId: number;
+  };
+
+  type removeOssConfigParams = {
+    oss_configId: number;
   };
 
   type removePostParams = {
@@ -792,6 +875,12 @@ declare namespace SystemAPI {
     data?: SysNoticeDTO[];
   };
 
+  type ResponseDTOListSysOssConfigDTO = {
+    code?: number;
+    message?: string;
+    data?: SysOssConfigDTO[];
+  };
+
   type ResponseDTOListSysPostDTO = {
     code?: number;
     message?: string;
@@ -856,6 +945,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: PageDTOSysNoticeDTO;
+  };
+
+  type ResponseDTOPageDTOSysOssConfigDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOSysOssConfigDTO;
   };
 
   type ResponseDTOPageDTOSysPostDTO = {
@@ -934,6 +1029,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysNoticeDTO;
+  };
+
+  type ResponseDTOSysOssConfigDTO = {
+    code?: number;
+    message?: string;
+    data?: SysOssConfigDTO;
   };
 
   type ResponseDTOSysPostDTO = {
@@ -1228,8 +1329,6 @@ declare namespace SystemAPI {
     fileId?: number;
     /** 文件名 */
     fileName?: string;
-    /** 文件存储路径 */
-    filePath?: string;
     /** 原始名 */
     originalName?: string;
     /** 文件大小（单位：字节） */
@@ -1238,13 +1337,10 @@ declare namespace SystemAPI {
     fileType?: string;
     /** 文件扩展名（如 jpg、pdf） */
     fileExtension?: string;
-    /** 桶名 */
-    bucketName?: string;
-    /** 访问策略 */
-    accessPolicy?: string;
     /** URL */
     url?: string;
     status?: string;
+    service?: string;
     creatorId?: number;
     createTime?: string;
   };
@@ -1298,6 +1394,43 @@ declare namespace SystemAPI {
     updateTime?: string;
     /** 备注 */
     remark?: string;
+  };
+
+  type SysOssConfigDTO = {
+    /** 主键 */
+    ossConfigId?: number;
+    /** 配置key */
+    configKey?: string;
+    /** accessKey */
+    accessKey?: string;
+    /** 秘钥 */
+    secretKey?: string;
+    /** 桶名称 */
+    bucketName?: string;
+    /** 前缀 */
+    prefix?: string;
+    /** 访问站点 */
+    endpoint?: string;
+    /** 自定义域名 */
+    domain?: string;
+    /** 是否https */
+    isHttps?: string;
+    /** 域 */
+    region?: string;
+    /** 桶权限类型(0=private 1=public 2=custom) */
+    accessPolicy?: string;
+    /** 是否默认 */
+    status?: string;
+    /** 扩展字段 */
+    ext1?: string;
+  };
+
+  type SysOssConfigQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
   };
 
   type SysPostDTO = {
@@ -1549,6 +1682,39 @@ declare namespace SystemAPI {
     menuId: number;
   };
 
+  type UpdateSysOssConfigCommand = {
+    /** 配置key */
+    configKey?: string;
+    /** accessKey */
+    accessKey?: string;
+    /** 秘钥 */
+    secretKey?: string;
+    /** 桶名称 */
+    bucketName?: string;
+    /** 前缀 */
+    prefix?: string;
+    /** 访问站点 */
+    endpoint?: string;
+    /** 自定义域名 */
+    domain?: string;
+    /** 是否https（Y=是,N=否） */
+    isHttps?: string;
+    /** 域 */
+    region?: string;
+    /** 桶权限类型(0=private 1=public 2=custom) */
+    accessPolicy?: string;
+    /** 是否默认（0=是,1=否） */
+    status?: string;
+    /** 扩展字段 */
+    ext1?: string;
+    ossConfigId?: number;
+  };
+
+  type UpdateSysOssConfigStatusCommand = {
+    ossConfigId?: number;
+    status?: string;
+  };
+
   type UpdateSysPostCommand = {
     deptId: number;
     belongDeptId?: number;
@@ -1618,7 +1784,6 @@ declare namespace SystemAPI {
   };
 
   type uploadParams = {
-    folder?: string;
     originalName?: string;
     fileType?: string;
   };

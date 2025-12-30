@@ -13,9 +13,22 @@ export const querySchema: FormSchemaGetter = () => [
     label: '计划名称',
   },
   {
-    component: 'Input',
+    component: 'Select',
     fieldName: 'frequency',
     label: '巡检频率',
+    defaultValue: undefined,
+    componentProps: {
+      placeholder: '请选择巡检周期',
+      options: [
+        { label: '天', value: 1 },
+        { label: '周', value: 2 },
+        { label: '月', value: 3 },
+      ],
+    },
+    dependencies: {
+      show: () => true,
+      triggerFields: [''],
+    },
   },
 
   {

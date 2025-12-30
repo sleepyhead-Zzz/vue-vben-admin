@@ -6,6 +6,7 @@ import * as user from "./user";
 import * as profile from "./profile";
 import * as role from "./role";
 import * as post from "./post";
+import * as ossConfig from "./ossConfig";
 import * as menu from "./menu";
 import * as dictType from "./dictType";
 import * as dictData from "./dictData";
@@ -19,6 +20,7 @@ export default {
   profile,
   role,
   post,
+  ossConfig,
   menu,
   dictType,
   dictData,

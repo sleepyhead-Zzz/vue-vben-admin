@@ -17,6 +17,16 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'fileExtension',
     label: '文件扩展名',
   },
+  {
+    component: 'Input',
+    fieldName: 'service',
+    label: '服务商',
+  },
+  {
+    component: 'RangePicker',
+    fieldName: 'createTime',
+    label: '创建时间',
+  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
@@ -55,10 +65,15 @@ export const columns: VxeGridProps['columns'] = [
     field: 'creatorId',
   },
   {
+    title: '服务商',
+    field: 'service',
+  },
+  {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 180,
+    resizable: false,
+    width: 'auto',
   },
 ];

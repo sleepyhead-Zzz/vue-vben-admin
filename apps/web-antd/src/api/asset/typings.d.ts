@@ -40,7 +40,7 @@ declare namespace AssetAPI {
     planId?: number;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
-    status?: number;
+    status?: string;
     /** 巡检实际开始时间 */
     startDate?: string;
     /** 巡检实际结束时间 */
@@ -214,6 +214,9 @@ declare namespace AssetAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    deviceName?: string;
+    deviceCode?: string;
+    status?: string;
   };
 
   type AssetDeviceVO = {
@@ -256,7 +259,7 @@ declare namespace AssetAPI {
     planId?: number;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
-    status?: number;
+    status?: string;
     /** 巡检实际开始时间 */
     startDate?: string;
     /** 巡检实际结束时间 */
@@ -294,6 +297,9 @@ declare namespace AssetAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    planName?: string;
+    frequency?: number;
+    status?: string;
   };
 
   type AssetInspectionPlanVO = {
@@ -337,6 +343,8 @@ declare namespace AssetAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    projectName?: string;
+    projectType?: string;
   };
 
   type AssetInspectionProjectVO = {
@@ -387,6 +395,8 @@ declare namespace AssetAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    taskName?: string;
+    status?: string;
   };
 
   type AssetInspectionTaskVO = {
@@ -469,6 +479,7 @@ declare namespace AssetAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    manufacturerName?: string;
   };
 
   type AssetManufacturerVO = {
@@ -499,6 +510,7 @@ declare namespace AssetAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    specificationName?: string;
   };
 
   type AssetSpecificationVO = {
@@ -836,6 +848,9 @@ declare namespace AssetAPI {
   };
 
   type listDeviceParams = {
+    deviceName?: string;
+    deviceCode?: string;
+    status?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -879,6 +894,7 @@ declare namespace AssetAPI {
   };
 
   type listManufacturerParams = {
+    manufacturerName?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -892,6 +908,9 @@ declare namespace AssetAPI {
   };
 
   type listPlanParams = {
+    planName?: string;
+    frequency?: number;
+    status?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -905,6 +924,8 @@ declare namespace AssetAPI {
   };
 
   type listProjectParams = {
+    projectName?: string;
+    projectType?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -918,6 +939,7 @@ declare namespace AssetAPI {
   };
 
   type listSpecificationParams = {
+    specificationName?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -931,6 +953,8 @@ declare namespace AssetAPI {
   };
 
   type listTaskParams = {
+    taskName?: string;
+    status?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -1355,7 +1379,7 @@ declare namespace AssetAPI {
     planId?: number;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
-    status?: number;
+    status?: string;
     /** 巡检实际开始时间 */
     startDate?: string;
     /** 巡检实际结束时间 */
