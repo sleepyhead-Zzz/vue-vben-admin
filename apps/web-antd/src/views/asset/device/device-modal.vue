@@ -7,11 +7,11 @@ import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
 import { addDevice, editDevice, getDeviceInfo } from '#/api/asset/device';
-import { dropdownlistLocation } from '#/api/asset/location';
-import { dropdownlistManufacturer } from '#/api/asset/manufacturer';
-import { dropDownProjectList } from '#/api/asset/project';
-import { dropDownListSpecification } from '#/api/asset/specification';
-import { dropdownDeptList } from '#/api/system/dept';
+import { optionLocationSelect } from '#/api/asset/location';
+import { optionManufacturerSelect } from '#/api/asset/manufacturer';
+import { optionProjectSelect } from '#/api/asset/project';
+import { optionSpecificationSelect } from '#/api/asset/specification';
+import { optionDeptList } from '#/api/system/dept';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -43,7 +43,7 @@ const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
 
 /** 部门选择 */
 async function setupDeptSelect() {
-  const deptTree = await dropdownDeptList({ query: {} });
+  const deptTree = await optionDeptList({ query: {} });
   addFullName(deptTree.data, 'label', ' / ');
 
   const commonDeptProps = {
@@ -67,7 +67,7 @@ async function setupDeptSelect() {
 
 /** 位置选择 */
 async function setupLocationSelect() {
-  const locationTree = await dropdownlistLocation({ query: {} });
+  const locationTree = await optionLocationSelect({ query: {} });
   addFullName(locationTree.data, 'label', ' / ');
   formApi.updateSchema([
     {
@@ -90,7 +90,7 @@ async function setupLocationSelect() {
 
 /** 巡检项目选择 */
 async function setupInspectionProjectSelect() {
-  const projectList = await dropDownProjectList();
+  const projectList = await optionProjectSelect();
   formApi.updateSchema([
     {
       fieldName: 'inspectionProjectIds',
@@ -121,8 +121,8 @@ const [BasicModal, modalApi] = useVbenModal({
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
 
-    const specificationList = await dropDownListSpecification();
-    const manufactureList = await dropdownlistManufacturer();
+    const specificationList = await optionSpecificationSelect();
+    const manufactureList = await optionManufacturerSelect();
 
     formApi.updateSchema([
       {

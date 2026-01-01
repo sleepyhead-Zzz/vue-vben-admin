@@ -11,9 +11,8 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveOssConfig,
   changeOssConfigStatus,
-  getPagedOssConfigs,
+  getPagedOssConfig,
   removeOssConfig,
 } from '#/api/system/ossConfig';
 import { TableSwitch } from '#/components/table';
@@ -48,7 +47,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedOssConfigs({
+        const { data } = await getPagedOssConfig({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -95,7 +94,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveOssConfig({ ids });
+      await removeOssConfig({ ids });
       await tableApi.query();
     },
   });

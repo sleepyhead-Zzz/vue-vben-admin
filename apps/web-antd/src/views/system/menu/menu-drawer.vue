@@ -13,7 +13,7 @@ import {
 import { Skeleton } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { addMenu, editMenu, getMenuInfo, listMenu } from '#/api/system/menu';
+import { addMenu, editMenu, getMenuInfo, getMenuList } from '#/api/system/menu';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { drawerSchema } from './data';
@@ -45,7 +45,7 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function setupMenuSelect() {
-  const { data } = await listMenu({
+  const { data } = await getMenuList({
     menuName: '',
   });
   const menuArray = data || [];

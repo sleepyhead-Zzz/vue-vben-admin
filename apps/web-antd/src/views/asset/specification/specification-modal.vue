@@ -10,8 +10,8 @@ import {
   addSpecification,
   editSpecification,
   getSpecificationInfo,
+  optionSpecificationSelect,
 } from '#/api/asset/specification';
-import { dropDownListCategory } from '#/api/asset/category';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -62,7 +62,7 @@ const [BasicModal, modalApi] = useVbenModal({
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
 
-    const categoryList = await dropDownListCategory();
+    const categoryList = await optionSpecificationSelect();
 
     formApi.updateSchema([
       {

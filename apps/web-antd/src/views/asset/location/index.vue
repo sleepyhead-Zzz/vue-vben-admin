@@ -9,7 +9,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { batchRemoveLocation, listLocation } from '#/api/asset/location';
+import { getLocationList, removeLocation } from '#/api/asset/location';
 
 import { columns, querySchema } from './data';
 import locationModal from './location-modal.vue';
@@ -71,11 +71,13 @@ const gridOptions: VxeGridProps = {
         // 根节点懒加载
         if (row) {
           // 子节点懒加载
-          const resp = await listLocation({ parentLocationId: row.locationId });
+          const resp = await getLocationList({
+            parentLocationId: row.locationId,
+          });
           return resp.data || [];
         } else {
           // 传 0 表示根节点
-          const resp = await listLocation({ parentLocationId: '0' });
+          const resp = await getLocationList({ parentLocationId: '0' });
           return resp.data || [];
         }
       } catch (error) {
@@ -105,7 +107,7 @@ async function handleEdit(row: AssetAPI.AssetLocationDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetLocationDTO) {
-  await batchRemoveLocation({ locationIds: [row.locationId] });
+  await removeLocation({ locationIds: [row.locationId] });
   await tableApi.query();
 }
 

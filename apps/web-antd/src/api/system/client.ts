@@ -17,6 +17,25 @@ export async function addClient(
   });
 }
 
+/** 修改系统授权 PUT /system/client/${param0} */
+export async function editClient(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: SystemAPI.editClientParams,
+  body: SystemAPI.UpdateSysClientCommand,
+  options?: { [key: string]: any },
+) {
+  const { clientId: param0, ...queryParams } = params;
+  return request<SystemAPI.ResponseDTOVoid>(`/system/client/${param0}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** 获取系统授权详情 GET /system/client/${param0} */
 export async function getClientInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -34,29 +53,10 @@ export async function getClientInfo(
   );
 }
 
-/** 修改系统授权 PUT /system/client/${param0} */
-export async function editClient(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.editClientParams,
-  body: SystemAPI.UpdateSysClientCommand,
-  options?: { [key: string]: any },
-) {
-  const { id: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOVoid>(`/system/client/${param0}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    params: { ...queryParams },
-    data: body,
-    ...(options || {}),
-  });
-}
-
 /** 批量删除系统授权 DELETE /system/client/batch-delete */
-export async function batchRemoveClient(
+export async function removeClient(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.batchRemoveClientParams,
+  params: SystemAPI.removeClientParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOVoid>('/system/client/batch-delete', {
@@ -151,25 +151,10 @@ export async function importClientByExcel(
   });
 }
 
-/** 获取系统授权列表 GET /system/client/list */
-export async function listClient(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.listClientParams,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOListSysClientDTO>('/system/client/list', {
-    method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 分页获取系统授权列表 GET /system/client/page */
-export async function getPagedClients(
+export async function getPagedClient(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.getPagedClientsParams,
+  params: SystemAPI.getPagedClientParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOPageDTOSysClientDTO>(
@@ -185,12 +170,12 @@ export async function getPagedClients(
 }
 
 /** 删除系统授权 DELETE /system/client/remove/${param0} */
-export async function removeClient(
+export async function removeById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.removeClientParams,
+  params: SystemAPI.removeByIdParams,
   options?: { [key: string]: any },
 ) {
-  const { id: param0, ...queryParams } = params;
+  const { clientId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/system/client/remove/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },

@@ -6,7 +6,7 @@ import { onMounted, ref } from 'vue';
 import { SyncOutlined } from '@ant-design/icons-vue';
 import { Empty, InputSearch, Skeleton, Tree } from 'ant-design-vue';
 
-import { dropdownDeptList } from '#/api/system/dept';
+import { optionDeptList } from '#/api/system/dept';
 
 defineOptions({ inheritAttrs: false });
 
@@ -44,7 +44,7 @@ async function loadTree() {
   searchValue.value = '';
   selectDeptId.value = [];
 
-  const ret = await dropdownDeptList({
+  const ret = await optionDeptList({
     query: {
       orderColumn: undefined,
       orderDirection: undefined,

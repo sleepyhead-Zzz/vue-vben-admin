@@ -6,7 +6,7 @@ import { $t } from '@vben/locales';
 import { addFullName, cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { dropdownDeptList } from '#/api/system/dept';
+import { optionDeptList } from '#/api/system/dept';
 import { addPost, editPost, getPostInfo } from '#/api/system/post';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -33,7 +33,7 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function setupDeptSelect() {
-  const { data } = await dropdownDeptList({});
+  const { data } = await optionDeptList({});
   const deptTree = data;
   // 选中后显示在输入框的值 即父节点 / 子节点
   addFullName(deptTree, 'label', ' / ');

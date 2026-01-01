@@ -6,7 +6,7 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { changeBookingStatus, getBookInfo } from '#/api/traveler/book';
+import { changeBookStatus, getBookInfo } from '#/api/traveler/book';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { statusModalSchema } from './data';
@@ -72,7 +72,7 @@ async function handleConfirm() {
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    await changeBookingStatus({ bookId: data.bookId, status: data.status });
+    await changeBookStatus({ bookId: data.bookId, status: data.status });
     resetInitialized();
     emit('reload');
     modalApi.close();

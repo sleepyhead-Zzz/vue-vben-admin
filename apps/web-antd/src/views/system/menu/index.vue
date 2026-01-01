@@ -18,7 +18,7 @@ import {
 import { Button, Popconfirm, Space, Switch, Tooltip } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listMenu, menuCascadeRemove, removeMenu } from '#/api/system/menu';
+import { getMenuList, removeMenu, removeMenusCascade } from '#/api/system/menu';
 
 import { columns, querySchema } from './data';
 import menuDrawer from './menu-drawer.vue';
@@ -48,11 +48,11 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async (_, formValues = {}) => {
-        const resp = await listMenu({
+        const { data } = await getMenuList({
           ...formValues,
         });
         // 手动转为树结构
-        const treeData = listToTree(resp.data, {
+        const treeData = listToTree(data, {
           id: 'menuId',
           pid: 'parentId',
         });
@@ -147,7 +147,7 @@ async function handleDelete(row: SystemAPI.SysMenuDTO) {
     const menuAndChildren: SystemAPI.SysMenuDTO[] = treeToList([row], {
       id: 'menuId',
     });
-    await menuCascadeRemove({
+    await removeMenusCascade({
       menuIds: menuAndChildren.map((item) => item.menuId),
     });
   } else {

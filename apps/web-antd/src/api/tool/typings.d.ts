@@ -11,7 +11,7 @@ declare namespace ToolAPI {
     pageQuery: GenPageQuery;
   };
 
-  type downloadParams = {
+  type downloadCodeParams = {
     tableId: number;
   };
 
@@ -19,7 +19,7 @@ declare namespace ToolAPI {
     tableId: number;
   };
 
-  type genListParams = {
+  type genGenListParams = {
     pageQuery: GenPageQuery;
   };
 
@@ -175,7 +175,7 @@ declare namespace ToolAPI {
     crud?: boolean;
   };
 
-  type getInfoParams = {
+  type getGenInfoParams = {
     tableId: number;
   };
 

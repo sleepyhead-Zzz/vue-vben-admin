@@ -9,7 +9,7 @@ import { InputNumber, Select, Space } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { addPlan, editPlan, getPlanInfo } from '#/api/asset/plan';
-import { dropdownDeptList } from '#/api/system/dept';
+import { optionDeptList } from '#/api/system/dept';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -44,7 +44,7 @@ const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
  */
 async function setupDeptSelect() {
   // updateSchema
-  const deptTree = await dropdownDeptList({ query: {} });
+  const deptTree = await optionDeptList({ query: {} });
   // 选中后显示在输入框的值 即父节点 / 子节点
   addFullName(deptTree.data, 'label', ' / ');
   formApi.updateSchema([

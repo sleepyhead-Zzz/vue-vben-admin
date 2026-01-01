@@ -128,7 +128,9 @@ export async function exportUserByExcel(
 }
 
 /** 用户导入excel下载 GET /system/user/excelTemplate */
-export async function downloadExcelTemplate(options?: { [key: string]: any }) {
+export async function downloadUserExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/system/user/excelTemplate', {
     method: 'GET',
     ...(options || {}),

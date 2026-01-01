@@ -42,14 +42,6 @@ declare namespace TravelerAPI {
     fileIds?: number[];
   };
 
-  type batchRemoveBookParams = {
-    bookIds: number[];
-  };
-
-  type batchRemoveEvaluationParams = {
-    evaluationIds: number[];
-  };
-
   type BookAnalyticsDataDTO = {
     bookStatusDTOList?: BookStatusDTO[];
     bookTrendDTOList?: BookTrendDTO;
@@ -69,7 +61,7 @@ declare namespace TravelerAPI {
     bookId: number;
   };
 
-  type changeBookingStatusParams = {
+  type changeBookStatusParams = {
     bookId: number;
     status: string;
   };
@@ -97,7 +89,7 @@ declare namespace TravelerAPI {
     evaluationId: number;
   };
 
-  type getPagedBooksParams = {
+  type getPagedBookParams = {
     keyword?: string;
     status?: string;
     travelerName?: string;
@@ -124,47 +116,9 @@ declare namespace TravelerAPI {
     endTime?: Date;
   };
 
-  type getPagedEvaluationsParams = {
+  type getPagedEvaluationParams = {
     pageNum?: number;
     pageSize?: number;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listBookParams = {
-    keyword?: string;
-    status?: string;
-    travelerName?: string;
-    documentType?: string;
-    documentNumber?: string;
-    phoneNumber?: string;
-    service?: string;
-    travelerType?: string;
-    flightNumber?: string;
-    flightTime?: string;
-    staffId?: number;
-    orderTime?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listEvaluationParams = {
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -191,30 +145,26 @@ declare namespace TravelerAPI {
     rows?: TravelerEvaluationDTO[];
   };
 
-  type removeBookParams = {
+  type removeBookByIdParams = {
     bookId: number;
   };
 
-  type removeEvaluationParams = {
+  type removeBookParams = {
+    bookIds: number[];
+  };
+
+  type removeEvaluationByIdParams = {
     evaluationId: number;
+  };
+
+  type removeEvaluationParams = {
+    evaluationIds: number[];
   };
 
   type ResponseDTOBookAnalyticsDataDTO = {
     code?: number;
     message?: string;
     data?: BookAnalyticsDataDTO;
-  };
-
-  type ResponseDTOListTravelerBookDTO = {
-    code?: number;
-    message?: string;
-    data?: TravelerBookDTO[];
-  };
-
-  type ResponseDTOListTravelerEvaluationDTO = {
-    code?: number;
-    message?: string;
-    data?: TravelerEvaluationDTO[];
   };
 
   type ResponseDTOPageDTOTravelerBookDTO = {

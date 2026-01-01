@@ -14,7 +14,7 @@ import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
   allocatedUserList,
   cancelAuthUser,
-  cancelAuthUserAll,
+  revokeUsersFromRole,
 } from '#/api/system/role';
 
 import { columns, querySchema } from './data';
@@ -99,7 +99,7 @@ function handleMultipleAuthCancel() {
     okType: 'danger',
     content: `确认取消选中的${ids.length}条授权记录吗？`,
     onOk: async () => {
-      await cancelAuthUserAll({ roleId, userIds: ids });
+      await revokeUsersFromRole({ roleId, userIds: ids });
       await tableApi.query();
       tableApi.grid.clearCheckboxRow();
     },

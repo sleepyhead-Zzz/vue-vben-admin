@@ -51,9 +51,9 @@ export async function editDept(
 }
 
 /** 删除部门 DELETE /system/dept/${param0} */
-export async function removeDept(
+export async function removeDeptById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.removeDeptParams,
+  params: SystemAPI.removeDeptByIdParams,
   options?: { [key: string]: any },
 ) {
   const { deptId: param0, ...queryParams } = params;
@@ -64,27 +64,10 @@ export async function removeDept(
   });
 }
 
-/** 获取部门树级结构 GET /system/dept/dept-tree */
-export async function dropdownDeptList(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.dropdownDeptListParams,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOListTreeLong>('/system/dept/dept-tree', {
-    method: 'GET',
-    params: {
-      ...params,
-      query: undefined,
-      ...params['query'],
-    },
-    ...(options || {}),
-  });
-}
-
 /** 部门列表 GET /system/dept/list */
-export async function listDept(
+export async function getDeptList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.listDeptParams,
+  params: SystemAPI.getDeptListParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOListSysDeptDTO>('/system/dept/list', {
@@ -125,6 +108,26 @@ export async function listUserByDept(
     {
       method: 'GET',
       params: { ...queryParams },
+      ...(options || {}),
+    },
+  );
+}
+
+/** 获取部门树级结构 GET /system/dept/option-select */
+export async function optionDeptList(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: SystemAPI.optionDeptListParams,
+  options?: { [key: string]: any },
+) {
+  return request<SystemAPI.ResponseDTOListTreeLong>(
+    '/system/dept/option-select',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+        query: undefined,
+        ...params['query'],
+      },
       ...(options || {}),
     },
   );

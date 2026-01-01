@@ -54,9 +54,9 @@ export async function editTask(
 }
 
 /** 批量删除巡检任务 DELETE /asset/task/batch-delete */
-export async function batchRemoveTask(
+export async function removeTask(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveTaskParams,
+  params: AssetAPI.removeTaskParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/task/batch-delete', {
@@ -66,17 +66,6 @@ export async function batchRemoveTask(
     },
     ...(options || {}),
   });
-}
-
-/** 巡检任务下拉列表 GET /asset/task/dropdown */
-export async function dropDownListTask(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionTaskVO>(
-    '/asset/task/dropdown',
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
 }
 
 /** 巡检任务列表导出 GET /asset/task/excel */
@@ -147,28 +136,21 @@ export async function importTaskByExcel(
   });
 }
 
-/** 获取巡检任务列表 GET /asset/task/list */
-export async function listTask(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listTaskParams,
-  options?: { [key: string]: any },
-) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionTaskDTO>(
-    '/asset/task/list',
+/** 巡检任务下拉列表 GET /asset/task/option-select */
+export async function optionTaskSelect(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListAssetInspectionTaskVO>(
+    '/asset/task/option-select',
     {
       method: 'GET',
-      params: {
-        ...params,
-      },
       ...(options || {}),
     },
   );
 }
 
 /** 分页获取巡检任务列表 GET /asset/task/page */
-export async function getPagedTasks(
+export async function getPagedTask(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedTasksParams,
+  params: AssetAPI.getPagedTaskParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetInspectionTaskDTO>(
@@ -184,9 +166,9 @@ export async function getPagedTasks(
 }
 
 /** 删除巡检任务 DELETE /asset/task/remove/${param0} */
-export async function removeTask(
+export async function removeTaskById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeTaskParams,
+  params: AssetAPI.removeTaskByIdParams,
   options?: { [key: string]: any },
 ) {
   const { taskId: param0, ...queryParams } = params;

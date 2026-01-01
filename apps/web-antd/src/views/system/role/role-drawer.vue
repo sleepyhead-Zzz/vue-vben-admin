@@ -9,7 +9,7 @@ import { $t } from '@vben/locales';
 import { cloneDeep, eachTree } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { dropdownMenu, getRoleMenuTreeSelect } from '#/api/system/menu';
+import { getRoleMenuTreeSelect, optionMenuSelect } from '#/api/system/menu';
 import { addRole, editRole, getRoleInfo } from '#/api/system/role';
 import { MenuSelectTable } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
@@ -51,7 +51,7 @@ async function setupMenuTree(id?: number | string) {
     await nextTick();
     await formApi.setFieldValue('menuIds', resp.data.checkedKeys);
   } else {
-    const resp = await dropdownMenu({});
+    const resp = await optionMenuSelect({});
     // i18n处理
     eachTree(resp.data, (node) => {
       node.label = $t(node.label);

@@ -90,19 +90,19 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: SystemAPI.PostDTO) {
+async function handleEdit(record: SystemAPI.SysPostDTO) {
   drawerApi.setData({ id: record.postId });
   drawerApi.open();
 }
 
-async function handleDelete(row: SystemAPI.PostDTO) {
+async function handleDelete(row: SystemAPI.SysPostDTO) {
   await removePost({ ids: [row.postId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: SystemAPI.PostDTO) => row.postId);
+  const ids = rows.map((row: SystemAPI.SysPostDTO) => row.postId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

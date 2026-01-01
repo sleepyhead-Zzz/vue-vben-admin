@@ -12,11 +12,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  batchRemoveTask,
-  exportTaskByExcel,
-  getPagedTasks,
-} from '#/api/asset/task';
+import { exportTaskByExcel, getPagedTask, removeTask } from '#/api/asset/task';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
@@ -60,7 +56,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedTasks({
+        const { data } = await getPagedTask({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -96,7 +92,7 @@ async function handleEdit(row: AssetAPI.AssetInspectionTaskDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetInspectionTaskDTO) {
-  await batchRemoveTask({ taskIds: [row.taskId] });
+  await removeTask({ taskIds: [row.taskId] });
   await tableApi.query();
 }
 
@@ -108,7 +104,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveTask({ taskIds: ids });
+      await removeTask({ taskIds: ids });
       await tableApi.query();
     },
   });

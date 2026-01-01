@@ -8,7 +8,7 @@ import { useRoute } from 'vue-router';
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { selectAuthUserAll, unallocatedUserList } from '#/api/system/role';
+import { assignUsersToRole, unallocatedUserList } from '#/api/system/role';
 
 import { columns, querySchema } from './data';
 
@@ -71,7 +71,7 @@ async function handleSubmit() {
   const records = tableApi.grid.getCheckboxRecords();
   const userIds = records.map((item) => item.userId);
   if (userIds.length > 0) {
-    await selectAuthUserAll({ roleId, userIds });
+    await assignUsersToRole({ roleId, userIds });
   }
   handleReset();
   emit('reload');

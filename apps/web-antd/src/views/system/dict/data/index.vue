@@ -12,11 +12,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  batchRemoveDictData,
-  getPagedDictData,
-  removeDictData,
-} from '#/api/system/dictData';
+import { getPagedDictData, removeDictData } from '#/api/system/dictData';
 
 import { emitter } from '../mitt';
 import { columns, querySchema } from './data';
@@ -105,7 +101,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveDictData({ dictCodes: ids });
+      await removeDictData({ dictCodes: ids });
       await tableApi.query();
     },
   });

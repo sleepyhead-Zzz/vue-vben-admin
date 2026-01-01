@@ -54,9 +54,9 @@ export async function editProject(
 }
 
 /** 批量删除巡检项目 DELETE /asset/project/batch-delete */
-export async function batchRemoveProject(
+export async function removeProject(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveProjectParams,
+  params: AssetAPI.removeProjectParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/project/batch-delete', {
@@ -66,17 +66,6 @@ export async function batchRemoveProject(
     },
     ...(options || {}),
   });
-}
-
-/** 巡检项目下拉列表 GET /asset/project/dropdown */
-export async function dropDownProjectList(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionProjectVO>(
-    '/asset/project/dropdown',
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
 }
 
 /** 巡检项目列表导出 GET /asset/project/excel */
@@ -97,7 +86,9 @@ export async function exportProjectByExcel(
 }
 
 /** 巡检项目导入excel下载 GET /asset/project/excelTemplate */
-export async function downloadExcelTemplate1(options?: { [key: string]: any }) {
+export async function downloadProjectExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/asset/project/excelTemplate', {
     method: 'GET',
     ...(options || {}),
@@ -145,28 +136,21 @@ export async function importProjectByExcel(
   });
 }
 
-/** 获取巡检项目列表 GET /asset/project/list */
-export async function listProject(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listProjectParams,
-  options?: { [key: string]: any },
-) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionProjectDTO>(
-    '/asset/project/list',
+/** 巡检项目下拉列表 GET /asset/project/option-select */
+export async function optionProjectSelect(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListAssetInspectionProjectVO>(
+    '/asset/project/option-select',
     {
       method: 'GET',
-      params: {
-        ...params,
-      },
       ...(options || {}),
     },
   );
 }
 
 /** 分页获取巡检项目列表 GET /asset/project/page */
-export async function getPagedProjects(
+export async function getPagedProject(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedProjectsParams,
+  params: AssetAPI.getPagedProjectParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetInspectionProjectDTO>(
@@ -182,9 +166,9 @@ export async function getPagedProjects(
 }
 
 /** 删除巡检项目 DELETE /asset/project/remove/${param0} */
-export async function removeProject(
+export async function removeProjectById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeProjectParams,
+  params: AssetAPI.removeProjectByIdParams,
   options?: { [key: string]: any },
 ) {
   const { projectId: param0, ...queryParams } = params;

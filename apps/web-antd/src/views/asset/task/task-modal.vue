@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import {computed, ref} from 'vue';
-import {$t} from '@vben/locales';
-import {useVbenModal, Page} from '@vben/common-ui';
-import {cloneDeep, getVxePopupContainer} from '@vben/utils';
-import {useVbenForm} from '#/adapter/form';
-import {addTask, editTask, getTaskInfo} from '#/api/asset/task';
-import {defaultFormValueGetter, useBeforeCloseDiff} from '#/utils/popup';
-import {modalSchema} from './data';
+import { computed, ref } from 'vue';
+
+import { useVbenModal } from '@vben/common-ui';
+import { $t } from '@vben/locales';
+import { cloneDeep } from '@vben/utils';
+
+import { useVbenForm } from '#/adapter/form';
+import { addTask, editTask, getTaskInfo } from '#/api/asset/task';
+import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
+
+import { modalSchema } from './data';
 
 const emit = defineEmits<{ reload: [] }>();
 
@@ -24,18 +27,18 @@ const [BasicForm, formApi] = useVbenForm({
     // 通用配置项 会影响到所有表单项
     componentProps: {
       class: 'w-full',
-    }
+    },
   },
   schema: modalSchema(),
   showDefaultActions: false,
   wrapperClass: 'grid-cols-2',
 });
 
-const {onBeforeClose, markInitialized, resetInitialized} = useBeforeCloseDiff(
-    {
-      initializedGetter: defaultFormValueGetter(formApi),
-      currentGetter: defaultFormValueGetter(formApi),
-    },
+const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
+  {
+    initializedGetter: defaultFormValueGetter(formApi),
+    currentGetter: defaultFormValueGetter(formApi),
+  },
 );
 
 const [BasicModal, modalApi] = useVbenModal({
@@ -51,11 +54,11 @@ const [BasicModal, modalApi] = useVbenModal({
     }
     modalApi.modalLoading(true);
 
-    const {id} = modalApi.getData() as { id?: number | string };
+    const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
-      const record = await getTaskInfo({taskId: id});
+      const record = await getTaskInfo({ taskId: id });
       await formApi.setValues(record.data);
     }
     await markInitialized();
@@ -67,13 +70,15 @@ const [BasicModal, modalApi] = useVbenModal({
 async function handleConfirm() {
   try {
     modalApi.lock(true);
-    const {valid} = await formApi.validate();
+    const { valid } = await formApi.validate();
     if (!valid) {
       return;
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value ? editTask({taskId: data.taskId}, data) : addTask(data));
+    await (isUpdate.value
+      ? editTask({ taskId: data.taskId }, data)
+      : addTask(data));
     resetInitialized();
     emit('reload');
     modalApi.close();
@@ -92,7 +97,6 @@ async function handleClosed() {
 
 <template>
   <BasicModal :title="title">
-    <BasicForm/>
+    <BasicForm />
   </BasicModal>
 </template>
-

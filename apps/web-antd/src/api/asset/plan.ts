@@ -54,7 +54,7 @@ export async function editPlan(
 }
 
 /** 新增巡检计划与设备的关联 POST /asset/plan/associate-device */
-export async function associateDevices(
+export async function assignDevicesToPlan(
   body: AssetAPI.UpdateDeviceAssociationCommand,
   options?: { [key: string]: any },
 ) {
@@ -69,9 +69,9 @@ export async function associateDevices(
 }
 
 /** 获取巡检计划关联的巡检设备 GET /asset/plan/associated-device/${param0}/list */
-export async function associatedInspectionDevices(
+export async function associatedPlanDevices(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.associatedInspectionDevicesParams,
+  params: AssetAPI.associatedPlanDevicesParams,
   options?: { [key: string]: any },
 ) {
   const { planId: param0, ...queryParams } = params;
@@ -90,9 +90,9 @@ export async function associatedInspectionDevices(
 }
 
 /** 批量删除巡检计划 DELETE /asset/plan/batch-delete */
-export async function batchRemovePlan(
+export async function removePlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemovePlanParams,
+  params: AssetAPI.removePlanParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/plan/batch-delete', {
@@ -102,17 +102,6 @@ export async function batchRemovePlan(
     },
     ...(options || {}),
   });
-}
-
-/** 巡检计划下拉列表 GET /asset/plan/dropdown */
-export async function dropdownListPlan(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionPlanVO>(
-    '/asset/plan/dropdown',
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
 }
 
 /** 巡检计划列表导出 GET /asset/plan/excel */
@@ -133,7 +122,9 @@ export async function exportPlanByExcel(
 }
 
 /** 巡检计划导入excel下载 GET /asset/plan/excelTemplate */
-export async function downloadExcelTemplate2(options?: { [key: string]: any }) {
+export async function downloadPlanExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/asset/plan/excelTemplate', {
     method: 'GET',
     ...(options || {}),
@@ -181,28 +172,21 @@ export async function importPlanByExcel(
   });
 }
 
-/** 获取巡检计划列表 GET /asset/plan/list */
-export async function listPlan(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listPlanParams,
-  options?: { [key: string]: any },
-) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionPlanDTO>(
-    '/asset/plan/list',
+/** 巡检计划下拉列表 GET /asset/plan/option-select */
+export async function optionPlanSelect(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListAssetInspectionPlanVO>(
+    '/asset/plan/option-select',
     {
       method: 'GET',
-      params: {
-        ...params,
-      },
       ...(options || {}),
     },
   );
 }
 
 /** 分页获取巡检计划列表 GET /asset/plan/page */
-export async function getPagedPlans(
+export async function getPagedPlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedPlansParams,
+  params: AssetAPI.getPagedPlanParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetInspectionPlanDTO>(
@@ -218,9 +202,9 @@ export async function getPagedPlans(
 }
 
 /** 删除巡检计划 DELETE /asset/plan/remove/${param0} */
-export async function removePlan(
+export async function removePlanById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removePlanParams,
+  params: AssetAPI.removePlanByIdParams,
   options?: { [key: string]: any },
 ) {
   const { planId: param0, ...queryParams } = params;
@@ -232,7 +216,7 @@ export async function removePlan(
 }
 
 /** 取消巡检计划与设备的关联 PUT /asset/plan/unassociate-device */
-export async function cancelAssociatedDevices(
+export async function revokeDevicesFromPlan(
   body: AssetAPI.UpdateDeviceAssociationCommand,
   options?: { [key: string]: any },
 ) {
@@ -250,9 +234,9 @@ export async function cancelAssociatedDevices(
 }
 
 /** 获取巡检计划未关联的巡检设备 GET /asset/plan/unassociated-device/${param0}/list */
-export async function unAssociatedInspectionDevices(
+export async function unAssociatedPlanDevices(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.unAssociatedInspectionDevicesParams,
+  params: AssetAPI.unAssociatedPlanDevicesParams,
   options?: { [key: string]: any },
 ) {
   const { planId: param0, ...queryParams } = params;

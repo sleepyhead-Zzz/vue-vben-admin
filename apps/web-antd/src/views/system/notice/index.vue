@@ -9,7 +9,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { getPagedNotices, removeNotice } from '#/api/system/notice';
+import { getPagedNotice, removeNotice } from '#/api/system/notice';
 
 import { columns, querySchema } from './data';
 import noticeModal from './notice-modal.vue';
@@ -41,7 +41,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedNotices({
+        const { data } = await getPagedNotice({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,

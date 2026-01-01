@@ -11,10 +11,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  associatedInspectionDevices,
-  cancelAssociatedDevices,
-} from '#/api/asset/plan';
+import { associatedPlanDevices, revokeDevicesFromPlan } from '#/api/asset/plan';
 
 import { columns, querySchema } from './data';
 import roleAssignDrawer from './plan-associate-drawer.vue';
@@ -49,7 +46,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await associatedInspectionDevices({
+        const { data } = await associatedPlanDevices({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           planId,
@@ -83,7 +80,7 @@ function handleAdd() {
  * 取消授权 一条记录
  */
 async function handleAuthCancel(record: AssetAPI.AssetDeviceDTO) {
-  await cancelAssociatedDevices({ deviceIds: [record.deviceId], planId });
+  await revokeDevicesFromPlan({ deviceIds: [record.deviceId], planId });
   await tableApi.query();
 }
 
@@ -98,7 +95,7 @@ function handleMultipleAuthCancel() {
     okType: 'danger',
     content: `确认取消选中的${ids.length}条授权记录吗？`,
     onOk: async () => {
-      await cancelAssociatedDevices({ planId, deviceIds: ids });
+      await revokeDevicesFromPlan({ planId, deviceIds: ids });
       await tableApi.query();
       tableApi.grid.clearCheckboxRow();
     },

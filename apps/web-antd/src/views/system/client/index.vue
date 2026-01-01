@@ -2,7 +2,6 @@
 import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import type { Client } from '#/api/system/client/model';
 
 import { useAccess } from '@vben/access';
 import { Page, useVbenDrawer } from '@vben/common-ui';
@@ -12,10 +11,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveClient,
   changeClientStatus,
   exportClientByExcel,
-  getPagedClients,
+  getPagedClient,
   removeClient,
 } from '#/api/system/client';
 import { TableSwitch } from '#/components/table';
@@ -43,7 +41,7 @@ const gridOptions: VxeGridProps = {
     reserve: true,
     // 点击行选中
     // trigger: 'row',
-    checkMethod: ({ row }) => (row as Client)?.id !== 1,
+    checkMethod: ({ row }) => (row as SystemAPI.SysClientDTO)?.id !== 1,
   },
   columns,
   height: 'auto',
@@ -52,7 +50,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedClients({
+        const { data } = await getPagedClient({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -82,25 +80,25 @@ function handleAdd() {
   drawerApi.open();
 }
 
-async function handleEdit(record: Client) {
+async function handleEdit(record: SystemAPI.SysClientDTO) {
   drawerApi.setData({ id: record.id });
   drawerApi.open();
 }
 
-async function handleDelete(row: Client) {
-  await removeClient({ id: [row.id] });
+async function handleDelete(row: SystemAPI.SysClientDTO) {
+  await removeClient({ ids: [row.id] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: Client) => row.id);
+  const ids = rows.map((row: SystemAPI.SysClientDTO) => row.id);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveClient({ ids });
+      await removeClient({ ids });
       await tableApi.query();
     },
   });

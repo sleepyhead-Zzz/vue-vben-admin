@@ -10,9 +10,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveProject,
   exportProjectByExcel,
-  getPagedProjects,
+  getPagedProject,
+  removeProject,
 } from '#/api/asset/project';
 import { commonDownloadExcel } from '#/utils/file/download';
 
@@ -57,7 +57,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedProjects({
+        const { data } = await getPagedProject({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -93,7 +93,7 @@ async function handleEdit(row: AssetAPI.AssetInspectionProjectDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetInspectionProjectDTO) {
-  await batchRemoveProject({ projectIds: [row.projectId] });
+  await removeProject({ projectIds: [row.projectId] });
   await tableApi.query();
 }
 
@@ -107,7 +107,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveProject({ projectIds: ids });
+      await removeProject({ projectIds: ids });
       await tableApi.query();
     },
   });

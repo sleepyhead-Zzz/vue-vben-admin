@@ -17,7 +17,7 @@ import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
   batchGenCode,
   generatorCodeWithPath,
-  genList,
+  genGenList,
   removeGenerator,
   syncDb,
 } from '#/api/tool/generator';
@@ -62,7 +62,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await genList({
+        const { data } = await genGenList({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,

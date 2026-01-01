@@ -54,9 +54,9 @@ export async function editManufacturer(
 }
 
 /** 批量删除生产厂商 DELETE /asset/manufacturer/batch-delete */
-export async function batchRemoveManufacturer(
+export async function removeManufacturer(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveManufacturerParams,
+  params: AssetAPI.removeManufacturerParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/manufacturer/batch-delete', {
@@ -66,19 +66,6 @@ export async function batchRemoveManufacturer(
     },
     ...(options || {}),
   });
-}
-
-/** 生产厂商下拉列表 GET /asset/manufacturer/dropdown */
-export async function dropdownlistManufacturer(options?: {
-  [key: string]: any;
-}) {
-  return request<AssetAPI.ResponseDTOListAssetManufacturerVO>(
-    '/asset/manufacturer/dropdown',
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
 }
 
 /** 生产厂商列表导出 GET /asset/manufacturer/excel */
@@ -99,7 +86,9 @@ export async function exportManufacturerByExcel(
 }
 
 /** 生产厂商导入excel下载 GET /asset/manufacturer/excelTemplate */
-export async function downloadExcelTemplate3(options?: { [key: string]: any }) {
+export async function downloadManufacturerExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/asset/manufacturer/excelTemplate', {
     method: 'GET',
     ...(options || {}),
@@ -147,28 +136,23 @@ export async function importManufacturerByExcel(
   });
 }
 
-/** 获取生产厂商列表 GET /asset/manufacturer/list */
-export async function listManufacturer(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listManufacturerParams,
-  options?: { [key: string]: any },
-) {
-  return request<AssetAPI.ResponseDTOListAssetManufacturerDTO>(
-    '/asset/manufacturer/list',
+/** 生产厂商下拉列表 GET /asset/manufacturer/option-select */
+export async function optionManufacturerSelect(options?: {
+  [key: string]: any;
+}) {
+  return request<AssetAPI.ResponseDTOListAssetManufacturerVO>(
+    '/asset/manufacturer/option-select',
     {
       method: 'GET',
-      params: {
-        ...params,
-      },
       ...(options || {}),
     },
   );
 }
 
 /** 分页获取生产厂商列表 GET /asset/manufacturer/page */
-export async function getPagedManufacturers(
+export async function getPagedManufacturer(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedManufacturersParams,
+  params: AssetAPI.getPagedManufacturerParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetManufacturerDTO>(
@@ -184,9 +168,9 @@ export async function getPagedManufacturers(
 }
 
 /** 删除生产厂商 DELETE /asset/manufacturer/remove/${param0} */
-export async function removeManufacturer(
+export async function removeManufacturerById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeManufacturerParams,
+  params: AssetAPI.removeManufacturerByIdParams,
   options?: { [key: string]: any },
 ) {
   const { manufacturerId: param0, ...queryParams } = params;

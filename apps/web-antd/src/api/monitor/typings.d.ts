@@ -4,6 +4,14 @@ declare namespace MonitorAPI {
     value?: string;
   };
 
+  type exportLoginInfoByExcelParams = {
+    query: LoginLogQuery;
+  };
+
+  type exportOperationLogByExcelParams = {
+    query: OperationLogQuery;
+  };
+
   type getPagedLoginInfoParams = {
     ipAddress?: string;
     status?: string;
@@ -22,8 +30,8 @@ declare namespace MonitorAPI {
     endTime?: Date;
   };
 
-  type loginInfosExcelParams = {
-    query: LoginLogQuery;
+  type getPagedOperationLogParams = {
+    query: OperationLogQuery;
   };
 
   type LoginLogDTO = {
@@ -133,14 +141,6 @@ declare namespace MonitorAPI {
     requestModule?: string;
   };
 
-  type operationLogsExcelParams = {
-    query: OperationLogQuery;
-  };
-
-  type operationLogsParams = {
-    query: OperationLogQuery;
-  };
-
   type PageDTOLoginLogDTO = {
     /** 总记录数 */
     total?: number;
@@ -168,11 +168,11 @@ declare namespace MonitorAPI {
     commandStats?: CommandStatusDTO[];
   };
 
-  type removeLoginInfosParams = {
+  type removeLoginInfoParams = {
     ids: number[];
   };
 
-  type removeOperationLogsParams = {
+  type removeOperationLogParams = {
     operationIds: number[];
   };
 

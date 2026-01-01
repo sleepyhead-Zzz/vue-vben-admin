@@ -8,7 +8,10 @@ import { ExcelIcon, InBoxIcon } from '@vben/icons';
 
 import { Modal, Switch, Upload } from 'ant-design-vue';
 
-import { downloadExcelTemplate, importUserByExcel } from '#/api/system/user';
+import {
+  downloadUserExcelTemplate,
+  importUserByExcel,
+} from '#/api/system/user';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 const emit = defineEmits<{ reload: [] }>();
@@ -89,7 +92,9 @@ function handleCancel() {
         <span>允许导入xlsx, xls文件</span>
         <a-button
           type="link"
-          @click="commonDownloadExcel(downloadExcelTemplate, '用户导入模板')"
+          @click="
+            commonDownloadExcel(downloadUserExcelTemplate, '用户导入模板')
+          "
         >
           <div class="flex items-center gap-[4px]">
             <ExcelIcon />

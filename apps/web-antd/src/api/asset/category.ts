@@ -54,9 +54,9 @@ export async function editCategory(
 }
 
 /** 批量删除资产分类 DELETE /asset/category/batch-delete */
-export async function batchRemoveCategory(
+export async function removeCategory(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveCategoryParams,
+  params: AssetAPI.removeCategoryParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/category/batch-delete', {
@@ -66,17 +66,6 @@ export async function batchRemoveCategory(
     },
     ...(options || {}),
   });
-}
-
-/** 资产分类下拉列表 GET /asset/category/dropdown */
-export async function dropDownListCategory(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetCategoryVO>(
-    '/asset/category/dropdown',
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
 }
 
 /** 资产分类列表导出 GET /asset/category/excel */
@@ -97,7 +86,9 @@ export async function exportCategoryByExcel(
 }
 
 /** 资产分类导入excel下载 GET /asset/category/excelTemplate */
-export async function downloadExcelTemplate6(options?: { [key: string]: any }) {
+export async function downloadCategoryExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/asset/category/excelTemplate', {
     method: 'GET',
     ...(options || {}),
@@ -146,9 +137,9 @@ export async function importCategoryByExcel(
 }
 
 /** 获取资产分类列表 GET /asset/category/list */
-export async function listCategory(
+export async function getCategoryList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listCategoryParams,
+  params: AssetAPI.getCategoryListParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOListAssetCategoryDTO>(
@@ -163,10 +154,21 @@ export async function listCategory(
   );
 }
 
+/** 资产分类下拉列表 GET /asset/category/option-select */
+export async function optionCategorySelect(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListAssetCategoryVO>(
+    '/asset/category/option-select',
+    {
+      method: 'GET',
+      ...(options || {}),
+    },
+  );
+}
+
 /** 分页获取资产分类列表 GET /asset/category/page */
-export async function getPagedCategorys(
+export async function getPagedCategory(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedCategorysParams,
+  params: AssetAPI.getPagedCategoryParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetCategoryDTO>(
@@ -182,9 +184,9 @@ export async function getPagedCategorys(
 }
 
 /** 删除资产分类 DELETE /asset/category/remove/${param0} */
-export async function removeCategory(
+export async function removeCategoryById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeCategoryParams,
+  params: AssetAPI.removeCategoryByIdParams,
   options?: { [key: string]: any },
 ) {
   const { categoryId: param0, ...queryParams } = params;

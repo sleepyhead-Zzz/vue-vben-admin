@@ -64,7 +64,7 @@ export async function removeRole(
   });
 }
 
-/** 已关联该角色的用户列表 GET /system/role/${param0}/allocated/list */
+/** 已关联该角色的用户列表 GET /system/role/${param0}/allocated/query */
 export async function allocatedUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.allocatedUserListParams,
@@ -72,7 +72,7 @@ export async function allocatedUserList(
 ) {
   const { roleId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOPageDTOSysUserDTO>(
-    `/system/role/${param0}/allocated/list`,
+    `/system/role/${param0}/allocated/query`,
     {
       method: 'GET',
       params: {
@@ -86,9 +86,9 @@ export async function allocatedUserList(
 }
 
 /** 修改角色数据权限 PUT /system/role/${param0}/dataScope */
-export async function dataScope(
+export async function changeRoleDataScope(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.dataScopeParams,
+  params: SystemAPI.changeRoleDataScopeParams,
   body: SystemAPI.UpdateSysRoleDataScopeCommand,
   options?: { [key: string]: any },
 ) {
@@ -126,7 +126,7 @@ export async function changeRoleStatus(
   });
 }
 
-/** 未关联该角色的用户列表 GET /system/role/${param0}/unallocated/list */
+/** 未关联该角色的用户列表 GET /system/role/${param0}/unallocated/query */
 export async function unallocatedUserList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.unallocatedUserListParams,
@@ -134,7 +134,7 @@ export async function unallocatedUserList(
 ) {
   const { roleId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOPageDTOSysUserDTO>(
-    `/system/role/${param0}/unallocated/list`,
+    `/system/role/${param0}/unallocated/query`,
     {
       method: 'GET',
       params: {
@@ -145,6 +145,23 @@ export async function unallocatedUserList(
       ...(options || {}),
     },
   );
+}
+
+/** 批量添加用户和角色关联 POST /system/role/authUser/assign */
+export async function assignUsersToRole(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: SystemAPI.assignUsersToRoleParams,
+  options?: { [key: string]: any },
+) {
+  return request<SystemAPI.ResponseDTOInteger>('/system/role/authUser/assign', {
+    method: 'POST',
+    params: {
+      ...params,
+      command: undefined,
+      ...params['command'],
+    },
+    ...(options || {}),
+  });
 }
 
 /** 此处后端没有提供注释 PUT /system/role/authUser/cancel */
@@ -162,40 +179,21 @@ export async function cancelAuthUser(
   });
 }
 
-/** 批量解除角色和用户的关联 PUT /system/role/authUser/cancelAll */
-export async function cancelAuthUserAll(
+/** 批量解除角色和用户的关联 PUT /system/role/authUser/revoke */
+export async function revokeUsersFromRole(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.cancelAuthUserAllParams,
+  params: SystemAPI.revokeUsersFromRoleParams,
   options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOInteger>(
-    '/system/role/authUser/cancelAll',
-    {
-      method: 'PUT',
-      params: {
-        ...params,
-      },
-      ...(options || {}),
+  return request<SystemAPI.ResponseDTOInteger>('/system/role/authUser/revoke', {
+    method: 'PUT',
+    params: {
+      ...params,
+      command: undefined,
+      ...params['command'],
     },
-  );
-}
-
-/** 批量添加用户和角色关联 POST /system/role/authUser/selectAll */
-export async function selectAuthUserAll(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.selectAuthUserAllParams,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOInteger>(
-    '/system/role/authUser/selectAll',
-    {
-      method: 'POST',
-      params: {
-        ...params,
-      },
-      ...(options || {}),
-    },
-  );
+    ...(options || {}),
+  });
 }
 
 /** 此处后端没有提供注释 GET /system/role/dept-tree/${param0} */
@@ -232,25 +230,10 @@ export async function exportRoleByExcel(
   });
 }
 
-/** 角色列表 POST /system/role/list */
-export async function getPagedRole(
-  body: SystemAPI.RoleQuery,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOPageDTOSysRoleDTO>('/system/role/list', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
 /** 此处后端没有提供注释 GET /system/role/option-select */
-export async function optionSelect(
+export async function optionRoleSelect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.optionSelectParams,
+  params: SystemAPI.optionRoleSelectParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOListSysRoleDTO>(
@@ -263,4 +246,19 @@ export async function optionSelect(
       ...(options || {}),
     },
   );
+}
+
+/** 角色列表 POST /system/role/page */
+export async function getPagedRole(
+  body: SystemAPI.RoleQuery,
+  options?: { [key: string]: any },
+) {
+  return request<SystemAPI.ResponseDTOPageDTOSysRoleDTO>('/system/role/page', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
 }

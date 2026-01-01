@@ -3,9 +3,9 @@
 import request from '#/api/request';
 
 /** 批量删除文件上传 DELETE /system/file/batch-delete */
-export async function batchRemoveFile(
+export async function removeFile(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.batchRemoveFileParams,
+  params: SystemAPI.removeFileParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOVoid>('/system/file/batch-delete', {
@@ -31,21 +31,6 @@ export async function download(
   });
 }
 
-/** 获取文件上传列表 GET /system/file/list */
-export async function listFile(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.listFileParams,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOListSysFileDTO>('/system/file/list', {
-    method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 根据ID串获取文件上传详情 GET /system/file/listByIds/${param0} */
 export async function listFileInfoByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
@@ -64,9 +49,9 @@ export async function listFileInfoByIds(
 }
 
 /** 分页获取文件上传列表 GET /system/file/page */
-export async function getPagedFiles(
+export async function getPagedFile(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.getPagedFilesParams,
+  params: SystemAPI.getPagedFileParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOPageDTOSysFileDTO>('/system/file/page', {

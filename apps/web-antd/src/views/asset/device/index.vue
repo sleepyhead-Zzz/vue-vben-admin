@@ -10,9 +10,9 @@ import { Avatar, Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveDevice,
   exportDeviceByExcel,
-  getPagedDevices,
+  getPagedDevice,
+  removeDevice,
 } from '#/api/asset/device';
 import { commonDownloadExcel } from '#/utils/file/download';
 
@@ -57,7 +57,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedDevices({
+        const { data } = await getPagedDevice({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -93,7 +93,7 @@ async function handleEdit(row: AssetAPI.AssetDeviceDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetDeviceDTO) {
-  await batchRemoveDevice({ deviceIds: [row.deviceId] });
+  await removeDevice({ deviceIds: [row.deviceId] });
   await tableApi.query();
 }
 
@@ -105,7 +105,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveDevice({ deviceIds: ids });
+      await removeDevice({ deviceIds: ids });
       await tableApi.query();
     },
   });

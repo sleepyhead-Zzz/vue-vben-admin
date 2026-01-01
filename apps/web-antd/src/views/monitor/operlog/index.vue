@@ -16,9 +16,9 @@ import {
 } from '#/adapter/vxe-table';
 import {
   cleanOperationLog,
-  operationLogs,
-  operationLogsExcel,
-  removeOperationLogs,
+  exportOperationLogByExcel,
+  getPagedOperationLog,
+  removeOperationLog,
 } from '#/api/monitor/logs';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { confirmDeleteModal } from '#/utils/modal';
@@ -68,7 +68,7 @@ const gridOptions: VxeGridProps<MonitorAPI.OperationLogDTO> = {
         };
         // 添加排序参数
         addSortParams(params, sorts);
-        const { data } = await operationLogs({ ...params });
+        const { data } = await getPagedOperationLog({ ...params });
         return data;
       },
     },
@@ -129,7 +129,7 @@ async function handleDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条操作日志吗？`,
     onOk: async () => {
-      await removeOperationLogs({ operationIds: ids });
+      await removeOperationLog({ operationIds: ids });
       await tableApi.query();
     },
   });
@@ -137,7 +137,7 @@ async function handleDelete() {
 
 function handleDownloadExcel() {
   commonDownloadExcel(
-    operationLogsExcel,
+    exportOperationLogByExcel,
     '操作日志',
     tableApi.formApi.form.values,
     {

@@ -535,45 +535,9 @@ declare namespace AssetAPI {
     deviceCode?: string;
   };
 
-  type associatedInspectionDevicesParams = {
+  type associatedPlanDevicesParams = {
     planId: number;
     query: AssociatedDeviceQuery;
-  };
-
-  type batchRemoveCategoryParams = {
-    categoryIds: number[];
-  };
-
-  type batchRemoveDeviceParams = {
-    deviceIds: number[];
-  };
-
-  type batchRemoveInspectionParams = {
-    inspectionIds: number[];
-  };
-
-  type batchRemoveLocationParams = {
-    locationIds: number[];
-  };
-
-  type batchRemoveManufacturerParams = {
-    manufacturerIds: number[];
-  };
-
-  type batchRemovePlanParams = {
-    planIds: number[];
-  };
-
-  type batchRemoveProjectParams = {
-    projectIds: number[];
-  };
-
-  type batchRemoveSpecificationParams = {
-    specificationIds: number[];
-  };
-
-  type batchRemoveTaskParams = {
-    taskIds: number[];
   };
 
   type editCategoryParams = {
@@ -653,6 +617,19 @@ declare namespace AssetAPI {
     categoryId: number;
   };
 
+  type getCategoryListParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getDeviceInfoParams = {
     /** 记录ID */
     deviceId: number;
@@ -673,12 +650,29 @@ declare namespace AssetAPI {
     locationId: number;
   };
 
+  type getLocationListParams = {
+    locationName?: string;
+    locationType?: string;
+    parentLocationId?: string;
+    locationCode?: string;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getManufacturerInfoParams = {
     /** 记录ID */
     manufacturerId: number;
   };
 
-  type getPagedCategorysParams = {
+  type getPagedCategoryParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -693,7 +687,7 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type getPagedDevicesParams = {
+  type getPagedDeviceParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -708,7 +702,7 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type getPagedInspectionsParams = {
+  type getPagedInspectionParams = {
     planId?: number;
     pageNum?: number;
     pageSize?: number;
@@ -724,7 +718,7 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type getPagedLocationsParams = {
+  type getPagedManufacturerParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -739,7 +733,7 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type getPagedManufacturersParams = {
+  type getPagedPlanParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -754,7 +748,7 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type getPagedPlansParams = {
+  type getPagedProjectParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -769,7 +763,7 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type getPagedProjectsParams = {
+  type getPagedSpecificationParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -784,22 +778,7 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type getPagedSpecificationsParams = {
-    pageNum?: number;
-    pageSize?: number;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type getPagedTasksParams = {
+  type getPagedTaskParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -829,116 +808,7 @@ declare namespace AssetAPI {
     specificationId: number;
   };
 
-  type getTaskInfoParams = {
-    /** 记录ID */
-    taskId: number;
-  };
-
-  type listCategoryParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listDeviceParams = {
-    deviceName?: string;
-    deviceCode?: string;
-    status?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listInspectionParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listLocationParams = {
-    locationName?: string;
-    locationType?: string;
-    parentLocationId?: string;
-    locationCode?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listManufacturerParams = {
-    manufacturerName?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listPlanParams = {
-    planName?: string;
-    frequency?: number;
-    status?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listProjectParams = {
-    projectName?: string;
-    projectType?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listSpecificationParams = {
+  type getSpecificationListParams = {
     specificationName?: string;
     /** 排序字段 */
     orderColumn?: string;
@@ -952,19 +822,9 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
-  type listTaskParams = {
-    taskName?: string;
-    status?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
+  type getTaskInfoParams = {
+    /** 记录ID */
+    taskId: number;
   };
 
   type PageDTOAssetCategoryDTO = {
@@ -1009,13 +869,6 @@ declare namespace AssetAPI {
     rows?: AssetInspectionTaskDTO[];
   };
 
-  type PageDTOAssetLocationDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: AssetLocationDTO[];
-  };
-
   type PageDTOAssetManufacturerDTO = {
     /** 总记录数 */
     total?: number;
@@ -1030,40 +883,76 @@ declare namespace AssetAPI {
     rows?: AssetSpecificationDTO[];
   };
 
-  type removeCategoryParams = {
+  type removeCategoryByIdParams = {
     categoryId: number;
   };
 
-  type removeDeviceParams = {
+  type removeCategoryParams = {
+    categoryIds: number[];
+  };
+
+  type removeDeviceByIdParams = {
     deviceId: number;
   };
 
-  type removeInspectionParams = {
+  type removeDeviceParams = {
+    deviceIds: number[];
+  };
+
+  type removeInspectionByIdParams = {
     inspectionId: number;
   };
 
-  type removeLocationParams = {
+  type removeInspectionParams = {
+    inspectionIds: number[];
+  };
+
+  type removeLocationByIdParams = {
     locationId: number;
   };
 
-  type removeManufacturerParams = {
+  type removeLocationParams = {
+    locationIds: number[];
+  };
+
+  type removeManufacturerByIdParams = {
     manufacturerId: number;
   };
 
-  type removePlanParams = {
+  type removeManufacturerParams = {
+    manufacturerIds: number[];
+  };
+
+  type removePlanByIdParams = {
     planId: number;
   };
 
-  type removeProjectParams = {
+  type removePlanParams = {
+    planIds: number[];
+  };
+
+  type removeProjectByIdParams = {
     projectId: number;
   };
 
-  type removeSpecificationParams = {
+  type removeProjectParams = {
+    projectIds: number[];
+  };
+
+  type removeSpecificationByIdParams = {
     specificationId: number;
   };
 
-  type removeTaskParams = {
+  type removeSpecificationParams = {
+    specificationIds: number[];
+  };
+
+  type removeTaskByIdParams = {
     taskId: number;
+  };
+
+  type removeTaskParams = {
+    taskIds: number[];
   };
 
   type ResponseDTOAssetCategoryDTO = {
@@ -1138,28 +1027,10 @@ declare namespace AssetAPI {
     data?: AssetCategoryVO[];
   };
 
-  type ResponseDTOListAssetDeviceDTO = {
-    code?: number;
-    message?: string;
-    data?: AssetDeviceDTO[];
-  };
-
   type ResponseDTOListAssetDeviceVO = {
     code?: number;
     message?: string;
     data?: AssetDeviceVO[];
-  };
-
-  type ResponseDTOListAssetInspectionDTO = {
-    code?: number;
-    message?: string;
-    data?: AssetInspectionDTO[];
-  };
-
-  type ResponseDTOListAssetInspectionPlanDTO = {
-    code?: number;
-    message?: string;
-    data?: AssetInspectionPlanDTO[];
   };
 
   type ResponseDTOListAssetInspectionPlanVO = {
@@ -1180,12 +1051,6 @@ declare namespace AssetAPI {
     data?: AssetInspectionProjectVO[];
   };
 
-  type ResponseDTOListAssetInspectionTaskDTO = {
-    code?: number;
-    message?: string;
-    data?: AssetInspectionTaskDTO[];
-  };
-
   type ResponseDTOListAssetInspectionTaskVO = {
     code?: number;
     message?: string;
@@ -1202,12 +1067,6 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetLocationDTO[];
-  };
-
-  type ResponseDTOListAssetManufacturerDTO = {
-    code?: number;
-    message?: string;
-    data?: AssetManufacturerDTO[];
   };
 
   type ResponseDTOListAssetManufacturerVO = {
@@ -1270,12 +1129,6 @@ declare namespace AssetAPI {
     data?: PageDTOAssetInspectionTaskDTO;
   };
 
-  type ResponseDTOPageDTOAssetLocationDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOAssetLocationDTO;
-  };
-
   type ResponseDTOPageDTOAssetManufacturerDTO = {
     code?: number;
     message?: string;
@@ -1331,7 +1184,7 @@ declare namespace AssetAPI {
     deviceCode?: string;
   };
 
-  type unAssociatedInspectionDevicesParams = {
+  type unAssociatedPlanDevicesParams = {
     planId: number;
     query: UnassociatedDeviceQuery;
   };

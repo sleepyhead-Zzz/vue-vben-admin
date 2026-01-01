@@ -54,9 +54,9 @@ export async function editOssConfig(
 }
 
 /** 批量删除对象存储配置 DELETE /system/oss_config/batch-delete */
-export async function batchRemoveOssConfig(
+export async function removeOssConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.batchRemoveOssConfigParams,
+  params: SystemAPI.removeOssConfigParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOVoid>('/system/oss_config/batch-delete', {
@@ -151,28 +151,10 @@ export async function importOssConfigByExcel(
   });
 }
 
-/** 获取对象存储配置列表 GET /system/oss_config/list */
-export async function listOssConfig(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.listOssConfigParams,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOListSysOssConfigDTO>(
-    '/system/oss_config/list',
-    {
-      method: 'GET',
-      params: {
-        ...params,
-      },
-      ...(options || {}),
-    },
-  );
-}
-
 /** 分页获取对象存储配置列表 GET /system/oss_config/page */
-export async function getPagedOssConfigs(
+export async function getPagedOssConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.getPagedOssConfigsParams,
+  params: SystemAPI.getPagedOssConfigParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOPageDTOSysOssConfigDTO>(
@@ -188,12 +170,12 @@ export async function getPagedOssConfigs(
 }
 
 /** 删除对象存储配置 DELETE /system/oss_config/remove/${param0} */
-export async function removeOssConfig(
+export async function removeOssConfigById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.removeOssConfigParams,
+  params: SystemAPI.removeOssConfigByIdParams,
   options?: { [key: string]: any },
 ) {
-  const { oss_configId: param0, ...queryParams } = params;
+  const { ossConfigId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(
     `/system/oss_config/remove/${param0}`,
     {

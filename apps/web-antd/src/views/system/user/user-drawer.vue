@@ -9,8 +9,8 @@ import { Tag } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { getConfigKey } from '#/api/system/config';
-import { dropdownDeptList } from '#/api/system/dept';
-import { optionSelectPost } from '#/api/system/post';
+import { optionDeptList } from '#/api/system/dept';
+import { optionPostSelect } from '#/api/system/post';
 import { addUser, editUser, getUserDetailInfo } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 import { authScopeOptions } from '#/views/system/role/data';
@@ -44,7 +44,7 @@ const [BasicForm, formApi] = useVbenForm({
     option: ({value, label, [disabled, key, title]}) => '',
   }),
  */
-function genRoleOptionlabel(role: API.SysRoleDTO) {
+function genRoleOptionlabel(role: SystemAPI.SysRoleDTO) {
   const found = authScopeOptions.find((item) => item.value === role.dataScope);
   if (!found) {
     return role.roleName;
@@ -59,9 +59,8 @@ function genRoleOptionlabel(role: API.SysRoleDTO) {
  * 岗位的加载
  */
 async function setupPostOptions(deptId: number | string) {
-  const { data } = await optionSelectPost({ deptId });
-  const postListResp = data;
-  const options = postListResp.map((item) => ({
+  const { data } = await optionPostSelect({ deptId });
+  const options = data.map((item) => ({
     label: item.postName,
     value: item.postId,
   }));
@@ -79,7 +78,7 @@ async function setupPostOptions(deptId: number | string) {
  */
 async function setupDeptSelect() {
   // updateSchema
-  const deptTree = await dropdownDeptList({
+  const deptTree = await optionDeptList({
     query: {
       orderColumn: undefined,
       orderDirection: undefined,

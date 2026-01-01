@@ -13,9 +13,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
   cleanLoginInfo,
+  exportLoginInfoByExcel,
   getPagedLoginInfo,
-  loginInfosExcel,
-  removeLoginInfos,
+  removeLoginInfo,
 } from '#/api/monitor/logs';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { confirmDeleteModal } from '#/utils/modal';
@@ -104,7 +104,7 @@ function handleClear() {
 }
 
 async function handleDelete(row: MonitorAPI.LoginLogDTO) {
-  await removeLoginInfos({ ids: [row.logId] });
+  await removeLoginInfo({ ids: [row.logId] });
   await tableApi.query();
 }
 
@@ -116,7 +116,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await removeLoginInfos({ ids });
+      await removeLoginInfo({ ids });
       await tableApi.query();
     },
   });
@@ -136,7 +136,7 @@ async function handleUnlock() {
 
 function handleDownloadExcel() {
   commonDownloadExcel(
-    loginInfosExcel,
+    exportLoginInfoByExcel,
     '登录日志',
     tableApi.formApi.form.values,
     {

@@ -185,37 +185,12 @@ declare namespace SystemAPI {
     query: AllocatedRoleQuery;
   };
 
-  type batchRemoveClientParams = {
-    ids: number[];
+  type assignUsersToRoleParams = {
+    command: RoleUserAssignCommand;
   };
 
-  type batchRemoveConfigParams = {
-    configIds: number[];
-  };
-
-  type batchRemoveDictDataParams = {
-    dictCodes: number[];
-  };
-
-  type batchRemoveDictTypeParams = {
-    dictTypeIds: number[];
-  };
-
-  type batchRemoveFileParams = {
-    fileIds: number[];
-  };
-
-  type batchRemoveNoticeParams = {
-    noticeIds: number[];
-  };
-
-  type batchRemoveOssConfigParams = {
-    oss_configIds: number[];
-  };
-
-  type cancelAuthUserAllParams = {
+  type changeRoleDataScopeParams = {
     roleId: number;
-    userIds: number[];
   };
 
   type changeRoleStatusParams = {
@@ -231,10 +206,6 @@ declare namespace SystemAPI {
     userId: number;
   };
 
-  type dataScopeParams = {
-    roleId: number;
-  };
-
   type deptNodeListParams = {
     deptId: number;
   };
@@ -248,28 +219,8 @@ declare namespace SystemAPI {
     fileId: number;
   };
 
-  type dropdownDeptListParams = {
-    query: SysDeptQuery;
-  };
-
-  type dropdownMenuParams = {
-    menuName?: string;
-    visible?: string;
-    status?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
   type editClientParams = {
-    id: number;
+    clientId: number;
   };
 
   type editConfigParams = {
@@ -320,7 +271,7 @@ declare namespace SystemAPI {
     query: SysOssConfigQuery;
   };
 
-  type exportPostParams = {
+  type exportPostByExcelParams = {
     query: SysPostQuery;
   };
 
@@ -346,8 +297,38 @@ declare namespace SystemAPI {
     configKey: string;
   };
 
+  type getConfigListParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getDeptInfoParams = {
     deptId: number;
+  };
+
+  type getDeptListParams = {
+    deptId?: number;
+    parentId?: number;
+    status?: string;
+    deptName?: string;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type getDictDataByTypeParams = {
@@ -368,9 +349,38 @@ declare namespace SystemAPI {
     menuId: number;
   };
 
+  type getMenuListParams = {
+    menuName?: string;
+    visible?: string;
+    status?: string;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getNoticeInfoParams = {
     /** 记录ID */
     noticeId: number;
+  };
+
+  type getNoticeListParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type getOssConfigInfoParams = {
@@ -378,7 +388,7 @@ declare namespace SystemAPI {
     ossConfigId: number;
   };
 
-  type getPagedClientsParams = {
+  type getPagedClientParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -393,7 +403,7 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
-  type getPagedConfigsParams = {
+  type getPagedConfigParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -425,7 +435,7 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
-  type getPagedDictTypesParams = {
+  type getPagedDictTypeParams = {
     dictType?: string;
     dictName?: string;
     pageNum?: number;
@@ -442,7 +452,7 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
-  type getPagedFilesParams = {
+  type getPagedFileParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -457,7 +467,7 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
-  type getPagedNoticesParams = {
+  type getPagedNoticeParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -472,7 +482,7 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
-  type getPagedOssConfigsParams = {
+  type getPagedOssConfigParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -503,136 +513,8 @@ declare namespace SystemAPI {
     userId: number;
   };
 
-  type listClientParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listConfigParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listDeptParams = {
-    deptId?: number;
-    parentId?: number;
-    status?: string;
-    deptName?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listDictDataParams = {
-    dictType?: string;
-    dictLabel?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listDictTypeParams = {
-    dictType?: string;
-    dictName?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
   type listFileInfoByIdsParams = {
     ossIds: number[];
-  };
-
-  type listFileParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listMenuParams = {
-    menuName?: string;
-    visible?: string;
-    status?: string;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listNoticeParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type listOssConfigParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
   };
 
   type listUserByDeptParams = {
@@ -648,11 +530,27 @@ declare namespace SystemAPI {
     menus?: TreeLong[];
   };
 
-  type optionSelectParams = {
-    roleIds?: number[];
+  type optionDeptListParams = {
+    query: SysDeptQuery;
   };
 
-  type optionSelectPostParams = {
+  type optionMenuSelectParams = {
+    menuName?: string;
+    visible?: string;
+    status?: string;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
+  type optionPostSelectParams = {
     postCode?: string;
     postName?: string;
     status?: string;
@@ -672,6 +570,10 @@ declare namespace SystemAPI {
     beginTime?: Date;
     /** 结束时间 */
     endTime?: Date;
+  };
+
+  type optionRoleSelectParams = {
+    roleIds?: number[];
   };
 
   type PageDTOSysClientDTO = {
@@ -744,36 +646,64 @@ declare namespace SystemAPI {
     rows?: SysUserDTO[];
   };
 
-  type removeClientParams = {
-    id: number;
+  type removeByIdParams = {
+    clientId: number;
   };
 
-  type removeConfigParams = {
+  type removeClientParams = {
+    ids: number[];
+  };
+
+  type removeConfigByIdParams = {
     configId: number;
   };
 
-  type removeDeptParams = {
+  type removeConfigParams = {
+    configIds: number[];
+  };
+
+  type removeDeptByIdParams = {
     deptId: number;
   };
 
-  type removeDictDataParams = {
+  type removeDictDataByCodeParams = {
     dictCode: number;
   };
 
-  type removeDictTypeParams = {
+  type removeDictDataParams = {
+    dictCodes: number[];
+  };
+
+  type removeDictTypeByIdParams = {
     dictTypeId: number;
+  };
+
+  type removeDictTypesParams = {
+    dictTypeIds: number[];
+  };
+
+  type removeFileParams = {
+    fileIds: number[];
   };
 
   type removeMenuParams = {
     menuId: number;
   };
 
-  type removeNoticeParams = {
+  type removeNoticeByIdParams = {
     noticeId: number;
   };
 
+  type removeNoticeParams = {
+    noticeIds: number[];
+  };
+
+  type removeOssConfigByIdParams = {
+    ossConfigId: number;
+  };
+
   type removeOssConfigParams = {
-    oss_configId: number;
+    ossConfigIds: number[];
   };
 
   type removePostParams = {
@@ -809,12 +739,6 @@ declare namespace SystemAPI {
     data?: number;
   };
 
-  type ResponseDTOListSysClientDTO = {
-    code?: number;
-    message?: string;
-    data?: SysClientDTO[];
-  };
-
   type ResponseDTOListSysConfigDTO = {
     code?: number;
     message?: string;
@@ -845,12 +769,6 @@ declare namespace SystemAPI {
     data?: SysDictDataVO[];
   };
 
-  type ResponseDTOListSysDictTypeDTO = {
-    code?: number;
-    message?: string;
-    data?: SysDictTypeDTO[];
-  };
-
   type ResponseDTOListSysDictTypeVO = {
     code?: number;
     message?: string;
@@ -873,12 +791,6 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysNoticeDTO[];
-  };
-
-  type ResponseDTOListSysOssConfigDTO = {
-    code?: number;
-    message?: string;
-    data?: SysOssConfigDTO[];
   };
 
   type ResponseDTOListSysPostDTO = {
@@ -1067,6 +979,10 @@ declare namespace SystemAPI {
     data?: Record<string, any>;
   };
 
+  type revokeUsersFromRoleParams = {
+    command: RoleUserAssignCommand;
+  };
+
   type roleDeptTreeSelectParams = {
     roleId: number;
   };
@@ -1088,6 +1004,11 @@ declare namespace SystemAPI {
     roleId?: number;
   };
 
+  type RoleUserAssignCommand = {
+    roleId?: number;
+    userIds?: number[];
+  };
+
   type SearchUserQuerySearchUserDO = {
     orderColumn?: string;
     orderDirection?: string;
@@ -1106,11 +1027,6 @@ declare namespace SystemAPI {
     phoneNumber?: string;
     /** 部门ID */
     deptId?: number;
-  };
-
-  type selectAuthUserAllParams = {
-    roleId: number;
-    userIds: number[];
   };
 
   type SysClientDTO = {

@@ -54,9 +54,9 @@ export async function editSpecification(
 }
 
 /** 批量删除规格型号 DELETE /asset/specification/batch-delete */
-export async function batchRemoveSpecification(
+export async function removeSpecification(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveSpecificationParams,
+  params: AssetAPI.removeSpecificationParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>(
@@ -66,19 +66,6 @@ export async function batchRemoveSpecification(
       params: {
         ...params,
       },
-      ...(options || {}),
-    },
-  );
-}
-
-/** 规格型号下拉列表 GET /asset/specification/dropdown */
-export async function dropDownListSpecification(options?: {
-  [key: string]: any;
-}) {
-  return request<AssetAPI.ResponseDTOListAssetSpecificationVO>(
-    '/asset/specification/dropdown',
-    {
-      method: 'GET',
       ...(options || {}),
     },
   );
@@ -102,7 +89,9 @@ export async function exportSpecificationByExcel(
 }
 
 /** 规格型号导入excel下载 GET /asset/specification/excelTemplate */
-export async function downloadExcelTemplate(options?: { [key: string]: any }) {
+export async function downloadSpecificationExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/asset/specification/excelTemplate', {
     method: 'GET',
     ...(options || {}),
@@ -154,9 +143,9 @@ export async function importSpecificationByExcel(
 }
 
 /** 获取规格型号列表 GET /asset/specification/list */
-export async function listSpecification(
+export async function getSpecificationList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listSpecificationParams,
+  params: AssetAPI.getSpecificationListParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOListAssetSpecificationDTO>(
@@ -171,10 +160,23 @@ export async function listSpecification(
   );
 }
 
+/** 规格型号下拉列表 GET /asset/specification/option-select */
+export async function optionSpecificationSelect(options?: {
+  [key: string]: any;
+}) {
+  return request<AssetAPI.ResponseDTOListAssetSpecificationVO>(
+    '/asset/specification/option-select',
+    {
+      method: 'GET',
+      ...(options || {}),
+    },
+  );
+}
+
 /** 分页获取规格型号列表 GET /asset/specification/page */
-export async function getPagedSpecifications(
+export async function getPagedSpecification(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedSpecificationsParams,
+  params: AssetAPI.getPagedSpecificationParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetSpecificationDTO>(
@@ -190,9 +192,9 @@ export async function getPagedSpecifications(
 }
 
 /** 删除规格型号 DELETE /asset/specification/remove/${param0} */
-export async function removeSpecification(
+export async function removeSpecificationById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeSpecificationParams,
+  params: AssetAPI.removeSpecificationByIdParams,
   options?: { [key: string]: any },
 ) {
   const { specificationId: param0, ...queryParams } = params;

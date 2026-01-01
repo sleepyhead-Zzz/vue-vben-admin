@@ -54,9 +54,9 @@ export async function editInspection(
 }
 
 /** 批量删除巡检记录 DELETE /asset/inspection/batch-delete */
-export async function batchRemoveInspection(
+export async function removeInspection(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveInspectionParams,
+  params: AssetAPI.removeInspectionParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/inspection/batch-delete', {
@@ -66,17 +66,6 @@ export async function batchRemoveInspection(
     },
     ...(options || {}),
   });
-}
-
-/** 巡检记录下拉列表 GET /asset/inspection/dropdown */
-export async function dropDownListInspection(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionVO>(
-    '/asset/inspection/dropdown',
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
 }
 
 /** 巡检记录列表导出 GET /asset/inspection/excel */
@@ -147,28 +136,21 @@ export async function importInspectionByExcel(
   });
 }
 
-/** 获取巡检记录列表 GET /asset/inspection/list */
-export async function listInspection(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listInspectionParams,
-  options?: { [key: string]: any },
-) {
-  return request<AssetAPI.ResponseDTOListAssetInspectionDTO>(
-    '/asset/inspection/list',
+/** 巡检记录下拉列表 GET /asset/inspection/option-select */
+export async function optionInspectionSelect(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListAssetInspectionVO>(
+    '/asset/inspection/option-select',
     {
       method: 'GET',
-      params: {
-        ...params,
-      },
       ...(options || {}),
     },
   );
 }
 
 /** 分页获取巡检记录列表 GET /asset/inspection/page */
-export async function getPagedInspections(
+export async function getPagedInspection(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedInspectionsParams,
+  params: AssetAPI.getPagedInspectionParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetInspectionDTO>(
@@ -184,9 +166,9 @@ export async function getPagedInspections(
 }
 
 /** 删除巡检记录 DELETE /asset/inspection/remove/${param0} */
-export async function removeInspection(
+export async function removeInspectionById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeInspectionParams,
+  params: AssetAPI.removeInspectionByIdParams,
   options?: { [key: string]: any },
 ) {
   const { inspectionId: param0, ...queryParams } = params;

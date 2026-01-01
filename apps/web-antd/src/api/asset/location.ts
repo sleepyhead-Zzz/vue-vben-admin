@@ -54,9 +54,9 @@ export async function editLocation(
 }
 
 /** 批量删除位置 DELETE /asset/location/batch-delete */
-export async function batchRemoveLocation(
+export async function removeLocation(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveLocationParams,
+  params: AssetAPI.removeLocationParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/location/batch-delete', {
@@ -64,14 +64,6 @@ export async function batchRemoveLocation(
     params: {
       ...params,
     },
-    ...(options || {}),
-  });
-}
-
-/** 位置下拉列表 GET /asset/location/dropdown */
-export async function dropdownlistLocation(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListTreeLong>('/asset/location/dropdown', {
-    method: 'GET',
     ...(options || {}),
   });
 }
@@ -94,7 +86,9 @@ export async function exportLocationByExcel(
 }
 
 /** 位置导入excel下载 GET /asset/location/excelTemplate */
-export async function downloadExcelTemplate4(options?: { [key: string]: any }) {
+export async function downloadLocationExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/asset/location/excelTemplate', {
     method: 'GET',
     ...(options || {}),
@@ -143,9 +137,9 @@ export async function importLocationByExcel(
 }
 
 /** 获取位置列表 GET /asset/location/list */
-export async function listLocation(
+export async function getLocationList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listLocationParams,
+  params: AssetAPI.getLocationListParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOListAssetLocationDTO>(
@@ -160,28 +154,21 @@ export async function listLocation(
   );
 }
 
-/** 分页获取位置列表 GET /asset/location/page */
-export async function getPagedLocations(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedLocationsParams,
-  options?: { [key: string]: any },
-) {
-  return request<AssetAPI.ResponseDTOPageDTOAssetLocationDTO>(
-    '/asset/location/page',
+/** 位置下拉列表 GET /asset/location/option-select */
+export async function optionLocationSelect(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListTreeLong>(
+    '/asset/location/option-select',
     {
       method: 'GET',
-      params: {
-        ...params,
-      },
       ...(options || {}),
     },
   );
 }
 
 /** 删除位置 DELETE /asset/location/remove/${param0} */
-export async function removeLocation(
+export async function removeLocationById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeLocationParams,
+  params: AssetAPI.removeLocationByIdParams,
   options?: { [key: string]: any },
 ) {
   const { locationId: param0, ...queryParams } = params;

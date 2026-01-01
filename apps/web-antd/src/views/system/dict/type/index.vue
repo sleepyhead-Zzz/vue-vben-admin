@@ -12,9 +12,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveDictType,
-  getPagedDictTypes,
-  removeDictType,
+  getPagedDictType,
+  removeDictTypeById,
+  removeDictTypes,
 } from '#/api/system/dictType';
 
 import { emitter } from '../mitt';
@@ -48,7 +48,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedDictTypes({
+        const { data } = await getPagedDictType({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -97,19 +97,19 @@ async function handleEdit(record: SystemAPI.SysDictTypeDTO) {
 }
 
 async function handleDelete(row: SystemAPI.SysDictTypeDTO) {
-  await removeDictType({ dictTypeId: row.dictTypeId });
+  await removeDictTypeById({ dictTypeId: row.dictTypeId });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.SysDictTypeDTO) => row.dictId);
+  const ids = rows.map((row: SystemAPI.SysDictTypeDTO) => row.dictTypeId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveDictType({ dictTypeIds: ids });
+      await removeDictTypes({ dictTypeIds: ids });
       await tableApi.query();
     },
   });

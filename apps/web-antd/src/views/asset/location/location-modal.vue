@@ -15,7 +15,7 @@ import {
   addLocation,
   editLocation,
   getLocationInfo,
-  listLocation,
+  getLocationList,
 } from '#/api/asset/location';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -45,7 +45,7 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function setupLocationSelect() {
-  const { data } = await listLocation({});
+  const { data } = await getLocationList({});
 
   const treeData = listToTree(data, {
     id: 'locationId',

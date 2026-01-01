@@ -11,7 +11,7 @@ import { eachTree, getVxePopupContainer } from '@vben/utils';
 import { Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { listDept, removeDept } from '#/api/system/dept';
+import { getDeptList, removeDeptById } from '#/api/system/dept';
 
 import { columns, querySchema } from './data';
 import deptDrawer from './dept-drawer.vue';
@@ -37,7 +37,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async (_, formValues = {}) => {
-        const resp = await listDept({
+        const resp = await getDeptList({
           ...formValues,
         });
         return { rows: resp.data };
@@ -112,7 +112,7 @@ async function handleEdit(record: SystemAPI.SysDeptDTO) {
 }
 
 async function handleDelete(row: SystemAPI.SysDeptDTO) {
-  await removeDept({ deptId: row.deptId });
+  await removeDeptById({ deptId: row.deptId });
   await tableApi.query();
 }
 

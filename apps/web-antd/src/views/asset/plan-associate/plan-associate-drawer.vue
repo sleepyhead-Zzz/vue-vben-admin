@@ -8,10 +8,7 @@ import { useRoute } from 'vue-router';
 import { useVbenDrawer } from '@vben/common-ui';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import {
-  associateDevices,
-  unAssociatedInspectionDevices,
-} from '#/api/asset/plan';
+import { assignDevicesToPlan, unAssociatedPlanDevices } from '#/api/asset/plan';
 
 import { columns, querySchema } from './data';
 
@@ -50,7 +47,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await unAssociatedInspectionDevices({
+        const { data } = await unAssociatedPlanDevices({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           planId,
@@ -74,7 +71,7 @@ async function handleSubmit() {
   const records = tableApi.grid.getCheckboxRecords();
   const deviceIds = records.map((item) => item.deviceId);
   if (deviceIds.length > 0) {
-    await associateDevices({ planId, deviceIds });
+    await assignDevicesToPlan({ planId, deviceIds });
   }
   handleReset();
   emit('reload');

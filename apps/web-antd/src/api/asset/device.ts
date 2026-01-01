@@ -54,9 +54,9 @@ export async function editDevice(
 }
 
 /** 批量删除设备 DELETE /asset/device/batch-delete */
-export async function batchRemoveDevice(
+export async function removeDevice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.batchRemoveDeviceParams,
+  params: AssetAPI.removeDeviceParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOVoid>('/asset/device/batch-delete', {
@@ -66,17 +66,6 @@ export async function batchRemoveDevice(
     },
     ...(options || {}),
   });
-}
-
-/** 设备下拉列表 GET /asset/device/dropdown */
-export async function dropDownListDevice(options?: { [key: string]: any }) {
-  return request<AssetAPI.ResponseDTOListAssetDeviceVO>(
-    '/asset/device/dropdown',
-    {
-      method: 'GET',
-      ...(options || {}),
-    },
-  );
 }
 
 /** 设备列表导出 GET /asset/device/excel */
@@ -97,7 +86,9 @@ export async function exportDeviceByExcel(
 }
 
 /** 设备导入excel下载 GET /asset/device/excelTemplate */
-export async function downloadExcelTemplate5(options?: { [key: string]: any }) {
+export async function downloadDeviceExcelTemplate(options?: {
+  [key: string]: any;
+}) {
   return request<any>('/asset/device/excelTemplate', {
     method: 'GET',
     ...(options || {}),
@@ -162,25 +153,21 @@ export async function getInspectionItemByDeviceId(
   );
 }
 
-/** 获取设备列表 GET /asset/device/list */
-export async function listDevice(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.listDeviceParams,
-  options?: { [key: string]: any },
-) {
-  return request<AssetAPI.ResponseDTOListAssetDeviceDTO>('/asset/device/list', {
-    method: 'GET',
-    params: {
-      ...params,
+/** 设备下拉列表 GET /asset/device/option-select */
+export async function optionDeviceSelect(options?: { [key: string]: any }) {
+  return request<AssetAPI.ResponseDTOListAssetDeviceVO>(
+    '/asset/device/option-select',
+    {
+      method: 'GET',
+      ...(options || {}),
     },
-    ...(options || {}),
-  });
+  );
 }
 
 /** 分页获取设备列表 GET /asset/device/page */
-export async function getPagedDevices(
+export async function getPagedDevice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.getPagedDevicesParams,
+  params: AssetAPI.getPagedDeviceParams,
   options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetDeviceDTO>(
@@ -196,9 +183,9 @@ export async function getPagedDevices(
 }
 
 /** 删除设备 DELETE /asset/device/remove/${param0} */
-export async function removeDevice(
+export async function removeDeviceById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: AssetAPI.removeDeviceParams,
+  params: AssetAPI.removeDeviceByIdParams,
   options?: { [key: string]: any },
 ) {
   const { deviceId: param0, ...queryParams } = params;

@@ -10,7 +10,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { batchRemoveBook, getPagedBooks } from '#/api/traveler/book';
+import { getPagedBook, removeBook } from '#/api/traveler/book';
 import evaluationDrawer from '#/views/traveler/evaluation/evaluation-drawer.vue';
 
 import bookModal from './book-modal.vue';
@@ -56,7 +56,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedBooks({
+        const { data } = await getPagedBook({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -109,7 +109,7 @@ async function handleEdit(row: TravelerAPI.TravelerBookDTO) {
 }
 
 async function handleDelete(row: TravelerAPI.TravelerBookDTO) {
-  await batchRemoveBook({ bookIds: [row.bookId] });
+  await removeBook({ bookIds: [row.bookId] });
   await tableApi.query();
 }
 
@@ -121,7 +121,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveBook({ bookIds: ids });
+      await removeBook({ bookIds: ids });
       await tableApi.query();
     },
   });

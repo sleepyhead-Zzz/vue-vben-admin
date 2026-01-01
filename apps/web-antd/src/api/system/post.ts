@@ -66,9 +66,9 @@ export async function editPost(
 }
 
 /** 职位列表导出 GET /system/post/excel */
-export async function exportPost(
+export async function exportPostByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.exportPostParams,
+  params: SystemAPI.exportPostByExcelParams,
   options?: { [key: string]: any },
 ) {
   return request<any>('/system/post/excel', {
@@ -82,25 +82,10 @@ export async function exportPost(
   });
 }
 
-/** 职位列表 POST /system/post/list */
-export async function getPagedPost(
-  body: SystemAPI.SysPostQuery,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOPageDTOSysPostDTO>('/system/post/list', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
 /** 职位列表（树级） 职位树级下拉框 GET /system/post/option-select */
-export async function optionSelectPost(
+export async function optionPostSelect(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.optionSelectPostParams,
+  params: SystemAPI.optionPostSelectParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOListSysPostDTO>(
@@ -113,4 +98,19 @@ export async function optionSelectPost(
       ...(options || {}),
     },
   );
+}
+
+/** 职位列表 POST /system/post/page */
+export async function getPagedPost(
+  body: SystemAPI.SysPostQuery,
+  options?: { [key: string]: any },
+) {
+  return request<SystemAPI.ResponseDTOPageDTOSysPostDTO>('/system/post/page', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
 }

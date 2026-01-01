@@ -11,9 +11,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveSpecification,
   exportSpecificationByExcel,
-  getPagedSpecifications,
+  getPagedSpecification,
+  removeSpecification,
 } from '#/api/asset/specification';
 import { commonDownloadExcel } from '#/utils/file/download';
 
@@ -58,7 +58,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedSpecifications({
+        const { data } = await getPagedSpecification({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -94,7 +94,7 @@ async function handleEdit(row: AssetAPI.AssetSpecificationDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetSpecificationDTO) {
-  await batchRemoveSpecification({ specificationIds: [row.specificationId] });
+  await removeSpecification({ specificationIds: [row.specificationId] });
   await tableApi.query();
 }
 
@@ -108,7 +108,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveSpecification({ specificationIds: ids });
+      await removeSpecification({ specificationIds: ids });
       await tableApi.query();
     },
   });

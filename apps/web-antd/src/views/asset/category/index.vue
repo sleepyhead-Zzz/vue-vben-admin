@@ -11,9 +11,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveCategory,
   exportCategoryByExcel,
-  getPagedCategorys,
+  getPagedCategory,
+  removeCategory,
 } from '#/api/asset/category';
 import { commonDownloadExcel } from '#/utils/file/download';
 
@@ -58,7 +58,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedCategorys({
+        const { data } = await getPagedCategory({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -94,7 +94,7 @@ async function handleEdit(row: AssetAPI.AssetCategoryDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetCategoryDTO) {
-  await batchRemoveCategory({ categoryIds: [row.categoryId] });
+  await removeCategory({ categoryIds: [row.categoryId] });
   await tableApi.query();
 }
 
@@ -106,7 +106,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveCategory({ categoryIds: ids });
+      await removeCategory({ categoryIds: ids });
       await tableApi.query();
     },
   });

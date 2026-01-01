@@ -11,7 +11,7 @@ import {
   deptNodeList,
   editDept,
   getDeptInfo,
-  listDept,
+  getDeptList,
   listUserByDept,
 } from '#/api/system/dept';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
@@ -44,12 +44,10 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function getDeptTree(deptId?: number | string, exclude = false) {
-  let ret: SystemAPI.SysDeptDTO[] = [];
   const { data } = await (!deptId || exclude
-    ? listDept({})
+    ? getDeptList({})
     : deptNodeList({ deptId }));
-  ret = data;
-  const treeData = listToTree(ret, { id: 'deptId', pid: 'parentId' });
+  const treeData = listToTree(data, { id: 'deptId', pid: 'parentId' });
   // 添加部门名称 如 xx-xx-xx
   addFullName(treeData, 'deptName', ' / ');
 
@@ -81,17 +79,16 @@ async function initDeptSelect(deptId?: number | string) {
  */
 async function initDeptUsers(deptId: number | string) {
   const { data } = await listUserByDept({ deptId });
-  const ret = data;
-  const options = ret.map((user) => ({
+  const options = data.map((user) => ({
     label: `${user.userName} | ${user.nickName}`,
     value: user.userId,
   }));
   formApi.updateSchema([
     {
       componentProps: {
-        disabled: ret.length === 0,
+        disabled: data.length === 0,
         options,
-        placeholder: ret.length === 0 ? '该部门暂无用户' : '请选择部门负责人',
+        placeholder: data.length === 0 ? '该部门暂无用户' : '请选择部门负责人',
       },
       fieldName: 'leader',
     },

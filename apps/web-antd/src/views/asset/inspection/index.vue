@@ -11,9 +11,9 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveInspection,
   exportInspectionByExcel,
-  getPagedInspections,
+  getPagedInspection,
+  removeInspection,
 } from '#/api/asset/inspection';
 import { commonDownloadExcel } from '#/utils/file/download';
 
@@ -58,7 +58,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedInspections({
+        const { data } = await getPagedInspection({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -94,7 +94,7 @@ async function handleEdit(row: AssetAPI.AssetInspectionDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetInspectionDTO) {
-  await batchRemoveInspection({ inspectionIds: [row.inspectionId] });
+  await removeInspection({ inspectionIds: [row.inspectionId] });
   await tableApi.query();
 }
 
@@ -106,7 +106,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveInspection({ inspectionIds: ids });
+      await removeInspection({ inspectionIds: ids });
       await tableApi.query();
     },
   });

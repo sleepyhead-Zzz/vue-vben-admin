@@ -65,7 +65,7 @@ export async function removeMenu(
 }
 
 /** 此处后端没有提供注释 DELETE /system/menu/cascade */
-export async function menuCascadeRemove(
+export async function removeMenusCascade(
   body: SystemAPI.MenuCascadeRemoveCommand,
   options?: { [key: string]: any },
 ) {
@@ -79,25 +79,10 @@ export async function menuCascadeRemove(
   });
 }
 
-/** 菜单列表（树级） 菜单树级下拉框 GET /system/menu/dropdown */
-export async function dropdownMenu(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.dropdownMenuParams,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOListTreeLong>('/system/menu/dropdown', {
-    method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
 /** 菜单列表 POST /system/menu/list */
-export async function listMenu(
+export async function getMenuList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.listMenuParams,
+  params: SystemAPI.getMenuListParams,
   options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOListSysMenuDTO>('/system/menu/list', {
@@ -107,6 +92,24 @@ export async function listMenu(
     },
     ...(options || {}),
   });
+}
+
+/** 菜单列表（树级） 菜单树级下拉框 GET /system/menu/option-select */
+export async function optionMenuSelect(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: SystemAPI.optionMenuSelectParams,
+  options?: { [key: string]: any },
+) {
+  return request<SystemAPI.ResponseDTOListTreeLong>(
+    '/system/menu/option-select',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    },
+  );
 }
 
 /** 此处后端没有提供注释 GET /system/menu/role/menu/tree-select/${param0} */

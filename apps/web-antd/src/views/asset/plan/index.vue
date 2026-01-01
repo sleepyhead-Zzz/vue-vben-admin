@@ -12,11 +12,7 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import {
-  batchRemovePlan,
-  exportPlanByExcel,
-  getPagedPlans,
-} from '#/api/asset/plan';
+import { exportPlanByExcel, getPagedPlan, removePlan } from '#/api/asset/plan';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
@@ -60,7 +56,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedPlans({
+        const { data } = await getPagedPlan({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -96,7 +92,7 @@ async function handleEdit(row: AssetAPI.AssetInspectionPlanDTO) {
 }
 
 async function handleDelete(row: AssetAPI.AssetInspectionPlanDTO) {
-  await batchRemovePlan({ planIds: [row.planId] });
+  await removePlan({ planIds: [row.planId] });
   await tableApi.query();
 }
 
@@ -108,7 +104,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemovePlan({ planIds: ids });
+      await removePlan({ planIds: ids });
       await tableApi.query();
     },
   });

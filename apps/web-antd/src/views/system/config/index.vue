@@ -10,8 +10,7 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveConfig,
-  getPagedConfigs,
+  getPagedConfig,
   refreshCache,
   removeConfig,
 } from '#/api/system/config';
@@ -52,7 +51,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedConfigs({
+        const { data } = await getPagedConfig({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -86,7 +85,7 @@ async function handleEdit(record: SystemAPI.SysConfigDTO) {
 }
 
 async function handleDelete(row: SystemAPI.SysConfigDTO) {
-  await removeConfig({ configId: row.configId });
+  await removeConfig({ configIds: row.configId });
   await tableApi.query();
 }
 
@@ -98,7 +97,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveConfig({ configIds: ids });
+      await removeConfig({ configIds: ids });
       await tableApi.query();
     },
   });

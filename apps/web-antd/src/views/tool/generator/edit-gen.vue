@@ -8,7 +8,7 @@ import { cloneDeep, safeParseNumber } from '@vben/utils';
 
 import { Card, Skeleton, TabPane, Tabs } from 'ant-design-vue';
 
-import { editSave, getInfo } from '#/api/tool/generator';
+import { editSave, getGenInfo } from '#/api/tool/generator';
 
 import { BasicSetting, GenConfig } from './edit-steps';
 
@@ -22,7 +22,7 @@ const genInfoData = ref<ToolAPI.GenTableDTO['info']>();
 provide('genInfoData', genInfoData);
 
 onMounted(async () => {
-  const { data } = await getInfo({ tableId });
+  const { data } = await getGenInfo({ tableId });
   // 需要做菜单转换 严格相等 才能选中回显
   data.info.parentMenuId = safeParseNumber(data.info.parentMenuId);
   genInfoData.value = data.info;

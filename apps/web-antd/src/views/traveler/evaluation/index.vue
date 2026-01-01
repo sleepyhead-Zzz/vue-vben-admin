@@ -11,8 +11,8 @@ import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
 import {
-  batchRemoveEvaluation,
-  getPagedEvaluations,
+  getPagedEvaluation,
+  removeEvaluation,
 } from '#/api/traveler/evaluation';
 
 import { columns, querySchema } from './data';
@@ -56,7 +56,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedEvaluations({
+        const { data } = await getPagedEvaluation({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -92,7 +92,7 @@ async function handleEdit(row: TravelerAPI.TravelerEvaluationDTO) {
 }
 
 async function handleDelete(row: TravelerAPI.TravelerEvaluationDTO) {
-  await batchRemoveEvaluation({ evaluationIds: [row.evaluationId] });
+  await removeEvaluation({ evaluationIds: [row.evaluationId] });
   await tableApi.query();
 }
 
@@ -106,7 +106,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveEvaluation({ evaluationIds: ids });
+      await removeEvaluation({ evaluationIds: ids });
       await tableApi.query();
     },
   });

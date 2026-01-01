@@ -28,7 +28,7 @@ import {
 } from '#/adapter/vxe-table';
 import { downloadFile } from '#/api/core/download';
 import { getConfigKey } from '#/api/system/config';
-import { batchRemoveFile, getPagedFiles } from '#/api/system/file';
+import { getPagedFile, removeFile } from '#/api/system/file';
 import { $t } from '#/locales';
 import { calculateFileSize } from '#/utils/file';
 import { downloadByData } from '#/utils/file/download';
@@ -82,7 +82,7 @@ const gridOptions: VxeGridProps = {
           ...formValues,
         };
         addSortParams(params, sorts);
-        const { data } = await getPagedFiles(params);
+        const { data } = await getPagedFile(params);
         return data;
       },
     },
@@ -115,7 +115,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   },
 });
 async function handleDelete(row: SystemAPI.SysFileDTO) {
-  await batchRemoveFile({ fileIds: [row.fileId ?? 0] });
+  await removeFile({ fileIds: [row.fileId ?? 0] });
   await tableApi.query();
 }
 
@@ -155,7 +155,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await batchRemoveFile({ ids });
+      await removeFile({ ids });
       await tableApi.query();
     },
   });
