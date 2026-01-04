@@ -67,7 +67,7 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
             <Space wrap>
               <Image
                 v-for="file in detail.files"
-                :key="file.fileId"
+                :key="file.ossId"
                 :width="100"
                 :src="file.url"
                 :alt="file.fileName"

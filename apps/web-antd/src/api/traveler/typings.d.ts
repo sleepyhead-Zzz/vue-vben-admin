@@ -197,10 +197,10 @@ declare namespace TravelerAPI {
     data?: Record<string, any>;
   };
 
-  type SysFileUploadDTO = {
+  type SysOssUploadDTO = {
     url?: string;
     fileName?: string;
-    fileId?: number;
+    ossId?: number;
   };
 
   type TravelerBookDTO = {
@@ -257,7 +257,7 @@ declare namespace TravelerAPI {
     serviceAttitude?: number;
     professionalism?: number;
     evaluationContent?: string;
-    files?: SysFileUploadDTO[];
+    files?: SysOssUploadDTO[];
   };
 
   type UpdateBookCommand = {

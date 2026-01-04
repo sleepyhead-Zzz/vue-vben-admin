@@ -38,7 +38,7 @@ const gridOptions: VxeGridProps = {
     ajax: {
       query: async (_, formValues = {}) => {
         // 默认只加载根节点
-        const resp = await listLocation({
+        const resp = await getLocationList({
           ...formValues,
           parentLocationId: '0',
         });

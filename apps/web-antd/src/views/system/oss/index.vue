@@ -94,7 +94,7 @@ const gridOptions: VxeGridProps = {
     height: 65,
   },
   rowConfig: {
-    keyField: 'fileId',
+    keyField: 'ossId',
   },
   sortConfig: {
     // 远程排序
@@ -114,19 +114,19 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
     sortChange: () => tableApi.query(),
   },
 });
-async function handleDelete(row: SystemAPI.SysFileDTO) {
-  await removeFile({ fileIds: [row.fileId ?? 0] });
+async function handleDelete(row: SystemAPI.SysOssDTO) {
+  await removeFile({ fileIds: [row.ossId ?? 0] });
   await tableApi.query();
 }
 
-async function handleDownload(row: SystemAPI.SysFileDTO) {
+async function handleDownload(row: SystemAPI.SysOssDTO) {
   const downloadSize = ref($t('pages.common.downloadLoading'));
   const hideLoading = message.loading({
     content: () => downloadSize.value,
     duration: 0,
   });
   try {
-    const { data } = await downloadFile({ fileId: row.fileId }, (e) => {
+    const { data } = await downloadFile({ ossId: row.ossId }, (e) => {
       const percent = Math.floor((e.loaded / e.total!) * 100);
       const current = calculateFileSize(e.loaded);
       const total = calculateFileSize(e.total!);
@@ -149,7 +149,7 @@ function handleToSettings() {
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row) => row.fileId);
+  const ids = rows.map((row) => row.ossId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

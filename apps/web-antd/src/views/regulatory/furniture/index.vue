@@ -16,13 +16,13 @@ import {
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { dropdownlistLocation } from '#/api/asset/location';
+import { optionLocationSelect } from '#/api/asset/location';
 import {
   batchRemoveFurniture,
   exportFurnitureByExcel,
   getPagedFurnitures,
 } from '#/api/regulatory/furniture';
-import { dropdownDeptList } from '#/api/system/dept';
+import { optionDeptList } from '#/api/system/dept';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
@@ -93,7 +93,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
  */
 async function setupDeptSelect() {
   // updateSchema
-  const deptTree = await dropdownDeptList({
+  const deptTree = await optionDeptList({
     query: {
       orderColumn: undefined,
       orderDirection: undefined,
@@ -139,7 +139,7 @@ async function setupDeptSelect() {
  */
 async function setupLocationSelect() {
   // updateSchema
-  const locationTree = await dropdownlistLocation({
+  const locationTree = await optionLocationSelect({
     query: {},
   });
   // 选中后显示在输入框的值 即父节点 / 子节点

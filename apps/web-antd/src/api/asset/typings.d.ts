@@ -688,6 +688,9 @@ declare namespace AssetAPI {
   };
 
   type getPagedDeviceParams = {
+    deviceName?: string;
+    deviceCode?: string;
+    status?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */

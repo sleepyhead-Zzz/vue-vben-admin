@@ -11,7 +11,7 @@ import { Select, Spin } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import { addOffice, editOffice, getOfficeInfo } from '#/api/regulatory/office';
-import { dropdownDeptList } from '#/api/system/dept';
+import { optionDeptList } from '#/api/system/dept';
 import { getPagedUser } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -124,7 +124,7 @@ async function handleClosed() {
  */
 async function setupDeptSelect() {
   // updateSchema
-  const deptTree = await dropdownDeptList({
+  const deptTree = await optionDeptList({
     query: {
       orderColumn: undefined,
       orderDirection: undefined,

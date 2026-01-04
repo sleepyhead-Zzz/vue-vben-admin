@@ -24,7 +24,7 @@ import { $t } from '@vben/locales';
 import { message, Modal } from 'ant-design-vue';
 import { isFunction, isString } from 'lodash-es';
 
-import { listFileInfoByIds } from '#/api/system/file';
+import { listOssInfoByIds } from '#/api/system/oss';
 
 /**
  * 图片预览hook
@@ -134,7 +134,7 @@ export function useUpload(
       return cb.response.originalName;
     }
     // 上传接口
-    return cb.response.fileName;
+    return cb.response.originalName;
   }
 
   /**
@@ -188,13 +188,13 @@ export function useUpload(
         }
         // 获取返回结果 为customRequest的reslove参数
         // 只有success才会走到这里
-        const { fileId, url } = currentFile.response.data as UploadResult;
+        const { ossId, url } = currentFile.response.data as UploadResult;
         currentFile.url = url;
-        currentFile.uid = fileId;
+        currentFile.uid = ossId;
 
         const cb = {
           type: 'upload',
-          response: currentFile.response as UploadResult,
+          response: currentFile.response.data as UploadResult,
         } as const;
 
         currentFile.fileName = transformFilename(cb);
@@ -204,14 +204,14 @@ export function useUpload(
         isUpload = true;
         // ossID添加 单个文件会被当做string
         if (props.maxCount === 1) {
-          bindValue.value = fileId;
+          bindValue.value = ossId;
         } else {
           // 给默认值
           if (!Array.isArray(bindValue.value)) {
             bindValue.value = [];
           }
           // 直接使用.value无法触发useForm的更新(原生是正常的) 需要修改地址
-          bindValue.value = [...bindValue.value, fileId];
+          bindValue.value = [...bindValue.value, ossId];
         }
         break;
       }
@@ -331,12 +331,12 @@ export function useUpload(
         return;
       }
 
-      const resp = await listFileInfoByIds({ ossIds: value });
-      function transformFile(info: SystemAPI.SysFileDTO) {
+      const { data } = await listOssInfoByIds({ ossIds: value });
+      function transformFile(info: SystemAPI.SysOssDTO) {
         const cb = { type: 'info', response: info } as const;
 
         const fileitem: UploadFile = {
-          uid: info.fileId,
+          uid: info.ossId,
           name: transformFilename(cb),
           fileName: transformFilename(cb),
           url: info.url,
@@ -345,17 +345,17 @@ export function useUpload(
         };
         return fileitem;
       }
-      const transformOptions = resp.map((item) => transformFile(item));
+      const transformOptions = data.map((item) => transformFile(item));
       innerFileList.value = transformOptions;
       // 单文件 丢弃策略
-      if (props.maxCount === 1 && resp.length === 0 && !props.keepMissingId) {
+      if (props.maxCount === 1 && data.length === 0 && !props.keepMissingId) {
         bindValue.value = '';
         return;
       }
       // 多文件
       // 单文件查到了也会走这里的逻辑 filter会报错 需要maxCount判断处理
       if (
-        resp.length !== value.length &&
+        data.length !== value.length &&
         !props.keepMissingId &&
         props.maxCount !== 1
       ) {
@@ -364,7 +364,7 @@ export function useUpload(
           bindValue.value = [];
         }
         bindValue.value = bindValue.value.filter((ossId) =>
-          resp.map((res) => res.ossId).includes(ossId),
+          data.map((res) => res.ossId).includes(ossId),
         );
       }
     },

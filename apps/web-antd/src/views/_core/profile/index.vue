@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { useUserStore } from '@vben/stores';
 
-import { userProfile } from '#/api/system/profile';
+import { getUserProfile } from '#/api/system/profile';
 import { useAuthStore } from '#/store';
 
 import { emitter } from './mitt';
@@ -13,7 +13,7 @@ import SettingPanel from './setting-panel.vue';
 
 const profile = ref<SystemAPI.UserProfileDTO>();
 async function loadProfile() {
-  const resp = await userProfile();
+  const resp = await getUserProfile();
   profile.value = resp.data;
 }
 

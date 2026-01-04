@@ -10,13 +10,13 @@ import { addFullName, cloneDeep, getPopupContainer } from '@vben/utils';
 import { Select, Spin } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
-import { dropdownlistLocation } from '#/api/asset/location';
+import { optionLocationSelect } from '#/api/asset/location';
 import {
   addFurniture,
   editFurniture,
   getFurnitureInfo,
 } from '#/api/regulatory/furniture';
-import { dropdownDeptList } from '#/api/system/dept';
+import { optionDeptList } from '#/api/system/dept';
 import { getPagedUser } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
@@ -132,7 +132,7 @@ async function handleClosed() {
  */
 async function setupDeptSelect() {
   // updateSchema
-  const deptTree = await dropdownDeptList({
+  const deptTree = await optionDeptList({
     query: {
       orderColumn: undefined,
       orderDirection: undefined,
@@ -178,7 +178,7 @@ async function setupDeptSelect() {
  */
 async function setupLocationSelect() {
   // updateSchema
-  const locationTree = await dropdownlistLocation({
+  const locationTree = await optionLocationSelect({
     query: {},
   });
   // 选中后显示在输入框的值 即父节点 / 子节点

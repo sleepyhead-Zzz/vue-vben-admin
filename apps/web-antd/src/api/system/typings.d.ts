@@ -216,7 +216,7 @@ declare namespace SystemAPI {
   };
 
   type downloadParams = {
-    fileId: number;
+    ossId: number;
   };
 
   type editClientParams = {
@@ -452,21 +452,6 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
-  type getPagedFileParams = {
-    pageNum?: number;
-    pageSize?: number;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
   type getPagedNoticeParams = {
     pageNum?: number;
     pageSize?: number;
@@ -497,6 +482,21 @@ declare namespace SystemAPI {
     endTime?: Date;
   };
 
+  type getPagedOssParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getPostInfoParams = {
     postId: number;
   };
@@ -513,7 +513,7 @@ declare namespace SystemAPI {
     userId: number;
   };
 
-  type listFileInfoByIdsParams = {
+  type listOssInfoByIdsParams = {
     ossIds: number[];
   };
 
@@ -604,13 +604,6 @@ declare namespace SystemAPI {
     rows?: SysDictTypeDTO[];
   };
 
-  type PageDTOSysFileDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: SysFileDTO[];
-  };
-
   type PageDTOSysNoticeDTO = {
     /** 总记录数 */
     total?: number;
@@ -623,6 +616,13 @@ declare namespace SystemAPI {
     total?: number;
     /** 列表数据 */
     rows?: SysOssConfigDTO[];
+  };
+
+  type PageDTOSysOssDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysOssDTO[];
   };
 
   type PageDTOSysPostDTO = {
@@ -682,10 +682,6 @@ declare namespace SystemAPI {
     dictTypeIds: number[];
   };
 
-  type removeFileParams = {
-    fileIds: number[];
-  };
-
   type removeMenuParams = {
     menuId: number;
   };
@@ -704,6 +700,10 @@ declare namespace SystemAPI {
 
   type removeOssConfigParams = {
     ossConfigIds: number[];
+  };
+
+  type removeOssParams = {
+    ossIds: number[];
   };
 
   type removePostParams = {
@@ -775,12 +775,6 @@ declare namespace SystemAPI {
     data?: SysDictTypeVO[];
   };
 
-  type ResponseDTOListSysFileDTO = {
-    code?: number;
-    message?: string;
-    data?: SysFileDTO[];
-  };
-
   type ResponseDTOListSysMenuDTO = {
     code?: number;
     message?: string;
@@ -791,6 +785,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysNoticeDTO[];
+  };
+
+  type ResponseDTOListSysOssPreviewDTO = {
+    code?: number;
+    message?: string;
+    data?: SysOssPreviewDTO[];
   };
 
   type ResponseDTOListSysPostDTO = {
@@ -847,12 +847,6 @@ declare namespace SystemAPI {
     data?: PageDTOSysDictTypeDTO;
   };
 
-  type ResponseDTOPageDTOSysFileDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOSysFileDTO;
-  };
-
   type ResponseDTOPageDTOSysNoticeDTO = {
     code?: number;
     message?: string;
@@ -863,6 +857,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: PageDTOSysOssConfigDTO;
+  };
+
+  type ResponseDTOPageDTOSysOssDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOSysOssDTO;
   };
 
   type ResponseDTOPageDTOSysPostDTO = {
@@ -919,18 +919,6 @@ declare namespace SystemAPI {
     data?: SysDictTypeDTO;
   };
 
-  type ResponseDTOSysFileDTO = {
-    code?: number;
-    message?: string;
-    data?: SysFileDTO;
-  };
-
-  type ResponseDTOSysFileUploadDTO = {
-    code?: number;
-    message?: string;
-    data?: SysFileUploadDTO;
-  };
-
   type ResponseDTOSysMenuDTO = {
     code?: number;
     message?: string;
@@ -947,6 +935,18 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysOssConfigDTO;
+  };
+
+  type ResponseDTOSysOssDTO = {
+    code?: number;
+    message?: string;
+    data?: SysOssDTO;
+  };
+
+  type ResponseDTOSysOssUploadDTO = {
+    code?: number;
+    message?: string;
+    data?: SysOssUploadDTO;
   };
 
   type ResponseDTOSysPostDTO = {
@@ -1241,32 +1241,6 @@ declare namespace SystemAPI {
     remark?: string;
   };
 
-  type SysFileDTO = {
-    fileId?: number;
-    /** 文件名 */
-    fileName?: string;
-    /** 原始名 */
-    originalName?: string;
-    /** 文件大小（单位：字节） */
-    fileSize?: number;
-    /** 文件类型（如 image/jpeg、application/pdf） */
-    fileType?: string;
-    /** 文件扩展名（如 jpg、pdf） */
-    fileExtension?: string;
-    /** URL */
-    url?: string;
-    status?: string;
-    service?: string;
-    creatorId?: number;
-    createTime?: string;
-  };
-
-  type SysFileUploadDTO = {
-    url?: string;
-    fileName?: string;
-    fileId?: number;
-  };
-
   type SysMenuDTO = {
     menuId?: number;
     menuName?: string;
@@ -1347,6 +1321,40 @@ declare namespace SystemAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+  };
+
+  type SysOssDTO = {
+    ossId?: number;
+    /** 文件名 */
+    fileName?: string;
+    /** 原始名 */
+    originalName?: string;
+    /** 文件大小（单位：字节） */
+    fileSize?: number;
+    /** 文件类型（如 image/jpeg、application/pdf） */
+    fileType?: string;
+    /** 文件扩展名（如 jpg、pdf） */
+    fileExtension?: string;
+    /** URL */
+    url?: string;
+    status?: string;
+    service?: string;
+    creatorId?: number;
+    createTime?: string;
+  };
+
+  type SysOssPreviewDTO = {
+    ossId?: number;
+    /** 原始名 */
+    originalName?: string;
+    /** URL */
+    url?: string;
+  };
+
+  type SysOssUploadDTO = {
+    url?: string;
+    fileName?: string;
+    ossId?: number;
   };
 
   type SysPostDTO = {
@@ -1701,7 +1709,7 @@ declare namespace SystemAPI {
 
   type uploadParams = {
     originalName?: string;
-    fileType?: string;
+    ossType?: string;
   };
 
   type UserDetailDTO = {
