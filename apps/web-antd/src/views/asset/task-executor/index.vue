@@ -2,6 +2,8 @@
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { DictEnum } from '@vben/constants';
+
 import {
   Button as AButton,
   DatePicker as ADatePicker,
@@ -12,12 +14,15 @@ import {
   FormItem as AFormItem,
   Input as AInput,
   Select as ASelect,
+  Spin,
 } from 'ant-design-vue';
 import dayjs from 'dayjs';
 
 import { getDeviceInfo, getInspectionItemByDeviceId } from '#/api/asset/device';
 import { addInspection } from '#/api/asset/inspection';
 import { getTaskInfo } from '#/api/asset/task';
+import { ImageUpload } from '#/components/upload';
+import { getDictOptions } from '#/utils/dict';
 
 // ---------------------------------------------------------------------
 // Route parameters
@@ -40,7 +45,16 @@ const inspectionForm = reactive<AssetAPI.UpdateAssetInspectionCommand>({
   endDate: '',
   description: '',
   results: [],
+  ossIds: [],
 });
+
+const inspectionStatusOptions = getDictOptions(
+  DictEnum.ASSET_INSPECTION_STATUS,
+);
+
+const inspectionItemStatusOptions = getDictOptions(
+  DictEnum.ASSET_INSPECTION_ITEM_STATUS,
+);
 
 onMounted(async () => {
   await loadTaskInfo(taskId);
@@ -83,7 +97,7 @@ async function loadInspectionItem(deviceId: string) {
       resultId: undefined,
       inspectionId: inspectionForm.inspectionId, // 可以先填，后端以实际值为准
       projectId: project.projectId!,
-      status: 3,
+      status: '3',
       value: '',
     }));
   } catch (error) {
@@ -139,10 +153,13 @@ const onFinish = async () => {
             v-model:value="inspectionForm.status"
             placeholder="请选择状态"
           >
-            <ASelect.Option :value="1">进行中</ASelect.Option>
-            <ASelect.Option :value="2">完成</ASelect.Option>
-            <ASelect.Option :value="3">异常</ASelect.Option>
-            <ASelect.Option :value="4">中断</ASelect.Option>
+            <ASelect.Option
+              v-for="item in inspectionStatusOptions"
+              :key="item.dictValue"
+              :value="item.dictValue"
+            >
+              {{ item.dictLabel }}
+            </ASelect.Option>
           </ASelect>
         </AFormItem>
 
@@ -194,22 +211,32 @@ const onFinish = async () => {
             />
 
             <ASelect
-              class="w-full md:w-40"
+              class="w-full md:w-28"
               v-model:value="inspectionForm.results[index].status"
             >
-              <ASelect.Option :value="1">正常</ASelect.Option>
-              <ASelect.Option :value="2">异常</ASelect.Option>
-              <ASelect.Option :value="3">未检查</ASelect.Option>
+              <ASelect.Option
+                v-for="item2 in inspectionItemStatusOptions"
+                :key="item2.dictValue"
+                :value="item2.dictValue"
+              >
+                {{ item2.dictLabel }}
+              </ASelect.Option>
             </ASelect>
 
-            <span class="text-xs text-gray-500">
+            <span class="whitespace-nowrap text-xs text-gray-500">
               范围：{{ item.minValue ?? '-' }} ~ {{ item.maxValue ?? '-' }}
+              <template v-if="item.unit">
+                {{ item.unit }}
+              </template>
             </span>
           </div>
         </AFormItem>
+        <AFormItem label="巡检图片" name="ossIds">
+          <ImageUpload v-model:value="inspectionForm.ossIds" :max-count="5" />
+        </AFormItem>
       </div>
 
-      <div v-else class="mt-4 text-gray-500">正在加载巡检项…</div>
+      <div v-else class="mt-4 text-gray-500"><Spin /></div>
 
       <!-- 提交按钮 -->
       <AFormItem class="mt-6">

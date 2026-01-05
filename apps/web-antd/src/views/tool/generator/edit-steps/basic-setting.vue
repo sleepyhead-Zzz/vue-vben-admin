@@ -11,7 +11,7 @@ import { addFullName, listToTree } from '@vben/utils';
 
 import { Col, Row } from 'ant-design-vue';
 
-import { listMenu } from '#/api/system/menu';
+import { optionMenuSelect } from '#/api/system/menu';
 
 import { formSchema } from './basic';
 
@@ -67,7 +67,7 @@ async function initTreeSelect(columns: Column[]) {
  * 加载菜单选择
  */
 async function initMenuSelect() {
-  const { data } = await listMenu({});
+  const { data } = await optionMenuSelect({});
   // support i18n
   data.forEach((item) => {
     item.menuName = $t(item.menuName);
