@@ -74,6 +74,7 @@ declare namespace MonitorAPI {
 
   type OnlineUserDTO = {
     tokenId?: string;
+    deviceType?: string;
     deptName?: string;
     userName?: string;
     ipAddress?: string;

@@ -200,6 +200,7 @@ declare namespace TravelerAPI {
   type SysOssUploadDTO = {
     url?: string;
     fileName?: string;
+    originalName?: string;
     ossId?: number;
   };
 

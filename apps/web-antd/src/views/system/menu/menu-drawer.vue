@@ -106,31 +106,29 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
   onClosed: handleClosed,
   onConfirm: handleConfirm,
   async onOpenChange(isOpen) {
-    if (!isOpen) {
-      return null;
-    }
+    if (!isOpen) return;
+
     drawerApi.drawerLoading(true);
     loading.value = true;
 
     const { id, update } = drawerApi.getData() as ModalProps;
     isUpdate.value = update;
 
-    if (!id) {
-      await setupMenuSelect();
-      return;
+    const tasks: Promise<unknown>[] = [setupMenuSelect()];
+
+    if (id && update) {
+      await formApi.setFieldValue('parentId', id);
+
+      tasks.push(
+        getMenuInfo({ menuId: id }).then((res) => {
+          const record = res.data;
+          if (record) {
+            return formApi.setValues(record);
+          }
+        }),
+      );
     }
-
-    await formApi.setFieldValue('parentId', id);
-
-    const [record] = await Promise.all([
-      update && getMenuInfo({ menuId: id }).then((res) => res.data),
-      setupMenuSelect(),
-    ]);
-
-    if (record) {
-      await formApi.setValues(record);
-    }
-
+    await Promise.all(tasks);
     await markInitialized();
 
     drawerApi.drawerLoading(false);

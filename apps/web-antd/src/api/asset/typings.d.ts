@@ -87,7 +87,7 @@ declare namespace AssetAPI {
   type AddAssetInspectionResultCommand = {
     inspectionId?: number;
     projectId?: number;
-    status?: number;
+    status?: string;
     value?: string;
   };
 
@@ -97,7 +97,7 @@ declare namespace AssetAPI {
     /** 任务名称 */
     taskName?: string;
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
-    status?: number;
+    status?: string;
     /** 巡检设备ID */
     deviceId?: number;
     /** 巡检地点ID */
@@ -132,6 +132,35 @@ declare namespace AssetAPI {
     manufacturerPeople?: string;
     /** 联系方式 */
     manufacturerContact?: string;
+  };
+
+  type AddAssetRepairCommand = {
+    /** 设备ID */
+    deviceId?: number;
+    /** 故障类型（1=硬件 2=软件 3=网络 4=其他） */
+    faultType?: string;
+    /** 故障描述 */
+    faultDescription?: string;
+    /** 紧急程度（1=紧急 2=一般 3=低） */
+    repairLevel?: string;
+    /** 状态（1=待受理 2=已受理 3=维修中 4=已完成 5=已关闭） */
+    repairStatus?: string;
+    /** 报修人ID */
+    reporterId?: number;
+    /** 受理/维修人ID */
+    handlerId?: number;
+    /** 维修结果说明 */
+    repairResult?: string;
+    /** 是否修复（0=否 1=是） */
+    isFixed?: string;
+    /** 报修时间 */
+    reportTime?: string;
+    /** 受理时间 */
+    acceptTime?: string;
+    /** 完成时间 */
+    finishTime?: string;
+    /** 关闭时间 */
+    closeTime?: string;
   };
 
   type AddAssetSpecificationCommand = {
@@ -376,7 +405,7 @@ declare namespace AssetAPI {
     /** 任务名称 */
     taskName?: string;
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
-    status?: number;
+    status?: string;
     /** 巡检设备ID */
     deviceId?: number;
     /** 巡检地点ID */
@@ -493,6 +522,45 @@ declare namespace AssetAPI {
     manufacturerContact?: string;
   };
 
+  type AssetRepairDTO = {
+    /** 报修单ID */
+    repairId?: number;
+    /** 设备ID */
+    deviceId?: number;
+    /** 故障类型 */
+    faultType?: string;
+    /** 故障描述 */
+    faultDescription?: string;
+    /** 紧急程度 */
+    repairLevel?: string;
+    /** 状态 */
+    repairStatus?: string;
+    /** 报修人ID */
+    reporterId?: number;
+    /** 受理/维修人ID */
+    handlerId?: number;
+    /** 维修结果说明 */
+    repairResult?: string;
+    /** 是否修复 */
+    isFixed?: string;
+    /** 报修时间 */
+    reportTime?: string;
+    /** 受理时间 */
+    acceptTime?: string;
+    /** 完成时间 */
+    finishTime?: string;
+    /** 关闭时间 */
+    closeTime?: string;
+  };
+
+  type AssetRepairQuery = {
+    orderColumn?: string;
+    orderDirection?: string;
+    timeRangeColumn?: string;
+    beginTime?: string;
+    endTime?: string;
+  };
+
   type AssetSpecificationDTO = {
     /** 规格型号ID */
     specificationId?: number;
@@ -568,6 +636,10 @@ declare namespace AssetAPI {
     projectId: number;
   };
 
+  type editRepairParams = {
+    repairId: number;
+  };
+
   type editSpecificationParams = {
     specificationId: number;
   };
@@ -602,6 +674,10 @@ declare namespace AssetAPI {
 
   type exportProjectByExcelParams = {
     query: AssetInspectionProjectQuery;
+  };
+
+  type exportRepairByExcelParams = {
+    query: AssetRepairQuery;
   };
 
   type exportSpecificationByExcelParams = {
@@ -766,6 +842,21 @@ declare namespace AssetAPI {
     endTime?: Date;
   };
 
+  type getPagedRepairParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
   type getPagedSpecificationParams = {
     pageNum?: number;
     pageSize?: number;
@@ -804,6 +895,24 @@ declare namespace AssetAPI {
   type getProjectInfoParams = {
     /** 记录ID */
     projectId: number;
+  };
+
+  type getRepairInfoParams = {
+    /** 记录ID */
+    repairId: number;
+  };
+
+  type getRepairListParams = {
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type getSpecificationInfoParams = {
@@ -879,6 +988,13 @@ declare namespace AssetAPI {
     rows?: AssetManufacturerDTO[];
   };
 
+  type PageDTOAssetRepairDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: AssetRepairDTO[];
+  };
+
   type PageDTOAssetSpecificationDTO = {
     /** 总记录数 */
     total?: number;
@@ -940,6 +1056,14 @@ declare namespace AssetAPI {
 
   type removeProjectParams = {
     projectIds: number[];
+  };
+
+  type removeRepairByIdParams = {
+    repairId: number;
+  };
+
+  type removeRepairParams = {
+    repairIds: number[];
   };
 
   type removeSpecificationByIdParams = {
@@ -1004,6 +1128,12 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetManufacturerDTO;
+  };
+
+  type ResponseDTOAssetRepairDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetRepairDTO;
   };
 
   type ResponseDTOAssetSpecificationDTO = {
@@ -1078,6 +1208,12 @@ declare namespace AssetAPI {
     data?: AssetManufacturerVO[];
   };
 
+  type ResponseDTOListAssetRepairDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetRepairDTO[];
+  };
+
   type ResponseDTOListAssetSpecificationDTO = {
     code?: number;
     message?: string;
@@ -1136,6 +1272,12 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: PageDTOAssetManufacturerDTO;
+  };
+
+  type ResponseDTOPageDTOAssetRepairDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOAssetRepairDTO;
   };
 
   type ResponseDTOPageDTOAssetSpecificationDTO = {
@@ -1289,7 +1431,7 @@ declare namespace AssetAPI {
     /** 任务名称 */
     taskName?: string;
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
-    status?: number;
+    status?: string;
     /** 巡检设备ID */
     deviceId?: number;
     /** 巡检地点ID */
@@ -1327,6 +1469,36 @@ declare namespace AssetAPI {
     /** 联系方式 */
     manufacturerContact?: string;
     manufacturerId?: number;
+  };
+
+  type UpdateAssetRepairCommand = {
+    /** 设备ID */
+    deviceId?: number;
+    /** 故障类型（1=硬件 2=软件 3=网络 4=其他） */
+    faultType?: string;
+    /** 故障描述 */
+    faultDescription?: string;
+    /** 紧急程度（1=紧急 2=一般 3=低） */
+    repairLevel?: string;
+    /** 状态（1=待受理 2=已受理 3=维修中 4=已完成 5=已关闭） */
+    repairStatus?: string;
+    /** 报修人ID */
+    reporterId?: number;
+    /** 受理/维修人ID */
+    handlerId?: number;
+    /** 维修结果说明 */
+    repairResult?: string;
+    /** 是否修复（0=否 1=是） */
+    isFixed?: string;
+    /** 报修时间 */
+    reportTime?: string;
+    /** 受理时间 */
+    acceptTime?: string;
+    /** 完成时间 */
+    finishTime?: string;
+    /** 关闭时间 */
+    closeTime?: string;
+    repairId?: number;
   };
 
   type UpdateAssetSpecificationCommand = {

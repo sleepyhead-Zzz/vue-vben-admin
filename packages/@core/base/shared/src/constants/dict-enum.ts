@@ -15,12 +15,16 @@ export const DictEnum = {
   WF_BUSINESS_STATUS: 'wf_business_status', // 业务状态
   WF_FORM_TYPE: 'wf_form_type', // 表单类型
   WF_TASK_STATUS: 'wf_task_status', // 任务状态,
+
   ASSET_LOCATION_TYPE: 'asset_location_type', // 设备所在位置类型
   ASSET_DEVICE_STATUS: 'asset_device_status', // 设备状态
   ASSET_INSPECTION_PLAN_STATUS: 'asset_inspection_plan_status', // 巡检计划状态
   ASSET_INSPECTION_TASK_STATUS: 'asset_inspection_task_status', // 巡检任务状态
   ASSET_INSPECTION_STATUS: 'asset_inspection_status', // 巡检状态
   ASSET_INSPECTION_ITEM_STATUS: 'asset_inspection_item_status', // 巡检项目状态
+  ASSET_REPAIR_STATUS: 'asset_repair_status', // 维修状态
+  ASSET_REPAIR_LEVEL: 'asset_repair_level', // 维修紧急程度
+
   RegulatoryCardAssetStatus: 'regulatory_card_asset_status', // 信息卡资产状态
   RegulatoryCardAccountStatus: 'regulatory_card_account_status', // 信息卡财务入账状态
   RegulatoryCardBusinessStatus: 'regulatory_card_business_status', // 信息卡业务状态
