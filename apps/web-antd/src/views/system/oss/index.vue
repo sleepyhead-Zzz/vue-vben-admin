@@ -28,7 +28,7 @@ import {
 } from '#/adapter/vxe-table';
 import { downloadFile } from '#/api/core/download';
 import { getConfigKey } from '#/api/system/config';
-import { getPagedFile, removeFile } from '#/api/system/file';
+import { getPagedOss, removeOss } from '#/api/system/oss';
 import { $t } from '#/locales';
 import { calculateFileSize } from '#/utils/file';
 import { downloadByData } from '#/utils/file/download';
@@ -82,7 +82,7 @@ const gridOptions: VxeGridProps = {
           ...formValues,
         };
         addSortParams(params, sorts);
-        const { data } = await getPagedFile(params);
+        const { data } = await getPagedOss(params);
         return data;
       },
     },
@@ -115,7 +115,7 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
   },
 });
 async function handleDelete(row: SystemAPI.SysOssDTO) {
-  await removeFile({ fileIds: [row.ossId ?? 0] });
+  await removeOss({ ossIds: [row.ossId ?? 0] });
   await tableApi.query();
 }
 
