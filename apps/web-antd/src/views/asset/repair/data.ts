@@ -8,7 +8,9 @@ import { getDictOptions } from '#/utils/dict';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_REPAIR_FAULT_TYPE),
+    },
     fieldName: 'faultType',
     label: '故障类型',
   },
@@ -106,13 +108,21 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '设备ID',
     fieldName: 'deviceId',
     component: 'Input',
-    rules: 'required',
+    disabled: true,
+  },
+  {
+    label: '设备名称',
+    fieldName: 'deviceName',
+    component: 'Input',
+    disabled: true,
   },
   {
     label: '故障类型',
     fieldName: 'faultType',
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_REPAIR_FAULT_TYPE),
+    },
   },
   {
     label: '故障描述',
@@ -140,12 +150,25 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '报修人ID',
     fieldName: 'reporterId',
     component: 'Input',
-    rules: 'required',
+    disabled: true,
+  },
+  {
+    label: '报修人名称',
+    fieldName: 'reporterName',
+    component: 'Input',
+    disabled: true,
   },
   {
     label: '受理/维修人ID',
     fieldName: 'handlerId',
     component: 'Input',
+    disabled: true,
+  },
+  {
+    label: '受理/维修人名称',
+    fieldName: 'handlerName',
+    component: 'Input',
+    disabled: true,
   },
   {
     label: '维修结果说明',
@@ -197,5 +220,61 @@ export const modalSchema: FormSchemaGetter = () => [
       format: 'YYYY-MM-DD HH:mm:ss',
       valueFormat: 'YYYY-MM-DD HH:mm:ss',
     },
+  },
+];
+
+export const pageSchema: FormSchemaGetter = () => [
+  {
+    label: '报修单ID',
+    fieldName: 'repairId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '设备ID',
+    fieldName: 'deviceId',
+    component: 'Input',
+    disabled: true,
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '设备编码',
+    fieldName: 'deviceCode',
+    component: 'Input',
+    disabled: true,
+  },
+  {
+    label: '设备名称',
+    fieldName: 'deviceName',
+    component: 'Input',
+    disabled: true,
+  },
+  {
+    label: '故障类型',
+    fieldName: 'faultType',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_REPAIR_FAULT_TYPE),
+    },
+  },
+  {
+    label: '故障描述',
+    fieldName: 'faultDescription',
+    component: 'Textarea',
+    rules: 'required',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_REPAIR_LEVEL),
+    },
+    fieldName: 'repairLevel',
+    label: '紧急程度',
   },
 ];

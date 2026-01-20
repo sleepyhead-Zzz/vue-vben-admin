@@ -127,8 +127,7 @@ function handleAdd() {
 }
 
 function handleSubAdd(row: SystemAPI.SysMenuDTO) {
-  const { menuId } = row;
-  drawerApi.setData({ id: menuId, update: false });
+  drawerApi.setData({ id: row.menuId, update: false });
   drawerApi.open();
 }
 

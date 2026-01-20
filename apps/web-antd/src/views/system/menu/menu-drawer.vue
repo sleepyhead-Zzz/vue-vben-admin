@@ -116,17 +116,18 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
 
     const tasks: Promise<unknown>[] = [setupMenuSelect()];
 
-    if (id && update) {
+    if (id) {
       await formApi.setFieldValue('parentId', id);
-
-      tasks.push(
-        getMenuInfo({ menuId: id }).then((res) => {
-          const record = res.data;
-          if (record) {
-            return formApi.setValues(record);
-          }
-        }),
-      );
+      if (update) {
+        tasks.push(
+          getMenuInfo({ menuId: id }).then((res) => {
+            const record = res.data;
+            if (record) {
+              return formApi.setValues(record);
+            }
+          }),
+        );
+      }
     }
     await Promise.all(tasks);
     await markInitialized();

@@ -54,10 +54,20 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '指派给的部门ID',
     field: 'assignDeptId',
+    visible: false,
+  },
+  {
+    title: '指派给的部门名称',
+    field: 'assignDeptName',
   },
   {
     title: '指派给的负责人ID',
     field: 'assignUserId',
+    visible: false,
+  },
+  {
+    title: '指派给的负责人名称',
+    field: 'assignUserName',
   },
   {
     title: '任务截止时间',
