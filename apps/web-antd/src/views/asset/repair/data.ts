@@ -4,6 +4,7 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { DictEnum } from '@vben/constants';
 
 import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -14,12 +15,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'faultType',
     label: '故障类型',
   },
-  {
-    component: 'Input',
-    fieldName: 'repairLevel',
-    label: '紧急程度',
-  },
-
   {
     component: 'Select',
     componentProps: {
@@ -37,9 +32,12 @@ export const querySchema: FormSchemaGetter = () => [
     label: '状态',
   },
   {
-    component: 'Input',
+    component: 'Select',
     fieldName: 'isFixed',
     label: '是否修复',
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_FIXED_STATUS),
+    },
   },
 ];
 
@@ -53,21 +51,45 @@ export const columns: VxeGridProps['columns'] = [
     visible: false,
   },
   {
+    title: '设备名称',
+    field: 'deviceName',
+  },
+  {
     title: '故障类型',
     field: 'faultType',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.faultType, DictEnum.ASSET_REPAIR_FAULT_TYPE);
+      },
+    },
   },
   {
     title: '紧急程度',
     field: 'repairLevel',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.repairLevel, DictEnum.ASSET_REPAIR_LEVEL);
+      },
+    },
   },
   {
     title: '状态',
     field: 'repairStatus',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.repairStatus, DictEnum.ASSET_REPAIR_STATUS);
+      },
+    },
   },
 
   {
     title: '是否修复',
     field: 'isFixed',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.isFixed, DictEnum.ASSET_FIXED_STATUS);
+      },
+    },
   },
   {
     title: '报修时间',
@@ -178,7 +200,10 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '是否修复',
     fieldName: 'isFixed',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_FIXED_STATUS),
+    },
   },
   {
     label: '报修时间',
