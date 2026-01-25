@@ -2,12 +2,12 @@
 /* eslint-disable */
 import request from '#/api/request';
 
-/** 新增通知公告表 POST /notice */
+/** 新增通知公告表 POST /notice/admin */
 export async function addNotice(
   body: SystemAPI.AddNoticeCommand,
   options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/notice', {
+  return request<SystemAPI.ResponseDTOVoid>('/notice/admin', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,21 +17,24 @@ export async function addNotice(
   });
 }
 
-/** 获取通知公告表详情 GET /notice/${param0} */
+/** 获取通知公告表详情 GET /notice/admin/${param0} */
 export async function getNoticeInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getNoticeInfoParams,
   options?: { [key: string]: any },
 ) {
   const { noticeId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOSysNoticeDTO>(`/notice/${param0}`, {
-    method: 'GET',
-    params: { ...queryParams },
-    ...(options || {}),
-  });
+  return request<SystemAPI.ResponseDTOSysNoticeAdminDetailDTO>(
+    `/notice/admin/${param0}`,
+    {
+      method: 'GET',
+      params: { ...queryParams },
+      ...(options || {}),
+    },
+  );
 }
 
-/** 修改通知公告表 PUT /notice/${param0} */
+/** 修改通知公告表 PUT /notice/admin/${param0} */
 export async function editNotice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editNoticeParams,
@@ -39,7 +42,7 @@ export async function editNotice(
   options?: { [key: string]: any },
 ) {
   const { noticeId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOVoid>(`/notice/${param0}`, {
+  return request<SystemAPI.ResponseDTOVoid>(`/notice/admin/${param0}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -50,13 +53,13 @@ export async function editNotice(
   });
 }
 
-/** 批量删除通知公告表 DELETE /notice/batch-delete */
+/** 批量删除通知公告表 DELETE /notice/admin/batch-delete */
 export async function removeNotice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeNoticeParams,
   options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/notice/batch-delete', {
+  return request<SystemAPI.ResponseDTOVoid>('/notice/admin/batch-delete', {
     method: 'DELETE',
     params: {
       ...params,
@@ -65,44 +68,32 @@ export async function removeNotice(
   });
 }
 
-/** 获取通知公告表列表 GET /notice/list */
-export async function getNoticeList(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: SystemAPI.getNoticeListParams,
-  options?: { [key: string]: any },
-) {
-  return request<SystemAPI.ResponseDTOListSysNoticeDTO>('/notice/list', {
-    method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
-}
-
-/** 分页获取通知公告表列表 GET /notice/page */
+/** 分页获取通知公告表列表 GET /notice/admin/page */
 export async function getPagedNotice(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getPagedNoticeParams,
   options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOPageDTOSysNoticeDTO>('/notice/page', {
-    method: 'GET',
-    params: {
-      ...params,
+  return request<SystemAPI.ResponseDTOPageDTOSysNoticeAdminListDTO>(
+    '/notice/admin/page',
+    {
+      method: 'GET',
+      params: {
+        ...params,
+      },
+      ...(options || {}),
     },
-    ...(options || {}),
-  });
+  );
 }
 
-/** 删除通知公告表 DELETE /notice/remove/${param0} */
+/** 删除通知公告表 DELETE /notice/admin/remove/${param0} */
 export async function removeNoticeById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeNoticeByIdParams,
   options?: { [key: string]: any },
 ) {
   const { noticeId: param0, ...queryParams } = params;
-  return request<SystemAPI.ResponseDTOVoid>(`/notice/remove/${param0}`, {
+  return request<SystemAPI.ResponseDTOVoid>(`/notice/admin/remove/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

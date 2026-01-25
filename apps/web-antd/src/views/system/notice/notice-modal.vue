@@ -1,7 +1,3 @@
-<!--
-2025年03月08日重构为原生表单(反向重构??)
-该文件作为例子 使用原生表单而非useVbenForm
--->
 <script setup lang="ts">
 import type { RuleObject } from 'ant-design-vue/es/form';
 
@@ -12,68 +8,66 @@ import { DictEnum } from '@vben/constants';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
-import { Form, FormItem, Input, RadioGroup } from 'ant-design-vue';
-import { pick } from 'lodash-es';
+import { Button, Form, FormItem, Input, RadioGroup } from 'ant-design-vue';
 
 import { addNotice, editNotice, getNoticeInfo } from '#/api/system/notice';
 import { Tinymce } from '#/components/tinymce';
 import { getDictOptions } from '#/utils/dict';
 import { useBeforeCloseDiff } from '#/utils/popup';
 
+import DeptTreeSelect from './dept-tree-select.vue';
+import UserTableSelect from './user-table-select.vue';
+
 const emit = defineEmits<{ reload: [] }>();
 
-const isUpdate = ref(false);
-const title = computed(() => {
-  return isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add');
-});
+/* ======================= 基础状态 ======================= */
 
-/**
- * 定义表单数据类型
- */
+const isUpdate = ref(false);
+const title = computed(() =>
+  isUpdate.value ? $t('pages.common.edit') : $t('pages.common.add'),
+);
+
 interface FormData {
   noticeId?: number;
   noticeTitle?: string;
   status?: string;
   noticeType?: string;
   noticeContent?: string;
+  deptIds?: number[];
+  userIds?: number[];
 }
 
-/**
- * 定义默认值 用于reset
- */
 const defaultValues: FormData = {
   noticeId: undefined,
   noticeTitle: '',
   status: '0',
   noticeType: '1',
   noticeContent: '',
+  deptIds: [],
+  userIds: [],
 };
 
-/**
- * 表单数据ref
- */
-const formData = ref(defaultValues);
+const formData = ref<FormData>({ ...defaultValues });
+
+/* ======================= 表单校验 ======================= */
 
 type AntdFormRules<T> = Partial<Record<keyof T, RuleObject[]>> & {
   [key: string]: RuleObject[];
 };
-/**
- * 表单校验规则
- */
+
 const formRules = ref<AntdFormRules<FormData>>({
+  noticeTitle: [{ required: true, message: $t('ui.formRules.required') }],
+  noticeType: [{ required: true, message: $t('ui.formRules.selectRequired') }],
   status: [{ required: true, message: $t('ui.formRules.selectRequired') }],
   noticeContent: [{ required: true, message: $t('ui.formRules.required') }],
-  noticeType: [{ required: true, message: $t('ui.formRules.selectRequired') }],
-  noticeTitle: [{ required: true, message: $t('ui.formRules.required') }],
 });
 
-/**
- * useForm解构出表单方法
- */
 const { validate, validateInfos, resetFields } = Form.useForm(
   formData,
   formRules,
 );
+
+/* ======================= 关闭校验 ======================= */
 
 function customFormValueGetter() {
   return JSON.stringify(formData.value);
@@ -86,53 +80,106 @@ const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
   },
 );
 
+/* ======================= 用户选择器引用 ======================= */
+
+const userSelectRef = ref<InstanceType<typeof UserTableSelect>>();
+
+/* ======================= Modal ======================= */
+
 const [BasicModal, modalApi] = useVbenModal({
-  class: 'w-[800px]',
+  class: 'w-[900px]',
   fullscreenButton: true,
   onBeforeClose,
   onClosed: handleClosed,
   onConfirm: handleConfirm,
   onOpenChange: async (isOpen) => {
-    if (!isOpen) {
-      return null;
-    }
+    if (!isOpen) return;
+
     modalApi.modalLoading(true);
 
-    const { id } = modalApi.getData() as { id?: number | string };
+    const { id } = modalApi.getData() as { id?: number };
     isUpdate.value = !!id;
-    if (isUpdate.value && id) {
-      const record = await getNoticeInfo({ noticeId: id });
-      // 只赋值存在的字段
-      const filterRecord = pick(record, Object.keys(defaultValues));
-      formData.value = filterRecord;
-    }
-    await markInitialized();
 
+    if (isUpdate.value && id) {
+      const { data } = await getNoticeInfo({ noticeId: id });
+
+      // 先基础字段赋值
+      formData.value.noticeId = data.noticeId;
+      formData.value.noticeTitle = data.noticeTitle;
+      formData.value.noticeType = data.noticeType;
+      formData.value.noticeContent = data.noticeContent;
+      formData.value.status = data.status;
+
+      // 处理部门和用户
+      const deptDispatch = data.dispatchList?.find(
+        (d: any) => d.dispatchType === '2',
+      );
+      const userDispatch = data.dispatchList?.find(
+        (d: any) => d.dispatchType === '3',
+      );
+
+      formData.value.deptIds = deptDispatch?.dispatchIds || [];
+      formData.value.userIds = userDispatch?.dispatchIds || [];
+    }
+
+    await markInitialized();
     modalApi.modalLoading(false);
   },
 });
+
+/* ======================= 提交 ======================= */
 
 async function handleConfirm() {
   try {
     modalApi.lock(true);
     await validate();
-    // 可能会做数据处理 使用cloneDeep深拷贝
+
     const data = cloneDeep(formData.value);
+
+    const dispatchList: any[] = [];
+
+    if (data.deptIds?.length) {
+      dispatchList.push({
+        dispatchType: '2',
+        dispatchIds: data.deptIds,
+      });
+    }
+
+    if (data.userIds?.length) {
+      dispatchList.push({
+        dispatchType: '3',
+        dispatchIds: data.userIds,
+      });
+    }
+
+    if (dispatchList.length === 0) {
+      dispatchList.push({
+        dispatchType: '1',
+        dispatchIds: [],
+      });
+    }
+
+    const submitData = {
+      noticeTitle: data.noticeTitle,
+      noticeType: data.noticeType,
+      noticeContent: data.noticeContent,
+      status: data.status,
+      dispatchList,
+    };
     await (isUpdate.value
-      ? editNotice({ noticeId: data.noticeId }, data)
-      : addNotice(data));
+      ? editNotice({ noticeId: data.noticeId }, submitData)
+      : addNotice(submitData));
+
     resetInitialized();
     emit('reload');
     modalApi.close();
-  } catch (error) {
-    console.error(error);
   } finally {
     modalApi.lock(false);
   }
 }
 
-async function handleClosed() {
-  formData.value = defaultValues;
+function handleClosed() {
+  formData.value = { ...defaultValues };
   resetFields();
   resetInitialized();
 }
@@ -142,32 +189,50 @@ async function handleClosed() {
   <BasicModal :title="title">
     <Form layout="vertical">
       <FormItem label="公告标题" v-bind="validateInfos.noticeTitle">
-        <Input
-          :placeholder="$t('ui.formRules.required')"
-          v-model:value="formData.noticeTitle"
-        />
+        <Input v-model:value="formData.noticeTitle" />
       </FormItem>
-      <div class="grid sm:grid-cols-1 lg:grid-cols-2">
+
+      <div class="grid gap-4 sm:grid-cols-1 lg:grid-cols-2">
         <FormItem label="公告状态" v-bind="validateInfos.status">
           <RadioGroup
+            v-model:value="formData.status"
             button-style="solid"
             option-type="button"
-            v-model:value="formData.status"
             :options="getDictOptions(DictEnum.SYS_NOTICE_STATUS)"
           />
         </FormItem>
+
         <FormItem label="公告类型" v-bind="validateInfos.noticeType">
           <RadioGroup
+            v-model:value="formData.noticeType"
             button-style="solid"
             option-type="button"
-            v-model:value="formData.noticeType"
             :options="getDictOptions(DictEnum.SYS_NOTICE_TYPE)"
           />
         </FormItem>
       </div>
+
+      <!-- 投递部门 -->
+      <FormItem label="投递部门">
+        <DeptTreeSelect v-model="formData.deptIds" />
+      </FormItem>
+
+      <!-- 投递用户 -->
+      <FormItem label="投递用户">
+        <Button type="primary" @click="userSelectRef?.open()">
+          选择用户
+        </Button>
+        <span class="ml-2 text-gray-500">
+          已选择 {{ formData.userIds?.length || 0 }} 人
+        </span>
+      </FormItem>
+
       <FormItem label="公告内容" v-bind="validateInfos.noticeContent">
         <Tinymce v-model="formData.noticeContent" />
       </FormItem>
     </Form>
+
+    <!-- 用户选择弹窗 -->
+    <UserTableSelect ref="userSelectRef" v-model="formData.userIds" />
   </BasicModal>
 </template>

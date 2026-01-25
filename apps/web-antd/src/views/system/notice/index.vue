@@ -9,7 +9,11 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
-import { getPagedNotice, removeNotice } from '#/api/system/notice';
+import {
+  getPagedNotice,
+  removeNotice,
+  removeNoticeById,
+} from '#/api/system/notice';
 
 import { columns, querySchema } from './data';
 import noticeModal from './notice-modal.vue';
@@ -70,25 +74,25 @@ function handleAdd() {
   modalApi.open();
 }
 
-async function handleEdit(record: SystemAPI.SysNoticeDTO) {
+async function handleEdit(record: SystemAPI.SysNoticeAdminListDTO) {
   modalApi.setData({ id: record.noticeId });
   modalApi.open();
 }
 
-async function handleDelete(row: SystemAPI.SysNoticeDTO) {
-  await removeNotice([row.noticeId]);
+async function handleDelete(row: SystemAPI.SysNoticeAdminListDTO) {
+  await removeNoticeById({ noticeId: row.noticeId });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: SystemAPI.SysNoticeDTO) => row.noticeId);
+  const ids = rows.map((row: SystemAPI.SysNoticeAdminListDTO) => row.noticeId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await removeNotice(ids);
+      await removeNotice({ noticeIds: ids });
       await tableApi.query();
     },
   });

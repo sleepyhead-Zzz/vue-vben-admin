@@ -14,6 +14,7 @@ import * as dept from './dept';
 import * as client from './client';
 import * as config from './config';
 import * as notice from './notice';
+import * as yonghuxiaoxizhongxin from './yonghuxiaoxizhongxin';
 import * as oss from './oss';
 export default {
   user,
@@ -28,5 +29,6 @@ export default {
   client,
   config,
   notice,
+  yonghuxiaoxizhongxin,
   oss,
 };

@@ -41,16 +41,16 @@ declare namespace SystemAPI {
   };
 
   type AddNoticeCommand = {
-    /** 公告标题 */
+    /** 通知标题 */
     noticeTitle?: string;
-    /** 公告类型（1通知 2公告） */
+    /** 通知类型（1通知 2公告） */
     noticeType?: string;
-    /** 公告内容 */
+    /** 通知内容 */
     noticeContent?: string;
-    /** 公告状态（0正常 1关闭） */
+    /** 通知内容 */
     status?: string;
-    /** 备注 */
-    remark?: string;
+    /** 投递对象列表 */
+    dispatchList?: SysNoticeDispatchDTO[];
   };
 
   type AddSysClientCommand = {
@@ -215,6 +215,10 @@ declare namespace SystemAPI {
     deptIds?: TreeLong[];
   };
 
+  type detailParams = {
+    noticeId: number;
+  };
+
   type downloadParams = {
     ossId: number;
   };
@@ -370,19 +374,6 @@ declare namespace SystemAPI {
     noticeId: number;
   };
 
-  type getNoticeListParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
   type getOssConfigInfoParams = {
     /** 记录ID */
     ossConfigId: number;
@@ -483,6 +474,21 @@ declare namespace SystemAPI {
   };
 
   type getPagedOssParams = {
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
+  type getPagedUserNoticeParams = {
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -604,11 +610,11 @@ declare namespace SystemAPI {
     rows?: SysDictTypeDTO[];
   };
 
-  type PageDTOSysNoticeDTO = {
+  type PageDTOSysNoticeAdminListDTO = {
     /** 总记录数 */
     total?: number;
     /** 列表数据 */
-    rows?: SysNoticeDTO[];
+    rows?: SysNoticeAdminListDTO[];
   };
 
   type PageDTOSysOssConfigDTO = {
@@ -644,6 +650,17 @@ declare namespace SystemAPI {
     total?: number;
     /** 列表数据 */
     rows?: SysUserDTO[];
+  };
+
+  type PageDTOSysUserNoticeListDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysUserNoticeListDTO[];
+  };
+
+  type readParams = {
+    noticeId: number;
   };
 
   type removeByIdParams = {
@@ -781,12 +798,6 @@ declare namespace SystemAPI {
     data?: SysMenuDTO[];
   };
 
-  type ResponseDTOListSysNoticeDTO = {
-    code?: number;
-    message?: string;
-    data?: SysNoticeDTO[];
-  };
-
   type ResponseDTOListSysOssPreviewDTO = {
     code?: number;
     message?: string;
@@ -847,10 +858,10 @@ declare namespace SystemAPI {
     data?: PageDTOSysDictTypeDTO;
   };
 
-  type ResponseDTOPageDTOSysNoticeDTO = {
+  type ResponseDTOPageDTOSysNoticeAdminListDTO = {
     code?: number;
     message?: string;
-    data?: PageDTOSysNoticeDTO;
+    data?: PageDTOSysNoticeAdminListDTO;
   };
 
   type ResponseDTOPageDTOSysOssConfigDTO = {
@@ -881,6 +892,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: PageDTOSysUserDTO;
+  };
+
+  type ResponseDTOPageDTOSysUserNoticeListDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOSysUserNoticeListDTO;
   };
 
   type ResponseDTOString = {
@@ -925,10 +942,16 @@ declare namespace SystemAPI {
     data?: SysMenuDTO;
   };
 
-  type ResponseDTOSysNoticeDTO = {
+  type ResponseDTOSysNoticeAdminDetailDTO = {
     code?: number;
     message?: string;
-    data?: SysNoticeDTO;
+    data?: SysNoticeAdminDetailDTO;
+  };
+
+  type ResponseDTOSysNoticeDetailDTO = {
+    code?: number;
+    message?: string;
+    data?: SysNoticeDetailDTO;
   };
 
   type ResponseDTOSysOssConfigDTO = {
@@ -1261,15 +1284,38 @@ declare namespace SystemAPI {
     createTime?: string;
   };
 
-  type SysNoticeDTO = {
+  type SysNoticeAdminDetailDTO = {
+    /** 通知ID */
+    noticeId?: number;
+    /** 通知标题 */
+    noticeTitle?: string;
+    /** 通知类型（1通知 2公告） */
+    noticeType?: string;
+    /** 通知内容 */
+    noticeContent?: string;
+    /** 状态（0正常 1关闭） */
+    status?: string;
+    /** 创建部门 */
+    createDept?: number;
+    /** 创建者 */
+    creatorId?: number;
+    /** 创建时间 */
+    createTime?: string;
+    /** 投递对象列表 */
+    dispatchList?: SysNoticeDispatchDTO[];
+    /** 已读人数 */
+    readCount?: number;
+    /** 未读人数 */
+    unreadCount?: number;
+  };
+
+  type SysNoticeAdminListDTO = {
     /** 公告ID */
     noticeId?: number;
     /** 公告标题 */
     noticeTitle?: string;
     /** 公告类型（1通知 2公告） */
     noticeType?: string;
-    /** 公告内容 */
-    noticeContent?: string;
     /** 公告状态（0正常 1关闭） */
     status?: string;
     /** 创建部门 */
@@ -1282,8 +1328,36 @@ declare namespace SystemAPI {
     updaterId?: number;
     /** 更新时间 */
     updateTime?: string;
-    /** 备注 */
-    remark?: string;
+    /** 投递范围描述（全体 / 部门 / 指定人） */
+    dispatchDesc?: string;
+    /** 已读人数 */
+    readCount?: number;
+    /** 未读人数 */
+    unreadCount?: number;
+  };
+
+  type SysNoticeDetailDTO = {
+    /** 通知ID */
+    noticeId?: number;
+    /** 通知标题 */
+    noticeTitle?: string;
+    /** 通知类型（1通知 2公告） */
+    noticeType?: string;
+    /** 通知内容 */
+    noticeContent?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 是否已读（0未读 1已读） */
+    readFlag?: string;
+    /** 阅读时间 */
+    readTime?: string;
+  };
+
+  type SysNoticeDispatchDTO = {
+    /** 投递类型（1全体 2部门 3用户） */
+    dispatchType?: string;
+    /** 投递对象ID列表（部门ID / 用户ID，全体为空） */
+    dispatchIds?: number[];
   };
 
   type SysOssConfigDTO = {
@@ -1452,6 +1526,19 @@ declare namespace SystemAPI {
     updateTime?: string;
   };
 
+  type SysUserNoticeListDTO = {
+    /** 通知ID */
+    noticeId?: number;
+    /** 通知标题 */
+    noticeTitle?: string;
+    /** 通知类型（1通知 2公告） */
+    noticeType?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 是否已读（0未读 1已读） */
+    readFlag?: string;
+  };
+
   type TreeLong = {
     weight?: Record<string, any>;
     config?: TreeNodeConfig;
@@ -1537,16 +1624,16 @@ declare namespace SystemAPI {
   };
 
   type UpdateNoticeCommand = {
-    /** 公告标题 */
+    /** 通知标题 */
     noticeTitle?: string;
-    /** 公告类型（1通知 2公告） */
+    /** 通知类型（1通知 2公告） */
     noticeType?: string;
-    /** 公告内容 */
+    /** 通知内容 */
     noticeContent?: string;
-    /** 公告状态（0正常 1关闭） */
+    /** 通知内容 */
     status?: string;
-    /** 备注 */
-    remark?: string;
+    /** 投递对象列表 */
+    dispatchList?: SysNoticeDispatchDTO[];
     noticeId?: number;
   };
 

@@ -410,10 +410,13 @@ declare namespace AssetAPI {
     deviceId?: number;
     /** 巡检地点ID */
     locationId?: number;
+    locationName?: string;
     /** 指派给的部门ID */
     assignDeptId?: number;
+    assignDeptName?: string;
     /** 指派给的负责人ID */
     assignUserId?: number;
+    assignUserName?: string;
     /** 任务截止时间 */
     executeDeadline?: string;
   };
@@ -527,6 +530,8 @@ declare namespace AssetAPI {
     repairId?: number;
     /** 设备ID */
     deviceId?: number;
+    /** 设备名称 */
+    deviceName?: string;
     /** 故障类型 */
     faultType?: string;
     /** 故障描述 */
@@ -537,8 +542,11 @@ declare namespace AssetAPI {
     repairStatus?: string;
     /** 报修人ID */
     reporterId?: number;
+    /** 报修人ID */
+    reporterName?: string;
     /** 受理/维修人ID */
     handlerId?: number;
+    handlerName?: string;
     /** 维修结果说明 */
     repairResult?: string;
     /** 是否修复 */
