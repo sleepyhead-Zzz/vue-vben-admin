@@ -69,6 +69,8 @@ declare namespace AssetAPI {
     monthDayList?: string[];
     /** 状态 */
     status?: string;
+    /** 巡检对象类型 */
+    inspectionObjectType?: string;
   };
 
   type AddAssetInspectionProjectCommand = {
@@ -98,6 +100,7 @@ declare namespace AssetAPI {
     taskName?: string;
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
     status?: string;
+    inspectionObjectType?: string;
     /** 巡检设备ID */
     deviceId?: number;
     /** 巡检地点ID */
@@ -317,6 +320,8 @@ declare namespace AssetAPI {
     monthDayList?: string[];
     /** 状态 */
     status?: string;
+    /** 巡检对象类型 */
+    inspectionObjectType?: string;
     jobId?: number;
   };
 
@@ -329,26 +334,6 @@ declare namespace AssetAPI {
     planName?: string;
     frequency?: number;
     status?: string;
-  };
-
-  type AssetInspectionPlanVO = {
-    planId?: number;
-    /** 计划名称 */
-    planName?: string;
-    /** 开始日期 */
-    startDate?: string;
-    /** 结束日期 */
-    endDate?: string;
-    /** 巡检频率 */
-    frequency?: number;
-    /** 每隔多少单位周期执行一次，如每2天、每3周、每1月 */
-    intervalValue?: number;
-    /** 适用于weekly，1~7，逗号分隔，如1,3,5表示周一三五 */
-    weekdays?: string;
-    /** 适用于monthly，1~31，逗号分隔，如1,15 */
-    monthDays?: string;
-    /** 状态 */
-    status?: number;
   };
 
   type AssetInspectionProjectDTO = {
@@ -406,11 +391,9 @@ declare namespace AssetAPI {
     taskName?: string;
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
     status?: string;
-    /** 巡检设备ID */
-    deviceId?: number;
-    /** 巡检地点ID */
-    locationId?: number;
-    locationName?: string;
+    inspectionObjectType?: string;
+    objectId?: number;
+    objectName?: string;
     /** 指派给的部门ID */
     assignDeptId?: number;
     assignDeptName?: string;
@@ -429,23 +412,6 @@ declare namespace AssetAPI {
     endTime?: string;
     taskName?: string;
     status?: string;
-  };
-
-  type AssetInspectionTaskVO = {
-    /** 巡检任务ID */
-    taskId?: number;
-    /** 来源巡检计划ID */
-    planId?: number;
-    /** 任务名称 */
-    taskName?: string;
-    /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
-    status?: number;
-    /** 指派给的部门ID */
-    assignDeptId?: number;
-    /** 指派给的负责人ID */
-    assignUserId?: number;
-    /** 任务截止时间 */
-    executeDeadline?: string;
   };
 
   type AssetInspectionVO = {
@@ -900,6 +866,10 @@ declare namespace AssetAPI {
     planId: number;
   };
 
+  type getPlanLocationsParams = {
+    planId: number;
+  };
+
   type getProjectInfoParams = {
     /** 记录ID */
     projectId: number;
@@ -945,6 +915,11 @@ declare namespace AssetAPI {
   type getTaskInfoParams = {
     /** 记录ID */
     taskId: number;
+  };
+
+  type InspectionPlanLocationSaveCommand = {
+    planId: number;
+    locationIds?: number[];
   };
 
   type PageDTOAssetCategoryDTO = {
@@ -1174,12 +1149,6 @@ declare namespace AssetAPI {
     data?: AssetDeviceVO[];
   };
 
-  type ResponseDTOListAssetInspectionPlanVO = {
-    code?: number;
-    message?: string;
-    data?: AssetInspectionPlanVO[];
-  };
-
   type ResponseDTOListAssetInspectionProjectDTO = {
     code?: number;
     message?: string;
@@ -1190,12 +1159,6 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetInspectionProjectVO[];
-  };
-
-  type ResponseDTOListAssetInspectionTaskVO = {
-    code?: number;
-    message?: string;
-    data?: AssetInspectionTaskVO[];
   };
 
   type ResponseDTOListAssetInspectionVO = {
@@ -1232,6 +1195,12 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetSpecificationVO[];
+  };
+
+  type ResponseDTOListLong = {
+    code?: number;
+    message?: string;
+    data?: number[];
   };
 
   type ResponseDTOListTreeLong = {
@@ -1304,6 +1273,10 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: Record<string, any>;
+  };
+
+  type savePlanLocationsParams = {
+    planId: number;
   };
 
   type TreeLong = {
@@ -1415,6 +1388,8 @@ declare namespace AssetAPI {
     monthDayList?: string[];
     /** 状态 */
     status?: string;
+    /** 巡检对象类型 */
+    inspectionObjectType?: string;
     planId?: number;
     jobId?: number;
   };
@@ -1440,6 +1415,7 @@ declare namespace AssetAPI {
     taskName?: string;
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
     status?: string;
+    inspectionObjectType?: string;
     /** 巡检设备ID */
     deviceId?: number;
     /** 巡检地点ID */

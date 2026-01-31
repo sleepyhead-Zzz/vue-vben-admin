@@ -3,7 +3,7 @@
 未修改文件名 而是新加了这个文件
 -->
 <script setup lang="ts">
-import PlanAssociatePage from '#/views/asset/plan-associate/index.vue';
+import PlanAssociatePage from '#/views/asset/plan-associate-device/index.vue';
 </script>
 
 <template>

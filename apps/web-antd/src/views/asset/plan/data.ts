@@ -114,6 +114,18 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   {
+    title: '巡检对象类型',
+    field: 'inspectionObjectType',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(
+          row.inspectionObjectType,
+          DictEnum.ASSET_INSPECTION_OBJECT_TYPE,
+        );
+      },
+    },
+  },
+  {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
@@ -260,5 +272,15 @@ export const modalSchema: FormSchemaGetter = () => [
     },
     fieldName: 'status',
     label: '状态',
+  },
+
+  {
+    component: 'Select',
+    componentProps: {
+      options: getDictOptions(DictEnum.ASSET_INSPECTION_OBJECT_TYPE),
+    },
+    fieldName: 'inspectionObjectType',
+    label: '巡检对象类型',
+    required: true,
   },
 ];

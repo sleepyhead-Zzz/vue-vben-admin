@@ -26,6 +26,7 @@ export const DictEnum = {
   ASSET_REPAIR_LEVEL: 'asset_repair_level', // 维修紧急程度
   ASSET_REPAIR_FAULT_TYPE: 'asset_repair_fault_type', // 维修故障类型
   ASSET_FIXED_STATUS: 'asset_fixed_status', // 是否修复状态
+  ASSET_INSPECTION_OBJECT_TYPE: 'asset_inspection_object_type', // 巡检对象类型
 
   RegulatoryCardAssetStatus: 'regulatory_card_asset_status', // 信息卡资产状态
   RegulatoryCardAccountStatus: 'regulatory_card_account_status', // 信息卡财务入账状态

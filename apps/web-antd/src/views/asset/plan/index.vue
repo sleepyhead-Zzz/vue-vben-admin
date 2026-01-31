@@ -121,8 +121,15 @@ function handleDownloadExcel() {
   );
 }
 const router = useRouter();
-function associatedInspectionDevice(record: AssetAPI.AssetInspectionPlanDTO) {
-  router.push(`/asset/plan-associate/device/${record.planId}`);
+function associatedInspection(record: AssetAPI.AssetInspectionPlanDTO) {
+  const typeMap: Record<string, string> = {
+    '1': 'device',
+    '2': 'location',
+  };
+
+  const subPath = typeMap[record.inspectionObjectType] ?? 'unknown';
+
+  router.push(`/asset/plan-associate/${subPath}/${record.planId}`);
 }
 
 function ViewInspectionRecord(record: AssetAPI.AssetInspectionPlanDTO) {
@@ -169,7 +176,7 @@ function ViewInspectionRecord(record: AssetAPI.AssetInspectionPlanDTO) {
           </ghost-button>
           <ghost-button
             v-access:code="['asset:plan:edit']"
-            @click.stop="associatedInspectionDevice(row)"
+            @click.stop="associatedInspection(row)"
           >
             分配
           </ghost-button>
