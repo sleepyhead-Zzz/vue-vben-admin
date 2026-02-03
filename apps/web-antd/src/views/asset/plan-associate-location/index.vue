@@ -1,70 +1,90 @@
 <script setup lang="ts">
-import type { VbenFormProps } from '@vben/common-ui';
-
-import type { VxeGridProps } from '#/adapter/vxe-table';
-
-import { nextTick, onMounted } from 'vue';
+import { onMounted, reactive } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { message, Space } from 'ant-design-vue';
+import { Checkbox, message, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getLocationList } from '#/api/asset/location';
-import { getPlanLocations, savePlanLocations } from '#/api/asset/plan';
+import {
+  getLocationTree,
+  getPlanLocations,
+  savePlanLocations,
+} from '#/api/asset/plan';
 
 import { columns, querySchema } from './data';
 
-/**
- * 父页面传入
- * 有 planId = 编辑
- * 无 planId = 新增
- */
-const props = defineProps<{
-  planId?: string;
-}>();
+const route = useRoute();
+const planId = route.params.planId as string;
 
-/* 查询表单 */
-const formOptions: VbenFormProps = {
-  commonConfig: {
-    labelWidth: 80,
-    componentProps: {
-      allowClear: true,
-    },
-  },
+// 已勾选叶子节点集合
+const checkedLocationIdSet = reactive(new Set<string>());
+
+// 查询表单配置
+const formOptions = {
+  commonConfig: { labelWidth: 80, componentProps: { allowClear: true } },
   schema: querySchema(),
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
 };
 
-/* 表格配置 */
-const gridOptions: VxeGridProps = {
-  columns,
+// 勾选/半选状态更新
+function updateNodeCheckState(row: any, checked: boolean) {
+  row.checked = checked;
+  row.children?.forEach((c) => updateNodeCheckState(c, checked));
+  let parent = row.parent;
+  while (parent) {
+    const allChecked = parent.children.every((c) => c.checked);
+    const noneChecked = parent.children.every(
+      (c) => !c.checked && !c.indeterminate,
+    );
+    parent.checked = allChecked;
+    parent.indeterminate = !allChecked && !noneChecked;
+    parent = parent.parent;
+  }
+}
+
+// 表格配置
+const gridOptions = {
+  id: 'inspection-plan-location-select',
+  columns: columns.map((col) =>
+    col.field === 'locationName'
+      ? { ...col, slots: { default: 'checkbox-cell' } }
+      : col,
+  ),
   height: 'auto',
-
-  rowConfig: {
-    keyField: 'locationId',
-  },
-
-  checkboxConfig: {
-    checkStrictly: false, // 父子节点联动
-  },
-
-  pagerConfig: {
-    enabled: false,
-  },
-
+  rowConfig: { keyField: 'locationId' },
+  pagerConfig: { enabled: false },
   proxyConfig: {
     ajax: {
-      query: async (_, formValues = {}) => {
-        const resp = await getLocationList({
-          ...formValues,
-          parentLocationId: '0',
+      query: async () => {
+        const resp = await getLocationTree({ parentLocationId: '0', planId });
+        const map: Record<string, any> = {};
+        const list = (resp.data || []).map((item) => {
+          const node = {
+            ...item,
+            locationId: String(item.locationId),
+            parentLocationId: String(item.parentLocationId),
+            checked: item.checked || false,
+            indeterminate: item.hasChild
+              ? item.checkedChildCount! > 0 &&
+                item.checkedChildCount! < item.totalChildCount!
+              : false,
+            children: [],
+          };
+          map[node.locationId] = node;
+          return node;
         });
-        return { rows: resp.data || [] };
+        list.forEach((node) => {
+          if (node.parentLocationId && map[node.parentLocationId]) {
+            node.parent = map[node.parentLocationId];
+            map[node.parentLocationId].children.push(node);
+          }
+        });
+        return { rows: list.filter((node) => node.parentLocationId === '0') };
       },
     },
   },
-
   treeConfig: {
     parentField: 'parentLocationId',
     rowField: 'locationId',
@@ -72,69 +92,89 @@ const gridOptions: VxeGridProps = {
     transform: true,
     lazy: true,
     loadMethod: async ({ row }) => {
-      const resp = await getLocationList({
-        parentLocationId: row ? row.locationId : '0',
+      const resp = await getLocationTree({
+        parentLocationId: row.locationId,
+        planId,
       });
-      return resp.data || [];
+      const children = (resp.data || []).map((item) => {
+        const node = {
+          ...item,
+          locationId: String(item.locationId),
+          parentLocationId: String(item.parentLocationId),
+          checked: item.checked || false,
+          indeterminate: item.hasChild
+            ? item.checkedChildCount! > 0 &&
+              item.checkedChildCount! < item.totalChildCount!
+            : false,
+          children: [],
+          parent: row,
+        };
+        return node;
+      });
+      row.children = children;
+
+      const total = row.children.length;
+      const checkedCount = row.children.filter((c) => c.checked).length;
+      row.checked = checkedCount === total;
+      row.indeterminate = checkedCount > 0 && checkedCount < total;
+
+      return children;
     },
   },
-
-  id: 'inspection-plan-location-select',
+  scrollY: { enabled: true, gt: 0 },
 };
 
-const [BasicTable, tableApi] = useVbenVxeGrid({
-  formOptions,
-  gridOptions,
-});
+const [BasicTable, tableApi] = useVbenVxeGrid({ formOptions, gridOptions });
 
-/* 展开 / 折叠 */
-function expandAll() {
-  tableApi.grid?.setAllTreeExpand(true);
-}
+// 工具栏
+const expandAll = () => tableApi.grid?.setAllTreeExpand(true);
+const collapseAll = () => tableApi.grid?.setAllTreeExpand(false);
 
-function collapseAll() {
-  tableApi.grid?.setAllTreeExpand(false);
-}
-
-/* 编辑模式：回显已选 location */
+// 初始化回显
 async function initCheckedLocations() {
-  if (!props.planId) return;
-
-  const locationIds = await getPlanLocations(props.planId);
-
-  nextTick(() => {
-    const { fullData } = tableApi.grid!.getTableData();
-
-    const rows = fullData.filter((row: any) =>
-      locationIds.includes(row.locationId),
-    );
-
-    tableApi.grid?.setCheckboxRow(rows, true);
-  });
+  if (!planId) return;
+  const resp = await getPlanLocations({ planId });
+  (resp.data.checkedLocationIds || [])
+    .map(String)
+    .forEach((id) => checkedLocationIdSet.add(id));
 }
 
-/* 保存（新增 / 更新一体） */
+// 保存
 async function handleSubmit() {
-  const records = tableApi.grid?.getCheckboxRecords() || [];
-  const locationIds = records.map((item: any) => item.locationId);
-
-  if (locationIds.length === 0) {
-    message.warning('请至少选择一个巡检地点');
+  if (checkedLocationIdSet.size === 0) {
+    message.warning('请至少选择一个巡检点位');
     return;
   }
-
-  await savePlanLocations({
-    planId: props.planId,
-    planLocationIds: locationIds,
-  });
-
-  message.success('保存成功');
+  try {
+    await savePlanLocations({
+      planId,
+      locationIds: [...checkedLocationIdSet],
+    });
+    message.success('保存成功');
+  } catch (error) {
+    console.error(error);
+    message.error('保存失败，请重试');
+  }
 }
 
+// checkbox change
+function onCheckChange(row: any, e: any) {
+  const checked = e.target.checked;
+  updateNodeCheckState(row, checked);
+
+  function updateSet(node: any) {
+    if (node.checked && (!node.children || node.children.length === 0))
+      checkedLocationIdSet.add(node.locationId);
+    else if (!node.checked) checkedLocationIdSet.delete(node.locationId);
+    node.children?.forEach(updateSet);
+  }
+  updateSet(row);
+}
+
+// 生命周期
 onMounted(async () => {
-  // 等表格数据加载完成再回显
-  await tableApi.query();
   await initCheckedLocations();
+  await tableApi.query();
 });
 </script>
 
@@ -145,8 +185,21 @@ onMounted(async () => {
         <Space>
           <a-button @click="collapseAll">折叠</a-button>
           <a-button @click="expandAll">展开</a-button>
-          <a-button type="primary" @click="handleSubmit"> 保存 </a-button>
+          <a-button type="primary" @click="handleSubmit">保存</a-button>
         </Space>
+      </template>
+
+      <!-- 自定义复选框插槽 -->
+      <template #checkbox-cell="{ row, level }">
+        <div :style="{ paddingLeft: `${level * 16}px` }">
+          <Checkbox
+            :checked="row.checked"
+            :indeterminate="row.indeterminate"
+            @change="onCheckChange(row, $event)"
+          >
+            {{ row.locationName }}
+          </Checkbox>
+        </div>
       </template>
     </BasicTable>
   </Page>

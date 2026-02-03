@@ -31,10 +31,6 @@ export const querySchema: FormSchemaGetter = () => [
 /* 表格列 */
 export const columns: VxeGridProps['columns'] = [
   {
-    type: 'checkbox',
-    width: 60,
-  },
-  {
     title: '位置名称',
     field: 'locationName',
     treeNode: true,

@@ -446,6 +446,7 @@ declare namespace AssetAPI {
     /** 显示顺序 */
     orderNum?: number;
     hasChild?: boolean;
+    childCount?: number;
   };
 
   type AssetLocationQuery = {
@@ -456,8 +457,18 @@ declare namespace AssetAPI {
     endTime?: string;
     locationName?: string;
     locationType?: string;
-    parentLocationId?: string;
+    parentLocationId?: number;
     locationCode?: string;
+  };
+
+  type AssetLocationTreeNodeDTO = {
+    locationId?: number;
+    parentLocationId?: number;
+    name?: string;
+    hasChild?: boolean;
+    totalChildCount?: number;
+    checkedChildCount?: number;
+    checked?: boolean;
   };
 
   type AssetManufacturerDTO = {
@@ -489,6 +500,11 @@ declare namespace AssetAPI {
     manufacturerPeople?: string;
     /** 联系方式 */
     manufacturerContact?: string;
+  };
+
+  type AssetPlanCheckedLocationDTO = {
+    planId?: number;
+    checkedLocationIds?: number[];
   };
 
   type AssetRepairDTO = {
@@ -703,7 +719,7 @@ declare namespace AssetAPI {
   type getLocationListParams = {
     locationName?: string;
     locationType?: string;
-    parentLocationId?: string;
+    parentLocationId?: number;
     locationCode?: string;
     /** 排序字段 */
     orderColumn?: string;
@@ -715,6 +731,11 @@ declare namespace AssetAPI {
     beginTime?: Date;
     /** 结束时间 */
     endTime?: Date;
+  };
+
+  type getLocationTreeParams = {
+    parentLocationId?: number;
+    planId?: number;
   };
 
   type getManufacturerInfoParams = {
@@ -1113,6 +1134,12 @@ declare namespace AssetAPI {
     data?: AssetManufacturerDTO;
   };
 
+  type ResponseDTOAssetPlanCheckedLocationDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetPlanCheckedLocationDTO;
+  };
+
   type ResponseDTOAssetRepairDTO = {
     code?: number;
     message?: string;
@@ -1173,6 +1200,12 @@ declare namespace AssetAPI {
     data?: AssetLocationDTO[];
   };
 
+  type ResponseDTOListAssetLocationTreeNodeDTO = {
+    code?: number;
+    message?: string;
+    data?: AssetLocationTreeNodeDTO[];
+  };
+
   type ResponseDTOListAssetManufacturerVO = {
     code?: number;
     message?: string;
@@ -1195,12 +1228,6 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: AssetSpecificationVO[];
-  };
-
-  type ResponseDTOListLong = {
-    code?: number;
-    message?: string;
-    data?: number[];
   };
 
   type ResponseDTOListTreeLong = {
@@ -1273,10 +1300,6 @@ declare namespace AssetAPI {
     code?: number;
     message?: string;
     data?: Record<string, any>;
-  };
-
-  type savePlanLocationsParams = {
-    planId: number;
   };
 
   type TreeLong = {
