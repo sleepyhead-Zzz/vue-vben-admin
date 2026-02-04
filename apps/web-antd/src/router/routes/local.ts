@@ -2,10 +2,10 @@ import type { RouteRecordStringComponent } from '@vben/types';
 
 import { $t } from '@vben/locales';
 
-const {
-  version,
-  // vite inject-metadata 插件注入的全局变量
-} = __VBEN_ADMIN_METADATA__ || {};
+// const {
+//   version,
+//   // vite inject-metadata 插件注入的全局变量
+// } = __VBEN_ADMIN_METADATA__ || {};
 
 /**
  * 该文件放非后台返回的路由 比如个人中心 等需要跳转显示的页面
@@ -35,6 +35,18 @@ const localRoutes: RouteRecordStringComponent[] = [
     path: '/system/oss-config',
   },
   {
+    component: '/system/user-notifications/index',
+    meta: {
+      activePath: '/system/user-notifications',
+      icon: 'ant-design:setting-outlined',
+      title: '用户通知',
+      hideInMenu: true,
+      requireHomeRedirect: true,
+    },
+    name: 'UserNotifications',
+    path: '/system/user-notifications',
+  },
+  {
     component: '/tool/generator/edit-gen',
     meta: {
       activePath: '/tool/generator',
@@ -58,33 +70,33 @@ const localRoutes: RouteRecordStringComponent[] = [
     name: 'RoleAssign',
     path: '/system/role-assign/:roleId',
   },
-  {
-    component: '/workflow/components/flow-designer',
-    meta: {
-      activePath: '/workflow/processDefinition',
-      icon: 'fluent-mdl2:flow',
-      title: '流程设计',
-      hideInMenu: true,
-      requireHomeRedirect: true,
-    },
-    name: 'WorkflowDesigner',
-    path: '/workflow/designer',
-  },
+  // {
+  //   component: '/workflow/components/flow-designer',
+  //   meta: {
+  //     activePath: '/workflow/processDefinition',
+  //     icon: 'fluent-mdl2:flow',
+  //     title: '流程设计',
+  //     hideInMenu: true,
+  //     requireHomeRedirect: true,
+  //   },
+  //   name: 'WorkflowDesigner',
+  //   path: '/workflow/designer',
+  // },
   /**
    * 需要添加iframe路由 同目录的./workflow-iframe.ts
    */
-  {
-    component: 'workflow/leave/leave-form',
-    meta: {
-      icon: 'flat-color-icons:leave',
-      title: '请假申请',
-      activePath: '/demo/leave',
-      hideInMenu: true,
-      requireHomeRedirect: true,
-    },
-    name: 'WorkflowLeaveIndex',
-    path: '/workflow/leaveEdit/index',
-  },
+  // {
+  //   component: 'workflow/leave/leave-form',
+  //   meta: {
+  //     icon: 'flat-color-icons:leave',
+  //     title: '请假申请',
+  //     activePath: '/demo/leave',
+  //     hideInMenu: true,
+  //     requireHomeRedirect: true,
+  //   },
+  //   name: 'WorkflowLeaveIndex',
+  //   path: '/workflow/leaveEdit/index',
+  // },
 ];
 
 /**

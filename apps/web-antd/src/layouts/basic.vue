@@ -13,8 +13,6 @@ import {
 import { preferences } from '@vben/preferences';
 import { useAccessStore, useUserStore } from '@vben/stores';
 
-import { message } from 'ant-design-vue';
-
 import { $t } from '#/locales';
 import { resetRoutes, router } from '#/router';
 import { useAuthStore } from '#/store';
@@ -49,7 +47,7 @@ const notifyStore = useNotifyStore();
 onMounted(() => notifyStore.startListeningMessage());
 
 function handleViewAll() {
-  message.warning('暂未开放');
+  router.push('/system/user-notifications');
 }
 
 watch(

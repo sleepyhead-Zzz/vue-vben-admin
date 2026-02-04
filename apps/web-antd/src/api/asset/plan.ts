@@ -242,16 +242,13 @@ export async function getLocationTree(
   params: AssetAPI.getLocationTreeParams,
   options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOListAssetLocationTreeNodeDTO>(
-    '/asset/plan/tree',
-    {
-      method: 'GET',
-      params: {
-        ...params,
-      },
-      ...(options || {}),
+  return request<AssetAPI.ResponseDTOListAssetLocationDTO>('/asset/plan/tree', {
+    method: 'GET',
+    params: {
+      ...params,
     },
-  );
+    ...(options || {}),
+  });
 }
 
 /** 取消巡检计划与设备的关联 PUT /asset/plan/unassociate-device */

@@ -60,15 +60,15 @@ export const columns: VxeGridProps['columns'] = [
     title: '指派给的部门名称',
     field: 'assignDeptName',
   },
-  {
-    title: '指派给的负责人ID',
-    field: 'assignUserId',
-    visible: false,
-  },
-  {
-    title: '指派给的负责人名称',
-    field: 'assignUserName',
-  },
+  // {
+  //   title: '指派给的负责人ID',
+  //   field: 'assignUserId',
+  //   visible: false,
+  // },
+  // {
+  //   title: '指派给的负责人名称',
+  //   field: 'assignUserName',
+  // },
   {
     title: '任务截止时间',
     field: 'executeDeadline',
@@ -115,11 +115,11 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'assignDeptId',
     component: 'Input',
   },
-  {
-    label: '指派给的负责人ID',
-    fieldName: 'assignUserId',
-    component: 'Input',
-  },
+  // {
+  //   label: '指派给的负责人ID',
+  //   fieldName: 'assignUserId',
+  //   component: 'Input',
+  // },
   {
     label: '任务截止时间',
     fieldName: 'executeDeadline',

@@ -1,26 +1,33 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { useRoute } from 'vue-router';
+
 import { DictEnum } from '@vben/constants';
 
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
 
-export const querySchema: FormSchemaGetter = () => [
-  {
-    component: 'Input',
-    fieldName: 'planId',
-    label: '关联的巡检计划ID',
-  },
-  {
-    component: 'Select',
-    componentProps: {
-      options: getDictOptions(DictEnum.ASSET_INSPECTION_STATUS),
+export const querySchema: FormSchemaGetter = () => {
+  const route = useRoute();
+  return [
+    {
+      component: 'Input',
+      fieldName: 'planId',
+      defaultValue: route.params.planId,
+      label: '关联的巡检计划ID',
+      show: false,
     },
-    fieldName: 'status',
-    label: '巡检状态',
-  },
-];
+    {
+      component: 'Select',
+      componentProps: {
+        options: getDictOptions(DictEnum.ASSET_INSPECTION_STATUS),
+      },
+      fieldName: 'status',
+      label: '巡检状态',
+    },
+  ];
+};
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [

@@ -38,7 +38,6 @@ declare namespace AssetAPI {
   type AddAssetInspectionCommand = {
     /** 关联的巡检计划ID */
     planId?: number;
-    /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
     status?: string;
     /** 巡检实际开始时间 */
@@ -101,10 +100,8 @@ declare namespace AssetAPI {
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
     status?: string;
     inspectionObjectType?: string;
-    /** 巡检设备ID */
-    deviceId?: number;
-    /** 巡检地点ID */
-    locationId?: number;
+    /** 巡检ID */
+    objectId?: number;
     /** 指派给的部门ID */
     assignDeptId?: number;
     /** 指派给的负责人ID（可选） */
@@ -446,7 +443,9 @@ declare namespace AssetAPI {
     /** 显示顺序 */
     orderNum?: number;
     hasChild?: boolean;
-    childCount?: number;
+    totalChildCount?: number;
+    checkedChildCount?: number;
+    checked?: boolean;
   };
 
   type AssetLocationQuery = {
@@ -459,16 +458,6 @@ declare namespace AssetAPI {
     locationType?: string;
     parentLocationId?: number;
     locationCode?: string;
-  };
-
-  type AssetLocationTreeNodeDTO = {
-    locationId?: number;
-    parentLocationId?: number;
-    name?: string;
-    hasChild?: boolean;
-    totalChildCount?: number;
-    checkedChildCount?: number;
-    checked?: boolean;
   };
 
   type AssetManufacturerDTO = {
@@ -1200,12 +1189,6 @@ declare namespace AssetAPI {
     data?: AssetLocationDTO[];
   };
 
-  type ResponseDTOListAssetLocationTreeNodeDTO = {
-    code?: number;
-    message?: string;
-    data?: AssetLocationTreeNodeDTO[];
-  };
-
   type ResponseDTOListAssetManufacturerVO = {
     code?: number;
     message?: string;
@@ -1379,7 +1362,6 @@ declare namespace AssetAPI {
   type UpdateAssetInspectionCommand = {
     /** 关联的巡检计划ID */
     planId?: number;
-    /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
     status?: string;
     /** 巡检实际开始时间 */
@@ -1439,10 +1421,8 @@ declare namespace AssetAPI {
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
     status?: string;
     inspectionObjectType?: string;
-    /** 巡检设备ID */
-    deviceId?: number;
-    /** 巡检地点ID */
-    locationId?: number;
+    /** 巡检ID */
+    objectId?: number;
     /** 指派给的部门ID */
     assignDeptId?: number;
     /** 指派给的负责人ID（可选） */

@@ -215,10 +215,6 @@ declare namespace SystemAPI {
     deptIds?: TreeLong[];
   };
 
-  type detailParams = {
-    noticeId: number;
-  };
-
   type downloadParams = {
     ossId: number;
   };
@@ -519,12 +515,20 @@ declare namespace SystemAPI {
     userId: number;
   };
 
+  type getUserNoticeDetailParams = {
+    noticeId: number;
+  };
+
   type listOssInfoByIdsParams = {
     ossIds: number[];
   };
 
   type listUserByDeptParams = {
     deptId: number;
+  };
+
+  type markNoticeAsReadParams = {
+    noticeId: number;
   };
 
   type MenuCascadeRemoveCommand = {
@@ -652,15 +656,11 @@ declare namespace SystemAPI {
     rows?: SysUserDTO[];
   };
 
-  type PageDTOSysUserNoticeListDTO = {
+  type PageDTOSysUserNotificationListDTO = {
     /** 总记录数 */
     total?: number;
     /** 列表数据 */
-    rows?: SysUserNoticeListDTO[];
-  };
-
-  type readParams = {
-    noticeId: number;
+    rows?: SysUserNotificationListDTO[];
   };
 
   type removeByIdParams = {
@@ -894,10 +894,10 @@ declare namespace SystemAPI {
     data?: PageDTOSysUserDTO;
   };
 
-  type ResponseDTOPageDTOSysUserNoticeListDTO = {
+  type ResponseDTOPageDTOSysUserNotificationListDTO = {
     code?: number;
     message?: string;
-    data?: PageDTOSysUserNoticeListDTO;
+    data?: PageDTOSysUserNotificationListDTO;
   };
 
   type ResponseDTOString = {
@@ -948,12 +948,6 @@ declare namespace SystemAPI {
     data?: SysNoticeAdminDetailDTO;
   };
 
-  type ResponseDTOSysNoticeDetailDTO = {
-    code?: number;
-    message?: string;
-    data?: SysNoticeDetailDTO;
-  };
-
   type ResponseDTOSysOssConfigDTO = {
     code?: number;
     message?: string;
@@ -982,6 +976,12 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysRoleDTO;
+  };
+
+  type ResponseDTOSysUserNotificationDetailDTO = {
+    code?: number;
+    message?: string;
+    data?: SysUserNotificationDetailDTO;
   };
 
   type ResponseDTOUserDetailDTO = {
@@ -1336,23 +1336,6 @@ declare namespace SystemAPI {
     unreadCount?: number;
   };
 
-  type SysNoticeDetailDTO = {
-    /** 通知ID */
-    noticeId?: number;
-    /** 通知标题 */
-    noticeTitle?: string;
-    /** 通知类型（1通知 2公告） */
-    noticeType?: string;
-    /** 通知内容 */
-    noticeContent?: string;
-    /** 创建时间 */
-    createTime?: string;
-    /** 是否已读（0未读 1已读） */
-    readFlag?: string;
-    /** 阅读时间 */
-    readTime?: string;
-  };
-
   type SysNoticeDispatchDTO = {
     /** 投递类型（1全体 2部门 3用户） */
     dispatchType?: string;
@@ -1526,11 +1509,29 @@ declare namespace SystemAPI {
     updateTime?: string;
   };
 
-  type SysUserNoticeListDTO = {
+  type SysUserNotificationDetailDTO = {
     /** 通知ID */
     noticeId?: number;
     /** 通知标题 */
     noticeTitle?: string;
+    /** 通知类型（1通知 2公告） */
+    noticeType?: string;
+    /** 通知内容 */
+    noticeContent?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 是否已读（0未读 1已读） */
+    readFlag?: string;
+    /** 阅读时间 */
+    readTime?: string;
+  };
+
+  type SysUserNotificationListDTO = {
+    /** 通知ID */
+    noticeId?: number;
+    /** 通知标题 */
+    noticeTitle?: string;
+    summary?: string;
     /** 通知类型（1通知 2公告） */
     noticeType?: string;
     /** 创建时间 */
