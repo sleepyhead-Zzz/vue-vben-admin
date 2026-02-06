@@ -4,8 +4,6 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 import { reactive } from 'vue';
 
-import { getPopupContainer } from '@vben/utils';
-
 import { Checkbox, Input, Select } from 'ant-design-vue';
 
 import { optionDictTypeSelect } from '#/api/system/dictType';
@@ -123,7 +121,7 @@ export const vxeTableColumns: VxeGridProps['columns'] = [
         return (
           <Select
             class="w-full"
-            getPopupContainer={getPopupContainer}
+            getPopupContainer={() => document.body}
             options={javaTypeOptions}
             v-model:value={row.javaType}
           ></Select>
@@ -227,7 +225,7 @@ export const vxeTableColumns: VxeGridProps['columns'] = [
         return (
           <Select
             class="w-full"
-            getPopupContainer={getPopupContainer}
+            getPopupContainer={() => document.body}
             options={queryTypeOptions}
             v-model:value={row.queryType}
           ></Select>
@@ -271,7 +269,7 @@ export const vxeTableColumns: VxeGridProps['columns'] = [
         return (
           <Select
             class="w-full"
-            getPopupContainer={getPopupContainer}
+            getPopupContainer={() => document.body}
             options={componentsOptions}
             v-model:value={row.htmlType}
           ></Select>
@@ -312,7 +310,7 @@ export const vxeTableColumns: VxeGridProps['columns'] = [
             allowClear={true}
             class="w-full"
             disabled={disabled}
-            getPopupContainer={getPopupContainer}
+            getPopupContainer={() => document.body}
             onDeselect={onDeselect}
             options={dictOptions}
             placeholder="请选择字典类型"

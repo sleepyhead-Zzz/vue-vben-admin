@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-
 import { useVbenModal } from '@vben/common-ui';
-import { cloneDeep } from '@vben/utils';
+import { cloneDeep, findGroupParentIds } from '@vben/utils';
+
+import { uniq } from 'lodash-es';
 
 import { useVbenForm } from '#/adapter/form';
 import {
@@ -10,7 +10,6 @@ import {
   getRoleInfo,
   roleDeptTreeSelect,
 } from '#/api/system/role';
-import { TreeSelectPanel } from '#/components/tree';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { authModalSchemas } from './data';
@@ -27,27 +26,33 @@ const [BasicForm, formApi] = useVbenForm({
   schema: authModalSchemas(),
   showDefaultActions: false,
 });
-
-const deptTree = ref<SystemAPI.DeptTreeSelectDTO[]>([]);
+/**
+ * 保存部门数据 用于获取祖先节点
+ */
+let treeData: SystemAPI.DeptTreeSelectDTO[] = [];
 async function setupDeptTree(id: number | string) {
   const resp = await roleDeptTreeSelect({ roleId: id });
+
+  /**
+   * 设置部门树数据
+   */
+  formApi.updateSchema([
+    { fieldName: 'deptIds', componentProps: { treeData: resp.data?.deptIds } },
+  ]);
+
+  /**
+   * 设置选中 必须先传递treeData
+   * Note: Tree missing follow keys: '1981565541727186945'
+   */
   formApi.setFieldValue('deptIds', resp.data.checkedKeys);
   // 设置菜单信息
-  deptTree.value = resp.data?.deptIds;
-}
-
-async function customFormValueGetter() {
-  const v = await defaultFormValueGetter(formApi)();
-  // 获取勾选信息
-  const menuIds = deptSelectRef.value?.[0]?.getCheckedKeys() ?? [];
-  const mixStr = v + menuIds.join(',');
-  return mixStr;
+  treeData = resp.data?.deptIds;
 }
 
 const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
   {
-    initializedGetter: customFormValueGetter,
-    currentGetter: customFormValueGetter,
+    initializedGetter: defaultFormValueGetter(formApi),
+    currentGetter: defaultFormValueGetter(formApi),
   },
 );
 
@@ -58,25 +63,24 @@ const [BasicModal, modalApi] = useVbenModal({
   onConfirm: handleConfirm,
   onOpenChange: async (isOpen) => {
     if (!isOpen) {
+      treeData = [];
       return null;
     }
     modalApi.modalLoading(true);
 
     const { id } = modalApi.getData() as { id: number | string };
 
-    setupDeptTree(id);
-    const record = await getRoleInfo({ roleId: id });
-    await formApi.setValues(record.data);
+    const [roleRes] = await Promise.all([
+      getRoleInfo({ roleId: id }),
+      setupDeptTree(id),
+    ]);
+
+    await formApi.setValues(roleRes.data);
     markInitialized();
 
     modalApi.modalLoading(false);
   },
 });
-
-/**
- * 这里拿到的是一个数组ref
- */
-const deptSelectRef = ref();
 
 async function handleConfirm() {
   try {
@@ -89,7 +93,15 @@ async function handleConfirm() {
     const data = cloneDeep(await formApi.getValues());
     // 不为自定义权限的话 删除部门id
     if (data.dataScope === '2') {
-      const deptIds = deptSelectRef.value?.[0]?.getCheckedKeys() ?? [];
+      let { deptIds, deptCheckStrictly } = data;
+      // 节点关联 需要拼接上祖级ID(获取的是不带的)
+      if (deptCheckStrictly) {
+        // 找到所有父级ID
+        const parentIds = findGroupParentIds(treeData, deptIds, { id: 'id' });
+        // 去重
+        deptIds = uniq([...parentIds, ...deptIds]);
+      }
+      // 赋值
       data.deptIds = deptIds;
     } else {
       data.deptIds = [];
@@ -109,29 +121,10 @@ async function handleClosed() {
   await formApi.resetForm();
   resetInitialized();
 }
-
-/**
- * 通过回调更新 无法通过v-model
- * @param value 菜单选择是否严格模式
- */
-function handleCheckStrictlyChange(value: boolean) {
-  formApi.setFieldValue('deptCheckStrictly', value);
-}
 </script>
 
 <template>
   <BasicModal class="min-h-[600px] w-[550px]" title="分配权限">
-    <BasicForm>
-      <template #deptIds="slotProps">
-        <TreeSelectPanel
-          ref="deptSelectRef"
-          v-bind="slotProps"
-          :check-strictly="formApi.form.values.deptCheckStrictly"
-          :expand-all-on-init="true"
-          :tree-data="deptTree"
-          @check-strictly-change="handleCheckStrictlyChange"
-        />
-      </template>
-    </BasicForm>
+    <BasicForm />
   </BasicModal>
 </template>

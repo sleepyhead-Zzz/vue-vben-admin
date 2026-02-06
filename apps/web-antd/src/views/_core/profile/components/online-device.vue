@@ -6,12 +6,24 @@ import { Popconfirm } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { columns } from '#/views/monitor/online/data';
 
+const onlineDeviceColumns: VxeGridProps['columns'] = [
+  {
+    type: 'seq',
+    title: '序号',
+    width: 60,
+  },
+  // 个人中心不需要显示重复字段
+  ...(columns?.filter(
+    (item) => !['deptName', 'userName'].includes(item.field ?? ''),
+  ) ?? []),
+];
 const gridOptions: VxeGridProps = {
-  columns,
+  columns: onlineDeviceColumns,
   keepSource: true,
   pagerConfig: {
     enabled: false,
   },
+  maxHeight: 600,
   proxyConfig: {
     ajax: {
       query: async () => {
@@ -22,6 +34,7 @@ const gridOptions: VxeGridProps = {
   },
   rowConfig: {
     keyField: 'tokenId',
+    isCurrent: true,
   },
 };
 

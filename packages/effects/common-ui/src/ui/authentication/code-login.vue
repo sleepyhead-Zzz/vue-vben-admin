@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Recordable } from '@vben/types';
-
 import type { VbenFormSchema } from '@vben-core/form-ui';
 
 import { computed, reactive } from 'vue';
@@ -35,6 +33,10 @@ interface Props {
    * @zh_CN 按钮文本
    */
   submitButtonText?: string;
+  /**
+   * @zh_CN 是否显示返回按钮
+   */
+  showBack?: boolean;
 }
 
 defineOptions({
@@ -43,6 +45,7 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
+  showBack: true,
   loginPath: '/auth/login',
   submitButtonText: '',
   subTitle: '',
@@ -50,7 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  submit: [Recordable<any>];
+  submit: [{ code: string; phoneNumber: string; tenantId: string }];
 }>();
 
 const router = useRouter();
@@ -70,7 +73,11 @@ async function handleSubmit() {
   const { valid } = await formApi.validate();
   const values = await formApi.getValues();
   if (valid) {
-    emit('submit', values);
+    emit('submit', {
+      tenantId: values?.tenantId,
+      code: values?.code,
+      phoneNumber: values?.phoneNumber,
+    });
   }
 }
 
@@ -110,7 +117,12 @@ defineExpose({
         {{ submitButtonText || $t('common.login') }}
       </slot>
     </VbenButton>
-    <VbenButton class="mt-4 w-full" variant="outline" @click="goToLogin()">
+    <VbenButton
+      v-if="showBack"
+      class="mt-4 w-full"
+      variant="outline"
+      @click="goToLogin()"
+    >
       {{ $t('common.back') }}
     </VbenButton>
   </div>

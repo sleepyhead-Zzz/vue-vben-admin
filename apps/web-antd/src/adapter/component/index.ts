@@ -34,6 +34,9 @@ const Button = defineAsyncComponent(() => import('ant-design-vue/es/button'));
 const Checkbox = defineAsyncComponent(
   () => import('ant-design-vue/es/checkbox'),
 );
+const Cascader = defineAsyncComponent(
+  () => import('ant-design-vue/es/cascader'),
+);
 const CheckboxGroup = defineAsyncComponent(() =>
   import('ant-design-vue/es/checkbox').then((res) => res.CheckboxGroup),
 );
@@ -109,6 +112,7 @@ const withDefaultPlaceholder = <T extends Component>(
 
 // 这里需要自行根据业务组件库进行适配，需要用到的组件都需要在这里类型说明
 export type ComponentType =
+  | 'ApiCascader'
   | 'ApiSelect'
   | 'ApiTreeSelect'
   | 'AutoComplete'
@@ -144,35 +148,29 @@ async function initComponentAdapter() {
     // 如果你的组件体积比较大，可以使用异步加载
     // Button: () =>
     // import('xxx').then((res) => res.Button),
-    ApiSelect: withDefaultPlaceholder(
-      {
-        ...ApiComponent,
-        name: 'ApiSelect',
-      },
-      'select',
-      {
-        component: Select,
-        loadingSlot: 'suffixIcon',
-        visibleEvent: 'onDropdownVisibleChange',
-        modelPropName: 'value',
-      },
-    ),
-    ApiTreeSelect: withDefaultPlaceholder(
-      {
-        ...ApiComponent,
-        name: 'ApiTreeSelect',
-      },
-      'select',
-      {
-        component: TreeSelect,
-        fieldNames: { label: 'label', value: 'value', children: 'children' },
-        loadingSlot: 'suffixIcon',
-        modelPropName: 'value',
-        optionsPropName: 'treeData',
-        visibleEvent: 'onVisibleChange',
-      },
-    ),
+    ApiCascader: withDefaultPlaceholder(ApiComponent, 'select', {
+      component: Cascader,
+      fieldNames: { label: 'label', value: 'value', children: 'children' },
+      loadingSlot: 'suffixIcon',
+      modelPropName: 'value',
+      visibleEvent: 'onVisibleChange',
+    }),
+    ApiSelect: withDefaultPlaceholder(ApiComponent, 'select', {
+      component: Select,
+      loadingSlot: 'suffixIcon',
+      modelPropName: 'value',
+      visibleEvent: 'onVisibleChange',
+    }),
+    ApiTreeSelect: withDefaultPlaceholder(ApiComponent, 'select', {
+      component: TreeSelect,
+      fieldNames: { label: 'label', value: 'value', children: 'children' },
+      loadingSlot: 'suffixIcon',
+      modelPropName: 'value',
+      optionsPropName: 'treeData',
+      visibleEvent: 'onVisibleChange',
+    }),
     AutoComplete,
+    Cascader: withDefaultPlaceholder(Cascader, 'select'),
     Checkbox,
     CheckboxGroup,
     DatePicker,

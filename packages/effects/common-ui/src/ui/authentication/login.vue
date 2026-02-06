@@ -107,7 +107,7 @@ defineExpose({
       </Title>
     </slot>
 
-    <Form />
+    <Form class="mb-2" />
 
     <div
       v-if="showRememberMe || showForgetPassword"
@@ -116,7 +116,7 @@ defineExpose({
       <div class="flex-center">
         <VbenCheckbox
           v-if="showRememberMe"
-          v-model:checked="rememberMe"
+          v-model="rememberMe"
           name="rememberMe"
         >
           {{ $t('authentication.rememberMe') }}

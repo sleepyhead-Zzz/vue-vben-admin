@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import type { VbenFormSchema } from '@vben/common-ui';
 
-import { computed, onMounted, ref, useTemplateRef } from 'vue';
+import { computed, markRaw, onMounted, ref, useTemplateRef } from 'vue';
 
 import { AuthenticationLogin, z } from '@vben/common-ui';
 import { useAppConfig } from '@vben/hooks';
 import { $t } from '@vben/locales';
 
+import { Input } from 'ant-design-vue';
 import { omit } from 'lodash-es';
 
 import { getCaptchaCode } from '#/api/common/captcha';
 import { useAuthStore } from '#/store';
+
+import InputCaptcha from './input-captcha.vue';
 
 defineOptions({ name: 'Login' });
 
@@ -49,10 +52,12 @@ onMounted(async () => {
 const formSchema = computed((): VbenFormSchema[] => {
   return [
     {
-      component: 'VbenInput',
+      component: markRaw(Input),
+      modelPropName: 'value',
       componentProps: {
-        class: 'focus:border-primary',
+        size: 'large',
         placeholder: $t('authentication.usernameTip'),
+        allowClear: true,
       },
       defaultValue: '',
       fieldName: 'identifier',
@@ -60,10 +65,11 @@ const formSchema = computed((): VbenFormSchema[] => {
       rules: z.string().min(1, { message: $t('authentication.usernameTip') }),
     },
     {
-      component: 'VbenInputPassword',
+      component: markRaw(Input.Password),
+      modelPropName: 'value',
       componentProps: {
-        class: 'focus:border-primary',
-        placeholder: $t('authentication.password'),
+        size: 'large',
+        placeholder: $t('authentication.passwordTip'),
       },
       defaultValue: '',
       fieldName: 'password',
@@ -71,7 +77,7 @@ const formSchema = computed((): VbenFormSchema[] => {
       rules: z.string().min(5, { message: $t('authentication.passwordTip') }),
     },
     {
-      component: 'VbenInputCaptcha',
+      component: markRaw(InputCaptcha),
       componentProps: {
         captcha: captchaInfo.value.img,
         class: 'focus:border-primary',
