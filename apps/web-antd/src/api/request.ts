@@ -19,7 +19,10 @@ import { useAuthStore } from '#/store';
 
 import { refreshTokenApi } from './core';
 
-const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
+const { apiURL, clientId } = useAppConfig(
+  import.meta.env,
+  import.meta.env.PROD,
+);
 
 let isLogoutProcessing = false;
 
@@ -73,6 +76,14 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
       const language = preferences.app.locale.replace('-', '_');
       config.headers['Accept-Language'] = language;
       config.headers['Content-Language'] = language;
+
+      /**
+       * 添加全局clientId
+       * 关于header的clientId被错误绑定到实体类
+       * https://gitee.com/dapppp/ruoyi-plus-vben5/issues/IC0BDS
+       */
+      config.headers.ClientID = clientId;
+
       return config;
     },
   });
