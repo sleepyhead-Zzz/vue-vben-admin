@@ -35,7 +35,7 @@ const defaultForm = (): AssetAPI.AssetInspectionPlanDTO => ({
   deptId: undefined,
   scheduleModel: 1,
   inspectionObjectType: undefined,
-  status: 1,
+  status: '1',
   interval: {
     unit: 2,
     value: 10,
@@ -52,7 +52,6 @@ const defaultForm = (): AssetAPI.AssetInspectionPlanDTO => ({
   },
   startTime: null,
   endTime: null,
-  timeZone: 'GMT+8',
   jitterSeconds: 0,
 });
 
@@ -83,8 +82,7 @@ const [BasicModal, modalApi] = useVbenModal({
 
     modalApi.modalLoading(true);
 
-    const planId = modalApi.getData().id || {};
-
+    const planId = modalApi.getData().id || undefined;
     isUpdate.value = !!planId;
     currentPlanId.value = planId ?? null;
 
