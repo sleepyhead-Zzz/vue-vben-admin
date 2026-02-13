@@ -204,6 +204,6 @@ declare namespace MonitorAPI {
   type ResponseDTOVoid = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
   };
 }

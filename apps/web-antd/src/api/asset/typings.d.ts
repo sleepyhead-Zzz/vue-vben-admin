@@ -53,23 +53,26 @@ declare namespace AssetAPI {
   type AddAssetInspectionPlanCommand = {
     /** 计划名称 */
     planName?: string;
-    /** 执行部门 */
+    /** 部门ID */
     deptId?: number;
-    /** 开始日期 */
-    startDate?: string;
-    /** 结束日期 */
-    endDate?: string;
-    /** 巡检频率 1 天 2 周 3 月 */
-    frequency?: number;
-    /** 每隔多少单位周期执行一次，如每2天、每3周、每1月 */
-    intervalValue?: number;
-    weekdayList?: string[];
-    /** 适用于monthly，1~31，逗号分隔，如1,15 */
-    monthDayList?: string[];
-    /** 状态 */
-    status?: string;
+    /** 调度模型 1=INTERVAL 2=CALENDAR */
+    scheduleModel?: number;
+    /** 间隔模式配置 */
+    interval?: IntervalConfig;
+    /** 日历模式配置 */
+    calendar?: CalendarConfig;
+    /** 开始时间 */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    /** 时区 */
+    timeZone?: string;
+    /** 抖动秒数 */
+    jitterSeconds?: number;
     /** 巡检对象类型 */
     inspectionObjectType?: string;
+    /** 巡检对象类型 */
+    status?: string;
   };
 
   type AddAssetInspectionProjectCommand = {
@@ -299,27 +302,17 @@ declare namespace AssetAPI {
 
   type AssetInspectionPlanDTO = {
     planId?: number;
-    /** 计划名称 */
     planName?: string;
-    /** 执行部门ID */
     deptId?: number;
-    /** 开始日期 */
-    startDate?: string;
-    /** 结束日期 */
-    endDate?: string;
-    /** 巡检频率 */
-    frequency?: number;
-    /** 每隔多少单位周期执行一次，如每2天、每3周、每1月 */
-    intervalValue?: number;
-    /** 适用于weekly，1~7，逗号分隔，如1,3,5表示周一三五 */
-    weekdayList?: string[];
-    /** 适用于monthly，1~31，逗号分隔，如1,15 */
-    monthDayList?: string[];
-    /** 状态 */
-    status?: string;
-    /** 巡检对象类型 */
+    scheduleModel?: number;
+    interval?: IntervalView;
+    calendar?: CalendarView;
+    startTime?: string;
+    endTime?: string;
+    timeZone?: string;
+    jitterSeconds?: number;
+    status?: number;
     inspectionObjectType?: string;
-    jobId?: number;
   };
 
   type AssetInspectionPlanQuery = {
@@ -585,6 +578,33 @@ declare namespace AssetAPI {
   type associatedPlanDevicesParams = {
     planId: number;
     query: AssociatedDeviceQuery;
+  };
+
+  type CalendarConfig = {
+    /** 触发小时 */
+    hour?: number;
+    /** 触发分钟 */
+    minute?: number;
+    /** 触发秒 */
+    second?: number;
+    /** 星期 (0-6) */
+    dayOfWeek?: number[];
+    /** 每月第几天 (1-31) */
+    dayOfMonth?: number[];
+    /** 月份 (1-12) */
+    month?: number[];
+    /** 年份(可选) */
+    year?: number[];
+  };
+
+  type CalendarView = {
+    hour?: number;
+    minute?: number;
+    second?: number;
+    dayOfWeek?: string;
+    dayOfMonth?: string;
+    month?: string;
+    year?: string;
   };
 
   type editCategoryParams = {
@@ -929,7 +949,22 @@ declare namespace AssetAPI {
 
   type InspectionPlanLocationSaveCommand = {
     planId: number;
-    locationIds?: number[];
+    locationIds: number[];
+  };
+
+  type IntervalConfig = {
+    /** 间隔单位 1=秒 2=分钟 3=小时 4=天 */
+    unit?: number;
+    /** 间隔值 */
+    value?: number;
+    /** 偏移秒数 */
+    offset?: number;
+  };
+
+  type IntervalView = {
+    unit?: number;
+    value?: number;
+    offset?: number;
   };
 
   type PageDTOAssetCategoryDTO = {
@@ -1282,11 +1317,11 @@ declare namespace AssetAPI {
   type ResponseDTOVoid = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
   };
 
   type TreeLong = {
-    weight?: Record<string, any>;
+    weight?: any;
     config?: TreeNodeConfig;
     name?: { empty?: boolean };
     id?: number;
@@ -1378,25 +1413,27 @@ declare namespace AssetAPI {
   type UpdateAssetInspectionPlanCommand = {
     /** 计划名称 */
     planName?: string;
-    /** 执行部门 */
+    /** 部门ID */
     deptId?: number;
-    /** 开始日期 */
-    startDate?: string;
-    /** 结束日期 */
-    endDate?: string;
-    /** 巡检频率 1 天 2 周 3 月 */
-    frequency?: number;
-    /** 每隔多少单位周期执行一次，如每2天、每3周、每1月 */
-    intervalValue?: number;
-    weekdayList?: string[];
-    /** 适用于monthly，1~31，逗号分隔，如1,15 */
-    monthDayList?: string[];
-    /** 状态 */
-    status?: string;
+    /** 调度模型 1=INTERVAL 2=CALENDAR */
+    scheduleModel?: number;
+    /** 间隔模式配置 */
+    interval?: IntervalConfig;
+    /** 日历模式配置 */
+    calendar?: CalendarConfig;
+    /** 开始时间 */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    /** 时区 */
+    timeZone?: string;
+    /** 抖动秒数 */
+    jitterSeconds?: number;
     /** 巡检对象类型 */
     inspectionObjectType?: string;
+    /** 巡检对象类型 */
+    status?: string;
     planId?: number;
-    jobId?: number;
   };
 
   type UpdateAssetInspectionProjectCommand = {

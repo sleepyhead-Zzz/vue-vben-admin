@@ -43,7 +43,7 @@ declare namespace ToolAPI {
     columnComment?: string;
     columnType?: string;
     javaType?: string;
-    javaField?: string;
+    javaField: string;
     isPk?: string;
     isIncrement?: string;
     isRequired?: string;
@@ -76,7 +76,7 @@ declare namespace ToolAPI {
     columnComment?: string;
     columnType?: string;
     javaType?: string;
-    javaField?: string;
+    javaField: string;
     isPk?: string;
     isIncrement?: string;
     isRequired?: string;
@@ -88,9 +88,9 @@ declare namespace ToolAPI {
     htmlType?: string;
     dictType?: string;
     sort?: number;
-    capJavaField?: string;
     increment?: boolean;
     query?: boolean;
+    capJavaField?: string;
     list?: boolean;
     required?: boolean;
     pk?: boolean;
@@ -102,18 +102,18 @@ declare namespace ToolAPI {
 
   type GenTableDTO = {
     tableId?: number;
-    dataName?: string;
-    tableName?: string;
-    tableComment?: string;
+    dataName: string;
+    tableName: string;
+    tableComment: string;
     subTableName?: string;
     subTableFkName?: string;
-    className?: string;
+    className: string;
     tplCategory?: string;
-    packageName?: string;
-    moduleName?: string;
-    businessName?: string;
-    functionName?: string;
-    functionAuthor?: string;
+    packageName: string;
+    moduleName: string;
+    businessName: string;
+    functionName: string;
+    functionAuthor: string;
     genType?: string;
     genPath?: string;
     pkColumn?: GenTableColumnDTO;
@@ -146,18 +146,18 @@ declare namespace ToolAPI {
     /** 删除标志（0代表存在 1代表删除） */
     deleted?: boolean;
     tableId?: number;
-    dataName?: string;
-    tableName?: string;
-    tableComment?: string;
+    dataName: string;
+    tableName: string;
+    tableComment: string;
     subTableName?: string;
     subTableFkName?: string;
-    className?: string;
+    className: string;
     tplCategory?: string;
-    packageName?: string;
-    moduleName?: string;
-    businessName?: string;
-    functionName?: string;
-    functionAuthor?: string;
+    packageName: string;
+    moduleName: string;
+    businessName: string;
+    functionName: string;
+    functionAuthor: string;
     genType?: string;
     genPath?: string;
     pkColumn?: GenTableColumnEntity;
@@ -246,7 +246,7 @@ declare namespace ToolAPI {
   type ResponseDTOVoid = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
   };
 
   type syncDbParams = {

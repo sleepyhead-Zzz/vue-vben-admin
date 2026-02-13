@@ -67,7 +67,7 @@ declare namespace CommonAPI {
   type ResponseDTOVoid = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
   };
 
   type RouterDTO = {
@@ -79,6 +79,7 @@ declare namespace CommonAPI {
     query?: string;
     alwaysShow?: boolean;
     meta?: RouterMeta;
+    children?: RouterDTO[];
   };
 
   type RouterMeta = {

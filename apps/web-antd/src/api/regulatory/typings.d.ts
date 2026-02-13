@@ -1284,7 +1284,7 @@ declare namespace RegulatoryAPI {
   type ResponseDTOVoid = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
   };
 
   type UpdateRegCardCommand = {

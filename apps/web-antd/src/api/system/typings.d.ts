@@ -1,11 +1,11 @@
 declare namespace SystemAPI {
   type AddConfigCommand = {
     /** 参数名称 */
-    configName?: string;
+    configName: string;
     /** 参数键名 */
-    configKey?: string;
+    configKey: string;
     /** 参数键值 */
-    configValue?: string;
+    configValue: string;
     /** 系统内置（Y是 N否） */
     configType?: string;
     /** 备注 */
@@ -42,15 +42,15 @@ declare namespace SystemAPI {
 
   type AddNoticeCommand = {
     /** 通知标题 */
-    noticeTitle?: string;
+    noticeTitle: string;
     /** 通知类型（1通知 2公告） */
-    noticeType?: string;
+    noticeType: string;
     /** 通知内容 */
-    noticeContent?: string;
+    noticeContent: string;
     /** 通知内容 */
     status?: string;
     /** 投递对象列表 */
-    dispatchList?: SysNoticeDispatchDTO[];
+    dispatchList: SysNoticeDispatchDTO[];
   };
 
   type AddSysClientCommand = {
@@ -74,7 +74,7 @@ declare namespace SystemAPI {
 
   type AddSysDeptCommand = {
     parentId: number;
-    deptName?: string;
+    deptName: string;
     orderNum: number;
     leaderId?: number;
     phone?: string;
@@ -84,14 +84,14 @@ declare namespace SystemAPI {
 
   type AddSysMenuCommand = {
     parentId?: number;
-    menuName?: string;
+    menuName: string;
     orderNum: number;
     path?: string;
     component?: string;
     queryParam?: string;
     isFrame?: string;
     isCache?: string;
-    menuType?: string;
+    menuType: string;
     visible?: string;
     status?: string;
     perms?: string;
@@ -129,8 +129,8 @@ declare namespace SystemAPI {
   type AddSysPostCommand = {
     deptId: number;
     belongDeptId?: number;
-    postCode?: string;
-    postName?: string;
+    postCode: string;
+    postName: string;
     postCategory?: string;
     postSort: number;
     status?: string;
@@ -138,8 +138,8 @@ declare namespace SystemAPI {
   };
 
   type AddSysRoleCommand = {
-    roleName?: string;
-    roleKey?: string;
+    roleName: string;
+    roleKey: string;
     roleSort: number;
     dataScope?: string;
     menuCheckStrictly?: boolean;
@@ -152,8 +152,8 @@ declare namespace SystemAPI {
 
   type AddUserCommand = {
     deptId?: number;
-    userName?: string;
-    nickName?: string;
+    userName: string;
+    nickName: string;
     email?: string;
     phoneNumber?: string;
     sex?: number;
@@ -999,7 +999,7 @@ declare namespace SystemAPI {
   type ResponseDTOVoid = {
     code?: number;
     message?: string;
-    data?: Record<string, any>;
+    data?: any;
   };
 
   type revokeUsersFromRoleParams = {
@@ -1282,6 +1282,7 @@ declare namespace SystemAPI {
     createDept?: number;
     remark?: string;
     createTime?: string;
+    children?: SysMenuDTO[];
   };
 
   type SysNoticeAdminDetailDTO = {
@@ -1541,7 +1542,7 @@ declare namespace SystemAPI {
   };
 
   type TreeLong = {
-    weight?: Record<string, any>;
+    weight?: any;
     config?: TreeNodeConfig;
     name?: { empty?: boolean };
     id?: number;
@@ -1582,11 +1583,11 @@ declare namespace SystemAPI {
 
   type UpdateConfigCommand = {
     /** 参数名称 */
-    configName?: string;
+    configName: string;
     /** 参数键名 */
-    configKey?: string;
+    configKey: string;
     /** 参数键值 */
-    configValue?: string;
+    configValue: string;
     /** 系统内置（Y是 N否） */
     configType?: string;
     /** 备注 */
@@ -1626,15 +1627,15 @@ declare namespace SystemAPI {
 
   type UpdateNoticeCommand = {
     /** 通知标题 */
-    noticeTitle?: string;
+    noticeTitle: string;
     /** 通知类型（1通知 2公告） */
-    noticeType?: string;
+    noticeType: string;
     /** 通知内容 */
-    noticeContent?: string;
+    noticeContent: string;
     /** 通知内容 */
     status?: string;
     /** 投递对象列表 */
-    dispatchList?: SysNoticeDispatchDTO[];
+    dispatchList: SysNoticeDispatchDTO[];
     noticeId?: number;
   };
 
@@ -1668,7 +1669,7 @@ declare namespace SystemAPI {
 
   type UpdateSysDeptCommand = {
     parentId: number;
-    deptName?: string;
+    deptName: string;
     orderNum: number;
     leaderId?: number;
     phone?: string;
@@ -1679,14 +1680,14 @@ declare namespace SystemAPI {
 
   type UpdateSysMenuCommand = {
     parentId?: number;
-    menuName?: string;
+    menuName: string;
     orderNum: number;
     path?: string;
     component?: string;
     queryParam?: string;
     isFrame?: string;
     isCache?: string;
-    menuType?: string;
+    menuType: string;
     visible?: string;
     status?: string;
     perms?: string;
@@ -1731,8 +1732,8 @@ declare namespace SystemAPI {
   type UpdateSysPostCommand = {
     deptId: number;
     belongDeptId?: number;
-    postCode?: string;
-    postName?: string;
+    postCode: string;
+    postName: string;
     postCategory?: string;
     postSort: number;
     status?: string;
@@ -1741,8 +1742,8 @@ declare namespace SystemAPI {
   };
 
   type UpdateSysRoleCommand = {
-    roleName?: string;
-    roleKey?: string;
+    roleName: string;
+    roleKey: string;
     roleSort: number;
     dataScope?: string;
     menuCheckStrictly?: boolean;
@@ -1768,8 +1769,8 @@ declare namespace SystemAPI {
 
   type UpdateUserCommand = {
     deptId?: number;
-    userName?: string;
-    nickName?: string;
+    userName: string;
+    nickName: string;
     email?: string;
     phoneNumber?: string;
     sex?: number;
