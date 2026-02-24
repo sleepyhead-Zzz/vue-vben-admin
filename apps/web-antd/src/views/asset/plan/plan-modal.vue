@@ -1,3 +1,4 @@
+<!-- eslint-disable no-unused-vars -->
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
@@ -22,25 +23,25 @@ import { optionDeptList } from '#/api/system/dept';
 import { getDictOptions } from '#/utils/dict';
 
 /* =========================
-   状态
+   枚举
 ========================= */
+enum ScheduleMode {
+  CALENDAR = 2,
+  INTERVAL = 1,
+}
+type CalendarType = 'month' | 'week';
 
-const deptTree = ref<any[]>([]);
-const isUpdate = ref(false);
-const currentPlanId = ref<null | number>(null);
-
+/* =========================
+   默认表单
+========================= */
 const defaultForm = (): AssetAPI.AssetInspectionPlanDTO => ({
   planId: null,
   planName: '',
   deptId: undefined,
-  scheduleModel: 1,
+  scheduleModel: ScheduleMode.INTERVAL,
   inspectionObjectType: undefined,
   status: '1',
-  interval: {
-    unit: 2,
-    value: 10,
-    offset: 0,
-  },
+  interval: { unit: 2, value: 10, offset: 0 },
   calendar: {
     hour: 8,
     minute: 0,
@@ -56,43 +57,61 @@ const defaultForm = (): AssetAPI.AssetInspectionPlanDTO => ({
 });
 
 const form = ref(defaultForm());
+const deptTree = ref<any[]>([]);
+const isUpdate = ref(false);
+const currentPlanId = ref<null | number>(null);
+const calendarType = ref<CalendarType>('week');
 
 /* =========================
    计算属性
 ========================= */
-
-const isInterval = computed(() => form.value.scheduleModel === 1);
-const isCalendar = computed(() => form.value.scheduleModel === 2);
-
+const isIntervalMode = computed(
+  () => form.value.scheduleModel === ScheduleMode.INTERVAL,
+);
+const isCalendarMode = computed(
+  () => form.value.scheduleModel === ScheduleMode.CALENDAR,
+);
 const modalTitle = computed(() =>
-  isUpdate.value ? '编辑巡检计划' : '新增巡检计划',
+  isUpdate.value ? '编辑巡检计划' : '新建巡检计划',
 );
 
 /* =========================
-   modal
+   Modal 生命周期
 ========================= */
-
 const [BasicModal, modalApi] = useVbenModal({
   class: 'w-[820px]',
   fullscreenButton: false,
-  onConfirm: handleConfirm,
-  onClosed: handleClosed,
+  onConfirm: handleSubmit,
+  onClosed: resetForm,
   onOpenChange: async (isOpen) => {
     if (!isOpen) return;
-
     modalApi.modalLoading(true);
 
     const planId = modalApi.getData().id || undefined;
     isUpdate.value = !!planId;
     currentPlanId.value = planId ?? null;
-
     await loadDeptTree();
 
     if (planId) {
       const { data } = await getPlanInfo({ planId });
       form.value = structuredClone(data);
+
+      // 修复 startTime/endTime 为 Dayjs 对象
+      if (form.value.startTime)
+        form.value.startTime = dayjs(form.value.startTime);
+      if (form.value.endTime) form.value.endTime = dayjs(form.value.endTime);
+
+      // 初始化 calendarType
+      if (form.value.scheduleModel === ScheduleMode.CALENDAR) {
+        calendarType.value = form.value.calendar.dayOfWeek?.length
+          ? 'week'
+          : 'month';
+      } else {
+        calendarType.value = 'week';
+      }
     } else {
       form.value = defaultForm();
+      calendarType.value = 'week';
     }
 
     modalApi.modalLoading(false);
@@ -100,84 +119,108 @@ const [BasicModal, modalApi] = useVbenModal({
 });
 
 /* =========================
-   初始化部门
+   加载部门
 ========================= */
-
 async function loadDeptTree() {
   const { data } = await optionDeptList({ query: '' });
   deptTree.value = data || [];
 }
 
 /* =========================
-   调度相关逻辑
+   切换模式
 ========================= */
-
-function toggleScheduleModel(type: number) {
-  form.value.scheduleModel = type;
-}
-
-const calendarMode = ref<'month' | 'week'>('week');
-
-function toggleCalendarMode(type: 'month' | 'week') {
-  calendarMode.value = type;
-
-  if (type === 'week') {
-    form.value.calendar.dayOfMonth = [];
-  } else {
+function switchScheduleMode(mode: ScheduleMode) {
+  form.value.scheduleModel = mode;
+  if (mode === ScheduleMode.INTERVAL) {
     form.value.calendar.dayOfWeek = [];
+    form.value.calendar.dayOfMonth = [];
+    form.value.calendar.month = [];
+    form.value.calendar.year = [];
   }
 }
 
-function toggleTag(list: number[], val: number) {
-  const index = list.indexOf(val);
-  if (index === -1) list.push(val);
-  else list.splice(index, 1);
+function switchCalendarType(type: CalendarType) {
+  calendarType.value = type;
+  if (type === 'week') form.value.calendar.dayOfMonth = [];
+  else form.value.calendar.dayOfWeek = [];
 }
 
-function onTimeChange(time: Dayjs | null) {
+/* =========================
+   时间 & 数字操作
+========================= */
+function updateCalendarTime(time: Dayjs | null) {
   if (!time) return;
   form.value.calendar.hour = time.hour();
   form.value.calendar.minute = time.minute();
   form.value.calendar.second = time.second();
 }
 
-function onDateSelect(date: Dayjs) {
-  toggleTag(form.value.calendar.dayOfMonth, date.date());
+function toggleNumber(list: number[], value: number) {
+  const index = list.indexOf(value);
+  index === -1 ? list.push(value) : list.splice(index, 1);
+}
+
+/* =========================
+   校验
+========================= */
+function validateForm(): boolean {
+  const data = form.value;
+  if (!data.planName) {
+    message.error('请输入计划名称');
+    return false;
+  }
+  if (!data.deptId) {
+    message.error('请选择负责部门');
+    return false;
+  }
+  if (!data.inspectionObjectType) {
+    message.error('请选择巡检对象');
+    return false;
+  }
+  if (
+    data.scheduleModel === ScheduleMode.INTERVAL &&
+    data.interval.value <= 0
+  ) {
+    message.error('执行间隔必须大于0');
+    return false;
+  }
+  return true;
 }
 
 /* =========================
    提交
 ========================= */
+function normalizeCalendar() {
+  if (form.value.scheduleModel === ScheduleMode.CALENDAR) {
+    if (calendarType.value === 'week') form.value.calendar.dayOfMonth = [];
+    else form.value.calendar.dayOfWeek = [];
+    form.value.calendar.month = [];
+    form.value.calendar.year = [];
+  } else {
+    form.value.calendar.dayOfWeek = [];
+    form.value.calendar.dayOfMonth = [];
+    form.value.calendar.month = [];
+    form.value.calendar.year = [];
+  }
+}
 
-async function handleConfirm() {
+async function handleSubmit() {
+  if (!validateForm()) return;
+  normalizeCalendar();
+
+  // 提交前转换 startTime/endTime 为原生 Date
+  const payload = {
+    ...form.value,
+    startTime: form.value.startTime ? form.value.startTime.toDate() : null,
+    endTime: form.value.endTime ? form.value.endTime.toDate() : null,
+  };
+
   try {
     modalApi.lock(true);
-
-    if (!form.value.planName) {
-      message.error('请输入计划名称');
-      return;
-    }
-
-    if (!form.value.deptId) {
-      message.error('请选择执行部门');
-      return;
-    }
-
-    if (!form.value.inspectionObjectType) {
-      message.error('请选择巡检对象类型');
-      return;
-    }
-
-    if (isInterval.value && form.value.interval.value <= 0) {
-      message.error('间隔值必须大于0');
-      return;
-    }
-
     await (isUpdate.value && currentPlanId.value
-      ? editPlan({ planId: currentPlanId.value }, form.value)
-      : addPlan(form.value));
-
-    message.success(isUpdate.value ? '修改成功' : '新增成功');
+      ? editPlan({ planId: currentPlanId.value }, payload)
+      : addPlan(payload));
+    message.success(isUpdate.value ? '修改成功' : '创建成功');
     modalApi.close();
   } finally {
     modalApi.lock(false);
@@ -185,13 +228,13 @@ async function handleConfirm() {
 }
 
 /* =========================
-   关闭后重置
+   重置
 ========================= */
-
-function handleClosed() {
+function resetForm() {
   form.value = defaultForm();
   isUpdate.value = false;
   currentPlanId.value = null;
+  calendarType.value = 'week';
 }
 </script>
 
@@ -200,57 +243,87 @@ function handleClosed() {
     <!-- 计划名称 -->
     <div class="section">
       <div class="label">计划名称</div>
-      <Input v-model:value="form.planName" placeholder="请输入计划名称" />
+      <Input
+        v-model:value="form.planName"
+        placeholder="例如：每周设备安全巡检"
+      />
     </div>
 
-    <!-- 巡检对象类型 -->
+    <!-- 巡检对象 -->
     <div class="section">
-      <div class="label">巡检对象类型</div>
+      <div class="label">巡检对象</div>
       <Select
         v-model:value="form.inspectionObjectType"
-        placeholder="请选择巡检对象类型"
+        placeholder="请选择要巡检的对象类型"
         style="width: 100%"
         :options="getDictOptions(DictEnum.ASSET_INSPECTION_OBJECT_TYPE)"
       />
     </div>
+
+    <!-- 是否启用 -->
     <div class="section">
-      <div class="label">状态</div>
+      <div class="label">是否启用</div>
       <Select
         v-model:value="form.status"
-        placeholder="请选择状态"
+        placeholder="请选择是否启用该计划"
         style="width: 100%"
         :options="getDictOptions(DictEnum.ASSET_INSPECTION_PLAN_STATUS)"
       />
     </div>
-    <!-- 执行部门 -->
+
+    <!-- 负责部门 -->
     <div class="section">
-      <div class="label">执行部门</div>
+      <div class="label">负责部门</div>
       <TreeSelect
         v-model:value="form.deptId"
         :tree-data="deptTree"
-        :field-names="{
-          label: 'label',
-          value: 'id',
-          children: 'children',
-        }"
+        :field-names="{ label: 'label', value: 'id', children: 'children' }"
         tree-default-expand-all
-        placeholder="请选择执行部门"
+        placeholder="请选择负责执行该计划的部门"
         style="width: 100%"
       />
     </div>
 
-    <!-- 调度模式 -->
+    <!-- 开始时间 -->
     <div class="section">
-      <Tag :color="isInterval ? 'blue' : ''" @click="toggleScheduleModel(1)">
-        间隔模式
+      <div class="label">开始时间</div>
+      <DatePicker
+        v-model:value="form.startTime"
+        style="width: 100%"
+        placeholder="请选择开始时间"
+      />
+    </div>
+
+    <!-- 结束时间 -->
+    <div class="section">
+      <div class="label">结束时间</div>
+      <DatePicker
+        v-model:value="form.endTime"
+        style="width: 100%"
+        placeholder="请选择结束时间"
+      />
+    </div>
+
+    <!-- 执行方式 -->
+    <div class="section">
+      <div class="label">执行方式</div>
+      <Tag
+        :color="isIntervalMode ? 'blue' : ''"
+        @click="switchScheduleMode(ScheduleMode.INTERVAL)"
+      >
+        按固定间隔执行
       </Tag>
-      <Tag :color="isCalendar ? 'blue' : ''" @click="toggleScheduleModel(2)">
-        日历模式
+      <Tag
+        :color="isCalendarMode ? 'blue' : ''"
+        @click="switchScheduleMode(ScheduleMode.CALENDAR)"
+      >
+        按指定日期执行
       </Tag>
     </div>
 
     <!-- 间隔模式 -->
-    <div v-if="isInterval" class="section">
+    <div v-if="isIntervalMode" class="section">
+      <div class="label">执行频率</div>
       <Space>
         每
         <InputNumber
@@ -268,10 +341,10 @@ function handleClosed() {
             { label: '天', value: 4 },
           ]"
         />
+        执行一次
       </Space>
-
       <div class="mt">
-        偏移秒数：
+        首次延迟（秒）：
         <InputNumber
           v-model:value="form.interval.offset"
           :min="0"
@@ -281,49 +354,51 @@ function handleClosed() {
     </div>
 
     <!-- 日历模式 -->
-    <div v-if="isCalendar" class="section">
-      <div class="mb">
-        执行时间：
-        <TimePicker
-          format="HH:mm:ss"
-          :value="
-            dayjs()
-              .hour(form.calendar.hour)
-              .minute(form.calendar.minute)
-              .second(form.calendar.second)
-          "
-          @change="onTimeChange"
-        />
-      </div>
+    <div v-if="isCalendarMode" class="section">
+      <div class="label">每天执行时间</div>
+      <TimePicker
+        format="HH:mm:ss"
+        :value="
+          dayjs()
+            .hour(form.calendar.hour)
+            .minute(form.calendar.minute)
+            .second(form.calendar.second)
+        "
+        @change="updateCalendarTime"
+      />
 
-      <div class="mb">
+      <div class="mt">
+        <div class="label">执行日期规则</div>
         <Tag
-          :color="calendarMode === 'week' ? 'blue' : ''"
-          @click="toggleCalendarMode('week')"
+          :color="calendarType === 'week' ? 'blue' : ''"
+          @click="switchCalendarType('week')"
         >
-          Days of week
+          每周固定几天
         </Tag>
         <Tag
-          :color="calendarMode === 'month' ? 'blue' : ''"
-          @click="toggleCalendarMode('month')"
+          :color="calendarType === 'month' ? 'blue' : ''"
+          @click="switchCalendarType('month')"
         >
-          Days of month
+          每月固定几号
         </Tag>
       </div>
 
-      <div v-if="calendarMode === 'week'" class="mb">
+      <div v-if="calendarType === 'week'" class="mt">
         <Tag
           v-for="d in 7"
           :key="d"
           :color="form.calendar.dayOfWeek.includes(d) ? 'blue' : ''"
-          @click="toggleTag(form.calendar.dayOfWeek, d)"
+          @click="toggleNumber(form.calendar.dayOfWeek, d)"
         >
           周{{ d }}
         </Tag>
       </div>
 
-      <div v-if="calendarMode === 'month'" class="mb">
-        <DatePicker :fullscreen="false" @select="onDateSelect">
+      <div v-if="calendarType === 'month'" class="mt">
+        <DatePicker
+          :fullscreen="false"
+          @select="(d) => toggleNumber(form.calendar.dayOfMonth, d.date())"
+        >
           <template #dateRender="{ current }">
             <div
               :style="{
@@ -358,10 +433,6 @@ function handleClosed() {
 
 .label {
   margin-bottom: 8px;
-}
-
-.mb {
-  margin-bottom: 12px;
 }
 
 .mt {

@@ -54,8 +54,8 @@ const [BasicDrawer, drawerApi] = useVbenDrawer({
     const { id } = drawerApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
     if (isUpdate.value && id) {
-      const record = await getOssConfigInfo({ ossConfigId: id });
-      await formApi.setValues(record);
+      const { data } = await getOssConfigInfo({ ossConfigId: id });
+      await formApi.setValues(data);
     }
     await markInitialized();
 

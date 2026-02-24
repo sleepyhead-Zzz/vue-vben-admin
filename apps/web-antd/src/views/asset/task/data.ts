@@ -96,6 +96,7 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'planId',
     component: 'Input',
     rules: 'required',
+    disabled: true,
   },
   {
     label: '任务名称',
@@ -113,6 +114,11 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '指派给的部门ID',
     fieldName: 'assignDeptId',
+    component: 'Input',
+  },
+  {
+    label: '指派给的部门名称',
+    fieldName: 'assignDeptName',
     component: 'Input',
   },
   // {
