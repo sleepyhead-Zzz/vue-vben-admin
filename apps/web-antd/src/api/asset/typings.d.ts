@@ -65,13 +65,11 @@ declare namespace AssetAPI {
     startTime?: string;
     /** 结束时间 */
     endTime?: string;
-    /** 时区 */
-    timeZone?: string;
     /** 抖动秒数 */
     jitterSeconds?: number;
     /** 巡检对象类型 */
     inspectionObjectType?: string;
-    /** 巡检对象类型 */
+    /** 状态 */
     status?: string;
   };
 
@@ -311,7 +309,7 @@ declare namespace AssetAPI {
     endTime?: string;
     timeZone?: string;
     jitterSeconds?: number;
-    status?: number;
+    status?: string;
     inspectionObjectType?: string;
   };
 
@@ -601,10 +599,10 @@ declare namespace AssetAPI {
     hour?: number;
     minute?: number;
     second?: number;
-    dayOfWeek?: string;
-    dayOfMonth?: string;
-    month?: string;
-    year?: string;
+    dayOfWeek?: number[];
+    dayOfMonth?: number[];
+    month?: number[];
+    year?: number[];
   };
 
   type editCategoryParams = {
@@ -1425,13 +1423,11 @@ declare namespace AssetAPI {
     startTime?: string;
     /** 结束时间 */
     endTime?: string;
-    /** 时区 */
-    timeZone?: string;
     /** 抖动秒数 */
     jitterSeconds?: number;
     /** 巡检对象类型 */
     inspectionObjectType?: string;
-    /** 巡检对象类型 */
+    /** 状态 */
     status?: string;
     planId?: number;
   };

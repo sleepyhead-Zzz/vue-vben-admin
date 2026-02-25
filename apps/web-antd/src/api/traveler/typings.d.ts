@@ -63,7 +63,7 @@ declare namespace TravelerAPI {
 
   type changeBookStatusParams = {
     bookId: number;
-    status: string;
+    status: number;
   };
 
   type editBookParams = {
@@ -91,7 +91,7 @@ declare namespace TravelerAPI {
 
   type getPagedBookParams = {
     keyword?: string;
-    status?: string;
+    status?: number;
     travelerName?: string;
     documentType?: string;
     documentNumber?: string;
@@ -100,8 +100,8 @@ declare namespace TravelerAPI {
     travelerType?: string;
     flightNumber?: string;
     flightTime?: string;
-    staffId?: number;
     orderTime?: string;
+    staffId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -233,7 +233,7 @@ declare namespace TravelerAPI {
     /** 接机人与乘机人关系 */
     pickupRelation?: string;
     /** 状态 */
-    status?: string;
+    status?: number;
     flightTime?: string;
     createTime?: string;
     /** 服务人员 */

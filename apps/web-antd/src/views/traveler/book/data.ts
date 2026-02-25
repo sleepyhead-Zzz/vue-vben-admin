@@ -56,7 +56,7 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'status',
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus),
+      options: getDictOptions(DictEnum.TravelerBookStatus, true),
     },
   },
   {
@@ -153,10 +153,12 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '托运行李数量',
     field: 'checkedBaggage',
+    visible: false,
   },
   {
     title: '手提行李数量',
     field: 'handBaggage',
+    visible: false,
   },
 
   {
@@ -180,6 +182,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '服务人员',
     field: 'staffName',
+    visible: false,
   },
   {
     title: '接单时间',
@@ -343,7 +346,7 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'status',
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus),
+      options: getDictOptions(DictEnum.TravelerBookStatus, true),
     },
     disabled: true,
   },
@@ -441,7 +444,7 @@ export const statusModalSchema: FormSchemaGetter = () => [
     fieldName: 'status',
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.TravelerBookStatus),
+      options: getDictOptions(DictEnum.TravelerBookStatus, true),
     },
   },
 ];
