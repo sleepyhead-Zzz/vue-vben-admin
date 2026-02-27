@@ -36,7 +36,7 @@ import userResetPwdModal from './user-reset-pwd-modal.vue';
 /**
  * 导入
  */
-const [UserImpotModal, userImportModalApi] = useVbenModal({
+const [UserImportModal, userImportModalApi] = useVbenModal({
   connectedComponent: userImportModal,
 });
 
@@ -288,7 +288,7 @@ const { hasAccessByCodes } = useAccess();
         </template>
       </BasicTable>
     </div>
-    <UserImpotModal @reload="tableApi.query()" />
+    <UserImportModal @reload="tableApi.query()" />
     <UserDrawer @reload="tableApi.query()" />
     <UserInfoModal />
     <UserResetPwdModal />

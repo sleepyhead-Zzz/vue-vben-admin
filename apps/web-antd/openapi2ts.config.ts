@@ -54,4 +54,11 @@ export default [
     projectName: 'regulatory',
     namespace: 'RegulatoryAPI',
   },
+  {
+    ...commonConfig,
+    schemaPath: 'http://192.168.3.44:8080/dev-api/v3/api-docs/PerfAPI',
+    serversPath: './src/api',
+    projectName: 'perf',
+    namespace: 'PerfAPI',
+  },
 ];

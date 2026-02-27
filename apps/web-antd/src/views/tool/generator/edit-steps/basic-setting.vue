@@ -70,25 +70,27 @@ async function initMenuSelect() {
   const { data } = await optionMenuSelect({});
   // support i18n
   data.forEach((item) => {
-    item.menuName = $t(item.menuName);
+    item.label = $t(item.label);
   });
-  const tree = listToTree(data, { id: 'menuId', pid: 'parentId' });
+  // 转树
+  const tree = listToTree(data, { id: 'id', pid: 'parentId' });
   const treeData = [
     {
+      id: 0,
       fullName: $t('menu.root'),
       menuId: 0,
       menuName: $t('menu.root'),
       children: tree,
     },
   ];
-  addFullName(treeData, 'menuName', ' / ');
+  addFullName(treeData, 'label', ' / ');
 
   formApi.updateSchema([
     {
       componentProps: {
         fieldNames: {
-          label: 'menuName',
-          value: 'menuId',
+          label: 'label',
+          value: 'id',
         },
         // 设置弹窗滚动高度 默认256
         listHeight: 300,

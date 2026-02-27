@@ -46,8 +46,8 @@ export const menuTypeOptions = [
 ];
 
 export const yesNoOptions = [
-  { label: '是', value: '0' },
-  { label: '否', value: '1' },
+  { label: '是', value: true },
+  { label: '否', value: false },
 ];
 
 // （M目录 C菜单 F按钮）
@@ -228,7 +228,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
     componentProps: (model) => {
       const placeholder =
-        model.isFrame === '0'
+        model.isFrame === true
           ? '填写链接地址http(s)://  使用新页面打开'
           : '填写`路由地址`或者`链接地址`  链接默认使用内部iframe内嵌打开';
       return {
@@ -237,7 +237,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     },
     dependencies: {
       rules: (model) => {
-        if (model.isFrame !== '0') {
+        if (model.isFrame === false) {
           return z
             .string({ message: '请输入路由地址' })
             .min(1, '请输入路由地址')
@@ -263,7 +263,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     componentProps: (model) => {
       return {
         // 为链接时组件disabled
-        disabled: model.isFrame === '0',
+        disabled: model.isFrame === true,
       };
     },
     defaultValue: '',
@@ -296,7 +296,7 @@ export const drawerSchema: FormSchemaGetter = () => [
       options: yesNoOptions,
       optionType: 'button',
     },
-    defaultValue: '1',
+    defaultValue: false,
     dependencies: {
       // 类型不为按钮时显示
       show: (values) => values.menuType !== 'F',
@@ -355,7 +355,7 @@ export const drawerSchema: FormSchemaGetter = () => [
     component: 'Input',
     componentProps: (model) => ({
       // 为链接时组件disabled
-      disabled: model.isFrame === '0',
+      disabled: model.isFrame === true,
       placeholder: '必须为json字符串格式',
     }),
     dependencies: {
@@ -374,7 +374,7 @@ export const drawerSchema: FormSchemaGetter = () => [
       options: yesNoOptions,
       optionType: 'button',
     },
-    defaultValue: '0',
+    defaultValue: false,
     dependencies: {
       // 类型为菜单时显示
       show: (values) => values.menuType === 'C',

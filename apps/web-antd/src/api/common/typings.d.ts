@@ -86,7 +86,7 @@ declare namespace CommonAPI {
     title?: string;
     activeIcon?: string;
     icon?: string;
-    noCache?: boolean;
+    isCache?: boolean;
     link?: string;
     activePath?: string;
     affixTab?: boolean;

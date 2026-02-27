@@ -113,7 +113,7 @@ function backMenuToVbenMenu(
         // 不可访问的路由由后端控制隐藏(不返回对应路由)
         hideInMenu: menu.hidden,
         icon: menu.meta?.icon,
-        keepAlive: !menu.meta?.noCache,
+        keepAlive: menu.meta?.isCache,
         title: menu.meta?.title,
       },
       name: menu.name,

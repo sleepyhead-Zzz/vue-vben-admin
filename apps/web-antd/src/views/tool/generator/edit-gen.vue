@@ -66,7 +66,7 @@ async function handleSave() {
     }
     // 需要进行参数转化
     if (requestData) {
-      const transform = (ret: boolean) => (ret ? '1' : '0');
+      const transform = (ret: boolean) => !!ret;
       requestData.columns.forEach((column) => {
         const { edit, insert, query, required, list } = column;
         column.isInsert = transform(insert);

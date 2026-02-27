@@ -89,8 +89,8 @@ declare namespace SystemAPI {
     path?: string;
     component?: string;
     queryParam?: string;
-    isFrame?: string;
-    isCache?: string;
+    isFrame?: boolean;
+    isCache?: boolean;
     menuType: string;
     visible?: string;
     status?: string;
@@ -1272,8 +1272,8 @@ declare namespace SystemAPI {
     path?: string;
     component?: string;
     queryParam?: string;
-    isFrame?: string;
-    isCache?: string;
+    isFrame?: boolean;
+    isCache?: boolean;
     menuType?: string;
     visible?: string;
     status?: string;
@@ -1685,8 +1685,8 @@ declare namespace SystemAPI {
     path?: string;
     component?: string;
     queryParam?: string;
-    isFrame?: string;
-    isCache?: string;
+    isFrame?: boolean;
+    isCache?: boolean;
     menuType: string;
     visible?: string;
     status?: string;

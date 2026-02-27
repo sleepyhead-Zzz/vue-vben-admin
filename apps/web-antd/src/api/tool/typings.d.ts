@@ -44,13 +44,13 @@ declare namespace ToolAPI {
     columnType?: string;
     javaType?: string;
     javaField: string;
-    isPk?: string;
-    isIncrement?: string;
-    isRequired?: string;
-    isInsert?: string;
-    isEdit?: string;
-    isList?: string;
-    isQuery?: string;
+    isPk?: boolean;
+    isIncrement?: boolean;
+    isRequired?: boolean;
+    isInsert?: boolean;
+    isEdit?: boolean;
+    isList?: boolean;
+    isQuery?: boolean;
     queryType?: string;
     htmlType?: string;
     dictType?: string;
@@ -77,13 +77,13 @@ declare namespace ToolAPI {
     columnType?: string;
     javaType?: string;
     javaField: string;
-    isPk?: string;
-    isIncrement?: string;
-    isRequired?: string;
-    isInsert?: string;
-    isEdit?: string;
-    isList?: string;
-    isQuery?: string;
+    isPk?: boolean;
+    isIncrement?: boolean;
+    isRequired?: boolean;
+    isInsert?: boolean;
+    isEdit?: boolean;
+    isList?: boolean;
+    isQuery?: boolean;
     queryType?: string;
     htmlType?: string;
     dictType?: string;
@@ -171,8 +171,8 @@ declare namespace ToolAPI {
     parentMenuId?: number;
     parentMenuName?: string;
     params?: Record<string, any>;
-    tree?: boolean;
     crud?: boolean;
+    tree?: boolean;
   };
 
   type getGenInfoParams = {
@@ -211,6 +211,12 @@ declare namespace ToolAPI {
 
   type removeGeneratorParams = {
     tableIds: number[];
+  };
+
+  type ResponseDTOListString = {
+    code?: number;
+    message?: string;
+    data?: string[];
   };
 
   type ResponseDTOMapStringObject = {
