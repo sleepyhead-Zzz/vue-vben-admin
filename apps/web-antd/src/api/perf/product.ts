@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增产品维度 POST /perf/product */
 export async function addProduct(
   body: PerfAPI.AddPerfDimProductCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/product', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/product", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addProduct(
 export async function removeProduct(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeProductParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/product', {
-    method: 'DELETE',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/product", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeProduct(
 export async function getProductInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getProductInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { productId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfDimProductDTO>(
     `/perf/product/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -54,13 +54,13 @@ export async function editProduct(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editProductParams,
   body: PerfAPI.UpdatePerfDimProductCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { productId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/product/${param0}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     params: { ...queryParams },
     data: body,
@@ -72,14 +72,14 @@ export async function editProduct(
 export async function exportProductByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportProductByExcelParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<any>('/perf/product/excel', {
-    method: 'GET',
+  return request<any>("/perf/product/excel", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportProductByExcel(
 export async function downloadProductExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>('/perf/product/excelTemplate', {
-    method: 'GET',
+  return request<any>("/perf/product/excelTemplate", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importProductByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -128,10 +128,10 @@ export async function importProductByExcel(
     }
   });
 
-  return request<PerfAPI.ResponseDTOString>('/perf/product/importData', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOString>("/perf/product/importData", {
+    method: "POST",
     data: formData,
-    requestType: 'form',
+    requestType: "form",
     ...(options || {}),
   });
 }
@@ -140,28 +140,28 @@ export async function importProductByExcel(
 export async function getProductList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getProductListParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOListPerfDimProductDTO>(
-    '/perf/product/list',
+    "/perf/product/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** 产品维度下拉列表 GET /perf/product/option-select */
 export async function optionProductSelect(options?: { [key: string]: any }) {
   return request<PerfAPI.ResponseDTOListPerfDimProductVO>(
-    '/perf/product/option-select',
+    "/perf/product/option-select",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -169,17 +169,17 @@ export async function optionProductSelect(options?: { [key: string]: any }) {
 export async function getPagedProduct(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedProductParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfDimProductDTO>(
-    '/perf/product/page',
+    "/perf/product/page",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -187,11 +187,11 @@ export async function getPagedProduct(
 export async function removeProductById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeProductByIdParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { productId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/product/remove/${param0}`, {
-    method: 'DELETE',
+    method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });

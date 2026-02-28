@@ -4,38 +4,13 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'userId',
-    label: '销售人员ID',
-  },
-  {
-    component: 'Input',
-    fieldName: 'customerId',
-    label: '客户ID',
-  },
-  {
-    component: 'Input',
-    fieldName: 'productCode',
+    fieldName: 'productId',
     label: '产品编码',
   },
   {
     component: 'Input',
     fieldName: 'quantity',
     label: '销售数量',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'orderDate',
-    label: '交货单创建日期',
-  },
-  {
-    component: 'Input',
-    fieldName: 'periodId',
-    label: '归属绩效周期ID',
   },
 ];
 
@@ -46,18 +21,29 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '数据ID',
     field: 'saleId',
+    visible: false,
   },
   {
     title: '销售人员ID',
     field: 'userId',
+    visible: false,
+  },
+  {
+    title: '业务经理姓名',
+    field: 'userName',
   },
   {
     title: '客户ID',
     field: 'customerId',
+    visible: false,
+  },
+  {
+    title: '客户名称',
+    field: 'customerName',
   },
   {
     title: '产品编码',
-    field: 'productCode',
+    field: 'productId',
   },
   {
     title: '销售数量',
@@ -70,6 +56,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '归属绩效周期ID',
     field: 'periodId',
+    visible: false,
   },
   {
     field: 'action',
@@ -99,7 +86,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '产品编码',
-    fieldName: 'productCode',
+    fieldName: 'productId',
     component: 'Input',
   },
   {
@@ -113,9 +100,9 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'orderDate',
     component: 'DatePicker',
     componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      showTime: false,
+      format: 'YYYY-MM-DD',
+      valueFormat: 'YYYY-MM-DD',
     },
     rules: 'required',
   },

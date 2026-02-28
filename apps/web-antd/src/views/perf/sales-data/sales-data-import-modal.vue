@@ -31,7 +31,7 @@ const form = ref<Record<string, any>>({
   customerName: undefined,
   quantity: undefined,
   orderDate: undefined,
-  productCode: undefined,
+  productId: undefined,
 });
 
 const fileList = ref<UploadFile[]>([]);
@@ -78,8 +78,8 @@ async function loadProducts() {
     productLoading.value = true;
     const { data } = await optionProductSelect();
     productOptions.value = data.map((item: any) => ({
-      label: `${item.productCode} - ${item.productName}`,
-      value: item.productCode,
+      label: `${item.productId} - ${item.productName}`,
+      value: item.productId,
     }));
   } finally {
     productLoading.value = false;
@@ -134,7 +134,7 @@ async function handleSubmit() {
   const formData = new FormData();
   formData.append('file', file); // 文件必须是 file 字段
   formData.append('sheetName', form.value.sheetName);
-  formData.append('productCode', form.value.productCode || '');
+  formData.append('productId', form.value.productId || '');
   formData.append('updateSupport', String(checked.value));
 
   // columnMappings 需要逐个 append 对象字段，不能 stringify 整个数组
@@ -182,7 +182,7 @@ function handleCancel() {
     customerName: undefined,
     quantity: undefined,
     orderDate: undefined,
-    productCode: undefined,
+    productId: undefined,
   };
   headers.value = [];
   sheets.value = [];
@@ -242,7 +242,7 @@ function handleCancel() {
         <div class="text-right text-gray-600">产品编码</div>
 
         <Select
-          v-model:value="form.productCode"
+          v-model:value="form.productId"
           :options="productOptions"
           :loading="productLoading"
           show-search

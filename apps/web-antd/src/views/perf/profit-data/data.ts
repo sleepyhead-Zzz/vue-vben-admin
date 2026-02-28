@@ -9,7 +9,7 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'productCode',
+    fieldName: 'productId',
     label: '产品编码',
   },
   {
@@ -48,7 +48,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '产品编码',
-    field: 'productCode',
+    field: 'productId',
   },
   {
     title: '净利润金额',
@@ -88,7 +88,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '产品编码',
-    fieldName: 'productCode',
+    fieldName: 'productId',
     component: 'Input',
   },
   {

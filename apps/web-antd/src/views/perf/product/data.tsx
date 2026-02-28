@@ -40,7 +40,8 @@ export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
     title: '产品编码',
-    field: 'productCode',
+    field: 'productId',
+    visible: false,
   },
   {
     title: '产品名称',
@@ -66,8 +67,12 @@ export const columns: VxeGridProps['columns'] = [
 export const modalSchema: FormSchemaGetter = () => [
   {
     label: '产品编码',
-    fieldName: 'productCode',
+    fieldName: 'productId',
     component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
   {
     label: '产品名称',

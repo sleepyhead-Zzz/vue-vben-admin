@@ -62,7 +62,7 @@ const [BasicModal, modalApi] = useVbenModal({
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
-      const record = await getSalesDataInfo({ salesDataId: id });
+      const record = await getSalesDataInfo({ salesId: id });
       await formApi.setValues(record.data);
     }
     await markInitialized();

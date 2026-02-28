@@ -99,7 +99,7 @@ async function handleEdit(row: API.PerfFactSalesDTO) {
 }
 
 async function handleDelete(row: API.PerfFactSalesDTO) {
-  await removeSalesData({ salesdataIds: [row.saleId] });
+  await removeSalesData({ salesIds: [row.saleId] });
   await tableApi.query();
 }
 
@@ -111,7 +111,7 @@ function handleMultiDelete() {
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await removeSalesData({ salesdataIds: ids });
+      await removeSalesData({ salesIds: ids });
       await tableApi.query();
     },
   });

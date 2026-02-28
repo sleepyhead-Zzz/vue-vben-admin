@@ -68,7 +68,7 @@ const gridOptions: VxeGridProps = {
     },
   },
   rowConfig: {
-    keyField: 'productCode',
+    keyField: 'productId',
   },
   // 表格全局唯一表示 保存列配置需要用到
   id: 'perf-product-index',
@@ -89,18 +89,18 @@ function handleAdd() {
 }
 
 async function handleEdit(row: API.PerfDimProductDTO) {
-  modalApi.setData({ id: row.productCode });
+  modalApi.setData({ id: row.productId });
   modalApi.open();
 }
 
 async function handleDelete(row: API.PerfDimProductDTO) {
-  await removeProduct({ productIds: [row.productCode] });
+  await removeProduct({ productIds: [row.productId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.PerfDimProductDTO) => row.productCode);
+  const ids = rows.map((row: API.PerfDimProductDTO) => row.productId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

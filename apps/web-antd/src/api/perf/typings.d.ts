@@ -21,17 +21,13 @@ declare namespace PerfAPI {
 
   type AddPerfDimPeriodCommand = {
     /** 年份 */
-    year?: number;
-    /** 月份（period_type=month时有效） */
+    year: number;
+    /** 周期类型：YEAR / MONTH / QUARTER */
+    periodType: string;
+    /** 月份（MONTH时必填） */
     month?: number;
-    /** 季度（period_type=quarter时有效） */
+    /** 季度（QUARTER时必填） */
     quarter?: number;
-    /** 周期类型：month/quarter/year */
-    periodType?: string;
-    /** 周期开始日期 */
-    startDate?: string;
-    /** 周期结束日期 */
-    endDate?: string;
   };
 
   type AddPerfDimProductCommand = {
@@ -47,7 +43,7 @@ declare namespace PerfAPI {
     /** 销售人员ID */
     userId?: number;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 净利润金额 */
     netProfit?: number;
     /** 订单日期 */
@@ -60,7 +56,7 @@ declare namespace PerfAPI {
     /** ${column.columnComment} */
     userId?: number;
     /** ${column.columnComment} */
-    productCode?: string;
+    productId?: number;
     /** ${column.columnComment} */
     periodId?: number;
     /** 计划利润金额 */
@@ -77,7 +73,7 @@ declare namespace PerfAPI {
     /** 售达方名称 */
     customerName?: string;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 交货单数量 */
     quantity?: number;
     /** 交货单创建日期 */
@@ -90,7 +86,7 @@ declare namespace PerfAPI {
     /** ${column.columnComment} */
     userId?: number;
     /** ${column.columnComment} */
-    productCode?: string;
+    productId?: number;
     /** ${column.columnComment} */
     periodId?: number;
     /** 计划销量（吨） */
@@ -394,6 +390,11 @@ declare namespace PerfAPI {
     endTime?: Date;
   };
 
+  type getSalesDataInfoParams = {
+    /** 记录ID */
+    salesId: number;
+  };
+
   type getSalesDataListParams = {
     /** 排序字段 */
     orderColumn?: string;
@@ -595,7 +596,7 @@ declare namespace PerfAPI {
 
   type PerfDimProductDTO = {
     /** 产品编码，例如 PMMA / MS */
-    productCode?: string;
+    productId?: number;
     /** 产品名称 */
     productName?: string;
     /** 产品分类 */
@@ -614,7 +615,7 @@ declare namespace PerfAPI {
 
   type PerfDimProductVO = {
     /** 产品编码，例如 PMMA / MS */
-    productCode?: string;
+    productId?: number;
     /** 产品名称 */
     productName?: string;
   };
@@ -625,7 +626,7 @@ declare namespace PerfAPI {
     /** 销售人员ID */
     userId?: number;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 净利润金额 */
     netProfit?: number;
     /** 订单日期 */
@@ -648,7 +649,7 @@ declare namespace PerfAPI {
     /** 销售人员ID */
     userId?: number;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 净利润金额 */
     netProfit?: number;
     /** 订单日期 */
@@ -663,7 +664,7 @@ declare namespace PerfAPI {
     /** ${comment} */
     userId?: number;
     /** ${comment} */
-    productCode?: string;
+    productId?: number;
     /** ${comment} */
     periodId?: number;
     /** 计划利润金额 */
@@ -684,7 +685,7 @@ declare namespace PerfAPI {
     /** ${comment} */
     userId?: number;
     /** ${comment} */
-    productCode?: string;
+    productId?: number;
     /** ${comment} */
     periodId?: number;
     /** 计划利润金额 */
@@ -696,10 +697,12 @@ declare namespace PerfAPI {
     saleId?: number;
     /** 销售人员ID */
     userId?: number;
+    /** 业务经理姓名 */
+    userName?: string;
     /** 客户ID */
     customerId?: number;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 销售数量 */
     quantity?: number;
     /** 交货单创建日期 */
@@ -724,7 +727,7 @@ declare namespace PerfAPI {
     /** 客户ID */
     customerId?: number;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 销售数量 */
     quantity?: number;
     /** 交货单创建日期 */
@@ -739,7 +742,7 @@ declare namespace PerfAPI {
     /** ${comment} */
     userId?: number;
     /** ${comment} */
-    productCode?: string;
+    productId?: number;
     /** ${comment} */
     periodId?: number;
     /** 计划销量 */
@@ -760,7 +763,7 @@ declare namespace PerfAPI {
     /** ${comment} */
     userId?: number;
     /** ${comment} */
-    productCode?: string;
+    productId?: number;
     /** ${comment} */
     periodId?: number;
     /** 计划销量 */
@@ -816,11 +819,11 @@ declare namespace PerfAPI {
   };
 
   type removeSalesDataByIdParams = {
-    salesdataId: number;
+    salesId: number;
   };
 
   type removeSalesDataParams = {
-    salesdataIds: number[];
+    salesIds: number[];
   };
 
   type removeSalesPlanByIdParams = {
@@ -1046,7 +1049,7 @@ declare namespace PerfAPI {
     columnMappings?: ColumnMappingDTO[];
     updateSupport?: boolean;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
   };
 
   type UpdatePerfDimCustomerCommand = {
@@ -1073,17 +1076,13 @@ declare namespace PerfAPI {
 
   type UpdatePerfDimPeriodCommand = {
     /** 年份 */
-    year?: number;
-    /** 月份（period_type=month时有效） */
+    year: number;
+    /** 周期类型：YEAR / MONTH / QUARTER */
+    periodType: string;
+    /** 月份（MONTH时必填） */
     month?: number;
-    /** 季度（period_type=quarter时有效） */
+    /** 季度（QUARTER时必填） */
     quarter?: number;
-    /** 周期类型：month/quarter/year */
-    periodType?: string;
-    /** 周期开始日期 */
-    startDate?: string;
-    /** 周期结束日期 */
-    endDate?: string;
     periodId?: number;
   };
 
@@ -1101,7 +1100,7 @@ declare namespace PerfAPI {
     /** 销售人员ID */
     userId?: number;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 净利润金额 */
     netProfit?: number;
     /** 订单日期 */
@@ -1115,7 +1114,7 @@ declare namespace PerfAPI {
     /** ${column.columnComment} */
     userId?: number;
     /** ${column.columnComment} */
-    productCode?: string;
+    productId?: number;
     /** ${column.columnComment} */
     periodId?: number;
     /** 计划利润金额 */
@@ -1133,7 +1132,7 @@ declare namespace PerfAPI {
     /** 售达方名称 */
     customerName?: string;
     /** 产品编码 */
-    productCode?: string;
+    productId?: number;
     /** 交货单数量 */
     quantity?: number;
     /** 交货单创建日期 */
@@ -1147,7 +1146,7 @@ declare namespace PerfAPI {
     /** ${column.columnComment} */
     userId?: number;
     /** ${column.columnComment} */
-    productCode?: string;
+    productId?: number;
     /** ${column.columnComment} */
     periodId?: number;
     /** 计划销量（吨） */

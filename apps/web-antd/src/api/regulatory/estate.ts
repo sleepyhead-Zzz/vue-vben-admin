@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增房屋和构筑物类固定资产 POST /regulatory/estate */
 export async function addEstate(
   body: RegulatoryAPI.AddRegEstateCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<RegulatoryAPI.ResponseDTOVoid>('/regulatory/estate', {
-    method: 'POST',
+  return request<RegulatoryAPI.ResponseDTOVoid>("/regulatory/estate", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addEstate(
 export async function getEstateInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.getEstateInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { estateId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTORegEstateDTO>(
     `/regulatory/estate/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -39,20 +39,20 @@ export async function editEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.editEstateParams,
   body: RegulatoryAPI.UpdateRegEstateCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { estateId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
     `/regulatory/estate/${param0}`,
     {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       params: { ...queryParams },
       data: body,
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -60,28 +60,28 @@ export async function editEstate(
 export async function batchRemoveEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.batchRemoveEstateParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<RegulatoryAPI.ResponseDTOVoid>(
-    '/regulatory/estate/batch-delete',
+    "/regulatory/estate/batch-delete",
     {
-      method: 'DELETE',
+      method: "DELETE",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** 房屋和构筑物类固定资产下拉列表 GET /regulatory/estate/dropdown */
 export async function dropDownListEstate(options?: { [key: string]: any }) {
   return request<RegulatoryAPI.ResponseDTOListRegEstateVO>(
-    '/regulatory/estate/dropdown',
+    "/regulatory/estate/dropdown",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -89,14 +89,14 @@ export async function dropDownListEstate(options?: { [key: string]: any }) {
 export async function exportEstateByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.exportEstateByExcelParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<any>('/regulatory/estate/excel', {
-    method: 'GET',
+  return request<any>("/regulatory/estate/excel", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -106,8 +106,8 @@ export async function exportEstateByExcel(
 export async function downloadEstateExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>('/regulatory/estate/excelTemplate', {
-    method: 'GET',
+  return request<any>("/regulatory/estate/excelTemplate", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -118,25 +118,25 @@ export async function importEstateByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -146,13 +146,13 @@ export async function importEstateByExcel(
   });
 
   return request<RegulatoryAPI.ResponseDTOString>(
-    '/regulatory/estate/importData',
+    "/regulatory/estate/importData",
     {
-      method: 'POST',
+      method: "POST",
       data: formData,
-      requestType: 'form',
+      requestType: "form",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -160,17 +160,17 @@ export async function importEstateByExcel(
 export async function listEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.listEstateParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<RegulatoryAPI.ResponseDTOListRegEstateDTO>(
-    '/regulatory/estate/list',
+    "/regulatory/estate/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -178,17 +178,17 @@ export async function listEstate(
 export async function getPagedEstates(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.getPagedEstatesParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<RegulatoryAPI.ResponseDTOPageDTORegEstateDTO>(
-    '/regulatory/estate/page',
+    "/regulatory/estate/page",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -196,15 +196,15 @@ export async function getPagedEstates(
 export async function removeEstate(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: RegulatoryAPI.removeEstateParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { estateId: param0, ...queryParams } = params;
   return request<RegulatoryAPI.ResponseDTOVoid>(
     `/regulatory/estate/remove/${param0}`,
     {
-      method: 'DELETE',
+      method: "DELETE",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }

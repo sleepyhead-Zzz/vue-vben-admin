@@ -9,7 +9,7 @@ export const querySchema: FormSchemaGetter = () => [
   },
   {
     component: 'Input',
-    fieldName: 'productCode',
+    fieldName: 'productId',
     label: 'todo',
   },
   {
@@ -38,7 +38,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: 'todo',
-    field: 'productCode',
+    field: 'productId',
   },
   {
     title: 'todo',
@@ -74,7 +74,7 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: 'todo',
-    fieldName: 'productCode',
+    fieldName: 'productId',
     component: 'Input',
   },
   {
