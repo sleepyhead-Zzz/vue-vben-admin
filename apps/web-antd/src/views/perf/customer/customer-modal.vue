@@ -6,7 +6,11 @@ import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
 
 import { useVbenForm } from '#/adapter/form';
-import { addPeriod, editPeriod, getPeriodInfo } from '#/api/perf/period';
+import {
+  addDimCustomer,
+  editDimCustomer,
+  getDimCustomerInfo,
+} from '#/api/perf/dimCustomer';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -58,7 +62,7 @@ const [BasicModal, modalApi] = useVbenModal({
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
-      const record = await getPeriodInfo({ periodId: id });
+      const record = await getDimCustomerInfo({ customerId: id });
       await formApi.setValues(record.data);
     }
     await markInitialized();
@@ -76,32 +80,9 @@ async function handleConfirm() {
     }
     // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-
-    // 根据周期类型清理无效字段
-    switch (data.periodType) {
-      case '1': {
-        // 年度
-        data.month = undefined;
-        data.quarter = undefined;
-
-        break;
-      }
-      case '2': {
-        // 月度
-        data.quarter = undefined;
-
-        break;
-      }
-      case '3': {
-        // 季度
-        data.month = undefined;
-
-        break;
-      }
-    }
     await (isUpdate.value
-      ? editPeriod({ periodId: data.periodId }, data)
-      : addPeriod(data));
+      ? editDimCustomer({ customerId: data.DimCustomerId }, data)
+      : addDimCustomer(data));
     resetInitialized();
     emit('reload');
     modalApi.close();

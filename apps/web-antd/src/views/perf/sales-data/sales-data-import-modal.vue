@@ -1,21 +1,14 @@
 <script setup lang="ts">
 import type { UploadFile } from 'ant-design-vue/es/upload/interface';
 
-import { ref, watch } from 'vue';
+import { h, onMounted, ref, watch } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { InBoxIcon } from '@vben/icons';
 
-import {
-  DatePicker,
-  Input,
-  Modal,
-  Select,
-  Switch,
-  Upload,
-} from 'ant-design-vue';
-import dayjs from 'dayjs';
+import { Modal, Select, Switch, Upload } from 'ant-design-vue';
 
+import { optionProductSelect } from '#/api/perf/product';
 import { importSalesDataByExcel } from '#/api/perf/salesdata';
 import { getHeaders, getSheets } from '#/api/tool/excel';
 import { commonUploadFile } from '#/utils/file/upload';
@@ -23,17 +16,22 @@ import { commonUploadFile } from '#/utils/file/upload';
 const emit = defineEmits<{ reload: [] }>();
 const UploadDragger = Upload.Dragger;
 
+/* -------------------- Excel字段配置 -------------------- */
+const excelFields = [
+  { label: '业务经理姓名', key: 'userName' },
+  { label: '售达方名称', key: 'customerName' },
+  { label: '交货单数量', key: 'quantity' },
+  { label: '交货单创建日期', key: 'orderDate' },
+] as const;
+
 /* -------------------- 表单数据 -------------------- */
-const form = ref({
+const form = ref<Record<string, any>>({
   sheetName: '',
-  userId: undefined as string | undefined,
-  userName: undefined as string | undefined,
-  customerId: undefined as string | undefined,
-  customerName: undefined as string | undefined,
-  productCode: undefined as string | undefined,
-  quantity: undefined as string | undefined,
-  orderDate: undefined as any,
-  periodId: undefined as number | undefined,
+  userName: undefined,
+  customerName: undefined,
+  quantity: undefined,
+  orderDate: undefined,
+  productCode: undefined,
 });
 
 const fileList = ref<UploadFile[]>([]);
@@ -43,26 +41,63 @@ const checked = ref(false);
 const sheets = ref<string[]>([]);
 const headers = ref<string[]>([]);
 
+/* -------------------- 产品数据 -------------------- */
+const productOptions = ref<{ label: string; value: string }[]>([]);
+const productLoading = ref(false);
+
 /* -------------------- Modal 控制 -------------------- */
 const [BasicModal, modalApi] = useVbenModal({
   onCancel: handleCancel,
   onConfirm: handleSubmit,
 });
 
+/* -------------------- 自动匹配列 -------------------- */
+function autoMatchHeaders() {
+  const missingFields: string[] = [];
+  excelFields.forEach((field) => {
+    const match = headers.value.find((h) => h.trim() === field.label.trim());
+    if (match) {
+      form.value[field.key] = match;
+    } else {
+      form.value[field.key] = undefined;
+      missingFields.push(field.label);
+    }
+  });
+
+  if (missingFields.length > 0) {
+    Modal.warning({
+      title: '部分字段未自动匹配',
+      content: `以下字段在 Excel 中未找到对应列：${missingFields.join('、')}，请手动选择。`,
+    });
+  }
+}
+
+/* -------------------- 加载产品列表 -------------------- */
+async function loadProducts() {
+  try {
+    productLoading.value = true;
+    const { data } = await optionProductSelect();
+    productOptions.value = data.map((item: any) => ({
+      label: `${item.productCode} - ${item.productName}`,
+      value: item.productCode,
+    }));
+  } finally {
+    productLoading.value = false;
+  }
+}
+
+onMounted(loadProducts);
+
 /* -------------------- 文件变化时加载 Sheet -------------------- */
 watch(fileList, async (files) => {
-  if (files.length === 1) {
-    const file = files[0]!.originFileObj as File;
-    try {
-      const { data } = await commonUploadFile(getSheets, file);
-      sheets.value = data;
-      if (sheets.value.length > 0) form.value.sheetName = sheets.value[0];
-    } catch {
-      Modal.error({
-        title: '错误',
-        content: '读取 Sheet 失败，请检查文件格式',
-      });
-    }
+  if (files.length !== 1) return;
+  const file = files[0]!.originFileObj as File;
+  try {
+    const { data } = await commonUploadFile(getSheets, file);
+    sheets.value = data;
+    if (data.length > 0) form.value.sheetName = data[0];
+  } catch {
+    Modal.error({ title: '错误', content: '读取 Sheet 失败，请检查文件格式' });
   }
 });
 
@@ -75,11 +110,9 @@ watch(
     try {
       const { data } = await commonUploadFile(getHeaders, file, { sheetName });
       headers.value = data;
+      autoMatchHeaders();
     } catch {
-      Modal.error({
-        title: '错误',
-        content: '读取表头失败，请检查文件或 Sheet 名称',
-      });
+      Modal.error({ title: '错误', content: '读取表头失败' });
     }
   },
 );
@@ -87,40 +120,40 @@ watch(
 /* -------------------- 提交逻辑 -------------------- */
 async function handleSubmit() {
   if (fileList.value.length !== 1) {
-    Modal.warning({ title: '提示', content: '请上传一个Excel文件' });
+    Modal.warning({ title: '提示', content: '请上传一个 Excel 文件' });
     return;
   }
 
   const file = fileList.value[0]!.originFileObj as File;
+
+  const columnMappings = excelFields
+    .filter((f) => form.value[f.key])
+    .map((f) => ({ field: f.key, columnName: form.value[f.key] }));
+
+  // 构造 FormData
   const formData = new FormData();
-
-  formData.append('file', file);
+  formData.append('file', file); // 文件必须是 file 字段
   formData.append('sheetName', form.value.sheetName);
-
-  // 业务字段映射
-  if (form.value.userId) formData.append('userId', form.value.userId);
-  if (form.value.userName) formData.append('userName', form.value.userName);
-  if (form.value.customerId)
-    formData.append('customerId', form.value.customerId);
-  if (form.value.customerName)
-    formData.append('customerName', form.value.customerName);
-  if (form.value.productCode)
-    formData.append('productCode', form.value.productCode);
-  if (form.value.quantity) formData.append('quantity', form.value.quantity);
-  if (form.value.periodId)
-    formData.append('periodId', String(form.value.periodId));
-  if (form.value.orderDate)
-    formData.append(
-      'orderDate',
-      dayjs(form.value.orderDate).format('YYYY-MM-DD'),
-    );
-
-  // 覆盖标记
+  formData.append('productCode', form.value.productCode || '');
   formData.append('updateSupport', String(checked.value));
+
+  // columnMappings 需要逐个 append 对象字段，不能 stringify 整个数组
+  columnMappings.forEach((cm, i) => {
+    formData.append(`columnMappings[${i}].fieldName`, cm.field); // 改成 fieldName
+    formData.append(`columnMappings[${i}].columnName`, cm.columnName);
+  });
 
   try {
     modalApi.modalLoading(true);
-    const { code, message } = await importSalesDataByExcel(formData);
+
+    const { code, message } = await importSalesDataByExcel(
+      { request: {} },
+      file,
+      {
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      },
+    );
 
     if (code === 200) emit('reload');
 
@@ -138,22 +171,21 @@ async function handleSubmit() {
   }
 }
 
-/* -------------------- 关闭处理 -------------------- */
+/* -------------------- 重置 -------------------- */
 function handleCancel() {
   modalApi.close();
   fileList.value = [];
   checked.value = false;
   form.value = {
     sheetName: '',
-    userId: undefined,
     userName: undefined,
-    customerId: undefined,
     customerName: undefined,
-    productCode: undefined,
     quantity: undefined,
     orderDate: undefined,
-    periodId: undefined,
+    productCode: undefined,
   };
+  headers.value = [];
+  sheets.value = [];
 }
 </script>
 
@@ -177,46 +209,52 @@ function handleCancel() {
       <p class="ant-upload-text">点击或者拖拽到此处上传文件</p>
     </UploadDragger>
 
-    <div class="mt-4 flex flex-col gap-3">
-      <!-- Sheet 选择 -->
+    <div class="mt-4 flex flex-col gap-4 p-4">
+      <!-- Sheet -->
       <Select
         v-model:value="form.sheetName"
         placeholder="选择 Sheet"
         :options="sheets.map((s) => ({ label: s, value: s }))"
-        style="width: 100%"
+        class="w-full"
       />
 
-      <!-- 业务字段选择表单：左列变量名，右列下拉选择 -->
+      <!-- Excel字段映射 -->
       <div
-        v-for="field in [
-          { label: '销售人员ID', key: 'userId' },
-          { label: '业务经理姓名', key: 'userName' },
-          { label: '客户ID', key: 'customerId' },
-          { label: '售达方名称', key: 'customerName' },
-          { label: '产品编码', key: 'productCode' },
-          { label: '交货单数量', key: 'quantity' },
-        ]"
+        v-for="field in excelFields"
         :key="field.key"
-        class="flex items-center gap-2"
+        class="grid grid-cols-[140px_1fr] items-center gap-3"
       >
-        <span class="w-[120px] text-gray-600">{{ field.label }}</span>
+        <div class="text-right text-gray-600">
+          {{ field.label }}
+        </div>
+
         <Select
           v-model:value="form[field.key]"
           :options="headers.map((h) => ({ label: h, value: h }))"
           placeholder="请选择对应列"
+          allow-clear
+          class="w-full"
         />
       </div>
 
-      <!-- 日期和周期 -->
-      <DatePicker
-        v-model:value="form.orderDate"
-        style="width: 100%"
-        placeholder="交货单创建日期"
-      />
-      <Input v-model:value="form.periodId" placeholder="归属绩效周期ID" />
+      <!-- 产品编码 -->
+      <div class="grid grid-cols-[140px_1fr] items-center gap-3">
+        <div class="text-right text-gray-600">产品编码</div>
+
+        <Select
+          v-model:value="form.productCode"
+          :options="productOptions"
+          :loading="productLoading"
+          show-search
+          allow-clear
+          placeholder="请选择产品"
+          class="w-full"
+          @search="loadProducts"
+        />
+      </div>
 
       <!-- 是否覆盖 -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center justify-between pt-2">
         <span :class="{ 'text-red-500': checked }">
           是否更新/覆盖已存在的用户数据
         </span>

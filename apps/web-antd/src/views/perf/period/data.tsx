@@ -9,48 +9,18 @@ import { renderDict } from '#/utils/render';
 
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
+    component: 'InputNumber',
     fieldName: 'year',
     label: '年份',
   },
   {
-    component: 'Input',
-    fieldName: 'month',
-    label: '月份',
-  },
-  {
-    component: 'Input',
-    fieldName: 'quarter',
-    label: '季度',
-  },
-  {
     component: 'Select',
+    fieldName: 'periodType',
+    label: '周期类型',
     componentProps: {
       getPopupContainer,
       options: getDictOptions(DictEnum.PerfPeriodType),
     },
-    fieldName: 'periodType',
-    label: '周期类型',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: false,
-      format: 'YYYY-MM-DD',
-      valueFormat: 'YYYY-MM-DD',
-    },
-    fieldName: 'startDate',
-    label: '周期开始日期',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: false,
-      format: 'YYYY-MM-DD',
-      valueFormat: 'YYYY-MM-DD',
-    },
-    fieldName: 'endDate',
-    label: '周期结束日期',
   },
 ];
 
@@ -84,12 +54,11 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   {
-    title: '周期开始日期',
-    field: 'startDate',
-  },
-  {
-    title: '周期结束日期',
-    field: 'endDate',
+    title: '周期区间',
+    field: 'periodRange',
+    slots: {
+      default: ({ row }) => `${row.startDate} ~ ${row.endDate}`,
+    },
   },
   {
     field: 'action',
@@ -102,7 +71,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: '周期主键ID',
+    label: 'ID',
     fieldName: 'periodId',
     component: 'Input',
     dependencies: {
@@ -113,18 +82,8 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '年份',
     fieldName: 'year',
-    component: 'Input',
+    component: 'InputNumber',
     rules: 'required',
-  },
-  {
-    label: '月份',
-    fieldName: 'month',
-    component: 'Input',
-  },
-  {
-    label: '季度',
-    fieldName: 'quarter',
-    component: 'Input',
   },
   {
     label: '周期类型',
@@ -135,27 +94,58 @@ export const modalSchema: FormSchemaGetter = () => [
       options: getDictOptions(DictEnum.PerfPeriodType),
     },
     rules: 'selectRequired',
+    dependencies: {
+      triggerFields: ['periodType'],
+      onChange: ({ periodType }, form) => {
+        if (periodType === '1') {
+          form.setFieldsValue({
+            month: undefined,
+            quarter: undefined,
+          });
+        }
+        if (periodType === '2') {
+          form.setFieldsValue({
+            quarter: undefined,
+          });
+        }
+        if (periodType === '3') {
+          form.setFieldsValue({
+            month: undefined,
+          });
+        }
+      },
+    },
   },
   {
-    label: '周期开始日期',
-    fieldName: 'startDate',
-    component: 'DatePicker',
+    label: '月份',
+    fieldName: 'month',
+    component: 'Select',
     componentProps: {
-      showTime: false,
-      format: 'YYYY-MM-DD',
-      valueFormat: 'YYYY-MM-DD',
+      options: Array.from({ length: 12 }).map((_, i) => ({
+        label: `${i + 1}月`,
+        value: i + 1,
+      })),
     },
-    rules: 'required',
+    dependencies: {
+      triggerFields: ['periodType'],
+      show: ({ periodType }) => periodType === '2',
+    },
   },
   {
-    label: '周期结束日期',
-    fieldName: 'endDate',
-    component: 'DatePicker',
+    label: '季度',
+    fieldName: 'quarter',
+    component: 'Select',
     componentProps: {
-      showTime: false,
-      format: 'YYYY-MM-DD',
-      valueFormat: 'YYYY-MM-DD',
+      options: [
+        { label: '第一季度', value: 1 },
+        { label: '第二季度', value: 2 },
+        { label: '第三季度', value: 3 },
+        { label: '第四季度', value: 4 },
+      ],
     },
-    rules: 'required',
+    dependencies: {
+      triggerFields: ['periodType'],
+      show: ({ periodType }) => periodType === '3',
+    },
   },
 ];
