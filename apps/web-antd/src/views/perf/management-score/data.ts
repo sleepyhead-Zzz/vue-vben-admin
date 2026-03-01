@@ -1,7 +1,5 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
-import { getDictOptions } from '#/utils/dict';
-import { renderDict } from '#/utils/render';
 
 export const querySchema: FormSchemaGetter = () => [
   {

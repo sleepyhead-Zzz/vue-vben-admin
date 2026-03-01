@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增销量计划 POST /perf/salesPlan */
 export async function addSalesPlan(
   body: PerfAPI.AddPerfFactSalesPlanCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/salesPlan", {
-    method: "POST",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/salesPlan', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addSalesPlan(
 export async function removeSalesPlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeSalesPlanParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/salesPlan", {
-    method: "DELETE",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/salesPlan', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -37,13 +37,13 @@ export async function editSalesPlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editSalesPlanParams,
   body: PerfAPI.UpdatePerfFactSalesPlanCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { planId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/salesPlan/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -55,16 +55,16 @@ export async function editSalesPlan(
 export async function getSalesPlanInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getSalesPlanInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { salesPlanId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfFactSalesPlanDTO>(
     `/perf/salesPlan/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -72,14 +72,14 @@ export async function getSalesPlanInfo(
 export async function exportSalesPlanByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportSalesPlanByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/perf/salesPlan/excel", {
-    method: "GET",
+  return request<any>('/perf/salesPlan/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportSalesPlanByExcel(
 export async function downloadSalesPlanExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/perf/salesPlan/excelTemplate", {
-    method: "GET",
+  return request<any>('/perf/salesPlan/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importSalesPlanByExcel(
     request?: PerfAPI.SalesPlanImportRequest;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -129,13 +129,13 @@ export async function importSalesPlanByExcel(
   });
 
   return request<PerfAPI.ResponseDTOImportResponseDTO>(
-    "/perf/salesPlan/importData",
+    '/perf/salesPlan/importData',
     {
-      method: "POST",
+      method: 'POST',
       data: formData,
-      requestType: "form",
+      requestType: 'form',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -143,28 +143,28 @@ export async function importSalesPlanByExcel(
 export async function getSalesPlanList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getSalesPlanListParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOListPerfFactSalesPlanDTO>(
-    "/perf/salesPlan/list",
+    '/perf/salesPlan/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
 /** 销量计划下拉列表 GET /perf/salesPlan/option-select */
 export async function optionSalesPlanSelect(options?: { [key: string]: any }) {
   return request<PerfAPI.ResponseDTOListPerfFactSalesPlanVO>(
-    "/perf/salesPlan/option-select",
+    '/perf/salesPlan/option-select',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -172,17 +172,17 @@ export async function optionSalesPlanSelect(options?: { [key: string]: any }) {
 export async function getPagedSalesPlan(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedSalesPlanParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfFactSalesPlanDTO>(
-    "/perf/salesPlan/page",
+    '/perf/salesPlan/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -190,11 +190,11 @@ export async function getPagedSalesPlan(
 export async function removeSalesPlanById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeSalesPlanByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { salesPlanId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/salesPlan/remove/${param0}`, {
-    method: "DELETE",
+    method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),
   });

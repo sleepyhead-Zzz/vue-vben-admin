@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增客户月度销量汇总 POST /perf/AggCustomerMonthlySales */
 export async function addAggCustomerMonthlySales(
   body: PerfAPI.AddPerfAggCustomerMonthlySalesCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/AggCustomerMonthlySales", {
-    method: "POST",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/AggCustomerMonthlySales', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addAggCustomerMonthlySales(
 export async function removeAggCustomerMonthlySales(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeAggCustomerMonthlySalesParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/AggCustomerMonthlySales", {
-    method: "DELETE",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/AggCustomerMonthlySales', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeAggCustomerMonthlySales(
 export async function getAggCustomerMonthlySalesInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getAggCustomerMonthlySalesInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { customerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfAggCustomerMonthlySalesDTO>(
     `/perf/AggCustomerMonthlySales/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -54,20 +54,20 @@ export async function editAggCustomerMonthlySales(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editAggCustomerMonthlySalesParams,
   body: PerfAPI.UpdatePerfAggCustomerMonthlySalesCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { customerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/AggCustomerMonthlySales/${param0}`,
     {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       params: { ...queryParams },
       data: body,
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -75,14 +75,14 @@ export async function editAggCustomerMonthlySales(
 export async function exportAggCustomerMonthlySalesByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportAggCustomerMonthlySalesByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/perf/AggCustomerMonthlySales/excel", {
-    method: "GET",
+  return request<any>('/perf/AggCustomerMonthlySales/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -92,8 +92,8 @@ export async function exportAggCustomerMonthlySalesByExcel(
 export async function downloadAggCustomerMonthlySalesExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/perf/AggCustomerMonthlySales/excelTemplate", {
-    method: "GET",
+  return request<any>('/perf/AggCustomerMonthlySales/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -104,25 +104,25 @@ export async function importAggCustomerMonthlySalesByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -132,13 +132,13 @@ export async function importAggCustomerMonthlySalesByExcel(
   });
 
   return request<PerfAPI.ResponseDTOString>(
-    "/perf/AggCustomerMonthlySales/importData",
+    '/perf/AggCustomerMonthlySales/importData',
     {
-      method: "POST",
+      method: 'POST',
       data: formData,
-      requestType: "form",
+      requestType: 'form',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -146,17 +146,17 @@ export async function importAggCustomerMonthlySalesByExcel(
 export async function getAggCustomerMonthlySalesList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getAggCustomerMonthlySalesListParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOListPerfAggCustomerMonthlySalesDTO>(
-    "/perf/AggCustomerMonthlySales/list",
+    '/perf/AggCustomerMonthlySales/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -165,11 +165,11 @@ export async function optionAggCustomerMonthlySalesSelect(options?: {
   [key: string]: any;
 }) {
   return request<PerfAPI.ResponseDTOListPerfAggCustomerMonthlySalesVO>(
-    "/perf/AggCustomerMonthlySales/option-select",
+    '/perf/AggCustomerMonthlySales/option-select',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -177,17 +177,17 @@ export async function optionAggCustomerMonthlySalesSelect(options?: {
 export async function getPagedAggCustomerMonthlySales(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedAggCustomerMonthlySalesParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfAggCustomerMonthlySalesDTO>(
-    "/perf/AggCustomerMonthlySales/page",
+    '/perf/AggCustomerMonthlySales/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -195,15 +195,15 @@ export async function getPagedAggCustomerMonthlySales(
 export async function removeAggCustomerMonthlySalesById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeAggCustomerMonthlySalesByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { customerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/AggCustomerMonthlySales/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
