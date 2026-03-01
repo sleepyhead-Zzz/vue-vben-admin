@@ -44,6 +44,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '产品编码',
     field: 'productId',
+    visible: false,
+  },
+  {
+    title: '产品编码',
+    field: 'productName',
   },
   {
     title: '销售数量',
@@ -75,17 +80,17 @@ export const modalSchema: FormSchemaGetter = () => [
     disabled: true,
   },
   {
-    label: '销售人员ID',
+    label: '销售人员',
     fieldName: 'userId',
     component: 'Input',
   },
   {
-    label: '客户ID',
+    label: '客户',
     fieldName: 'customerId',
     component: 'Input',
   },
   {
-    label: '产品编码',
+    label: '产品',
     fieldName: 'productId',
     component: 'Input',
   },
@@ -107,7 +112,7 @@ export const modalSchema: FormSchemaGetter = () => [
     rules: 'required',
   },
   {
-    label: '归属绩效周期ID',
+    label: '归属绩效周期',
     fieldName: 'periodId',
     component: 'Input',
   },

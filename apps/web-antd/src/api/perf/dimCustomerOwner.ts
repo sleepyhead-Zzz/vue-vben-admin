@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增客户归属历史 POST /perf/customer-owner */
 export async function addDimCustomerOwner(
   body: PerfAPI.AddPerfDimCustomerOwnerCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/customer-owner', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/customer-owner", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addDimCustomerOwner(
 export async function removeDimCustomerOwner(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeDimCustomerOwnerParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/customer-owner', {
-    method: 'DELETE',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/customer-owner", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeDimCustomerOwner(
 export async function getDimCustomerOwnerInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getDimCustomerOwnerInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { ownerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfDimCustomerOwnerDTO>(
     `/perf/customer-owner/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -54,13 +54,13 @@ export async function editDimCustomerOwner(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editDimCustomerOwnerParams,
   body: PerfAPI.UpdatePerfDimCustomerOwnerCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { ownerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/customer-owner/${param0}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     params: { ...queryParams },
     data: body,
@@ -72,14 +72,14 @@ export async function editDimCustomerOwner(
 export async function exportDimCustomerOwnerByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportDimCustomerOwnerByExcelParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<any>('/perf/customer-owner/excel', {
-    method: 'GET',
+  return request<any>("/perf/customer-owner/excel", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportDimCustomerOwnerByExcel(
 export async function downloadDimCustomerOwnerExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>('/perf/customer-owner/excelTemplate', {
-    method: 'GET',
+  return request<any>("/perf/customer-owner/excelTemplate", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importDimCustomerOwnerByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -128,10 +128,10 @@ export async function importDimCustomerOwnerByExcel(
     }
   });
 
-  return request<PerfAPI.ResponseDTOString>('/perf/customer-owner/importData', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOString>("/perf/customer-owner/importData", {
+    method: "POST",
     data: formData,
-    requestType: 'form',
+    requestType: "form",
     ...(options || {}),
   });
 }
@@ -140,17 +140,17 @@ export async function importDimCustomerOwnerByExcel(
 export async function getDimCustomerOwnerList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getDimCustomerOwnerListParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOListPerfDimCustomerOwnerDTO>(
-    '/perf/customer-owner/list',
+    "/perf/customer-owner/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -159,11 +159,11 @@ export async function optionDimCustomerOwnerSelect(options?: {
   [key: string]: any;
 }) {
   return request<PerfAPI.ResponseDTOListPerfDimCustomerOwnerVO>(
-    '/perf/customer-owner/option-select',
+    "/perf/customer-owner/option-select",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -171,17 +171,17 @@ export async function optionDimCustomerOwnerSelect(options?: {
 export async function getPagedDimCustomerOwner(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedDimCustomerOwnerParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfDimCustomerOwnerDTO>(
-    '/perf/customer-owner/page',
+    "/perf/customer-owner/page",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -189,15 +189,15 @@ export async function getPagedDimCustomerOwner(
 export async function removeDimCustomerOwnerById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeDimCustomerOwnerByIdParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { ownerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/customer-owner/remove/${param0}`,
     {
-      method: 'DELETE',
+      method: "DELETE",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
