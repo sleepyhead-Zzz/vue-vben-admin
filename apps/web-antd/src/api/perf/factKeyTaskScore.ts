@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增重点工作得分 POST /perf/FactKeyTaskScore */
 export async function addFactKeyTaskScore(
   body: PerfAPI.AddPerfFactKeyTaskScoreCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/FactKeyTaskScore", {
-    method: "POST",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/FactKeyTaskScore', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addFactKeyTaskScore(
 export async function removeFactKeyTaskScore(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactKeyTaskScoreParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/FactKeyTaskScore", {
-    method: "DELETE",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/FactKeyTaskScore', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeFactKeyTaskScore(
 export async function getFactKeyTaskScoreInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactKeyTaskScoreInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { taskId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfFactKeyTaskScoreDTO>(
     `/perf/FactKeyTaskScore/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -54,13 +54,13 @@ export async function editFactKeyTaskScore(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editFactKeyTaskScoreParams,
   body: PerfAPI.UpdatePerfFactKeyTaskScoreCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { taskId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/FactKeyTaskScore/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -72,14 +72,14 @@ export async function editFactKeyTaskScore(
 export async function exportFactKeyTaskScoreByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportFactKeyTaskScoreByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/perf/FactKeyTaskScore/excel", {
-    method: "GET",
+  return request<any>('/perf/FactKeyTaskScore/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportFactKeyTaskScoreByExcel(
 export async function downloadFactKeyTaskScoreExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/perf/FactKeyTaskScore/excelTemplate", {
-    method: "GET",
+  return request<any>('/perf/FactKeyTaskScore/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importFactKeyTaskScoreByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -129,13 +129,13 @@ export async function importFactKeyTaskScoreByExcel(
   });
 
   return request<PerfAPI.ResponseDTOString>(
-    "/perf/FactKeyTaskScore/importData",
+    '/perf/FactKeyTaskScore/importData',
     {
-      method: "POST",
+      method: 'POST',
       data: formData,
-      requestType: "form",
+      requestType: 'form',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -143,17 +143,17 @@ export async function importFactKeyTaskScoreByExcel(
 export async function getFactKeyTaskScoreList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactKeyTaskScoreListParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOListPerfFactKeyTaskScoreDTO>(
-    "/perf/FactKeyTaskScore/list",
+    '/perf/FactKeyTaskScore/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -162,11 +162,11 @@ export async function optionFactKeyTaskScoreSelect(options?: {
   [key: string]: any;
 }) {
   return request<PerfAPI.ResponseDTOListPerfFactKeyTaskScoreVO>(
-    "/perf/FactKeyTaskScore/option-select",
+    '/perf/FactKeyTaskScore/option-select',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -174,17 +174,17 @@ export async function optionFactKeyTaskScoreSelect(options?: {
 export async function getPagedFactKeyTaskScore(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedFactKeyTaskScoreParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfFactKeyTaskScoreDTO>(
-    "/perf/FactKeyTaskScore/page",
+    '/perf/FactKeyTaskScore/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -192,15 +192,15 @@ export async function getPagedFactKeyTaskScore(
 export async function removeFactKeyTaskScoreById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactKeyTaskScoreByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { taskId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/FactKeyTaskScore/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }

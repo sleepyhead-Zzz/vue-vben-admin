@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增设备报修 POST /asset/repair */
 export async function addRepair(
   body: AssetAPI.AddAssetRepairCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/repair", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/repair', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addRepair(
 export async function removeRepair(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeRepairParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/repair", {
-    method: "DELETE",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/repair', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeRepair(
 export async function getRepairInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getRepairInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { repairId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOAssetRepairDTO>(
     `/asset/repair/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -54,13 +54,13 @@ export async function editRepair(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.editRepairParams,
   body: AssetAPI.UpdateAssetRepairCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { repairId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/repair/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -72,14 +72,14 @@ export async function editRepair(
 export async function exportRepairByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.exportRepairByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/asset/repair/excel", {
-    method: "GET",
+  return request<any>('/asset/repair/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportRepairByExcel(
 export async function downloadRepairExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/asset/repair/excelTemplate", {
-    method: "GET",
+  return request<any>('/asset/repair/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importRepairByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -128,10 +128,10 @@ export async function importRepairByExcel(
     }
   });
 
-  return request<AssetAPI.ResponseDTOString>("/asset/repair/importData", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOString>('/asset/repair/importData', {
+    method: 'POST',
     data: formData,
-    requestType: "form",
+    requestType: 'form',
     ...(options || {}),
   });
 }
@@ -140,10 +140,10 @@ export async function importRepairByExcel(
 export async function getRepairList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getRepairListParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOListAssetRepairDTO>("/asset/repair/list", {
-    method: "GET",
+  return request<AssetAPI.ResponseDTOListAssetRepairDTO>('/asset/repair/list', {
+    method: 'GET',
     params: {
       ...params,
     },
@@ -155,17 +155,17 @@ export async function getRepairList(
 export async function getPagedRepair(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getPagedRepairParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetRepairDTO>(
-    "/asset/repair/page",
+    '/asset/repair/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -173,11 +173,11 @@ export async function getPagedRepair(
 export async function removeRepairById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeRepairByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { repairId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/repair/remove/${param0}`, {
-    method: "DELETE",
+    method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),
   });

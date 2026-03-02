@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增位置 POST /asset/location */
 export async function addLocation(
   body: AssetAPI.AddAssetLocationCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/location", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/location', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addLocation(
 export async function getLocationInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getLocationInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { locationId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOAssetLocationDTO>(
     `/asset/location/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,13 +39,13 @@ export async function editLocation(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.editLocationParams,
   body: AssetAPI.UpdateAssetLocationCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { locationId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/location/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -57,10 +57,10 @@ export async function editLocation(
 export async function removeLocation(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeLocationParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/location/batch-delete", {
-    method: "DELETE",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/location/batch-delete', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -72,14 +72,14 @@ export async function removeLocation(
 export async function exportLocationByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.exportLocationByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/asset/location/excel", {
-    method: "GET",
+  return request<any>('/asset/location/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportLocationByExcel(
 export async function downloadLocationExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/asset/location/excelTemplate", {
-    method: "GET",
+  return request<any>('/asset/location/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importLocationByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -128,10 +128,10 @@ export async function importLocationByExcel(
     }
   });
 
-  return request<AssetAPI.ResponseDTOString>("/asset/location/importData", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOString>('/asset/location/importData', {
+    method: 'POST',
     data: formData,
-    requestType: "form",
+    requestType: 'form',
     ...(options || {}),
   });
 }
@@ -140,28 +140,28 @@ export async function importLocationByExcel(
 export async function getLocationList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getLocationListParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOListAssetLocationDTO>(
-    "/asset/location/list",
+    '/asset/location/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
 /** 位置下拉列表 GET /asset/location/option-select */
 export async function optionLocationSelect(options?: { [key: string]: any }) {
   return request<AssetAPI.ResponseDTOListTreeLong>(
-    "/asset/location/option-select",
+    '/asset/location/option-select',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -169,11 +169,11 @@ export async function optionLocationSelect(options?: { [key: string]: any }) {
 export async function removeLocationById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeLocationByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { locationId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/location/remove/${param0}`, {
-    method: "DELETE",
+    method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),
   });

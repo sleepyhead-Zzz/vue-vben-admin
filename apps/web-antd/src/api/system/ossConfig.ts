@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增对象存储配置 POST /system/oss_config */
 export async function addOssConfig(
   body: SystemAPI.AddSysOssConfigCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>("/system/oss_config", {
-    method: "POST",
+  return request<SystemAPI.ResponseDTOVoid>('/system/oss_config', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addOssConfig(
 export async function getOssConfigInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getOssConfigInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { ossConfigId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOSysOssConfigDTO>(
     `/system/oss_config/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,13 +39,13 @@ export async function editOssConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.editOssConfigParams,
   body: SystemAPI.UpdateSysOssConfigCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { ossConfigId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(`/system/oss_config/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -57,10 +57,10 @@ export async function editOssConfig(
 export async function removeOssConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeOssConfigParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>("/system/oss_config/batch-delete", {
-    method: "DELETE",
+  return request<SystemAPI.ResponseDTOVoid>('/system/oss_config/batch-delete', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -71,12 +71,12 @@ export async function removeOssConfig(
 /** 此处后端没有提供注释 PUT /system/oss_config/changeStatus */
 export async function changeOssConfigStatus(
   body: SystemAPI.UpdateSysOssConfigStatusCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<SystemAPI.ResponseDTOVoid>("/system/oss_config/changeStatus", {
-    method: "PUT",
+  return request<SystemAPI.ResponseDTOVoid>('/system/oss_config/changeStatus', {
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -87,14 +87,14 @@ export async function changeOssConfigStatus(
 export async function exportOssConfigByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.exportOssConfigByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/system/oss_config/excel", {
-    method: "GET",
+  return request<any>('/system/oss_config/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -104,8 +104,8 @@ export async function exportOssConfigByExcel(
 export async function downloadOssConfigExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/system/oss_config/excelTemplate", {
-    method: "GET",
+  return request<any>('/system/oss_config/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -116,25 +116,25 @@ export async function importOssConfigByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -143,10 +143,10 @@ export async function importOssConfigByExcel(
     }
   });
 
-  return request<SystemAPI.ResponseDTOString>("/system/oss_config/importData", {
-    method: "POST",
+  return request<SystemAPI.ResponseDTOString>('/system/oss_config/importData', {
+    method: 'POST',
     data: formData,
-    requestType: "form",
+    requestType: 'form',
     ...(options || {}),
   });
 }
@@ -155,17 +155,17 @@ export async function importOssConfigByExcel(
 export async function getPagedOssConfig(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getPagedOssConfigParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<SystemAPI.ResponseDTOPageDTOSysOssConfigDTO>(
-    "/system/oss_config/page",
+    '/system/oss_config/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -173,15 +173,15 @@ export async function getPagedOssConfig(
 export async function removeOssConfigById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeOssConfigByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { ossConfigId: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOVoid>(
     `/system/oss_config/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
