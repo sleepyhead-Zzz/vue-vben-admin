@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 此处后端没有提供注释 POST /tool/excel/headers */
 export async function getHeaders(
@@ -8,25 +8,25 @@ export async function getHeaders(
     sheetName?: string;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -35,10 +35,10 @@ export async function getHeaders(
     }
   });
 
-  return request<ToolAPI.ResponseDTOListString>('/tool/excel/headers', {
-    method: 'POST',
+  return request<ToolAPI.ResponseDTOListString>("/tool/excel/headers", {
+    method: "POST",
     data: formData,
-    requestType: 'form',
+    requestType: "form",
     ...(options || {}),
   });
 }
@@ -47,25 +47,25 @@ export async function getHeaders(
 export async function getSheets(
   body: {},
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -74,10 +74,10 @@ export async function getSheets(
     }
   });
 
-  return request<ToolAPI.ResponseDTOListString>('/tool/excel/sheets', {
-    method: 'POST',
+  return request<ToolAPI.ResponseDTOListString>("/tool/excel/sheets", {
+    method: "POST",
     data: formData,
-    requestType: 'form',
+    requestType: "form",
     ...(options || {}),
   });
 }

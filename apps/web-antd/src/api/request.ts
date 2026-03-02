@@ -2,6 +2,7 @@ import type {
   HttpResponse,
   RequestClientConfig,
   RequestClientOptions,
+  RequestResponse,
 } from '@vben/request';
 
 import { useAppConfig } from '@vben/hooks';
@@ -25,6 +26,51 @@ const { apiURL, clientId } = useAppConfig(
 );
 
 let isLogoutProcessing = false;
+
+type LooseResponseInterceptor = {
+  fulfilled?: (response: RequestResponse<any>) => any | Promise<any>;
+  rejected?: (error: any) => any;
+};
+
+function addLooseResponseInterceptor(
+  client: RequestClient,
+  interceptor: LooseResponseInterceptor,
+) {
+  client.addResponseInterceptor(interceptor as never);
+}
+
+function getContentType(response: RequestResponse<any>) {
+  const contentType = response.headers?.['content-type'];
+  if (Array.isArray(contentType)) {
+    return contentType.join(';');
+  }
+  return contentType ?? '';
+}
+
+function isBlobResponse(response: RequestResponse<any>) {
+  return response.config.responseType === 'blob';
+}
+
+function isBusinessResponse(data: unknown): data is HttpResponse {
+  return !!data && typeof data === 'object' && 'code' in data;
+}
+
+function isFormDataPayload(data: unknown): data is FormData {
+  return typeof FormData !== 'undefined' && data instanceof FormData;
+}
+
+function clearContentTypeHeader(headers: Record<string, any>) {
+  // AxiosHeaders
+  if (typeof headers.delete === 'function') {
+    headers.delete('Content-Type');
+    headers.delete('content-type');
+    return;
+  }
+
+  // Plain object headers
+  delete headers['Content-Type'];
+  delete headers['content-type'];
+}
 
 function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   const client = new RequestClient({ ...options, baseURL });
@@ -66,23 +112,31 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   client.addRequestInterceptor({
     fulfilled: async (config) => {
       const accessStore = useAccessStore();
+      config.headers = (config.headers ?? {}) as any;
+      const headers = config.headers as Record<string, any>;
 
       // 添加token
-      config.headers.Authorization = formatToken(accessStore.accessToken);
+      headers.Authorization = formatToken(accessStore.accessToken);
 
       /**
        * locale跟后台不一致 需要转换
        */
       const language = preferences.app.locale.replace('-', '_');
-      config.headers['Accept-Language'] = language;
-      config.headers['Content-Language'] = language;
+      headers['Accept-Language'] = language;
+      headers['Content-Language'] = language;
 
       /**
        * 添加全局clientId
        * 关于header的clientId被错误绑定到实体类
        * https://gitee.com/dapppp/ruoyi-plus-vben5/issues/IC0BDS
        */
-      config.headers.ClientID = clientId;
+      headers.ClientID = clientId;
+
+      // FormData 请求必须让浏览器自动注入 multipart boundary
+      // 否则继承默认 application/json 会导致后端拿不到文件
+      if (isFormDataPayload(config.data)) {
+        clearContentTypeHeader(headers);
+      }
 
       return config;
     },
@@ -96,72 +150,69 @@ function createRequestClient(baseURL: string, options?: RequestClientOptions) {
   );
 
   // 响应拦截器
-  client.addResponseInterceptor<HttpResponse>({
-    //@ts-ignore
-    fulfilled: async (response) => {
-      /**
-       * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
-       * 当type为blob且content-type为application/json时 则判断已经下载出错
-       */
-      if (response.config.responseType === 'blob') {
-        const contentType = response.headers['content-type'];
+  const handleBusinessResponse = async (response: RequestResponse<any>) => {
+    /**
+     * 需要判断下载二进制的情况 正常是返回二进制 报错会返回json
+     * 当type为blob且content-type为application/json时 则判断已经下载出错
+     */
+    if (isBlobResponse(response)) {
+      const contentType = getContentType(response);
 
-        // ✅ 如果返回的是 JSON，说明是错误信息
-        if (contentType && contentType.includes('application/json')) {
-          const blob = response.data as unknown as Blob;
-          const text = await blob.text();
-          try {
-            response.data = JSON.parse(text); // 只在确定是 JSON 时解析
-          } catch (err) {
-            notify.error('JSON 解析失败:' + err);
-            throw new Error('下载失败，且返回的错误信息格式错误');
-          }
-        } else {
-          return response.data;
+      // 如果返回的是 JSON，说明是错误信息
+      if (contentType.includes('application/json')) {
+        const blob = response.data as Blob;
+        const text = await blob.text();
+        try {
+          response.data = JSON.parse(text);
+        } catch (err) {
+          notify.error('JSON 解析失败:' + err);
+          throw new Error('下载失败，且返回的错误信息格式错误');
         }
-      }
-
-      const axiosResponseData = response.data;
-
-      if (!axiosResponseData) throw new Error($t('http.apiRequestFailed'));
-
-      const { code, message } = axiosResponseData;
-
-      const hasSuccess =
-        response.status >= 200 && response.status < 400 && code === 200;
-
-      if (hasSuccess) {
-        // 展示响应成功消息
-        // const successMsg = message;
-        // notify.success(successMsg);
-
-        return axiosResponseData;
-      }
-
-      let timeoutMsg = '';
-
-      if (code === 107 || code === 108 || code === 106) {
-        if (isLogoutProcessing) {
-          timeoutMsg = $t('http.loginTimeout'); // 这里给timeoutMsg赋值
-          notify.error(timeoutMsg);
-          throw new Error(timeoutMsg);
-        }
-        isLogoutProcessing = true;
-
-        const _msg = $t('http.loginTimeout');
-        const userStore = useAuthStore();
-
-        // 注销后处理
-        userStore.logout().finally(() => {
-          isLogoutProcessing = false; // 正确地设置为false
-        });
-
-        throw new Error(_msg);
       } else {
-        notify.error(message);
-        throw new Error(message);
+        return response.data;
       }
-    },
+    }
+
+    const axiosResponseData = response.data;
+
+    if (!isBusinessResponse(axiosResponseData)) {
+      throw new Error($t('http.apiRequestFailed'));
+    }
+
+    const { code, message } = axiosResponseData;
+
+    const hasSuccess =
+      response.status >= 200 && response.status < 400 && code === 200;
+
+    if (hasSuccess) {
+      return axiosResponseData;
+    }
+
+    if (code === 107 || code === 108 || code === 106) {
+      const timeoutMsg = $t('http.loginTimeout');
+      if (isLogoutProcessing) {
+        throw new Error(timeoutMsg);
+      }
+
+      isLogoutProcessing = true;
+      notify.error(timeoutMsg);
+
+      const userStore = useAuthStore();
+      // 注销后处理
+      userStore.logout().finally(() => {
+        isLogoutProcessing = false;
+      });
+
+      throw new Error(timeoutMsg);
+    }
+
+    const errorMessage = message || $t('http.apiRequestFailed');
+    notify.error(errorMessage);
+    throw new Error(errorMessage);
+  };
+
+  addLooseResponseInterceptor(client, {
+    fulfilled: handleBusinessResponse,
   });
 
   // token过期的处理
