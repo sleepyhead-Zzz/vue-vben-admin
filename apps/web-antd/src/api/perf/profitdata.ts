@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增利润明细事实 POST /perf/profitdata */
 export async function addProfitData(
   body: PerfAPI.AddPerfFactProfitDataCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/profitdata', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/profitdata", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addProfitData(
 export async function removeProfitData(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeProfitDataParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/profitdata', {
-    method: 'DELETE',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/profitdata", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeProfitData(
 export async function getProfitDataInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getProfitDataInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { profitId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfFactProfitDataDTO>(
     `/perf/profitdata/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -54,13 +54,13 @@ export async function editProfitData(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editProfitDataParams,
   body: PerfAPI.UpdatePerfFactProfitDataCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { profitId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/profitdata/${param0}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     params: { ...queryParams },
     data: body,
@@ -72,14 +72,14 @@ export async function editProfitData(
 export async function exportProfitDataByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportProfitDataByExcelParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<any>('/perf/profitdata/excel', {
-    method: 'GET',
+  return request<any>("/perf/profitdata/excel", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportProfitDataByExcel(
 export async function downloadProfitDataExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>('/perf/profitdata/excelTemplate', {
-    method: 'GET',
+  return request<any>("/perf/profitdata/excelTemplate", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importProfitDataByExcel(
     request?: PerfAPI.ProfitDataImportRequest;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -129,13 +129,13 @@ export async function importProfitDataByExcel(
   });
 
   return request<PerfAPI.ResponseDTOImportResponseDTO>(
-    '/perf/profitdata/importData',
+    "/perf/profitdata/importData",
     {
-      method: 'POST',
+      method: "POST",
       data: formData,
-      requestType: 'form',
+      requestType: "form",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -143,28 +143,28 @@ export async function importProfitDataByExcel(
 export async function getProfitDataList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getProfitDataListParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOListPerfFactProfitDataDTO>(
-    '/perf/profitdata/list',
+    "/perf/profitdata/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
 /** 利润明细事实下拉列表 GET /perf/profitdata/option-select */
 export async function optionProfitDataSelect(options?: { [key: string]: any }) {
   return request<PerfAPI.ResponseDTOListPerfFactProfitDataVO>(
-    '/perf/profitdata/option-select',
+    "/perf/profitdata/option-select",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -172,17 +172,17 @@ export async function optionProfitDataSelect(options?: { [key: string]: any }) {
 export async function getPagedProfitData(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedProfitDataParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfFactProfitDataDTO>(
-    '/perf/profitdata/page',
+    "/perf/profitdata/page",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -190,11 +190,11 @@ export async function getPagedProfitData(
 export async function removeProfitDataById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeProfitDataByIdParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { profitId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/profitdata/remove/${param0}`, {
-    method: 'DELETE',
+    method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });

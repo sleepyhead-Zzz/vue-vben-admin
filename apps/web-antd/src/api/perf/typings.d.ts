@@ -1271,10 +1271,16 @@ declare namespace PerfAPI {
     planId?: number;
     /** ${comment} */
     userId?: number;
+    /** 业务经理姓名 */
+    userName?: string;
     /** ${comment} */
     productId?: number;
+    /** 产品名称 */
+    productName?: string;
     /** ${comment} */
     periodId?: number;
+    /** 归属绩效周期名称 */
+    periodName?: string;
     /** 计划销量 */
     planQuantity?: number;
   };
@@ -1792,6 +1798,10 @@ declare namespace PerfAPI {
     sheetName?: string;
     columnMappings?: ColumnMappingDTO[];
     updateSupport?: boolean;
+    /** 产品编码 */
+    productId?: number;
+    /** 年份(为空默认当前年) */
+    year?: number;
   };
 
   type UpdatePerfAggCustomerMonthlySalesCommand = {
