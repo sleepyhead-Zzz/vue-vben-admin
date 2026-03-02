@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增绩效周期维度 POST /perf/period */
 export async function addPeriod(
   body: PerfAPI.AddPerfDimPeriodCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/period', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/period", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addPeriod(
 export async function removePeriod(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removePeriodParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/period', {
-    method: 'DELETE',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/period", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removePeriod(
 export async function getPeriodInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPeriodInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { periodId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfDimPeriodDTO>(
     `/perf/period/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -54,13 +54,13 @@ export async function editPeriod(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editPeriodParams,
   body: PerfAPI.UpdatePerfDimPeriodCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { periodId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/period/${param0}`, {
-    method: 'PUT',
+    method: "PUT",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     params: { ...queryParams },
     data: body,
@@ -72,14 +72,14 @@ export async function editPeriod(
 export async function exportPeriodByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportPeriodByExcelParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<any>('/perf/period/excel', {
-    method: 'GET',
+  return request<any>("/perf/period/excel", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportPeriodByExcel(
 export async function downloadPeriodExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>('/perf/period/excelTemplate', {
-    method: 'GET',
+  return request<any>("/perf/period/excelTemplate", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importPeriodByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -128,10 +128,10 @@ export async function importPeriodByExcel(
     }
   });
 
-  return request<PerfAPI.ResponseDTOString>('/perf/period/importData', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOString>("/perf/period/importData", {
+    method: "POST",
     data: formData,
-    requestType: 'form',
+    requestType: "form",
     ...(options || {}),
   });
 }
@@ -140,10 +140,10 @@ export async function importPeriodByExcel(
 export async function getPeriodList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPeriodListParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOListPerfDimPeriodDTO>('/perf/period/list', {
-    method: 'GET',
+  return request<PerfAPI.ResponseDTOListPerfDimPeriodDTO>("/perf/period/list", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -154,11 +154,11 @@ export async function getPeriodList(
 /** 绩效周期维度下拉列表 GET /perf/period/option-select */
 export async function optionPeriodSelect(options?: { [key: string]: any }) {
   return request<PerfAPI.ResponseDTOListPerfDimPeriodVO>(
-    '/perf/period/option-select',
+    "/perf/period/option-select",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -166,17 +166,17 @@ export async function optionPeriodSelect(options?: { [key: string]: any }) {
 export async function getPagedPeriod(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedPeriodParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfDimPeriodDTO>(
-    '/perf/period/page',
+    "/perf/period/page",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -184,11 +184,11 @@ export async function getPagedPeriod(
 export async function removePeriodById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removePeriodByIdParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { periodId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/period/remove/${param0}`, {
-    method: 'DELETE',
+    method: "DELETE",
     params: { ...queryParams },
     ...(options || {}),
   });

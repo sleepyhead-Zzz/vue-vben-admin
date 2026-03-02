@@ -18,9 +18,9 @@ import {
 
 import { optionProductSelect } from '#/api/perf/product';
 import {
-  downloadSalesPlanExcelTemplate,
-  importSalesPlanByExcel,
-} from '#/api/perf/salesPlan';
+  downloadProfitDataExcelTemplate,
+  importProfitDataByExcel,
+} from '#/api/perf/profitdata';
 import { getHeaders, getSheets } from '#/api/tool/excel';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
@@ -31,36 +31,23 @@ const emit = defineEmits<{ reload: [] }>();
 
 const UploadDragger = Upload.Dragger;
 const excelFields = [
-  { key: 'userName', label: 'username' },
-  ...Array.from({ length: 12 }).map((_, index) => ({
-    key: `month${index + 1}`,
-    label: `${index + 1}月`,
-  })),
+  { key: 'userName', label: '业务经理姓名' },
+  { key: 'netProfit', label: '净利润金额' },
+  { key: 'orderDate', label: '订单日期' },
 ] as const;
 
-const currentYear = new Date().getFullYear();
-const yearOptions = Array.from({ length: 7 }).map((_, index) => {
-  const year = currentYear - 3 + index;
-  return { label: `${year}`, value: year };
-});
+const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
+  userName: ['userName', 'username', '业务经理姓名', '销售经理'],
+  netProfit: ['netProfit', '净利润金额', '净利润', '利润金额'],
+  orderDate: ['orderDate', '订单日期', '下单日期', '日期'],
+};
 
 const form = ref<Record<string, any>>({
   sheetName: '',
   userName: undefined,
-  month1: undefined,
-  month2: undefined,
-  month3: undefined,
-  month4: undefined,
-  month5: undefined,
-  month6: undefined,
-  month7: undefined,
-  month8: undefined,
-  month9: undefined,
-  month10: undefined,
-  month11: undefined,
-  month12: undefined,
   productId: undefined,
-  year: currentYear,
+  netProfit: undefined,
+  orderDate: undefined,
 });
 
 const checked = ref(false);
@@ -93,32 +80,22 @@ const flow = useExcelImportFlow({
     const missingLabels: string[] = [];
     const matchedKeys: string[] = [];
 
-    const userHeader = normalizedHeaders.find(
-      (item) => item.normalized === 'username',
-    );
-
-    if (userHeader) {
-      form.value.userName = userHeader.raw;
-      matchedKeys.push('userName');
-    } else {
-      missingLabels.push('username');
-      form.value.userName = undefined;
-    }
-
-    for (let month = 1; month <= 12; month++) {
-      const fieldKey = `month${month}`;
-      const monthLabel = `${month}月`;
-      const matched = normalizedHeaders.find(
-        (item) => item.normalized === normalizeHeader(monthLabel),
+    excelFields.forEach((field) => {
+      const aliases = new Set(
+        fieldAliases[field.key].map((alias) => normalizeHeader(alias)),
       );
+      const matched = normalizedHeaders.find((item) =>
+        aliases.has(item.normalized),
+      );
+
       if (matched) {
-        form.value[fieldKey] = matched.raw;
-        matchedKeys.push(fieldKey);
+        form.value[field.key] = matched.raw;
+        matchedKeys.push(field.key);
       } else {
-        form.value[fieldKey] = undefined;
-        missingLabels.push(monthLabel);
+        form.value[field.key] = undefined;
+        missingLabels.push(field.label);
       }
-    }
+    });
 
     return { matchedKeys, missingLabels };
   },
@@ -136,6 +113,7 @@ const flow = useExcelImportFlow({
   },
   resetMappings,
 });
+
 const {
   autoMatchedKeys,
   errorText,
@@ -171,20 +149,11 @@ const validation = computed<ImportValidationResult>(() => {
     missing.push('选择产品');
   }
 
-  if (!form.value.year) {
-    missing.push('选择年份');
-  }
-
-  if (!form.value.userName) {
-    missing.push('映射 username 列');
-  }
-
-  const hasMappedMonth = Array.from({ length: 12 }).some(
-    (_, index) => !!form.value[`month${index + 1}`],
-  );
-  if (!hasMappedMonth) {
-    missing.push('至少映射一个月份列');
-  }
+  excelFields.forEach((field) => {
+    if (!form.value[field.key]) {
+      missing.push(`映射 ${field.label}`);
+    }
+  });
 
   return {
     valid: missing.length === 0,
@@ -217,6 +186,14 @@ async function loadProducts() {
 }
 
 onMounted(loadProducts);
+
+function beforeUpload(file: File) {
+  if (!/\.(?:xlsx|xls)$/i.test(file.name)) {
+    Modal.warning({ title: '提示', content: '仅支持 .xlsx 或 .xls 文件' });
+    return Upload.LIST_IGNORE;
+  }
+  return false;
+}
 
 function buildResultContent(
   response: PerfAPI.ResponseDTOImportResponseDTO,
@@ -259,14 +236,6 @@ function buildResultContent(
   ]);
 }
 
-function beforeUpload(file: File) {
-  if (!/\.(?:xlsx|xls)$/i.test(file.name)) {
-    Modal.warning({ title: '提示', content: '仅支持 .xlsx 或 .xls 文件' });
-    return Upload.LIST_IGNORE;
-  }
-  return false;
-}
-
 async function handleSubmit() {
   if (!validation.value.valid) {
     Modal.warning({
@@ -278,18 +247,14 @@ async function handleSubmit() {
 
   const file = fileList.value[0]?.originFileObj as File;
 
-  const columnMappings = excelFields
-    .filter((field) => !!form.value[field.key])
-    .map((field) => ({
-      fieldName: field.key,
-      columnName: form.value[field.key],
-    }));
+  const columnMappings = excelFields.map((field) => ({
+    fieldName: field.key,
+    columnName: form.value[field.key],
+  }));
 
-  // ✅ 这是你真正要给后端的 request（会被生成器打成 JSON part）
-  const requestObj: PerfAPI.SalesPlanImportRequest = {
+  const requestObj: PerfAPI.ProfitDataImportRequest = {
     sheetName: form.value.sheetName,
-    productId: Number(form.value.productId),
-    year: Number(form.value.year),
+    productId: form.value.productId,
     updateSupport: checked.value,
     columnMappings,
   };
@@ -299,11 +264,10 @@ async function handleSubmit() {
     uploadPercent.value = 0;
     modalApi.modalLoading(true);
 
-    // ✅ 关键：用 commonUploadFile 包裹生成器函数
     const response = await commonUploadFile(
-      importSalesPlanByExcel,
+      importProfitDataByExcel,
       file,
-      { request: requestObj }, // 👈 extraData 就是 body
+      { request: requestObj },
       {
         onProgress(percent) {
           uploadPercent.value = percent;
@@ -345,20 +309,9 @@ function handleCancel() {
   form.value = {
     sheetName: '',
     userName: undefined,
-    month1: undefined,
-    month2: undefined,
-    month3: undefined,
-    month4: undefined,
-    month5: undefined,
-    month6: undefined,
-    month7: undefined,
-    month8: undefined,
-    month9: undefined,
-    month10: undefined,
-    month11: undefined,
-    month12: undefined,
     productId: undefined,
-    year: currentYear,
+    netProfit: undefined,
+    orderDate: undefined,
   };
 }
 </script>
@@ -367,7 +320,7 @@ function handleCancel() {
   <BasicModal
     :close-on-click-modal="false"
     :fullscreen-button="false"
-    title="销量计划导入"
+    title="利润明细导入"
   >
     <div class="import-shell">
       <div class="steps-grid">
@@ -396,7 +349,7 @@ function handleCancel() {
             <InBoxIcon class="size-[52px] text-[#0f766e]" />
           </p>
           <p class="ant-upload-text text-[16px] font-medium text-slate-700">
-            点击或拖拽上传销售计划文件
+            点击或拖拽上传利润明细文件
           </p>
           <p class="text-xs text-slate-500">
             支持 .xlsx / .xls，仅允许一个文件
@@ -499,30 +452,19 @@ function handleCancel() {
       <section class="import-card">
         <div class="section-title">第三步：导入配置与提交</div>
 
-        <div class="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-          <div>
-            <div class="mb-1 text-xs text-slate-500">产品</div>
-            <Select
-              v-model:value="form.productId"
-              :options="productOptions"
-              :loading="productLoading"
-              show-search
-              option-filter-prop="label"
-              option-label-prop="label"
-              placeholder="请选择产品"
-              class="w-full"
-            />
-          </div>
-
-          <div>
-            <div class="mb-1 text-xs text-slate-500">年份</div>
-            <Select
-              v-model:value="form.year"
-              :options="yearOptions"
-              placeholder="请选择年份"
-              class="w-full"
-            />
-          </div>
+        <div class="mt-3">
+          <div class="mb-1 text-xs text-slate-500">产品</div>
+          <Select
+            v-model:value="form.productId"
+            :options="productOptions"
+            :loading="productLoading"
+            show-search
+            option-filter-prop="label"
+            option-label-prop="label"
+            allow-clear
+            placeholder="请选择产品"
+            class="w-full"
+          />
         </div>
 
         <div class="mt-3 flex flex-wrap items-center gap-2">
@@ -531,8 +473,8 @@ function handleCancel() {
             type="link"
             @click="
               commonDownloadExcel(
-                downloadSalesPlanExcelTemplate,
-                '销量计划导入模板',
+                downloadProfitDataExcelTemplate,
+                '利润明细导入模板',
               )
             "
           >

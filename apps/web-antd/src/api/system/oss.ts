@@ -1,15 +1,15 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 批量删除文件上传 DELETE /system/oss/batch-delete */
 export async function removeOss(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.removeOssParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOVoid>('/system/oss/batch-delete', {
-    method: 'DELETE',
+  return request<SystemAPI.ResponseDTOVoid>("/system/oss/batch-delete", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -21,11 +21,11 @@ export async function removeOss(
 export async function download(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.downloadParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { ossId: param0, ...queryParams } = params;
   return request<any>(`/system/oss/download/${param0}`, {
-    method: 'GET',
+    method: "GET",
     params: { ...queryParams },
     ...(options || {}),
   });
@@ -35,16 +35,16 @@ export async function download(
 export async function listOssInfoByIds(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.listOssInfoByIdsParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { ossIds: param0, ...queryParams } = params;
   return request<SystemAPI.ResponseDTOListSysOssPreviewDTO>(
     `/system/oss/listByIds/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -52,10 +52,10 @@ export async function listOssInfoByIds(
 export async function getPagedOss(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: SystemAPI.getPagedOssParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<SystemAPI.ResponseDTOPageDTOSysOssDTO>('/system/oss/page', {
-    method: 'GET',
+  return request<SystemAPI.ResponseDTOPageDTOSysOssDTO>("/system/oss/page", {
+    method: "GET",
     params: {
       ...params,
     },
@@ -69,25 +69,25 @@ export async function upload(
   params: SystemAPI.uploadParams,
   body: {},
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -96,13 +96,13 @@ export async function upload(
     }
   });
 
-  return request<SystemAPI.ResponseDTOSysOssUploadDTO>('/system/oss/upload', {
-    method: 'POST',
+  return request<SystemAPI.ResponseDTOSysOssUploadDTO>("/system/oss/upload", {
+    method: "POST",
     params: {
       ...params,
     },
     data: formData,
-    requestType: 'form',
+    requestType: "form",
     ...(options || {}),
   });
 }

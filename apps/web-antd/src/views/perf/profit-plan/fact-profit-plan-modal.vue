@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import type { SelectProps } from 'ant-design-vue';
+
+import { computed, reactive, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { cloneDeep } from '@vben/utils';
+
+import { Select, Spin } from 'ant-design-vue';
 
 import { useVbenForm } from '#/adapter/form';
 import {
@@ -11,6 +15,9 @@ import {
   editFactProfitPlan,
   getFactProfitPlanInfo,
 } from '#/api/perf/factProfitPlan';
+import { getPeriodInfo, optionPeriodSelect } from '#/api/perf/period';
+import { getProductInfo, optionProductSelect } from '#/api/perf/product';
+import { getPagedUser } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 
 import { modalSchema } from './data';
@@ -24,11 +31,8 @@ const title = computed(() => {
 
 const [BasicForm, formApi] = useVbenForm({
   commonConfig: {
-    // 默认占满两列
     formItemClass: 'col-span-2',
-    // 默认label宽度 px
     labelWidth: 80,
-    // 通用配置项 会影响到所有表单项
     componentProps: {
       class: 'w-full',
     },
@@ -45,8 +49,83 @@ const { onBeforeClose, markInitialized, resetInitialized } = useBeforeCloseDiff(
   },
 );
 
+type RemoteSelectState = {
+  fetching: boolean;
+  options: SelectProps['options'];
+};
+
+const userState = reactive<RemoteSelectState>({
+  fetching: false,
+  options: [],
+});
+
+const productState = reactive<RemoteSelectState>({
+  fetching: false,
+  options: [],
+});
+
+const periodState = reactive<RemoteSelectState>({
+  fetching: false,
+  options: [],
+});
+
+const productLoaded = ref(false);
+const periodLoaded = ref(false);
+
+function resetRemoteSelectState() {
+  userState.fetching = false;
+  userState.options = [];
+  productState.fetching = false;
+  periodState.fetching = false;
+}
+
+function getPeriodLabel(
+  period: PerfAPI.PerfDimPeriodDTO | PerfAPI.PerfDimPeriodVO,
+) {
+  if (period.month) {
+    return `${period.year}年${period.month}月`;
+  }
+  if (period.quarter) {
+    return `${period.year}年第${period.quarter}季度`;
+  }
+  return `${period.year}年`;
+}
+
+async function loadProductOptions() {
+  if (productLoaded.value) {
+    return;
+  }
+  productState.fetching = true;
+  try {
+    const res = await optionProductSelect();
+    productState.options = (res.data ?? []).map((product) => ({
+      label: `${product.productName || '-'}(${product.productId})`,
+      value: product.productId,
+    }));
+    productLoaded.value = true;
+  } finally {
+    productState.fetching = false;
+  }
+}
+
+async function loadPeriodOptions() {
+  if (periodLoaded.value) {
+    return;
+  }
+  periodState.fetching = true;
+  try {
+    const res = await optionPeriodSelect();
+    periodState.options = (res.data ?? []).map((period) => ({
+      label: getPeriodLabel(period),
+      value: period.periodId,
+    }));
+    periodLoaded.value = true;
+  } finally {
+    periodState.fetching = false;
+  }
+}
+
 const [BasicModal, modalApi] = useVbenModal({
-  // 在这里更改宽度
   class: 'w-[550px]',
   fullscreenButton: false,
   onBeforeClose,
@@ -56,15 +135,120 @@ const [BasicModal, modalApi] = useVbenModal({
     if (!isOpen) {
       return null;
     }
+
+    resetRemoteSelectState();
     modalApi.modalLoading(true);
+
+    await Promise.all([loadProductOptions(), loadPeriodOptions()]);
 
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
       const record = await getFactProfitPlanInfo({ planId: id });
-      await formApi.setValues(record.data);
+      const recordData = record.data;
+      const values = {
+        ...recordData,
+        planId: recordData?.id,
+      };
+      await formApi.setValues(values);
+      formApi.setFieldValue(
+        'userName',
+        (recordData as { userName?: string })?.userName,
+      );
+      formApi.setFieldValue(
+        'productName',
+        (recordData as { productName?: string })?.productName,
+      );
+      formApi.setFieldValue(
+        'periodName',
+        (recordData as { periodName?: string })?.periodName,
+      );
+
+      if (recordData?.userId) {
+        const userRes = await getPagedUser({ userId: recordData.userId });
+        if (userRes.data?.rows?.length) {
+          const user = userRes.data.rows[0];
+          userState.options = [
+            {
+              label: user.nickName || user.userName,
+              value: user.userId,
+            },
+          ];
+          formApi.setFieldValue('userName', user.nickName || user.userName);
+        } else {
+          userState.options = [
+            {
+              label: String(recordData.userId),
+              value: recordData.userId,
+            },
+          ];
+          formApi.setFieldValue('userName', String(recordData.userId));
+        }
+      }
+
+      if (recordData?.productId) {
+        const exists = productState.options?.some(
+          (item) => item?.value === recordData?.productId,
+        );
+        if (exists) {
+          const selected = productState.options?.find(
+            (item) => item?.value === recordData?.productId,
+          );
+          const label = (selected?.label as string) || '';
+          formApi.setFieldValue(
+            'productName',
+            label.split('(')[0]?.trim() || undefined,
+          );
+        }
+        if (!exists) {
+          const productRes = await getProductInfo({
+            productId: recordData.productId,
+          });
+          if (productRes.data?.productId) {
+            productState.options = [
+              {
+                label: `${productRes.data.productName || '-'}(${productRes.data.productId})`,
+                value: productRes.data.productId,
+              },
+              ...(productState.options ?? []),
+            ];
+            formApi.setFieldValue('productName', productRes.data.productName);
+          }
+        }
+      }
+
+      if (recordData?.periodId) {
+        const exists = periodState.options?.some(
+          (item) => item?.value === recordData?.periodId,
+        );
+        if (exists) {
+          const selected = periodState.options?.find(
+            (item) => item?.value === recordData?.periodId,
+          );
+          formApi.setFieldValue(
+            'periodName',
+            (selected?.label as string) || undefined,
+          );
+        }
+        if (!exists) {
+          const periodRes = await getPeriodInfo({
+            periodId: recordData.periodId,
+          });
+          if (periodRes.data?.periodId) {
+            periodState.options = [
+              {
+                label: getPeriodLabel(periodRes.data),
+                value: periodRes.data.periodId,
+              },
+              ...(periodState.options ?? []),
+            ];
+            formApi.setFieldValue('periodName', getPeriodLabel(periodRes.data));
+          }
+        }
+      }
     }
+
     await markInitialized();
 
     modalApi.modalLoading(false);
@@ -78,11 +262,20 @@ async function handleConfirm() {
     if (!valid) {
       return;
     }
-    // getValues获取为一个readonly的对象 需要修改必须先深拷贝一次
     const data = cloneDeep(await formApi.getValues());
-    await (isUpdate.value
-      ? editFactProfitPlan({ planId: data.planId }, data)
-      : addFactProfitPlan(data));
+    const planId = data.planId;
+    delete data.userName;
+    delete data.productName;
+    delete data.periodName;
+    if (isUpdate.value) {
+      if (!Number.isFinite(planId)) {
+        throw new TypeError('缺少有效的计划ID');
+      }
+      await editFactProfitPlan({ planId }, { ...data, planId });
+    } else {
+      await addFactProfitPlan(data);
+    }
+
     resetInitialized();
     emit('reload');
     modalApi.close();
@@ -96,11 +289,102 @@ async function handleConfirm() {
 async function handleClosed() {
   await formApi.resetForm();
   resetInitialized();
+  resetRemoteSelectState();
+}
+
+async function fetchUser(value: string) {
+  if (!value) {
+    userState.options = [];
+    return;
+  }
+
+  userState.fetching = true;
+  try {
+    const res = await getPagedUser({ userName: value });
+    userState.options =
+      res.data?.rows?.map((user) => ({
+        label: user.nickName || user.userName,
+        value: user.userId,
+      })) ?? [];
+  } finally {
+    userState.fetching = false;
+  }
+}
+
+function handleUserChange(val: null | number) {
+  formApi.setFieldValue('userId', val);
+  const selected = userState.options?.find((item) => item?.value === val);
+  formApi.setFieldValue('userName', (selected?.label as string) || undefined);
+}
+
+function handleProductChange(val: null | number) {
+  formApi.setFieldValue('productId', val);
+  const selected = productState.options?.find((item) => item?.value === val);
+  const label = (selected?.label as string) || '';
+  formApi.setFieldValue(
+    'productName',
+    label.split('(')[0]?.trim() || undefined,
+  );
+}
+
+function handlePeriodChange(val: null | number) {
+  formApi.setFieldValue('periodId', val);
+  const selected = periodState.options?.find((item) => item?.value === val);
+  formApi.setFieldValue('periodName', (selected?.label as string) || undefined);
 }
 </script>
 
 <template>
   <BasicModal :title="title">
-    <BasicForm />
+    <BasicForm>
+      <template #userId="slotProps">
+        <Select
+          show-search
+          :value="slotProps.value"
+          placeholder="请输入销售人员"
+          style="width: 100%"
+          :filter-option="false"
+          :not-found-content="userState.fetching ? undefined : null"
+          :options="userState.options"
+          @search="fetchUser"
+          @change="handleUserChange"
+          allow-clear
+        >
+          <template v-if="userState.fetching" #notFoundContent>
+            <Spin size="small" />
+          </template>
+        </Select>
+      </template>
+
+      <template #productId="slotProps">
+        <Select
+          show-search
+          :value="slotProps.value"
+          placeholder="请选择产品"
+          style="width: 100%"
+          option-filter-prop="label"
+          option-label-prop="label"
+          :loading="productState.fetching"
+          :options="productState.options"
+          @change="handleProductChange"
+          allow-clear
+        />
+      </template>
+
+      <template #periodId="slotProps">
+        <Select
+          show-search
+          :value="slotProps.value"
+          placeholder="请选择绩效周期"
+          style="width: 100%"
+          option-filter-prop="label"
+          option-label-prop="label"
+          :loading="periodState.fetching"
+          :options="periodState.options"
+          @change="handlePeriodChange"
+          allow-clear
+        />
+      </template>
+    </BasicForm>
   </BasicModal>
 </template>

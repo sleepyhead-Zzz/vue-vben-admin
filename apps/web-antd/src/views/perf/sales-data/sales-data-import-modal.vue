@@ -80,7 +80,9 @@ const flow = useExcelImportFlow({
   },
   form,
   async loadHeadersApi(file, sheetName) {
-    const { data } = await commonUploadFile(getHeaders, file, { sheetName });
+    const { data } = await commonUploadFile(getHeaders, file, {
+      request: sheetName,
+    });
 
     return data ?? [];
   },
@@ -222,6 +224,7 @@ async function handleSubmit() {
   }
 
   const file = fileList.value[0]?.originFileObj as File;
+
   const columnMappings = excelFields
     .filter((field) => !!form.value[field.key])
     .map((field) => ({
@@ -229,32 +232,31 @@ async function handleSubmit() {
       columnName: form.value[field.key],
     }));
 
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('sheetName', form.value.sheetName);
-  formData.append('productId', String(form.value.productId));
-  formData.append('updateSupport', String(checked.value));
-
-  columnMappings.forEach((mapping, index) => {
-    formData.append(`columnMappings[${index}].fieldName`, mapping.fieldName);
-    formData.append(`columnMappings[${index}].columnName`, mapping.columnName);
-  });
+  // ✅ 和“销量计划导入”一致：真正传给后端的 request（会被生成器打成 JSON part）
+  // 如果你们的类型名不是 SalesDataImportRequest，就把类型改成你们实际的 DTO 类型即可。
+  const requestObj = {
+    sheetName: form.value.sheetName,
+    productId: Number(form.value.productId),
+    updateSupport: checked.value,
+    columnMappings,
+  } as unknown as PerfAPI.SalesDataImportRequest;
 
   try {
     stage.value = 'submitting';
     uploadPercent.value = 0;
     modalApi.modalLoading(true);
 
-    const response = await importSalesDataByExcel({ request: {} }, file, {
-      data: formData,
-      headers: { 'Content-Type': 'multipart/form-data' },
-      onUploadProgress(event: ProgressEvent) {
-        if (!event.total) {
-          return;
-        }
-        uploadPercent.value = Math.round((event.loaded / event.total) * 100);
+    // ✅ 关键：用 commonUploadFile 包裹生成器函数（与第一个页面一致）
+    const response = await commonUploadFile(
+      importSalesDataByExcel,
+      file,
+      { request: requestObj }, // 👈 extraData 就是 body（JSON part）
+      {
+        onProgress(percent) {
+          uploadPercent.value = percent;
+        },
       },
-    });
+    );
 
     if (response.code === 200) {
       emit('reload');
@@ -271,9 +273,15 @@ async function handleSubmit() {
 
     handleCancel();
   } catch (error: any) {
+    const errorMessage = String(error?.message ?? '');
+    const isTimeout =
+      error?.code === 'ECONNABORTED' || /timeout|超时/i.test(errorMessage);
+
     Modal.error({
       title: '错误',
-      content: error?.message || '导入失败',
+      content: isTimeout
+        ? '导入处理超时，请先拆分文件后重试；如仍超时，请联系后端调大导入处理时长。'
+        : error?.message || '导入失败',
     });
   } finally {
     modalApi.modalLoading(false);

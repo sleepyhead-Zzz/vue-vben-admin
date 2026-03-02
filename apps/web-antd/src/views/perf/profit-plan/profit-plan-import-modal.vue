@@ -16,11 +16,11 @@ import {
   Upload,
 } from 'ant-design-vue';
 
-import { optionProductSelect } from '#/api/perf/product';
 import {
-  downloadSalesPlanExcelTemplate,
-  importSalesPlanByExcel,
-} from '#/api/perf/salesPlan';
+  downloadFactProfitPlanExcelTemplate,
+  importFactProfitPlanByExcel,
+} from '#/api/perf/factProfitPlan';
+import { optionProductSelect } from '#/api/perf/product';
 import { getHeaders, getSheets } from '#/api/tool/excel';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
@@ -64,7 +64,7 @@ const form = ref<Record<string, any>>({
 });
 
 const checked = ref(false);
-const productOptions = ref<{ label: string; value: number }[]>([]);
+const productOptions = ref<{ label: string; value: string }[]>([]);
 const productLoading = ref(false);
 
 const [BasicModal, modalApi] = useVbenModal({
@@ -286,10 +286,13 @@ async function handleSubmit() {
     }));
 
   // ✅ 这是你真正要给后端的 request（会被生成器打成 JSON part）
-  const requestObj: PerfAPI.SalesPlanImportRequest = {
+  const requestObj: PerfAPI.ProfitPlanImportRequest & {
+    productId?: string;
+    year?: number;
+  } = {
     sheetName: form.value.sheetName,
-    productId: Number(form.value.productId),
-    year: Number(form.value.year),
+    productId: form.value.productId,
+    year: form.value.year,
     updateSupport: checked.value,
     columnMappings,
   };
@@ -301,7 +304,7 @@ async function handleSubmit() {
 
     // ✅ 关键：用 commonUploadFile 包裹生成器函数
     const response = await commonUploadFile(
-      importSalesPlanByExcel,
+      importFactProfitPlanByExcel,
       file,
       { request: requestObj }, // 👈 extraData 就是 body
       {
@@ -367,7 +370,7 @@ function handleCancel() {
   <BasicModal
     :close-on-click-modal="false"
     :fullscreen-button="false"
-    title="销量计划导入"
+    title="利润计划导入"
   >
     <div class="import-shell">
       <div class="steps-grid">
@@ -396,7 +399,7 @@ function handleCancel() {
             <InBoxIcon class="size-[52px] text-[#0f766e]" />
           </p>
           <p class="ant-upload-text text-[16px] font-medium text-slate-700">
-            点击或拖拽上传销售计划文件
+            点击或拖拽上传利润计划文件
           </p>
           <p class="text-xs text-slate-500">
             支持 .xlsx / .xls，仅允许一个文件
@@ -531,8 +534,8 @@ function handleCancel() {
             type="link"
             @click="
               commonDownloadExcel(
-                downloadSalesPlanExcelTemplate,
-                '销量计划导入模板',
+                downloadFactProfitPlanExcelTemplate,
+                '利润计划导入模板',
               )
             "
           >

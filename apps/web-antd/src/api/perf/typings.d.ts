@@ -1149,14 +1149,20 @@ declare namespace PerfAPI {
     profitId?: number;
     /** 销售人员ID */
     userId?: number;
+    /** 业务经理姓名 */
+    userName?: string;
     /** 产品编码 */
     productId?: number;
+    /** 产品名称 */
+    productName?: string;
     /** 净利润金额 */
     netProfit?: number;
     /** 订单日期 */
     orderDate?: string;
     /** 归属绩效周期ID */
     periodId?: number;
+    /** 归属绩效周期名称 */
+    periodName?: string;
   };
 
   type PerfFactProfitDataQuery = {
@@ -1187,10 +1193,16 @@ declare namespace PerfAPI {
     id?: number;
     /** ${comment} */
     userId?: number;
+    /** 业务经理姓名 */
+    userName?: string;
     /** ${comment} */
     productId?: number;
+    /** 产品名称 */
+    productName?: string;
     /** ${comment} */
     periodId?: number;
+    /** 归属绩效周期名称 */
+    periodName?: string;
     /** 计划利润金额 */
     planProfit?: number;
   };
@@ -1318,6 +1330,10 @@ declare namespace PerfAPI {
     sheetName?: string;
     columnMappings?: ColumnMappingDTO[];
     updateSupport?: boolean;
+    /** 产品编码 */
+    productId?: number;
+    /** 年份(为空默认当前年) */
+    year?: number;
   };
 
   type removeAggCustomerMonthlySalesByIdParams = {

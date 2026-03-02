@@ -3,6 +3,8 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { onMounted } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { getVxePopupContainer } from '@vben/utils';
@@ -15,10 +17,13 @@ import {
   getPagedFactProfitPlan,
   removeFactProfitPlan,
 } from '#/api/perf/factProfitPlan';
+import { optionPeriodSelect } from '#/api/perf/period';
+import { optionProductSelect } from '#/api/perf/product';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
 import profitPlanModal from './fact-profit-plan-modal.vue';
+import profitPlanImportModal from './profit-plan-import-modal.vue';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -82,25 +87,91 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 const [FactProfitPlanModal, modalApi] = useVbenModal({
   connectedComponent: profitPlanModal,
 });
+const [FactProfitPlanImportModal, importModalApi] = useVbenModal({
+  connectedComponent: profitPlanImportModal,
+});
+
+function getPeriodLabel(
+  period: PerfAPI.PerfDimPeriodDTO | PerfAPI.PerfDimPeriodVO,
+) {
+  if (period.month) {
+    return `${period.year}年${period.month}月`;
+  }
+  if (period.quarter) {
+    return `${period.year}年第${period.quarter}季度`;
+  }
+  return `${period.year}年`;
+}
+
+async function setupQueryOptions() {
+  const [productRes, periodRes] = await Promise.all([
+    optionProductSelect(),
+    optionPeriodSelect(),
+  ]);
+
+  const productOptions = (productRes.data ?? []).map((product) => ({
+    label: `${product.productName || '-'}(${product.productId})`,
+    value: product.productId,
+  }));
+  const periodOptions = (periodRes.data ?? []).map((period) => ({
+    label: getPeriodLabel(period),
+    value: period.periodId,
+  }));
+
+  tableApi.formApi.updateSchema([
+    {
+      componentProps: {
+        options: productOptions,
+      },
+      fieldName: 'productId',
+    },
+    {
+      componentProps: {
+        options: periodOptions,
+      },
+      fieldName: 'periodId',
+    },
+  ]);
+}
+
+onMounted(async () => {
+  try {
+    await setupQueryOptions();
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 function handleAdd() {
   modalApi.setData({});
   modalApi.open();
 }
 
-async function handleEdit(row: API.PerfFactProfitPlanDTO) {
+function handleImport() {
+  importModalApi.open();
+}
+
+async function handleEdit(row: PerfAPI.PerfFactProfitPlanDTO) {
   modalApi.setData({ id: row.id });
   modalApi.open();
 }
 
-async function handleDelete(row: API.PerfFactProfitPlanDTO) {
+async function handleDelete(row: PerfAPI.PerfFactProfitPlanDTO) {
+  if (typeof row.id !== 'number') {
+    return;
+  }
   await removeFactProfitPlan({ planIds: [row.id] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.PerfFactProfitPlanDTO) => row.id);
+  const ids = rows
+    .map((row: PerfAPI.PerfFactProfitPlanDTO) => row.id)
+    .filter((id): id is number => typeof id === 'number');
+  if (ids.length === 0) {
+    return;
+  }
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -129,6 +200,12 @@ function handleDownloadExcel() {
     <BasicTable table-title="利润计划列表">
       <template #toolbar-tools>
         <Space>
+          <a-button
+            v-access:code="['perf:FactProfitPlan:import']"
+            @click="handleImport"
+          >
+            {{ $t('pages.common.import') }}
+          </a-button>
           <a-button
             v-access:code="['perf:FactProfitPlan:export']"
             @click="handleDownloadExcel"
@@ -179,5 +256,6 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <FactProfitPlanModal @reload="tableApi.query()" />
+    <FactProfitPlanImportModal @reload="tableApi.query()" />
   </Page>
 </template>

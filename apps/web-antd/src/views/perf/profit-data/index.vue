@@ -3,6 +3,8 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { onMounted } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { getVxePopupContainer } from '@vben/utils';
@@ -10,15 +12,18 @@ import { getVxePopupContainer } from '@vben/utils';
 import { Modal, Popconfirm, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import { optionPeriodSelect } from '#/api/perf/period';
+import { optionProductSelect } from '#/api/perf/product';
 import {
-  exportFactProfitDataByExcel,
-  getPagedFactProfitData,
-  removeFactProfitData,
-} from '#/api/perf/factProfitData';
+  exportProfitDataByExcel,
+  getPagedProfitData,
+  removeProfitData,
+} from '#/api/perf/profitdata';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
-import profitDataModal from './fact-profit-data-modal.vue';
+import profitDataImportModal from './profit-data-import-modal.vue';
+import profitDataModal from './profit-data-modal.vue';
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -58,7 +63,7 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        const { data } = await getPagedFactProfitData({
+        const { data } = await getPagedProfitData({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
           ...formValues,
@@ -82,31 +87,97 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 const [FactProfitDataModal, modalApi] = useVbenModal({
   connectedComponent: profitDataModal,
 });
+const [FactProfitDataImportModal, importModalApi] = useVbenModal({
+  connectedComponent: profitDataImportModal,
+});
+
+function getPeriodLabel(
+  period: PerfAPI.PerfDimPeriodDTO | PerfAPI.PerfDimPeriodVO,
+) {
+  if (period.month) {
+    return `${period.year}年${period.month}月`;
+  }
+  if (period.quarter) {
+    return `${period.year}年第${period.quarter}季度`;
+  }
+  return `${period.year}年`;
+}
+
+async function setupQueryOptions() {
+  const [productRes, periodRes] = await Promise.all([
+    optionProductSelect(),
+    optionPeriodSelect(),
+  ]);
+
+  const productOptions = (productRes.data ?? []).map((product) => ({
+    label: `${product.productName || '-'}(${product.productId})`,
+    value: product.productId,
+  }));
+  const periodOptions = (periodRes.data ?? []).map((period) => ({
+    label: getPeriodLabel(period),
+    value: period.periodId,
+  }));
+
+  tableApi.formApi.updateSchema([
+    {
+      fieldName: 'productId',
+      componentProps: {
+        options: productOptions,
+      },
+    },
+    {
+      fieldName: 'periodId',
+      componentProps: {
+        options: periodOptions,
+      },
+    },
+  ]);
+}
+
+onMounted(async () => {
+  try {
+    await setupQueryOptions();
+  } catch (error) {
+    console.error(error);
+  }
+});
 
 function handleAdd() {
   modalApi.setData({});
   modalApi.open();
 }
 
-async function handleEdit(row: API.PerfFactProfitDataDTO) {
+function handleImport() {
+  importModalApi.open();
+}
+
+async function handleEdit(row: PerfAPI.PerfFactProfitDataDTO) {
   modalApi.setData({ id: row.profitId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.PerfFactProfitDataDTO) {
-  await removeFactProfitData({ profitIds: [row.profitId] });
+async function handleDelete(row: PerfAPI.PerfFactProfitDataDTO) {
+  if (typeof row.profitId !== 'number') {
+    return;
+  }
+  await removeProfitData({ profitIds: [row.profitId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.PerfFactProfitDataDTO) => row.profitId);
+  const ids = rows
+    .map((row: PerfAPI.PerfFactProfitDataDTO) => row.profitId)
+    .filter((id): id is number => typeof id === 'number');
+  if (ids.length === 0) {
+    return;
+  }
   Modal.confirm({
     title: '提示',
     okType: 'danger',
     content: `确认删除选中的${ids.length}条记录吗？`,
     onOk: async () => {
-      await removeFactProfitData({ profitIds: ids });
+      await removeProfitData({ profitIds: ids });
       await tableApi.query();
     },
   });
@@ -114,7 +185,7 @@ function handleMultiDelete() {
 
 function handleDownloadExcel() {
   commonDownloadExcel(
-    exportFactProfitDataByExcel,
+    exportProfitDataByExcel,
     '利润明细事实数据',
     tableApi.formApi.form.values,
     {
@@ -129,6 +200,12 @@ function handleDownloadExcel() {
     <BasicTable table-title="利润明细事实列表">
       <template #toolbar-tools>
         <Space>
+          <a-button
+            v-access:code="['perf:FactProfitData:import']"
+            @click="handleImport"
+          >
+            {{ $t('pages.common.import') }}
+          </a-button>
           <a-button
             v-access:code="['perf:FactProfitData:export']"
             @click="handleDownloadExcel"
@@ -179,5 +256,6 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <FactProfitDataModal @reload="tableApi.query()" />
+    <FactProfitDataImportModal @reload="tableApi.query()" />
   </Page>
 </template>

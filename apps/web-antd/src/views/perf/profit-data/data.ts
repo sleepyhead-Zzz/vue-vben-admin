@@ -1,16 +1,37 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { getPopupContainer } from '@vben/utils';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'userId',
-    label: '销售人员ID',
+    fieldName: 'userName',
+    label: '销售人员',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'productId',
-    label: '产品编码',
+    label: '产品',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    fieldName: 'periodId',
+    label: '绩效周期',
   },
   {
     component: 'Input',
@@ -27,11 +48,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'orderDate',
     label: '订单日期',
   },
-  {
-    component: 'Input',
-    fieldName: 'periodId',
-    label: '归属绩效周期ID',
-  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
@@ -39,16 +55,33 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: 'todo',
+    title: '数据ID',
     field: 'profitId',
+    visible: false,
   },
   {
     title: '销售人员ID',
     field: 'userId',
+    visible: false,
+  },
+  {
+    title: '销售人员',
+    field: 'userName',
+    formatter({ row }) {
+      return row.userName || row.userId || '-';
+    },
   },
   {
     title: '产品编码',
     field: 'productId',
+    visible: false,
+  },
+  {
+    title: '产品名称',
+    field: 'productName',
+    formatter({ row }) {
+      return row.productName || row.productId || '-';
+    },
   },
   {
     title: '净利润金额',
@@ -61,6 +94,14 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '归属绩效周期ID',
     field: 'periodId',
+    visible: false,
+  },
+  {
+    title: '绩效周期',
+    field: 'periodName',
+    formatter({ row }) {
+      return row.periodName || row.periodId || '-';
+    },
   },
   {
     field: 'action',
@@ -73,7 +114,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: 'todo',
+    label: '数据ID',
     fieldName: 'profitId',
     component: 'Input',
     dependencies: {
@@ -82,19 +123,61 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '销售人员ID',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'userId',
-    component: 'Input',
+    label: '销售人员',
+    rules: 'selectRequired',
   },
   {
-    label: '产品编码',
-    fieldName: 'productId',
+    label: '销售人员名称',
+    fieldName: 'userName',
     component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
+  {
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    fieldName: 'productId',
+    label: '产品',
+    rules: 'selectRequired',
+  },
+  {
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    fieldName: 'periodId',
+    label: '绩效周期',
+  },
+
   {
     label: '净利润金额',
     fieldName: 'netProfit',
-    component: 'Input',
+    component: 'InputNumber',
+    componentProps: {
+      min: 0,
+      precision: 2,
+    },
     rules: 'required',
   },
   {
@@ -102,15 +185,10 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'orderDate',
     component: 'DatePicker',
     componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
+      showTime: false,
+      format: 'YYYY-MM-DD',
+      valueFormat: 'YYYY-MM-DD',
     },
     rules: 'required',
-  },
-  {
-    label: '归属绩效周期ID',
-    fieldName: 'periodId',
-    component: 'Input',
   },
 ];

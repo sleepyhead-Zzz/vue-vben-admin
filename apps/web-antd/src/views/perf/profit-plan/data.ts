@@ -1,24 +1,44 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { getPopupContainer } from '@vben/utils';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'userId',
-    label: 'todo',
+    fieldName: 'userName',
+    label: '销售人员',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'productId',
-    label: 'todo',
+    label: '产品',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'periodId',
-    label: 'todo',
+    label: '绩效周期',
   },
   {
-    component: 'Input',
+    component: 'InputNumber',
+    componentProps: {
+      min: 0,
+      precision: 2,
+    },
     fieldName: 'planProfit',
     label: '计划利润金额',
   },
@@ -29,20 +49,45 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: 'todo',
+    title: '计划ID',
     field: 'id',
+    visible: false,
   },
   {
-    title: 'todo',
+    title: '销售人员ID',
     field: 'userId',
+    visible: false,
   },
   {
-    title: 'todo',
+    title: '销售人员',
+    field: 'userName',
+    formatter({ row }) {
+      return row.userName || row.userId || '-';
+    },
+  },
+  {
+    title: '产品ID',
     field: 'productId',
+    visible: false,
   },
   {
-    title: 'todo',
+    title: '产品',
+    field: 'productName',
+    formatter({ row }) {
+      return row.productName || row.productId || '-';
+    },
+  },
+  {
+    title: '绩效周期ID',
     field: 'periodId',
+    visible: false,
+  },
+  {
+    title: '绩效周期',
+    field: 'periodName',
+    formatter({ row }) {
+      return row.periodName || row.periodId || '-';
+    },
   },
   {
     title: '计划利润金额',
@@ -59,8 +104,8 @@ export const columns: VxeGridProps['columns'] = [
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: 'todo',
-    fieldName: 'id',
+    label: '计划ID',
+    fieldName: 'planId',
     component: 'Input',
     dependencies: {
       show: () => false,
@@ -68,24 +113,79 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: 'todo',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'userId',
-    component: 'Input',
+    label: '销售人员',
+    rules: 'selectRequired',
   },
   {
-    label: 'todo',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'productId',
-    component: 'Input',
+    label: '产品',
+    rules: 'selectRequired',
   },
   {
-    label: 'todo',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'periodId',
+    label: '绩效周期',
+    rules: 'selectRequired',
+  },
+  {
+    label: '销售人员名称',
+    fieldName: 'userName',
     component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '产品名称',
+    fieldName: 'productName',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '绩效周期名称',
+    fieldName: 'periodName',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
   {
     label: '计划利润金额',
     fieldName: 'planProfit',
-    component: 'Input',
+    component: 'InputNumber',
+    componentProps: {
+      min: 0,
+      precision: 2,
+    },
     rules: 'required',
   },
 ];
