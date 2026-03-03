@@ -306,6 +306,16 @@ declare namespace PerfAPI {
     endTime?: Date;
   };
 
+  type getCalcJobLogsParams = {
+    jobId: number;
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type getCalcJobParams = {
+    jobId: number;
+  };
+
   type getDimCustomerInfoParams = {
     /** 记录ID */
     customerId: number;
@@ -906,6 +916,13 @@ declare namespace PerfAPI {
     rows?: PerfFactSalesPlanDTO[];
   };
 
+  type PageDTOPerformanceCalcJobLogDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: PerformanceCalcJobLogDTO[];
+  };
+
   type PerfAggCustomerMonthlySalesDTO = {
     customerId?: number;
     userId?: number;
@@ -1417,6 +1434,79 @@ declare namespace PerfAPI {
     planQuantity?: number;
   };
 
+  type PerformanceCalcJobDTO = {
+    /** 作业ID */
+    id?: number;
+    /** 作业类型 */
+    jobType?: string;
+    /** workflowId */
+    workflowId?: string;
+    /** runId */
+    runId?: string;
+    /** 状态 */
+    status?: string;
+    /** 参数快照JSON */
+    paramsJson?: string;
+    /** 总进度 */
+    progressTotal?: number;
+    /** 已完成进度 */
+    progressDone?: number;
+    /** 成功人数 */
+    successCount?: number;
+    /** 失败人数 */
+    failedCount?: number;
+    /** 跳过人数 */
+    skippedCount?: number;
+    /** 错误条数 */
+    errorCount?: number;
+    /** 触发人 */
+    createdBy?: number;
+    /** 创建时间 */
+    createTime?: string;
+    /** 开始时间 */
+    startedAt?: string;
+    /** 结束时间 */
+    finishedAt?: string;
+    /** 信息 */
+    message?: string;
+  };
+
+  type PerformanceCalcJobLogDTO = {
+    /** 日志ID */
+    id?: number;
+    /** 作业ID */
+    jobId?: number;
+    /** 序号 */
+    seq?: number;
+    /** 日志级别 */
+    level?: string;
+    /** 阶段 */
+    stage?: string;
+    /** 周期键 */
+    periodKey?: string;
+    /** 用户ID */
+    userId?: number;
+    /** 日志内容 */
+    message?: string;
+    /** 明细JSON */
+    detailJson?: string;
+    /** 日志时间 */
+    createdAt?: string;
+  };
+
+  type PerformanceCalcTriggerResponseDTO = {
+    /** 作业ID */
+    jobId?: number;
+    /** Workflow ID */
+    workflowId?: string;
+    /** Workflow Run ID */
+    runId?: string;
+    /** 作业状态 */
+    status?: string;
+    /** 提交时间 */
+    submittedAt?: string;
+  };
+
   type ProfitDataImportRequest = {
     sheetName?: string;
     columnMappings?: ColumnMappingDTO[];
@@ -1805,6 +1895,12 @@ declare namespace PerfAPI {
     data?: PageDTOPerfFactSalesPlanDTO;
   };
 
+  type ResponseDTOPageDTOPerformanceCalcJobLogDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOPerformanceCalcJobLogDTO;
+  };
+
   type ResponseDTOPerfAggCustomerMonthlySalesDTO = {
     code?: number;
     message?: string;
@@ -1889,6 +1985,18 @@ declare namespace PerfAPI {
     data?: PerfFactSalesPlanDTO;
   };
 
+  type ResponseDTOPerformanceCalcJobDTO = {
+    code?: number;
+    message?: string;
+    data?: PerformanceCalcJobDTO;
+  };
+
+  type ResponseDTOPerformanceCalcTriggerResponseDTO = {
+    code?: number;
+    message?: string;
+    data?: PerformanceCalcTriggerResponseDTO;
+  };
+
   type ResponseDTOString = {
     code?: number;
     message?: string;
@@ -1917,6 +2025,26 @@ declare namespace PerfAPI {
     productId?: number;
     /** 年份(为空默认当前年) */
     year?: number;
+  };
+
+  type TriggerMonthlyCalculationCommand = {
+    /** 年份 */
+    year: number;
+    /** 月份 */
+    month: number;
+    /** 是否覆盖已存在结果，默认false */
+    overwrite?: boolean;
+  };
+
+  type TriggerRangeCalculationCommand = {
+    /** 年份 */
+    year: number;
+    /** 起始月份 */
+    fromMonth: number;
+    /** 结束月份 */
+    toMonth: number;
+    /** 是否覆盖已存在结果，默认false */
+    overwrite?: boolean;
   };
 
   type UpdatePerfAggCustomerMonthlySalesCommand = {

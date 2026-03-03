@@ -33,6 +33,13 @@ const excelFields = [
   { label: '交货单创建日期', key: 'orderDate' },
 ] as const;
 
+const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
+  userName: ['userName', 'username', '业务经理姓名', '销售经理', '姓名'],
+  customerName: ['customerName', '售达方名称', '客户名称', '客户'],
+  quantity: ['quantity', '交货单数量', '数量'],
+  orderDate: ['orderDate', '交货单创建日期', '订单日期', '下单日期', '日期'],
+};
+
 const form = ref<Record<string, any>>({
   sheetName: '',
   userName: undefined,
@@ -52,6 +59,10 @@ const [BasicModal, modalApi] = useVbenModal({
   onConfirm: handleSubmit,
 });
 
+function normalizeHeader(value: string) {
+  return value.replaceAll(/\s+/g, '').toLowerCase();
+}
+
 function resetMappings() {
   excelFields.forEach((field) => {
     form.value[field.key] = undefined;
@@ -60,15 +71,24 @@ function resetMappings() {
 
 const flow = useExcelImportFlow({
   autoMatch(headers) {
+    const normalizedHeaders = headers.map((header) => ({
+      raw: header,
+      normalized: normalizeHeader(header),
+    }));
+
     const missingLabels: string[] = [];
     const matchedKeys: string[] = [];
 
     excelFields.forEach((field) => {
-      const match = headers.find(
-        (header) => header.trim() === field.label.trim(),
+      const aliases = new Set(
+        fieldAliases[field.key].map((alias) => normalizeHeader(alias)),
       );
-      if (match) {
-        form.value[field.key] = match;
+      const matched = normalizedHeaders.find((item) =>
+        aliases.has(item.normalized),
+      );
+
+      if (matched) {
+        form.value[field.key] = matched.raw;
         matchedKeys.push(field.key);
       } else {
         form.value[field.key] = undefined;
@@ -250,7 +270,7 @@ async function handleSubmit() {
     const response = await commonUploadFile(
       importSalesDataByExcel,
       file,
-      { request: requestObj }, // 👈 extraData 就是 body（JSON part）
+      { request: requestObj },
       {
         onProgress(percent) {
           uploadPercent.value = percent;
@@ -464,7 +484,7 @@ function handleCancel() {
             class="text-sm"
             :class="[checked ? 'text-red-500' : 'text-slate-600']"
           >
-            是否更新/覆盖已存在的用户数据
+            是否更新/覆盖已存在的数据
           </span>
           <Switch v-model:checked="checked" />
         </div>

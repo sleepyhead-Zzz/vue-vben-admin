@@ -38,6 +38,22 @@ const excelFields = [
   })),
 ] as const;
 
+const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
+  userName: ['userName', 'username', '销售人员姓名', '业务经理姓名', '姓名'],
+  month1: ['month1', '1月', '1月销量', '一月'],
+  month2: ['month2', '2月', '2月销量', '二月'],
+  month3: ['month3', '3月', '3月销量', '三月'],
+  month4: ['month4', '4月', '4月销量', '四月'],
+  month5: ['month5', '5月', '5月销量', '五月'],
+  month6: ['month6', '6月', '6月销量', '六月'],
+  month7: ['month7', '7月', '7月销量', '七月'],
+  month8: ['month8', '8月', '8月销量', '八月'],
+  month9: ['month9', '9月', '9月销量', '九月'],
+  month10: ['month10', '10月', '10月销量', '十月'],
+  month11: ['month11', '11月', '11月销量', '十一月'],
+  month12: ['month12', '12月', '12月销量', '十二月'],
+};
+
 const currentYear = new Date().getFullYear();
 const yearOptions = Array.from({ length: 7 }).map((_, index) => {
   const year = currentYear - 3 + index;
@@ -93,32 +109,22 @@ const flow = useExcelImportFlow({
     const missingLabels: string[] = [];
     const matchedKeys: string[] = [];
 
-    const userHeader = normalizedHeaders.find(
-      (item) => item.normalized === 'username',
-    );
-
-    if (userHeader) {
-      form.value.userName = userHeader.raw;
-      matchedKeys.push('userName');
-    } else {
-      missingLabels.push('username');
-      form.value.userName = undefined;
-    }
-
-    for (let month = 1; month <= 12; month++) {
-      const fieldKey = `month${month}`;
-      const monthLabel = `${month}月`;
-      const matched = normalizedHeaders.find(
-        (item) => item.normalized === normalizeHeader(monthLabel),
+    excelFields.forEach((field) => {
+      const aliases = new Set(
+        fieldAliases[field.key].map((alias) => normalizeHeader(alias)),
       );
+      const matched = normalizedHeaders.find((item) =>
+        aliases.has(item.normalized),
+      );
+
       if (matched) {
-        form.value[fieldKey] = matched.raw;
-        matchedKeys.push(fieldKey);
+        form.value[field.key] = matched.raw;
+        matchedKeys.push(field.key);
       } else {
-        form.value[fieldKey] = undefined;
-        missingLabels.push(monthLabel);
+        form.value[field.key] = undefined;
+        missingLabels.push(field.label);
       }
-    }
+    });
 
     return { matchedKeys, missingLabels };
   },
@@ -288,7 +294,7 @@ async function handleSubmit() {
   // ✅ 这是你真正要给后端的 request（会被生成器打成 JSON part）
   const requestObj: PerfAPI.SalesPlanImportRequest = {
     sheetName: form.value.sheetName,
-    productId: Number(form.value.productId),
+    productId: form.value.productId,
     year: Number(form.value.year),
     updateSupport: checked.value,
     columnMappings,
