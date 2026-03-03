@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增预约表 POST /traveler/book */
 export async function addBook(
   body: TravelerAPI.AddBookCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<TravelerAPI.ResponseDTOVoid>("/traveler/book", {
-    method: "POST",
+  return request<TravelerAPI.ResponseDTOVoid>('/traveler/book', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addBook(
 export async function getBookInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: TravelerAPI.getBookInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { bookId: param0, ...queryParams } = params;
   return request<TravelerAPI.ResponseDTOTravelerBookDTO>(
     `/traveler/book/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,13 +39,13 @@ export async function editBook(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: TravelerAPI.editBookParams,
   body: TravelerAPI.UpdateBookCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { bookId: param0, ...queryParams } = params;
   return request<TravelerAPI.ResponseDTOVoid>(`/traveler/book/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -56,11 +56,11 @@ export async function editBook(
 /** 获取预约单分析数据 GET /traveler/book/analytics */
 export async function getAnalyticsData(options?: { [key: string]: any }) {
   return request<TravelerAPI.ResponseDTOBookAnalyticsDataDTO>(
-    "/traveler/book/analytics",
+    '/traveler/book/analytics',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -68,10 +68,10 @@ export async function getAnalyticsData(options?: { [key: string]: any }) {
 export async function removeBook(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: TravelerAPI.removeBookParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<TravelerAPI.ResponseDTOVoid>("/traveler/book/batch-delete", {
-    method: "DELETE",
+  return request<TravelerAPI.ResponseDTOVoid>('/traveler/book/batch-delete', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -83,16 +83,16 @@ export async function removeBook(
 export async function cancelBook(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: TravelerAPI.cancelBookParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { bookId: param0, ...queryParams } = params;
   return request<TravelerAPI.ResponseDTOVoid>(
     `/traveler/book/cancel/${param0}`,
     {
-      method: "PUT",
+      method: 'PUT',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -100,17 +100,17 @@ export async function cancelBook(
 export async function getPagedBook(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: TravelerAPI.getPagedBookParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<TravelerAPI.ResponseDTOPageDTOTravelerBookDTO>(
-    "/traveler/book/page",
+    '/traveler/book/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -118,16 +118,16 @@ export async function getPagedBook(
 export async function removeBookById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: TravelerAPI.removeBookByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { bookId: param0, ...queryParams } = params;
   return request<TravelerAPI.ResponseDTOVoid>(
     `/traveler/book/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -135,17 +135,17 @@ export async function removeBookById(
 export async function changeBookStatus(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: TravelerAPI.changeBookStatusParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { bookId: param0, ...queryParams } = params;
   return request<TravelerAPI.ResponseDTOVoid>(
     `/traveler/book/status/${param0}`,
     {
-      method: "PUT",
+      method: 'PUT',
       params: {
         ...queryParams,
       },
       ...(options || {}),
-    }
+    },
   );
 }
