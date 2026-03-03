@@ -1542,8 +1542,8 @@ declare namespace SystemAPI {
   };
 
   type TreeLong = {
-    config?: TreeNodeConfig;
     weight?: any;
+    config?: TreeNodeConfig;
     name?: { empty?: boolean };
     id?: number;
     parentId?: number;

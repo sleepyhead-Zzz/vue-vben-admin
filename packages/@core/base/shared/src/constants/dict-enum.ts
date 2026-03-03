@@ -43,6 +43,7 @@ export const DictEnum = {
   TravelerBookHeartNormals: 'traveler_book_heart_normals',
 
   PerfPeriodType: 'perf_period_type',
+  PerfManagementScoreType: 'perf_management_score_type',
 } as const;
 
 export type DictEnumKey = keyof typeof DictEnum;

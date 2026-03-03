@@ -66,7 +66,7 @@ declare namespace PerfAPI {
     userId?: number;
     /** ${column.columnComment} */
     periodId?: number;
-    /** 评分类型：WEEKLY_REPORT/SAMPLE_FEEDBACK/EXECUTION/OVERDUE */
+    /** 评分类型：1-周报，2-样品反馈，3-执行力，4-逾期 */
     scoreType?: string;
     /** 得分（可正可负） */
     scoreValue?: number;
@@ -230,14 +230,6 @@ declare namespace PerfAPI {
 
   type editSalesPlanParams = {
     planId: number;
-  };
-
-  type ExecutionImportRequest = {
-    sheetName?: string;
-    columnMappings?: ColumnMappingDTO[];
-    updateSupport?: boolean;
-    /** 年份 */
-    year?: number;
   };
 
   type exportAggCustomerMonthlySalesByExcelParams = {
@@ -797,7 +789,7 @@ declare namespace PerfAPI {
     updateSupport?: boolean;
     /** 年份 */
     year?: number;
-    /** 类型：WEEKLY_REPORT/SAMPLE_FEEDBACK/EXECUTION/OVERDUE */
+    /** 类型：1-周报，2-样品反馈，3-执行力，4-逾期 */
     scoreType?: string;
   };
 
@@ -814,14 +806,6 @@ declare namespace PerfAPI {
     beginTime?: Date;
     /** 结束时间 */
     endTime?: Date;
-  };
-
-  type OverdueImportRequest = {
-    sheetName?: string;
-    columnMappings?: ColumnMappingDTO[];
-    updateSupport?: boolean;
-    /** 年份 */
-    year?: number;
   };
 
   type PageDTOPerfAggCustomerMonthlySalesDTO = {
@@ -1136,8 +1120,10 @@ declare namespace PerfAPI {
     userName?: string;
     periodId?: number;
     periodName?: string;
-    /** 评分类型：WEEKLY_REPORT/SAMPLE_FEEDBACK/EXECUTION/OVERDUE */
+    /** 评分类型：1-周报，2-样品反馈，3-执行力，4-逾期 */
     scoreType?: string;
+    /** 评分类型名称 */
+    scoreTypeName?: string;
     /** 得分 */
     scoreValue?: number;
   };
@@ -1188,8 +1174,11 @@ declare namespace PerfAPI {
   type PerfFactOverdueRecordDTO = {
     overdueId?: number;
     userId?: number;
+    userName?: string;
     customerId?: number;
+    customerName?: string;
     periodId?: number;
+    periodName?: string;
     /** 逾期区间：0_10/11_30/31_59/60_90/90_plus */
     overdueLevel?: string;
     /** 最终扣分值 */
@@ -1930,14 +1919,6 @@ declare namespace PerfAPI {
     year?: number;
   };
 
-  type SampleFeedbackImportRequest = {
-    sheetName?: string;
-    columnMappings?: ColumnMappingDTO[];
-    updateSupport?: boolean;
-    /** 年份 */
-    year?: number;
-  };
-
   type UpdatePerfAggCustomerMonthlySalesCommand = {
     /** 当月总销量（吨） */
     totalQuantity?: number;
@@ -2011,7 +1992,7 @@ declare namespace PerfAPI {
     userId?: number;
     /** ${column.columnComment} */
     periodId?: number;
-    /** 评分类型：WEEKLY_REPORT/SAMPLE_FEEDBACK/EXECUTION/OVERDUE */
+    /** 评分类型：1-周报，2-样品反馈，3-执行力，4-逾期 */
     scoreType?: string;
     /** 得分（可正可负） */
     scoreValue?: number;
@@ -2122,13 +2103,5 @@ declare namespace PerfAPI {
     /** 计划销量（吨） */
     planQuantity?: number;
     planId?: number;
-  };
-
-  type WeeklyReportImportRequest = {
-    sheetName?: string;
-    columnMappings?: ColumnMappingDTO[];
-    updateSupport?: boolean;
-    /** 年份 */
-    year?: number;
   };
 }

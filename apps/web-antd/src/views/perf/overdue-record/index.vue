@@ -3,6 +3,8 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { onMounted } from 'vue';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 import { getVxePopupContainer } from '@vben/utils';
@@ -15,8 +17,10 @@ import {
   getPagedFactOverdueRecord,
   removeFactOverdueRecord,
 } from '#/api/perf/factOverdueRecord';
+import { optionPeriodSelect } from '#/api/perf/period';
 import { commonDownloadExcel } from '#/utils/file/download';
 
+import managementScoreImportModal from '../management-score/management-score-import-modal.vue';
 import { columns, querySchema } from './data';
 import overdueRecordModal from './overdue-record-modal.vue';
 
@@ -82,10 +86,51 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 const [FactOverdueRecordModal, modalApi] = useVbenModal({
   connectedComponent: overdueRecordModal,
 });
+const [FactOverdueImportModal, importModalApi] = useVbenModal({
+  connectedComponent: managementScoreImportModal,
+});
+
+function getPeriodLabel(
+  period: PerfAPI.PerfDimPeriodDTO | PerfAPI.PerfDimPeriodVO,
+) {
+  if (period.month) {
+    return `${period.year}年${period.month}月`;
+  }
+  if (period.quarter) {
+    return `${period.year}年第${period.quarter}季度`;
+  }
+  return `${period.year}年`;
+}
+
+async function setupQueryOptions() {
+  const periodRes = await optionPeriodSelect();
+  const periodOptions = (periodRes.data ?? []).map((period) => ({
+    label: getPeriodLabel(period),
+    value: period.periodId,
+  }));
+
+  tableApi.formApi.updateSchema([
+    {
+      fieldName: 'periodId',
+      componentProps: {
+        options: periodOptions,
+      },
+    },
+  ]);
+}
 
 function handleAdd() {
   modalApi.setData({});
   modalApi.open();
+}
+
+function handleImport() {
+  importModalApi.setData({
+    title: '逾期导入',
+    defaultScoreType: '4',
+    lockScoreType: true,
+  });
+  importModalApi.open();
 }
 
 async function handleEdit(row: API.PerfFactOverdueRecordDTO) {
@@ -122,6 +167,14 @@ function handleDownloadExcel() {
     },
   );
 }
+
+onMounted(async () => {
+  try {
+    await setupQueryOptions();
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>
@@ -129,6 +182,12 @@ function handleDownloadExcel() {
     <BasicTable table-title="逾期扣分记录：按客户记录最终扣分值列表">
       <template #toolbar-tools>
         <Space>
+          <a-button
+            v-access:code="['perf:FactOverdueRecord:import']"
+            @click="handleImport"
+          >
+            {{ $t('pages.common.import') }}
+          </a-button>
           <a-button
             v-access:code="['perf:FactOverdueRecord:export']"
             @click="handleDownloadExcel"
@@ -179,5 +238,6 @@ function handleDownloadExcel() {
       </template>
     </BasicTable>
     <FactOverdueRecordModal @reload="tableApi.query()" />
+    <FactOverdueImportModal @reload="tableApi.query()" />
   </Page>
 </template>

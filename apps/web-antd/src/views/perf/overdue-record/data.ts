@@ -1,29 +1,56 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { getPopupContainer } from '@vben/utils';
+
+const overdueLevelOptions = [
+  { label: '0-10天', value: '0_10' },
+  { label: '11-30天', value: '11_30' },
+  { label: '31-59天', value: '31_59' },
+  { label: '60-90天', value: '60_90' },
+  { label: '90天以上', value: '90_plus' },
+];
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'userId',
-    label: '',
+    fieldName: 'userName',
+    label: '销售人员',
   },
   {
     component: 'Input',
-    fieldName: 'customerId',
-    label: '',
+    fieldName: 'customerName',
+    label: '客户',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'periodId',
-    label: '',
+    label: '绩效周期',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: overdueLevelOptions,
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'overdueLevel',
-    label: '逾期区间：0_10/11_30/31_59/60_90/90_plus',
+    label: '逾期区间',
   },
   {
-    component: 'Input',
+    component: 'InputNumber',
+    componentProps: {
+      precision: 2,
+    },
     fieldName: 'scoreValue',
     label: '最终扣分值',
   },
@@ -34,24 +61,57 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: '',
+    title: '记录ID',
     field: 'overdueId',
+    visible: false,
   },
   {
-    title: '',
+    title: '销售人员ID',
     field: 'userId',
+    visible: false,
   },
   {
-    title: '',
+    title: '销售人员',
+    field: 'userName',
+    formatter({ row }) {
+      return row.userName || row.userId || '-';
+    },
+  },
+  {
+    title: '客户ID',
     field: 'customerId',
+    visible: false,
   },
   {
-    title: '',
+    title: '客户',
+    field: 'customerName',
+    formatter({ row }) {
+      return row.customerName || row.customerId || '-';
+    },
+  },
+  {
+    title: '绩效周期ID',
     field: 'periodId',
+    visible: false,
   },
   {
-    title: '逾期区间：0_10/11_30/31_59/60_90/90_plus',
+    title: '绩效周期',
+    field: 'periodName',
+    formatter({ row }) {
+      return row.periodName || row.periodId || '-';
+    },
+  },
+  {
+    title: '逾期区间',
     field: 'overdueLevel',
+    formatter({ row }) {
+      return (
+        overdueLevelOptions.find((item) => item.value === row.overdueLevel)
+          ?.label ||
+        row.overdueLevel ||
+        '-'
+      );
+    },
   },
   {
     title: '最终扣分值',
@@ -68,7 +128,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: '',
+    label: '记录ID',
     fieldName: 'overdueId',
     component: 'Input',
     dependencies: {
@@ -77,28 +137,64 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '',
+    label: '销售人员',
     fieldName: 'userId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
-    label: '',
+    label: '客户',
     fieldName: 'customerId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
-    label: '',
+    label: '绩效周期',
     fieldName: 'periodId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
-    label: '逾期区间：0_10/11_30/31_59/60_90/90_plus',
+    label: '逾期区间',
     fieldName: 'overdueLevel',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: overdueLevelOptions,
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
     label: '最终扣分值',
     fieldName: 'scoreValue',
-    component: 'Input',
+    component: 'InputNumber',
+    componentProps: {
+      precision: 2,
+    },
+    rules: 'required',
   },
 ];

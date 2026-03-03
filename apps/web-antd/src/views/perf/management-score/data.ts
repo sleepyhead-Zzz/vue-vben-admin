@@ -1,25 +1,44 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { DictEnum } from '@vben/constants';
+import { getPopupContainer } from '@vben/utils';
+
+import { getDictOptions } from '#/utils/dict';
+import { renderDict } from '#/utils/render';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'userId',
-    label: '',
-  },
-  {
-    component: 'Input',
-    fieldName: 'periodId',
-    label: '',
+    fieldName: 'userName',
+    label: '销售人员',
   },
   {
     component: 'Select',
-    componentProps: {},
-    fieldName: 'scoreType',
-    label: '评分类型：WEEKLY_REPORT/SAMPLE/EXECUTION',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    fieldName: 'periodId',
+    label: '绩效周期',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: getDictOptions(DictEnum.PerfManagementScoreType),
+    },
+    fieldName: 'scoreType',
+    label: '评分类型',
+  },
+  {
+    component: 'InputNumber',
+    componentProps: {
+      precision: 2,
+    },
     fieldName: 'scoreValue',
     label: '得分',
   },
@@ -30,20 +49,42 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: '',
+    title: '记录ID',
     field: 'managementId',
+    visible: false,
   },
   {
-    title: '',
+    title: '销售人员ID',
     field: 'userId',
+    visible: false,
   },
   {
-    title: '',
+    title: '销售人员',
+    field: 'userName',
+    formatter({ row }) {
+      return row.userName || row.userId || '-';
+    },
+  },
+  {
+    title: '绩效周期ID',
     field: 'periodId',
+    visible: false,
   },
   {
-    title: '评分类型：WEEKLY_REPORT/SAMPLE/EXECUTION',
+    title: '绩效周期',
+    field: 'periodName',
+    formatter({ row }) {
+      return row.periodName || row.periodId || '-';
+    },
+  },
+  {
+    title: '评分类型',
     field: 'scoreType',
+    slots: {
+      default: ({ row }) => {
+        return renderDict(row.scoreType, DictEnum.PerfManagementScoreType);
+      },
+    },
   },
   {
     title: '得分',
@@ -60,7 +101,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: '',
+    label: '记录ID',
     fieldName: 'managementId',
     component: 'Input',
     dependencies: {
@@ -69,24 +110,48 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '',
+    label: '销售人员',
     fieldName: 'userId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
-    label: '',
+    label: '绩效周期',
     fieldName: 'periodId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
-    label: '评分类型：WEEKLY_REPORT/SAMPLE/EXECUTION',
+    label: '评分类型',
     fieldName: 'scoreType',
     component: 'Select',
-    componentProps: {},
+    componentProps: {
+      getPopupContainer,
+      options: getDictOptions(DictEnum.PerfManagementScoreType),
+    },
+    rules: 'selectRequired',
   },
   {
     label: '得分',
     fieldName: 'scoreValue',
-    component: 'Input',
+    component: 'InputNumber',
+    componentProps: {
+      precision: 2,
+    },
+    rules: 'required',
   },
 ];

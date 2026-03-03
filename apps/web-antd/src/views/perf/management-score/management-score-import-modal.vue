@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { ImportValidationResult } from '../_shared/use-excel-import-flow';
 
-import { computed, h, ref } from 'vue';
+import { computed, h, ref, watch } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
+import { DictEnum } from '@vben/constants';
 import { ExcelIcon, InBoxIcon } from '@vben/icons';
 
 import {
@@ -17,10 +18,11 @@ import {
 } from 'ant-design-vue';
 
 import {
-  downloadFactKeyTaskScoreExcelTemplate,
-  importFactKeyTaskScoreByExcel,
-} from '#/api/perf/factKeyTaskScore';
+  downloadFactManagementScoreExcelTemplate,
+  importByType,
+} from '#/api/perf/factManagementScore';
 import { getHeaders, getSheets } from '#/api/tool/excel';
+import { getDictOptions } from '#/utils/dict';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
 
@@ -29,94 +31,191 @@ import { useExcelImportFlow } from '../_shared/use-excel-import-flow';
 const emit = defineEmits<{ reload: [] }>();
 
 const UploadDragger = Upload.Dragger;
-const excelFields = [
-  { key: 'userName', label: '销售人员姓名' },
-  { key: 'scoreValue', label: '重点工作平均得分' },
-  { key: 'q1Score', label: 'Q1' },
-  { key: 'q2Score', label: 'Q2' },
-  { key: 'q3Score', label: 'Q3' },
-  { key: 'q4Score', label: 'Q4' },
-] as const;
-
-const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
-  userName: ['userName', 'username', '销售人员姓名', '业务经理姓名', '姓名'],
-  scoreValue: ['scoreValue', '重点工作平均得分', '平均得分'],
-  q1Score: ['q1Score', 'Q1', 'Q1得分'],
-  q2Score: ['q2Score', 'Q2', 'Q2得分'],
-  q3Score: ['q3Score', 'Q3', 'Q3得分'],
-  q4Score: ['q4Score', 'Q4', 'Q4得分'],
-};
-
+const scoreTypeOptions = getDictOptions(DictEnum.PerfManagementScoreType);
 const currentYear = new Date().getFullYear();
 const yearOptions = Array.from({ length: 7 }).map((_, index) => {
   const year = currentYear - 3 + index;
   return { label: `${year}`, value: year };
 });
 
+const monthFields = Array.from({ length: 12 }).map((_, index) => ({
+  key: `month${index + 1}` as const,
+  label: `${index + 1}月`,
+}));
+
+type ImportFieldKey =
+  | 'bucket0_10'
+  | 'bucket11_30'
+  | 'bucket30_59'
+  | 'bucket60_90'
+  | 'bucket90_plus'
+  | 'customerName'
+  | 'scoreValue'
+  | 'userName'
+  | `month${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12}`;
+
+const excelFieldsByType: Record<
+  string,
+  Array<{
+    key: ImportFieldKey;
+    label: string;
+  }>
+> = {
+  '1': [
+    { key: 'userName', label: '销售人员姓名' },
+    { key: 'scoreValue', label: '得分' },
+  ],
+  '2': [{ key: 'userName', label: '销售人员姓名' }, ...monthFields],
+  '3': [{ key: 'userName', label: '销售人员姓名' }, ...monthFields],
+  '4': [
+    { key: 'userName', label: '销售人员姓名' },
+    { key: 'customerName', label: '客户名称' },
+    { key: 'bucket0_10', label: '0-10' },
+    { key: 'bucket11_30', label: '11-30' },
+    { key: 'bucket30_59', label: '30-59' },
+    { key: 'bucket60_90', label: '60-90' },
+    { key: 'bucket90_plus', label: '90天以上' },
+  ],
+};
+
+const fieldAliases: Record<ImportFieldKey, string[]> = {
+  bucket0_10: ['0-10', '0_10', '0到10'],
+  bucket11_30: ['11-30', '11_30', '11,-30', '11到30'],
+  bucket30_59: ['30-59', '30_59', '31-59', '31_59', '30到59', '31到59'],
+  bucket60_90: ['60-90', '60_90', '60到90'],
+  bucket90_plus: ['90天以上', '90_plus', '90以上', '90+'],
+  userName: ['userName', 'username', '销售人员姓名', '业务经理姓名', '姓名'],
+  customerName: ['customerName', '客户名称', '客户'],
+  month1: ['month1', '1月', '1月得分'],
+  month2: ['month2', '2月', '2月得分'],
+  month3: ['month3', '3月', '3月得分'],
+  month4: ['month4', '4月', '4月得分'],
+  month5: ['month5', '5月', '5月得分'],
+  month6: ['month6', '6月', '6月得分'],
+  month7: ['month7', '7月', '7月得分'],
+  month8: ['month8', '8月', '8月得分'],
+  month9: ['month9', '9月', '9月得分'],
+  month10: ['month10', '10月', '10月得分'],
+  month11: ['month11', '11月', '11月得分'],
+  month12: ['month12', '12月', '12月得分'],
+  scoreValue: ['scoreValue', '得分', '最终扣分值', '分值'],
+};
+const allMappingKeys = Object.keys(fieldAliases) as ImportFieldKey[];
+
 const form = ref<Record<string, any>>({
   sheetName: '',
+  scoreType: undefined,
   year: currentYear,
   userName: undefined,
+  customerName: undefined,
   scoreValue: undefined,
-  q1Score: undefined,
-  q2Score: undefined,
-  q3Score: undefined,
-  q4Score: undefined,
+  month1: undefined,
+  month2: undefined,
+  month3: undefined,
+  month4: undefined,
+  month5: undefined,
+  month6: undefined,
+  month7: undefined,
+  month8: undefined,
+  month9: undefined,
+  month10: undefined,
+  month11: undefined,
+  month12: undefined,
+  bucket0_10: undefined,
+  bucket11_30: undefined,
+  bucket30_59: undefined,
+  bucket60_90: undefined,
+  bucket90_plus: undefined,
 });
 
 const checked = ref(false);
+const lockScoreType = ref(false);
 
 const [BasicModal, modalApi] = useVbenModal({
   class: 'w-[95vw] max-w-[1200px] md:w-[85vw] lg:w-[70vw]',
   onCancel: handleCancel,
   onConfirm: handleSubmit,
+  onOpenChange(isOpen) {
+    if (!isOpen) return;
+
+    const data = (modalApi.getData() as Record<string, any> | undefined) || {};
+    const defaultType = data.defaultScoreType
+      ? String(data.defaultScoreType)
+      : undefined;
+
+    lockScoreType.value = !!data.lockScoreType;
+    checked.value = false;
+    form.value = {
+      sheetName: '',
+      scoreType: defaultType,
+      year: data.defaultYear || currentYear,
+      userName: undefined,
+      customerName: undefined,
+      overdueLevel: undefined,
+      scoreValue: undefined,
+    };
+    resetFlow();
+  },
 });
 
 function normalizeHeader(value: string) {
   return value.replaceAll(/\s+/g, '').toLowerCase();
 }
 
+const activeFields = computed(() => {
+  const key = String(form.value.scoreType ?? '');
+  if (key !== '1') {
+    return [];
+  }
+  return excelFieldsByType[key] ?? [];
+});
+
+const needsManualMapping = computed(
+  () => String(form.value.scoreType ?? '') === '1',
+);
+
 function resetMappings() {
-  excelFields.forEach((field) => {
-    form.value[field.key] = undefined;
+  allMappingKeys.forEach((key) => {
+    form.value[key] = undefined;
   });
 }
 
+function runAutoMatch(headers: string[]) {
+  const normalizedHeaders = headers.map((header) => ({
+    raw: header,
+    normalized: normalizeHeader(header),
+  }));
+
+  const missingLabels: string[] = [];
+  const matchedKeys: string[] = [];
+
+  activeFields.value.forEach((field) => {
+    const aliases = new Set(
+      fieldAliases[field.key].map((alias) => normalizeHeader(alias)),
+    );
+    const matched = normalizedHeaders.find((item) =>
+      aliases.has(item.normalized),
+    );
+
+    if (matched) {
+      form.value[field.key] = matched.raw;
+      matchedKeys.push(field.key);
+    } else {
+      form.value[field.key] = undefined;
+      missingLabels.push(field.label);
+    }
+  });
+
+  return { matchedKeys, missingLabels };
+}
+
 const flow = useExcelImportFlow({
-  autoMatch(headers) {
-    const normalizedHeaders = headers.map((header) => ({
-      raw: header,
-      normalized: normalizeHeader(header),
-    }));
-
-    const missingLabels: string[] = [];
-    const matchedKeys: string[] = [];
-
-    excelFields.forEach((field) => {
-      const aliases = new Set(
-        fieldAliases[field.key].map((alias) => normalizeHeader(alias)),
-      );
-      const matched = normalizedHeaders.find((item) =>
-        aliases.has(item.normalized),
-      );
-
-      if (matched) {
-        form.value[field.key] = matched.raw;
-        matchedKeys.push(field.key);
-      } else {
-        form.value[field.key] = undefined;
-        missingLabels.push(field.label);
-      }
-    });
-
-    return { matchedKeys, missingLabels };
-  },
+  autoMatch: runAutoMatch,
   form,
   async loadHeadersApi(file, sheetName) {
     const { data } = await commonUploadFile(getHeaders, file, {
       request: sheetName,
     });
-
     return data ?? [];
   },
   async loadSheetsApi(file) {
@@ -138,11 +237,36 @@ const {
   uploadPercent,
 } = flow;
 
+watch(
+  () => form.value.scoreType,
+  () => {
+    resetMappings();
+    if (headers.value.length > 0 && activeFields.value.length > 0) {
+      const result = runAutoMatch(headers.value);
+      autoMatchedKeys.value = result.matchedKeys;
+      missingAutoMatchLabels.value = result.missingLabels;
+    } else {
+      autoMatchedKeys.value = [];
+      missingAutoMatchLabels.value = [];
+    }
+  },
+);
+
+const modalTitle = computed(() => {
+  const title = (modalApi.getData() as Record<string, any> | undefined)?.title;
+  return title || '管理/逾期导入';
+});
+
 const fileName = computed(() => fileList.value[0]?.name || '未选择文件');
 
 const fieldProgress = computed(() => {
-  const total = excelFields.length;
-  const mapped = excelFields.filter((field) => !!form.value[field.key]).length;
+  if (!needsManualMapping.value) {
+    return { total: 0, mapped: 0, percent: 100 };
+  }
+  const total = activeFields.value.length || 1;
+  const mapped = activeFields.value.filter(
+    (field) => !!form.value[field.key],
+  ).length;
   return { total, mapped, percent: Math.round((mapped / total) * 100) };
 });
 
@@ -152,16 +276,14 @@ const validation = computed<ImportValidationResult>(() => {
   if (fileList.value.length !== 1) {
     missing.push('上传一个 Excel 文件');
   }
-
-  if (!form.value.sheetName) {
-    missing.push('选择 Sheet');
+  if (!form.value.scoreType) {
+    missing.push('选择类型');
   }
-
   if (!form.value.year) {
     missing.push('选择年份');
   }
 
-  excelFields.forEach((field) => {
+  activeFields.value.forEach((field) => {
     if (!form.value[field.key]) {
       missing.push(`映射 ${field.label}`);
     }
@@ -191,12 +313,9 @@ function beforeUpload(file: File) {
   return false;
 }
 
-function buildResultContent(
-  response: PerfAPI.ResponseDTOImportResponseDTO,
-  fallbackText: string,
-) {
+function buildResultContent(response: PerfAPI.ResponseDTOImportResponseDTO) {
   const result = response.data;
-  const messageHtml = response.message || fallbackText;
+  const messageHtml = response.message || '';
 
   return h('div', { class: 'space-y-3' }, [
     h('div', { class: 'rounded-lg border border-[#dbeafe] bg-[#eff6ff] p-3' }, [
@@ -204,6 +323,13 @@ function buildResultContent(
       h('div', { class: 'mt-2 text-sm text-[#1e293b]' }, [
         `成功 ${result?.successCount ?? 0} 条，失败 ${result?.failureCount ?? 0} 条`,
       ]),
+      result?.hasError
+        ? h(
+            'div',
+            { class: 'mt-1 text-xs text-amber-600' },
+            '存在失败记录，请查看错误详情',
+          )
+        : null,
       result?.errorFileUrl
         ? h(
             'a',
@@ -218,17 +344,19 @@ function buildResultContent(
           )
         : null,
     ]),
-    h('details', { class: 'rounded border border-slate-200 p-2 text-sm' }, [
-      h(
-        'summary',
-        { class: 'cursor-pointer text-slate-600' },
-        '查看后端原始消息',
-      ),
-      h('div', {
-        class: 'mt-2 max-h-[220px] overflow-y-auto text-slate-700',
-        innerHTML: messageHtml,
-      }),
-    ]),
+    messageHtml
+      ? h('details', { class: 'rounded border border-slate-200 p-2 text-sm' }, [
+          h(
+            'summary',
+            { class: 'cursor-pointer text-slate-600' },
+            '查看后端原始消息',
+          ),
+          h('div', {
+            class: 'mt-2 max-h-[220px] overflow-y-auto text-slate-700',
+            innerHTML: messageHtml,
+          }),
+        ])
+      : null,
   ]);
 }
 
@@ -242,26 +370,27 @@ async function handleSubmit() {
   }
 
   const file = fileList.value[0]?.originFileObj as File;
+  const columnMappings = needsManualMapping.value
+    ? activeFields.value.map((field) => ({
+        fieldName: field.key,
+        columnName: form.value[field.key],
+      }))
+    : undefined;
 
-  const columnMappings = excelFields.map((field) => ({
-    fieldName: field.key,
-    columnName: form.value[field.key],
-  }));
-
-  const requestObj = {
-    sheetName: form.value.sheetName,
+  const requestObj: PerfAPI.ManagementScoreImportRequest = {
+    scoreType: form.value.scoreType,
     year: form.value.year,
+    sheetName: form.value.sheetName || undefined,
     updateSupport: checked.value,
     columnMappings,
-  } as PerfAPI.KeyTaskScoreImportRequest & { year?: number };
+  };
 
   try {
-    stage.value = 'submitting';
-    uploadPercent.value = 0;
     modalApi.modalLoading(true);
+    uploadPercent.value = 0;
 
     const response = await commonUploadFile(
-      importFactKeyTaskScoreByExcel,
+      importByType,
       file,
       { request: requestObj },
       {
@@ -275,13 +404,15 @@ async function handleSubmit() {
       emit('reload');
     }
 
-    Modal[response.code === 200 ? 'success' : 'error']({
+    let method: 'error' | 'success' | 'warning' = 'error';
+    if (response.code === 200) {
+      method = response.data?.hasError ? 'warning' : 'success';
+    }
+
+    Modal[method]({
       title: '提示',
       width: 560,
-      content: buildResultContent(
-        response,
-        response.code === 200 ? '导入成功' : '导入失败',
-      ),
+      content: buildResultContent(response),
     });
 
     handleCancel();
@@ -292,9 +423,6 @@ async function handleSubmit() {
     });
   } finally {
     modalApi.modalLoading(false);
-    if (stage.value !== 'idle') {
-      stage.value = 'ready';
-    }
   }
 }
 
@@ -304,13 +432,28 @@ function handleCancel() {
   resetFlow();
   form.value = {
     sheetName: '',
+    scoreType: undefined,
     year: currentYear,
     userName: undefined,
+    customerName: undefined,
     scoreValue: undefined,
-    q1Score: undefined,
-    q2Score: undefined,
-    q3Score: undefined,
-    q4Score: undefined,
+    month1: undefined,
+    month2: undefined,
+    month3: undefined,
+    month4: undefined,
+    month5: undefined,
+    month6: undefined,
+    month7: undefined,
+    month8: undefined,
+    month9: undefined,
+    month10: undefined,
+    month11: undefined,
+    month12: undefined,
+    bucket0_10: undefined,
+    bucket11_30: undefined,
+    bucket30_59: undefined,
+    bucket60_90: undefined,
+    bucket90_plus: undefined,
   };
 }
 </script>
@@ -319,7 +462,7 @@ function handleCancel() {
   <BasicModal
     :close-on-click-modal="false"
     :fullscreen-button="false"
-    title="重点工作得分导入"
+    :title="modalTitle"
   >
     <div class="import-shell">
       <div class="steps-grid">
@@ -327,7 +470,7 @@ function handleCancel() {
           1. 上传文件
         </div>
         <div class="step-chip" :class="[{ active: stageStep >= 1 }]">
-          2. Sheet 与映射
+          2. 字段映射
         </div>
         <div class="step-chip" :class="[{ active: stageStep >= 2 }]">
           3. 导入配置
@@ -348,7 +491,7 @@ function handleCancel() {
             <InBoxIcon class="size-[52px] text-[#0f766e]" />
           </p>
           <p class="ant-upload-text text-[16px] font-medium text-slate-700">
-            点击或拖拽上传重点工作得分文件
+            点击或拖拽上传导入文件
           </p>
           <p class="text-xs text-slate-500">
             支持 .xlsx / .xls，仅允许一个文件
@@ -382,7 +525,7 @@ function handleCancel() {
       <section class="import-card">
         <div class="flex items-center justify-between gap-2">
           <div class="section-title">第二步：Sheet 与字段映射</div>
-          <div class="text-xs text-slate-500">
+          <div v-if="needsManualMapping" class="text-xs text-slate-500">
             已映射 {{ fieldProgress.mapped }}/{{ fieldProgress.total }}
           </div>
         </div>
@@ -394,19 +537,19 @@ function handleCancel() {
         />
 
         <div class="mt-3">
-          <div class="mb-1 text-xs text-slate-500">Sheet</div>
+          <div class="mb-1 text-xs text-slate-500">Sheet（可选）</div>
           <Select
             v-model:value="form.sheetName"
             :disabled="sheets.length === 0"
             :loading="stage === 'parsingSheets'"
-            placeholder="选择 Sheet"
+            placeholder="不选则默认第一张"
             :options="sheets.map((item) => ({ label: item, value: item }))"
             class="w-full"
           />
         </div>
 
         <Alert
-          v-if="stage === 'parsingHeaders'"
+          v-if="needsManualMapping && stage === 'parsingHeaders'"
           class="mt-3"
           message="正在解析表头并自动匹配字段..."
           show-icon
@@ -414,16 +557,24 @@ function handleCancel() {
         />
 
         <Alert
-          v-if="missingAutoMatchLabels.length > 0"
+          v-if="needsManualMapping && missingAutoMatchLabels.length > 0"
           class="mt-3"
           :message="`自动匹配未覆盖：${missingAutoMatchLabels.join('、')}`"
           show-icon
           type="warning"
         />
 
-        <div class="mapping-grid mt-4">
+        <Alert
+          v-if="!needsManualMapping"
+          class="mt-3"
+          message="当前类型由后端按业务规则自动处理月份/逾期列，前端无需手动映射。"
+          show-icon
+          type="info"
+        />
+
+        <div v-if="needsManualMapping" class="mapping-grid mt-4">
           <div
-            v-for="field in excelFields"
+            v-for="field in activeFields"
             :key="field.key"
             class="mapping-row"
             :class="{ 'mapping-row-warning': !form[field.key] }"
@@ -451,28 +602,47 @@ function handleCancel() {
       <section class="import-card">
         <div class="section-title">第三步：导入配置与提交</div>
 
-        <div class="mt-3">
-          <div class="mb-1 text-xs text-slate-500">年份</div>
-          <Select
-            v-model:value="form.year"
-            :options="yearOptions"
-            show-search
-            option-filter-prop="label"
-            option-label-prop="label"
-            allow-clear
-            placeholder="请选择年份"
-            class="w-full"
-          />
+        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+          <div>
+            <div class="mb-1 text-xs text-slate-500">类型</div>
+            <Select
+              v-model:value="form.scoreType"
+              :disabled="lockScoreType"
+              :options="scoreTypeOptions"
+              option-filter-prop="label"
+              option-label-prop="label"
+              show-search
+              allow-clear
+              placeholder="请选择类型"
+              class="w-full"
+            />
+          </div>
+
+          <div>
+            <div class="mb-1 text-xs text-slate-500">年份</div>
+            <Select
+              v-model:value="form.year"
+              :options="yearOptions"
+              option-filter-prop="label"
+              option-label-prop="label"
+              show-search
+              allow-clear
+              placeholder="请选择年份"
+              class="w-full"
+            />
+          </div>
         </div>
 
-        <div class="mt-3 flex flex-wrap items-center gap-2">
-          <span class="text-xs text-slate-500">允许导入 xlsx、xls 文件</span>
+        <div
+          class="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500"
+        >
+          <span>支持 .xlsx / .xls</span>
           <a-button
             type="link"
             @click="
               commonDownloadExcel(
-                downloadFactKeyTaskScoreExcelTemplate,
-                '重点工作得分导入模板',
+                downloadFactManagementScoreExcelTemplate,
+                '管理与逾期导入模板',
               )
             "
           >
@@ -511,7 +681,7 @@ function handleCancel() {
           </ul>
         </div>
 
-        <div v-if="stage === 'submitting'" class="mt-4">
+        <div v-if="uploadPercent > 0 && uploadPercent < 100" class="mt-4">
           <div class="mb-1 text-xs text-slate-500">
             上传进度 {{ uploadPercent }}%
           </div>
