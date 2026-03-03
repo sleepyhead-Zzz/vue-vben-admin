@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增新客户得分记录 POST /perf/FactNewCustomerScore */
 export async function addFactNewCustomerScore(
   body: PerfAPI.AddPerfFactNewCustomerScoreCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/FactNewCustomerScore", {
-    method: "POST",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/FactNewCustomerScore', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addFactNewCustomerScore(
 export async function removeFactNewCustomerScore(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactNewCustomerScoreParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/FactNewCustomerScore", {
-    method: "DELETE",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/FactNewCustomerScore', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeFactNewCustomerScore(
 export async function getFactNewCustomerScoreInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactNewCustomerScoreInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { newCustomerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfFactNewCustomerScoreDTO>(
     `/perf/FactNewCustomerScore/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -54,20 +54,20 @@ export async function editFactNewCustomerScore(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editFactNewCustomerScoreParams,
   body: PerfAPI.UpdatePerfFactNewCustomerScoreCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { newCustomerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/FactNewCustomerScore/${param0}`,
     {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       params: { ...queryParams },
       data: body,
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -75,14 +75,14 @@ export async function editFactNewCustomerScore(
 export async function exportFactNewCustomerScoreByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportFactNewCustomerScoreByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/perf/FactNewCustomerScore/excel", {
-    method: "GET",
+  return request<any>('/perf/FactNewCustomerScore/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -92,8 +92,8 @@ export async function exportFactNewCustomerScoreByExcel(
 export async function downloadFactNewCustomerScoreExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/perf/FactNewCustomerScore/excelTemplate", {
-    method: "GET",
+  return request<any>('/perf/FactNewCustomerScore/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -104,25 +104,25 @@ export async function importFactNewCustomerScoreByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -132,13 +132,13 @@ export async function importFactNewCustomerScoreByExcel(
   });
 
   return request<PerfAPI.ResponseDTOString>(
-    "/perf/FactNewCustomerScore/importData",
+    '/perf/FactNewCustomerScore/importData',
     {
-      method: "POST",
+      method: 'POST',
       data: formData,
-      requestType: "form",
+      requestType: 'form',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -146,17 +146,17 @@ export async function importFactNewCustomerScoreByExcel(
 export async function getFactNewCustomerScoreList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactNewCustomerScoreListParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOListPerfFactNewCustomerScoreDTO>(
-    "/perf/FactNewCustomerScore/list",
+    '/perf/FactNewCustomerScore/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -165,11 +165,11 @@ export async function optionFactNewCustomerScoreSelect(options?: {
   [key: string]: any;
 }) {
   return request<PerfAPI.ResponseDTOListPerfFactNewCustomerScoreVO>(
-    "/perf/FactNewCustomerScore/option-select",
+    '/perf/FactNewCustomerScore/option-select',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -177,17 +177,17 @@ export async function optionFactNewCustomerScoreSelect(options?: {
 export async function getPagedFactNewCustomerScore(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedFactNewCustomerScoreParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfFactNewCustomerScoreDTO>(
-    "/perf/FactNewCustomerScore/page",
+    '/perf/FactNewCustomerScore/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -195,15 +195,15 @@ export async function getPagedFactNewCustomerScore(
 export async function removeFactNewCustomerScoreById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactNewCustomerScoreByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { newCustomerId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/FactNewCustomerScore/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
