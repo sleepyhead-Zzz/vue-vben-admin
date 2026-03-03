@@ -1,16 +1,25 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { getPopupContainer } from '@vben/utils';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'userId',
-    label: '',
+    fieldName: 'userName',
+    label: '销售人员',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
     fieldName: 'periodId',
-    label: '',
+    label: '绩效周期',
   },
   {
     component: 'Input',
@@ -24,20 +33,53 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: '',
+    title: 'ID',
     field: 'taskId',
+    visible: false,
   },
   {
-    title: '',
+    title: '销售人员ID',
     field: 'userId',
+    visible: false,
   },
   {
-    title: '',
+    title: '销售人员',
+    field: 'userName',
+    formatter({ row }) {
+      return row.userName || row.userId || '-';
+    },
+  },
+  {
+    title: '绩效周期ID',
     field: 'periodId',
+    visible: false,
+  },
+  {
+    title: '绩效周期',
+    field: 'periodName',
+    formatter({ row }) {
+      return row.periodName || row.periodId || '-';
+    },
   },
   {
     title: '重点工作平均得分',
     field: 'scoreValue',
+  },
+  {
+    title: 'Q1得分',
+    field: 'q1Score',
+  },
+  {
+    title: 'Q2得分',
+    field: 'q2Score',
+  },
+  {
+    title: 'Q3得分',
+    field: 'q3Score',
+  },
+  {
+    title: 'Q4得分',
+    field: 'q4Score',
   },
   {
     field: 'action',
@@ -50,7 +92,7 @@ export const columns: VxeGridProps['columns'] = [
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: '',
+    label: 'ID',
     fieldName: 'taskId',
     component: 'Input',
     dependencies: {
@@ -59,18 +101,58 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '',
+    label: '销售人员',
     fieldName: 'userId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
-    label: '',
+    label: '绩效周期',
     fieldName: 'periodId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
+    rules: 'selectRequired',
   },
   {
     label: '重点工作平均得分',
     fieldName: 'scoreValue',
-    component: 'Input',
+    component: 'InputNumber',
+    componentProps: {
+      min: 0,
+      precision: 2,
+    },
+  },
+  {
+    label: 'Q1得分',
+    fieldName: 'q1Score',
+    component: 'InputNumber',
+  },
+  {
+    label: 'Q2得分',
+    fieldName: 'q2Score',
+    component: 'InputNumber',
+  },
+  {
+    label: 'Q3得分',
+    fieldName: 'q3Score',
+    component: 'InputNumber',
+  },
+  {
+    label: 'Q4得分',
+    fieldName: 'q4Score',
+    component: 'InputNumber',
   },
 ];

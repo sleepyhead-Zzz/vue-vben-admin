@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { ImportValidationResult } from '../_shared/use-excel-import-flow';
 
-import { computed, h, onMounted, ref } from 'vue';
+import { computed, h, ref } from 'vue';
 
 import { useVbenModal } from '@vben/common-ui';
-import { InBoxIcon } from '@vben/icons';
+import { ExcelIcon, InBoxIcon } from '@vben/icons';
 
 import {
   Alert,
@@ -16,41 +16,65 @@ import {
   Upload,
 } from 'ant-design-vue';
 
-import { optionProductSelect } from '#/api/perf/product';
-import { importSalesDataByExcel } from '#/api/perf/salesdata';
+import {
+  downloadFactKeyTaskScoreExcelTemplate,
+  importFactKeyTaskScoreByExcel,
+} from '#/api/perf/factKeyTaskScore';
 import { getHeaders, getSheets } from '#/api/tool/excel';
+import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
 
 import { useExcelImportFlow } from '../_shared/use-excel-import-flow';
 
 const emit = defineEmits<{ reload: [] }>();
-const UploadDragger = Upload.Dragger;
 
+const UploadDragger = Upload.Dragger;
 const excelFields = [
-  { label: '业务经理姓名', key: 'userName' },
-  { label: '售达方名称', key: 'customerName' },
-  { label: '交货单数量', key: 'quantity' },
-  { label: '交货单创建日期', key: 'orderDate' },
+  { key: 'userName', label: '销售人员姓名' },
+  { key: 'scoreValue', label: '重点工作平均得分' },
+  { key: 'q1Score', label: 'Q1' },
+  { key: 'q2Score', label: 'Q2' },
+  { key: 'q3Score', label: 'Q3' },
+  { key: 'q4Score', label: 'Q4' },
 ] as const;
+
+const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
+  userName: ['userName', 'username', '销售人员姓名', '业务经理姓名', '姓名'],
+  scoreValue: ['scoreValue', '重点工作平均得分', '平均得分'],
+  q1Score: ['q1Score', 'Q1', 'Q1得分'],
+  q2Score: ['q2Score', 'Q2', 'Q2得分'],
+  q3Score: ['q3Score', 'Q3', 'Q3得分'],
+  q4Score: ['q4Score', 'Q4', 'Q4得分'],
+};
+
+const currentYear = new Date().getFullYear();
+const yearOptions = Array.from({ length: 7 }).map((_, index) => {
+  const year = currentYear - 3 + index;
+  return { label: `${year}`, value: year };
+});
 
 const form = ref<Record<string, any>>({
   sheetName: '',
+  year: currentYear,
   userName: undefined,
-  customerName: undefined,
-  quantity: undefined,
-  orderDate: undefined,
-  productId: undefined,
+  scoreValue: undefined,
+  q1Score: undefined,
+  q2Score: undefined,
+  q3Score: undefined,
+  q4Score: undefined,
 });
 
 const checked = ref(false);
-const productOptions = ref<{ label: string; value: number }[]>([]);
-const productLoading = ref(false);
 
 const [BasicModal, modalApi] = useVbenModal({
   class: 'w-[95vw] max-w-[1200px] md:w-[85vw] lg:w-[70vw]',
   onCancel: handleCancel,
   onConfirm: handleSubmit,
 });
+
+function normalizeHeader(value: string) {
+  return value.replaceAll(/\s+/g, '').toLowerCase();
+}
 
 function resetMappings() {
   excelFields.forEach((field) => {
@@ -60,15 +84,24 @@ function resetMappings() {
 
 const flow = useExcelImportFlow({
   autoMatch(headers) {
+    const normalizedHeaders = headers.map((header) => ({
+      raw: header,
+      normalized: normalizeHeader(header),
+    }));
+
     const missingLabels: string[] = [];
     const matchedKeys: string[] = [];
 
     excelFields.forEach((field) => {
-      const match = headers.find(
-        (header) => header.trim() === field.label.trim(),
+      const aliases = new Set(
+        fieldAliases[field.key].map((alias) => normalizeHeader(alias)),
       );
-      if (match) {
-        form.value[field.key] = match;
+      const matched = normalizedHeaders.find((item) =>
+        aliases.has(item.normalized),
+      );
+
+      if (matched) {
+        form.value[field.key] = matched.raw;
         matchedKeys.push(field.key);
       } else {
         form.value[field.key] = undefined;
@@ -92,6 +125,7 @@ const flow = useExcelImportFlow({
   },
   resetMappings,
 });
+
 const {
   autoMatchedKeys,
   errorText,
@@ -123,8 +157,8 @@ const validation = computed<ImportValidationResult>(() => {
     missing.push('选择 Sheet');
   }
 
-  if (!form.value.productId) {
-    missing.push('选择产品');
+  if (!form.value.year) {
+    missing.push('选择年份');
   }
 
   excelFields.forEach((field) => {
@@ -148,22 +182,6 @@ const stageStep = computed(() => {
   }
   return 2;
 });
-
-async function loadProducts() {
-  try {
-    productLoading.value = true;
-    const { data } = await optionProductSelect();
-    const list = data ?? [];
-    productOptions.value = list.map((item) => ({
-      label: `${item.productId} - ${item.productName}`,
-      value: item.productId,
-    }));
-  } finally {
-    productLoading.value = false;
-  }
-}
-
-onMounted(loadProducts);
 
 function beforeUpload(file: File) {
   if (!/\.(?:xlsx|xls)$/i.test(file.name)) {
@@ -191,7 +209,7 @@ function buildResultContent(
             'a',
             {
               class:
-                'mt-2 inline-block rounded border border-[#93c5fd] px-2 py-1 text-xs text-[#1d4ed8] hover:bg-[#dbeafe]',
+                'mt-2 inline-block rounded border border-[#93c5fd] px-2 py-1 text-xs text-[#1d4ed8]',
               href: result.errorFileUrl,
               rel: 'noopener noreferrer',
               target: '_blank',
@@ -225,32 +243,27 @@ async function handleSubmit() {
 
   const file = fileList.value[0]?.originFileObj as File;
 
-  const columnMappings = excelFields
-    .filter((field) => !!form.value[field.key])
-    .map((field) => ({
-      fieldName: field.key,
-      columnName: form.value[field.key],
-    }));
+  const columnMappings = excelFields.map((field) => ({
+    fieldName: field.key,
+    columnName: form.value[field.key],
+  }));
 
-  // ✅ 和“销量计划导入”一致：真正传给后端的 request（会被生成器打成 JSON part）
-  // 如果你们的类型名不是 SalesDataImportRequest，就把类型改成你们实际的 DTO 类型即可。
   const requestObj = {
     sheetName: form.value.sheetName,
-    productId: form.value.productId,
+    year: Number(form.value.year),
     updateSupport: checked.value,
     columnMappings,
-  } as unknown as PerfAPI.SalesDataImportRequest;
+  } as PerfAPI.KeyTaskScoreImportRequest & { year?: number };
 
   try {
     stage.value = 'submitting';
     uploadPercent.value = 0;
     modalApi.modalLoading(true);
 
-    // ✅ 关键：用 commonUploadFile 包裹生成器函数（与第一个页面一致）
     const response = await commonUploadFile(
-      importSalesDataByExcel,
+      importFactKeyTaskScoreByExcel,
       file,
-      { request: requestObj }, // 👈 extraData 就是 body（JSON part）
+      { request: requestObj },
       {
         onProgress(percent) {
           uploadPercent.value = percent;
@@ -273,15 +286,9 @@ async function handleSubmit() {
 
     handleCancel();
   } catch (error: any) {
-    const errorMessage = String(error?.message ?? '');
-    const isTimeout =
-      error?.code === 'ECONNABORTED' || /timeout|超时/i.test(errorMessage);
-
     Modal.error({
       title: '错误',
-      content: isTimeout
-        ? '导入处理超时，请先拆分文件后重试；如仍超时，请联系后端调大导入处理时长。'
-        : error?.message || '导入失败',
+      content: error?.message || '导入失败',
     });
   } finally {
     modalApi.modalLoading(false);
@@ -297,11 +304,13 @@ function handleCancel() {
   resetFlow();
   form.value = {
     sheetName: '',
+    year: currentYear,
     userName: undefined,
-    customerName: undefined,
-    quantity: undefined,
-    orderDate: undefined,
-    productId: undefined,
+    scoreValue: undefined,
+    q1Score: undefined,
+    q2Score: undefined,
+    q3Score: undefined,
+    q4Score: undefined,
   };
 }
 </script>
@@ -310,7 +319,7 @@ function handleCancel() {
   <BasicModal
     :close-on-click-modal="false"
     :fullscreen-button="false"
-    title="销量数据导入"
+    title="重点工作得分导入"
   >
     <div class="import-shell">
       <div class="steps-grid">
@@ -336,10 +345,10 @@ function handleCancel() {
           class="upload-zone"
         >
           <p class="ant-upload-drag-icon flex items-center justify-center">
-            <InBoxIcon class="size-[52px] text-[#0369a1]" />
+            <InBoxIcon class="size-[52px] text-[#0f766e]" />
           </p>
           <p class="ant-upload-text text-[16px] font-medium text-slate-700">
-            点击或拖拽上传销量数据文件
+            点击或拖拽上传重点工作得分文件
           </p>
           <p class="text-xs text-slate-500">
             支持 .xlsx / .xls，仅允许一个文件
@@ -443,33 +452,50 @@ function handleCancel() {
         <div class="section-title">第三步：导入配置与提交</div>
 
         <div class="mt-3">
-          <div class="mb-1 text-xs text-slate-500">产品</div>
+          <div class="mb-1 text-xs text-slate-500">年份</div>
           <Select
-            v-model:value="form.productId"
-            :options="productOptions"
-            :loading="productLoading"
+            v-model:value="form.year"
+            :options="yearOptions"
             show-search
             option-filter-prop="label"
             option-label-prop="label"
             allow-clear
-            placeholder="请选择产品"
+            placeholder="请选择年份"
             class="w-full"
           />
         </div>
 
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <span class="text-xs text-slate-500">允许导入 xlsx、xls 文件</span>
+          <a-button
+            type="link"
+            @click="
+              commonDownloadExcel(
+                downloadFactKeyTaskScoreExcelTemplate,
+                '重点工作得分导入模板',
+              )
+            "
+          >
+            <div class="flex items-center gap-1">
+              <ExcelIcon />
+              <span>下载模板</span>
+            </div>
+          </a-button>
+        </div>
+
         <div
-          class="mt-3 flex items-center justify-between rounded-lg px-3 py-2"
+          class="mt-2 flex items-center justify-between rounded-lg px-3 py-2"
         >
           <span
             class="text-sm"
             :class="[checked ? 'text-red-500' : 'text-slate-600']"
           >
-            是否更新/覆盖已存在的用户数据
+            是否更新/覆盖已存在的数据
           </span>
           <Switch v-model:checked="checked" />
         </div>
 
-        <div class="s mt-4 rounded-lg border p-3">
+        <div class="mt-4 rounded-lg border p-3">
           <div class="text-xs font-medium text-slate-700">可提交条件</div>
           <ul class="mt-2 space-y-1 text-xs">
             <li
@@ -520,8 +546,8 @@ function handleCancel() {
 
 .step-chip.active {
   font-weight: 600;
-  color: #0c4a6e;
-  border-color: #38bdf8;
+  color: #0f766e;
+  border-color: #2dd4bf;
 }
 
 .import-card {

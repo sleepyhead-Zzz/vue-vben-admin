@@ -39,16 +39,27 @@ export const querySchema: FormSchemaGetter = () => [
 export const columns: VxeGridProps['columns'] = [
   { type: 'checkbox', width: 60 },
   {
-    title: 'todo',
-    field: 'id',
+    title: 'ID',
+    field: 'ownerId',
+    visible: false,
   },
   {
     title: '客户ID',
     field: 'customerId',
+    visible: false,
+  },
+  {
+    title: '客户',
+    field: 'customerName',
   },
   {
     title: '销售人员ID',
     field: 'userId',
+    visible: false,
+  },
+  {
+    title: '销售人员',
+    field: 'userName',
   },
   {
     title: '归属开始日期',
@@ -69,8 +80,8 @@ export const columns: VxeGridProps['columns'] = [
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: 'todo',
-    fieldName: 'id',
+    label: 'ID',
+    fieldName: 'ownerId',
     component: 'Input',
     dependencies: {
       show: () => false,

@@ -89,18 +89,18 @@ function handleAdd() {
 }
 
 async function handleEdit(row: API.PerfDimCustomerOwnerDTO) {
-  modalApi.setData({ id: row.id });
+  modalApi.setData({ id: row.ownerId });
   modalApi.open();
 }
 
 async function handleDelete(row: API.PerfDimCustomerOwnerDTO) {
-  await removeDimCustomerOwner({ ownerIds: [row.id] });
+  await removeDimCustomerOwner({ ownerIds: [row.ownerId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.PerfDimCustomerOwnerDTO) => row.id);
+  const ids = rows.map((row: API.PerfDimCustomerOwnerDTO) => row.ownerId);
   Modal.confirm({
     title: '提示',
     okType: 'danger',

@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from '#/api/request';
+import request from "#/api/request";
 
 /** 新增最终绩效结果锁定：避免历史规则变动导致分数变化 POST /perf/FactPerformanceResult */
 export async function addFactPerformanceResult(
   body: PerfAPI.AddPerfFactPerformanceResultCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/FactPerformanceResult', {
-    method: 'POST',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/FactPerformanceResult", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addFactPerformanceResult(
 export async function removeFactPerformanceResult(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactPerformanceResultParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<PerfAPI.ResponseDTOVoid>('/perf/FactPerformanceResult', {
-    method: 'DELETE',
+  return request<PerfAPI.ResponseDTOVoid>("/perf/FactPerformanceResult", {
+    method: "DELETE",
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeFactPerformanceResult(
 export async function getFactPerformanceResultInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactPerformanceResultInfoParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { performanceId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfFactPerformanceResultDTO>(
     `/perf/FactPerformanceResult/${param0}`,
     {
-      method: 'GET',
+      method: "GET",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -54,20 +54,20 @@ export async function editFactPerformanceResult(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editFactPerformanceResultParams,
   body: PerfAPI.UpdatePerfFactPerformanceResultCommand,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { performanceId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/FactPerformanceResult/${param0}`,
     {
-      method: 'PUT',
+      method: "PUT",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       params: { ...queryParams },
       data: body,
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -75,14 +75,14 @@ export async function editFactPerformanceResult(
 export async function exportFactPerformanceResultByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportFactPerformanceResultByExcelParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
-  return request<any>('/perf/FactPerformanceResult/excel', {
-    method: 'GET',
+  return request<any>("/perf/FactPerformanceResult/excel", {
+    method: "GET",
     params: {
       ...params,
       query: undefined,
-      ...params['query'],
+      ...params["query"],
     },
     ...(options || {}),
   });
@@ -92,8 +92,8 @@ export async function exportFactPerformanceResultByExcel(
 export async function downloadFactPerformanceResultExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>('/perf/FactPerformanceResult/excelTemplate', {
-    method: 'GET',
+  return request<any>("/perf/FactPerformanceResult/excelTemplate", {
+    method: "GET",
     ...(options || {}),
   });
 }
@@ -104,25 +104,25 @@ export async function importFactPerformanceResultByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append('file', file);
+    formData.append("file", file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
+      if (typeof item === "object" && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
+          item.forEach((f) => formData.append(ele, f || ""));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
+            new Blob([JSON.stringify(item)], { type: "application/json" })
           );
         }
       } else {
@@ -132,13 +132,13 @@ export async function importFactPerformanceResultByExcel(
   });
 
   return request<PerfAPI.ResponseDTOString>(
-    '/perf/FactPerformanceResult/importData',
+    "/perf/FactPerformanceResult/importData",
     {
-      method: 'POST',
+      method: "POST",
       data: formData,
-      requestType: 'form',
+      requestType: "form",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -146,17 +146,17 @@ export async function importFactPerformanceResultByExcel(
 export async function getFactPerformanceResultList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactPerformanceResultListParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOListPerfFactPerformanceResultDTO>(
-    '/perf/FactPerformanceResult/list',
+    "/perf/FactPerformanceResult/list",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -165,11 +165,11 @@ export async function optionFactPerformanceResultSelect(options?: {
   [key: string]: any;
 }) {
   return request<PerfAPI.ResponseDTOListPerfFactPerformanceResultVO>(
-    '/perf/FactPerformanceResult/option-select',
+    "/perf/FactPerformanceResult/option-select",
     {
-      method: 'GET',
+      method: "GET",
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -177,17 +177,17 @@ export async function optionFactPerformanceResultSelect(options?: {
 export async function getPagedFactPerformanceResult(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedFactPerformanceResultParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfFactPerformanceResultDTO>(
-    '/perf/FactPerformanceResult/page',
+    "/perf/FactPerformanceResult/page",
     {
-      method: 'GET',
+      method: "GET",
       params: {
         ...params,
       },
       ...(options || {}),
-    },
+    }
   );
 }
 
@@ -195,15 +195,15 @@ export async function getPagedFactPerformanceResult(
 export async function removeFactPerformanceResultById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactPerformanceResultByIdParams,
-  options?: { [key: string]: any },
+  options?: { [key: string]: any }
 ) {
   const { performanceId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/FactPerformanceResult/remove/${param0}`,
     {
-      method: 'DELETE',
+      method: "DELETE",
       params: { ...queryParams },
       ...(options || {}),
-    },
+    }
   );
 }
