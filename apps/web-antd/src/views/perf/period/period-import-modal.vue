@@ -15,6 +15,7 @@ import {
 } from '#/api/perf/period';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
+
 import {
   showJobTaskSubmitError,
   showJobTaskSubmitFeedback,
@@ -41,13 +42,9 @@ async function handleSubmit() {
       return;
     }
     const file = fileList.value[0]!.originFileObj as File;
-    const response = await commonUploadFile(
-      importPeriodByExcel,
-      file,
-      {
-        updateSupport: unref(checked),
-      },
-    );
+    const response = await commonUploadFile(importPeriodByExcel, file, {
+      updateSupport: unref(checked),
+    });
     if (response.code === 200) {
       emit('reload');
     }

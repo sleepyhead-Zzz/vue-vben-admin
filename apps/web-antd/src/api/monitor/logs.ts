@@ -1,11 +1,11 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 此处后端没有提供注释 DELETE /monitor/logs/clean-login-info */
 export async function cleanLoginInfo(options?: { [key: string]: any }) {
-  return request<MonitorAPI.ResponseDTOVoid>("/monitor/logs/clean-login-info", {
-    method: "DELETE",
+  return request<MonitorAPI.ResponseDTOVoid>('/monitor/logs/clean-login-info', {
+    method: 'DELETE',
     ...(options || {}),
   });
 }
@@ -13,11 +13,11 @@ export async function cleanLoginInfo(options?: { [key: string]: any }) {
 /** 此处后端没有提供注释 DELETE /monitor/logs/cleanOperationLog */
 export async function cleanOperationLog(options?: { [key: string]: any }) {
   return request<MonitorAPI.ResponseDTOVoid>(
-    "/monitor/logs/cleanOperationLog",
+    '/monitor/logs/cleanOperationLog',
     {
-      method: "DELETE",
+      method: 'DELETE',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -25,10 +25,10 @@ export async function cleanOperationLog(options?: { [key: string]: any }) {
 export async function removeLoginInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: MonitorAPI.removeLoginInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<MonitorAPI.ResponseDTOVoid>("/monitor/logs/loginLogs", {
-    method: "DELETE",
+  return request<MonitorAPI.ResponseDTOVoid>('/monitor/logs/loginLogs', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -40,14 +40,14 @@ export async function removeLoginInfo(
 export async function exportLoginInfoByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: MonitorAPI.exportLoginInfoByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/monitor/logs/loginLogs/excel", {
-    method: "GET",
+  return request<any>('/monitor/logs/loginLogs/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -57,19 +57,19 @@ export async function exportLoginInfoByExcel(
 export async function getPagedOperationLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: MonitorAPI.getPagedOperationLogParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<MonitorAPI.ResponseDTOPageDTOOperationLogDTO>(
-    "/monitor/logs/operationLogs",
+    '/monitor/logs/operationLogs',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
         query: undefined,
-        ...params["query"],
+        ...params['query'],
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -77,10 +77,10 @@ export async function getPagedOperationLog(
 export async function removeOperationLog(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: MonitorAPI.removeOperationLogParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<MonitorAPI.ResponseDTOVoid>("/monitor/logs/operationLogs", {
-    method: "DELETE",
+  return request<MonitorAPI.ResponseDTOVoid>('/monitor/logs/operationLogs', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -92,14 +92,14 @@ export async function removeOperationLog(
 export async function exportOperationLogByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: MonitorAPI.exportOperationLogByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/monitor/logs/operationLogs/excel", {
-    method: "GET",
+  return request<any>('/monitor/logs/operationLogs/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -109,16 +109,16 @@ export async function exportOperationLogByExcel(
 export async function getPagedLoginInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: MonitorAPI.getPagedLoginInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<MonitorAPI.ResponseDTOPageDTOLoginLogDTO>(
-    "/monitor/logs/page",
+    '/monitor/logs/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }

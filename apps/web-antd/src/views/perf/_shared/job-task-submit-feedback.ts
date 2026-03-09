@@ -1,6 +1,6 @@
-import { h } from 'vue';
-
 import type { Router } from 'vue-router';
+
+import { h } from 'vue';
 
 import { Modal } from 'ant-design-vue';
 
@@ -24,7 +24,10 @@ function normalizeJobSubmitData(data: unknown): JobSubmitLike {
   return data as JobSubmitLike;
 }
 
-export function showJobTaskSubmitFeedback(response: ResponseLike, router: Router) {
+export function showJobTaskSubmitFeedback(
+  response: ResponseLike,
+  router: Router,
+) {
   if (response?.code !== 200) {
     Modal.error({
       title: '任务提交失败',
@@ -47,7 +50,10 @@ export function showJobTaskSubmitFeedback(response: ResponseLike, router: Router
       h('div', [`状态：${job.status ?? '-'}`]),
       h(
         'div',
-        { class: 'mt-2 rounded border border-blue-200 bg-blue-50 p-2 text-blue-700' },
+        {
+          class:
+            'mt-2 rounded border border-blue-200 bg-blue-50 p-2 text-blue-700',
+        },
         '请到 系统管理 > 任务管理 查看执行进度与明细日志',
       ),
     ]),

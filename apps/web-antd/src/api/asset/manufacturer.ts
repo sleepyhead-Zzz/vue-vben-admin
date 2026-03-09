@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增生产厂商 POST /asset/manufacturer */
 export async function addManufacturer(
   body: AssetAPI.AddAssetManufacturerCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/manufacturer", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/manufacturer', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,16 +21,16 @@ export async function addManufacturer(
 export async function getManufacturerInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getManufacturerInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { manufacturerId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOAssetManufacturerDTO>(
     `/asset/manufacturer/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -39,13 +39,13 @@ export async function editManufacturer(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.editManufacturerParams,
   body: AssetAPI.UpdateAssetManufacturerCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { manufacturerId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(`/asset/manufacturer/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -57,10 +57,10 @@ export async function editManufacturer(
 export async function removeManufacturer(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeManufacturerParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<AssetAPI.ResponseDTOVoid>("/asset/manufacturer/batch-delete", {
-    method: "DELETE",
+  return request<AssetAPI.ResponseDTOVoid>('/asset/manufacturer/batch-delete', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -72,14 +72,14 @@ export async function removeManufacturer(
 export async function exportManufacturerByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.exportManufacturerByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/asset/manufacturer/excel", {
-    method: "GET",
+  return request<any>('/asset/manufacturer/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -89,8 +89,8 @@ export async function exportManufacturerByExcel(
 export async function downloadManufacturerExcelTemplate(options?: {
   [key: string]: any;
 }) {
-  return request<any>("/asset/manufacturer/excelTemplate", {
-    method: "GET",
+  return request<any>('/asset/manufacturer/excelTemplate', {
+    method: 'GET',
     ...(options || {}),
   });
 }
@@ -101,25 +101,25 @@ export async function importManufacturerByExcel(
     updateSupport?: boolean;
   },
   file?: File,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const formData = new FormData();
 
   if (file) {
-    formData.append("file", file);
+    formData.append('file', file);
   }
 
   Object.keys(body).forEach((ele) => {
     const item = (body as any)[ele];
 
     if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
+      if (typeof item === 'object' && !(item instanceof File)) {
         if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
+          item.forEach((f) => formData.append(ele, f || ''));
         } else {
           formData.append(
             ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
+            new Blob([JSON.stringify(item)], { type: 'application/json' }),
           );
         }
       } else {
@@ -128,10 +128,10 @@ export async function importManufacturerByExcel(
     }
   });
 
-  return request<AssetAPI.ResponseDTOString>("/asset/manufacturer/importData", {
-    method: "POST",
+  return request<AssetAPI.ResponseDTOString>('/asset/manufacturer/importData', {
+    method: 'POST',
     data: formData,
-    requestType: "form",
+    requestType: 'form',
     ...(options || {}),
   });
 }
@@ -141,11 +141,11 @@ export async function optionManufacturerSelect(options?: {
   [key: string]: any;
 }) {
   return request<AssetAPI.ResponseDTOListAssetManufacturerVO>(
-    "/asset/manufacturer/option-select",
+    '/asset/manufacturer/option-select',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -153,17 +153,17 @@ export async function optionManufacturerSelect(options?: {
 export async function getPagedManufacturer(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.getPagedManufacturerParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<AssetAPI.ResponseDTOPageDTOAssetManufacturerDTO>(
-    "/asset/manufacturer/page",
+    '/asset/manufacturer/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -171,15 +171,15 @@ export async function getPagedManufacturer(
 export async function removeManufacturerById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: AssetAPI.removeManufacturerByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { manufacturerId: param0, ...queryParams } = params;
   return request<AssetAPI.ResponseDTOVoid>(
     `/asset/manufacturer/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
