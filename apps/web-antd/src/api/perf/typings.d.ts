@@ -13,17 +13,6 @@ declare namespace PerfAPI {
     firstOrderDate?: string;
   };
 
-  type AddPerfDimCustomerOwnerCommand = {
-    /** 客户ID */
-    customerId?: number;
-    /** 销售人员ID（sys_user.id） */
-    userId?: number;
-    /** 归属开始日期 */
-    startDate?: string;
-    /** 归属结束日期（为空表示当前有效） */
-    endDate?: string;
-  };
-
   type AddPerfDimPeriodCommand = {
     /** 年份 */
     year: number;
@@ -184,10 +173,6 @@ declare namespace PerfAPI {
     customerId: number;
   };
 
-  type editDimCustomerOwnerParams = {
-    ownerId: number;
-  };
-
   type editDimCustomerParams = {
     customerId: number;
   };
@@ -242,10 +227,6 @@ declare namespace PerfAPI {
 
   type exportDimCustomerByExcelParams = {
     query: PerfDimCustomerQuery;
-  };
-
-  type exportDimCustomerOwnerByExcelParams = {
-    query: PerfDimCustomerOwnerQuery;
   };
 
   type exportFactKeyTaskScoreByExcelParams = {
@@ -326,28 +307,6 @@ declare namespace PerfAPI {
   };
 
   type getDimCustomerListParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type getDimCustomerOwnerInfoParams = {
-    /** 记录ID */
-    ownerId: number;
-  };
-
-  type getDimCustomerOwnerListParams = {
-    /** 销售人员名称（模糊匹配） */
-    userName?: string;
-    /** 客户名称（模糊匹配） */
-    customerName?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -472,25 +431,6 @@ declare namespace PerfAPI {
   };
 
   type getPagedAggCustomerMonthlySalesParams = {
-    pageNum?: number;
-    pageSize?: number;
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type getPagedDimCustomerOwnerParams = {
-    /** 销售人员名称（模糊匹配） */
-    userName?: string;
-    /** 客户名称（模糊匹配） */
-    customerName?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -840,13 +780,6 @@ declare namespace PerfAPI {
     rows?: PerfDimCustomerDTO[];
   };
 
-  type PageDTOPerfDimCustomerOwnerDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: PerfDimCustomerOwnerDTO[];
-  };
-
   type PageDTOPerfDimPeriodDTO = {
     /** 总记录数 */
     total?: number;
@@ -965,46 +898,6 @@ declare namespace PerfAPI {
     customerName?: string;
     /** 客户首次成交日期 */
     firstOrderDate?: string;
-  };
-
-  type PerfDimCustomerOwnerDTO = {
-    ownerId?: number;
-    /** 客户ID */
-    customerId?: number;
-    /** 销售人员ID */
-    userId?: number;
-    /** 销售人员名称 */
-    userName?: string;
-    /** 客户名称 */
-    customerName?: string;
-    /** 归属开始日期 */
-    startDate?: string;
-    /** 归属结束日期 */
-    endDate?: string;
-  };
-
-  type PerfDimCustomerOwnerQuery = {
-    orderColumn?: string;
-    orderDirection?: string;
-    timeRangeColumn?: string;
-    beginTime?: string;
-    endTime?: string;
-    /** 销售人员名称（模糊匹配） */
-    userName?: string;
-    /** 客户名称（模糊匹配） */
-    customerName?: string;
-  };
-
-  type PerfDimCustomerOwnerVO = {
-    id?: number;
-    /** 客户ID */
-    customerId?: number;
-    /** 销售人员ID */
-    userId?: number;
-    /** 归属开始日期 */
-    startDate?: string;
-    /** 归属结束日期 */
-    endDate?: string;
   };
 
   type PerfDimCustomerQuery = {
@@ -1553,14 +1446,6 @@ declare namespace PerfAPI {
     customerId: number;
   };
 
-  type removeDimCustomerOwnerByIdParams = {
-    ownerId: number;
-  };
-
-  type removeDimCustomerOwnerParams = {
-    ownerIds: number[];
-  };
-
   type removeDimCustomerParams = {
     customerIds: number[];
   };
@@ -1675,18 +1560,6 @@ declare namespace PerfAPI {
     code?: number;
     message?: string;
     data?: PerfDimCustomerDTO[];
-  };
-
-  type ResponseDTOListPerfDimCustomerOwnerDTO = {
-    code?: number;
-    message?: string;
-    data?: PerfDimCustomerOwnerDTO[];
-  };
-
-  type ResponseDTOListPerfDimCustomerOwnerVO = {
-    code?: number;
-    message?: string;
-    data?: PerfDimCustomerOwnerVO[];
   };
 
   type ResponseDTOListPerfDimCustomerVO = {
@@ -1839,12 +1712,6 @@ declare namespace PerfAPI {
     data?: PageDTOPerfDimCustomerDTO;
   };
 
-  type ResponseDTOPageDTOPerfDimCustomerOwnerDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOPerfDimCustomerOwnerDTO;
-  };
-
   type ResponseDTOPageDTOPerfDimPeriodDTO = {
     code?: number;
     message?: string;
@@ -1927,12 +1794,6 @@ declare namespace PerfAPI {
     code?: number;
     message?: string;
     data?: PerfDimCustomerDTO;
-  };
-
-  type ResponseDTOPerfDimCustomerOwnerDTO = {
-    code?: number;
-    message?: string;
-    data?: PerfDimCustomerOwnerDTO;
   };
 
   type ResponseDTOPerfDimPeriodDTO = {
@@ -2077,18 +1938,6 @@ declare namespace PerfAPI {
     /** 客户首次成交日期 */
     firstOrderDate?: string;
     customerId?: number;
-  };
-
-  type UpdatePerfDimCustomerOwnerCommand = {
-    /** 客户ID */
-    customerId?: number;
-    /** 销售人员ID（sys_user.id） */
-    userId?: number;
-    /** 归属开始日期 */
-    startDate?: string;
-    /** 归属结束日期（为空表示当前有效） */
-    endDate?: string;
-    ownerId?: number;
   };
 
   type UpdatePerfDimPeriodCommand = {

@@ -14,6 +14,7 @@ import {
   getDimCustomerInfo,
   getPagedDimCustomer,
 } from '#/api/perf/dimCustomer';
+import { getPeriodInfo, optionPeriodSelect } from '#/api/perf/period';
 import { getProductInfo, optionProductSelect } from '#/api/perf/product';
 import {
   addSalesData,
@@ -72,14 +73,21 @@ const productState = reactive<RemoteSelectState>({
   fetching: false,
 });
 
+const periodState = reactive<RemoteSelectState>({
+  options: [],
+  fetching: false,
+});
+
 /** product 全量只加载一次（你如果希望每次打开都刷新，把它改成每次都拉） */
 const productLoaded = ref(false);
+const periodLoaded = ref(false);
 
 function resetRemoteSelectState() {
   userState.fetching = false;
   userState.options = [];
   customerState.fetching = false;
   customerState.options = [];
+  periodState.fetching = false;
   // product 不清空 loaded：做成普通下拉一般希望复用缓存，提升体验
   // 如果你希望关闭弹窗就清掉，取消注释下面两行：
   // productLoaded.value = false;
@@ -104,6 +112,33 @@ async function loadProductOptions() {
   }
 }
 
+function getPeriodLabel(
+  period: PerfAPI.PerfDimPeriodDTO | PerfAPI.PerfDimPeriodVO,
+) {
+  if (period.month) {
+    return `${period.year}年${period.month}月`;
+  }
+  return `${period.year}年`;
+}
+
+async function loadPeriodOptions() {
+  if (periodLoaded.value) return;
+
+  periodState.fetching = true;
+  try {
+    const res = await optionPeriodSelect({ periodType: '2' });
+    const list = res.data ?? [];
+
+    periodState.options = list.map((period) => ({
+      label: getPeriodLabel(period),
+      value: period.periodId,
+    }));
+    periodLoaded.value = true;
+  } finally {
+    periodState.fetching = false;
+  }
+}
+
 const [BasicModal, modalApi] = useVbenModal({
   class: 'w-[550px]',
   fullscreenButton: false,
@@ -116,8 +151,8 @@ const [BasicModal, modalApi] = useVbenModal({
     resetRemoteSelectState();
     modalApi.modalLoading(true);
 
-    // ✅ product 做成普通下拉：打开时先加载全量 options
-    await loadProductOptions();
+    // ✅ product/period 做成普通下拉：打开时先加载全量 options
+    await Promise.all([loadProductOptions(), loadPeriodOptions()]);
 
     const { id } = modalApi.getData() as { id?: number | string };
     isUpdate.value = !!id;
@@ -160,6 +195,24 @@ const [BasicModal, modalApi] = useVbenModal({
             productState.options = [
               { label: product.productName, value: product.productId },
               ...(productState.options ?? []),
+            ];
+          }
+        }
+      }
+
+      if (record.data?.periodId) {
+        const exists = periodState.options?.some(
+          (o) => o?.value === record.data.periodId,
+        );
+        if (!exists) {
+          const periodRes = await getPeriodInfo({
+            periodId: record.data.periodId,
+          });
+          const period = periodRes.data;
+          if (period?.periodId) {
+            periodState.options = [
+              { label: getPeriodLabel(period), value: period.periodId },
+              ...(periodState.options ?? []),
             ];
           }
         }
@@ -263,6 +316,10 @@ function handleProductChange(val: null | number) {
   );
 }
 
+function handlePeriodChange(val: null | number) {
+  formApi.setFieldValue('periodId', val);
+}
+
 /**
  * ✅ 前端过滤：用户输入时按 label 匹配
  * ant-design-vue Select 的 filterOption 支持 (input, option) => boolean
@@ -330,6 +387,21 @@ function productFilterOption(input: string, option: any) {
             <Spin size="small" />
           </template>
         </Select>
+      </template>
+
+      <template #periodId="slotProps">
+        <Select
+          show-search
+          :value="slotProps.value"
+          placeholder="请选择归属绩效周期"
+          style="width: 100%"
+          option-filter-prop="label"
+          option-label-prop="label"
+          :loading="periodState.fetching"
+          :options="periodState.options"
+          @change="handlePeriodChange"
+          allow-clear
+        />
       </template>
     </BasicForm>
   </BasicModal>

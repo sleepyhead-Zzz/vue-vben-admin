@@ -1,6 +1,8 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { getPopupContainer } from '@vben/utils';
+
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
@@ -132,6 +134,13 @@ export const modalSchema: FormSchemaGetter = () => [
   {
     label: '归属绩效周期',
     fieldName: 'periodId',
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
   },
 ];

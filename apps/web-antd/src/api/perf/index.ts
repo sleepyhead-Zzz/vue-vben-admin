@@ -8,7 +8,6 @@ import * as profitdata from "./profitdata";
 import * as product from "./product";
 import * as period from "./period";
 import * as dimCustomer from "./dimCustomer";
-import * as dimCustomerOwner from "./dimCustomerOwner";
 import * as factProfitPlan from "./factProfitPlan";
 import * as factPerformanceResult from "./factPerformanceResult";
 import * as factOverdueRecord from "./factOverdueRecord";
@@ -23,7 +22,6 @@ export default {
   product,
   period,
   dimCustomer,
-  dimCustomerOwner,
   factProfitPlan,
   factPerformanceResult,
   factOverdueRecord,
