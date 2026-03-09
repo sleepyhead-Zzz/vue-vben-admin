@@ -345,6 +345,14 @@ declare namespace SystemAPI {
     dictTypeId: number;
   };
 
+  type getJobParams = {
+    taskId: number;
+  };
+
+  type getJobProgressParams = {
+    taskId: number;
+  };
+
   type getMenuInfoParams = {
     menuId: number;
   };
@@ -519,6 +527,96 @@ declare namespace SystemAPI {
     noticeId: number;
   };
 
+  type JobImportDetailDTO = {
+    /** 明细ID */
+    detailId?: number;
+    /** 任务ID */
+    taskId?: number;
+    /** 导入记录ID */
+    recordId?: number;
+    /** Excel行号 */
+    rowNum?: number;
+    /** 行数据 */
+    rowData?: string;
+    /** 状态 */
+    status?: string;
+    /** 失败原因 */
+    failReason?: string;
+    /** 处理时间 */
+    processTime?: string;
+  };
+
+  type JobLogDTO = {
+    /** 日志ID */
+    logId?: number;
+    /** 任务ID */
+    taskId?: number;
+    /** 序号 */
+    seq?: number;
+    /** 日志级别 */
+    level?: string;
+    /** 阶段 */
+    stage?: string;
+    /** 日志内容 */
+    message?: string;
+    /** 明细 */
+    detailJson?: string;
+    /** 日志时间 */
+    logTime?: string;
+  };
+
+  type JobTaskDTO = {
+    /** 任务ID */
+    taskId?: number;
+    /** 任务类型 */
+    taskType?: string;
+    /** 业务类型 */
+    businessType?: string;
+    /** 任务状态 */
+    status?: string;
+    /** 进度(0-100) */
+    progress?: number;
+    /** 总行数 */
+    totalRows?: number;
+    /** 已处理行数 */
+    processedRows?: number;
+    /** 成功行数 */
+    successRows?: number;
+    /** 失败行数 */
+    failRows?: number;
+    /** 开始时间 */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    /** 错误信息 */
+    errorMessage?: string;
+    /** workflowId */
+    workflowId?: string;
+    /** runId */
+    runId?: string;
+    /** 创建人 */
+    creatorId?: number;
+    /** 创建时间 */
+    createTime?: string;
+  };
+
+  type JobTaskProgressDTO = {
+    /** 任务ID */
+    taskId?: number;
+    /** 任务状态 */
+    status?: string;
+    /** 进度(0-100) */
+    progress?: number;
+    /** 总行数 */
+    totalRows?: number;
+    /** 已处理行数 */
+    processedRows?: number;
+    /** 成功行数 */
+    successRows?: number;
+    /** 失败行数 */
+    failRows?: number;
+  };
+
   type listOssInfoByIdsParams = {
     ossIds: number[];
   };
@@ -584,6 +682,27 @@ declare namespace SystemAPI {
 
   type optionRoleSelectParams = {
     roleIds?: number[];
+  };
+
+  type PageDTOJobImportDetailDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: JobImportDetailDTO[];
+  };
+
+  type PageDTOJobLogDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: JobLogDTO[];
+  };
+
+  type PageDTOJobTaskDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: JobTaskDTO[];
   };
 
   type PageDTOSysClientDTO = {
@@ -661,6 +780,53 @@ declare namespace SystemAPI {
     total?: number;
     /** 列表数据 */
     rows?: SysUserNotificationListDTO[];
+  };
+
+  type pageImportDetailsParams = {
+    taskId: number;
+    /** 状态(success/failed) */
+    status?: string;
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
+  };
+
+  type pageJobLogsParams = {
+    taskId: number;
+    pageNum?: number;
+    pageSize?: number;
+  };
+
+  type pageJobsParams = {
+    /** 任务类型 */
+    taskType?: string;
+    /** 业务类型 */
+    businessType?: string;
+    /** 状态 */
+    status?: string;
+    /** 创建人ID */
+    creator?: number;
+    pageNum?: number;
+    pageSize?: number;
+    /** 排序字段 */
+    orderColumn?: string;
+    /** 排序方向 */
+    orderDirection?: string;
+    /** 时间范围字段名 */
+    timeRangeColumn?: string;
+    /** 开始时间 */
+    beginTime?: Date;
+    /** 结束时间 */
+    endTime?: Date;
   };
 
   type removeByIdParams = {
@@ -756,6 +922,18 @@ declare namespace SystemAPI {
     data?: number;
   };
 
+  type ResponseDTOJobTaskDTO = {
+    code?: number;
+    message?: string;
+    data?: JobTaskDTO;
+  };
+
+  type ResponseDTOJobTaskProgressDTO = {
+    code?: number;
+    message?: string;
+    data?: JobTaskProgressDTO;
+  };
+
   type ResponseDTOListSysConfigDTO = {
     code?: number;
     message?: string;
@@ -832,6 +1010,24 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: MenuTreeSelectDTO;
+  };
+
+  type ResponseDTOPageDTOJobImportDetailDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOJobImportDetailDTO;
+  };
+
+  type ResponseDTOPageDTOJobLogDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOJobLogDTO;
+  };
+
+  type ResponseDTOPageDTOJobTaskDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOJobTaskDTO;
   };
 
   type ResponseDTOPageDTOSysClientDTO = {

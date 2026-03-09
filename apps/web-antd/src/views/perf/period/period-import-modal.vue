@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import type { UploadFile } from 'ant-design-vue/es/upload/interface';
 
-import { h, ref, unref } from 'vue';
+import { ref, unref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { useVbenModal } from '@vben/common-ui';
 import { ExcelIcon, InBoxIcon } from '@vben/icons';
 
-import { Modal, Switch, Upload } from 'ant-design-vue';
+import { Switch, Upload } from 'ant-design-vue';
 
 import {
-  downloadUserExcelTemplate,
-  importUserByExcel,
-} from '#/api/system/user';
+  downloadPeriodExcelTemplate,
+  importPeriodByExcel,
+} from '#/api/perf/period';
 import { commonDownloadExcel } from '#/utils/file/download';
+import { commonUploadFile } from '#/utils/file/upload';
+import {
+  showJobTaskSubmitError,
+  showJobTaskSubmitFeedback,
+} from '../_shared/job-task-submit-feedback';
 
 const emit = defineEmits<{ reload: [] }>();
+const router = useRouter();
 
 const UploadDragger = Upload.Dragger;
 
@@ -33,27 +40,21 @@ async function handleSubmit() {
       handleCancel();
       return;
     }
-    const data = {
-      file: fileList.value[0]!.originFileObj as Blob,
-      updateSupport: unref(checked),
-    };
-    const { code, message } = await importUserByExcel(data);
-    let modal = Modal.success;
-    if (code === 200) {
+    const file = fileList.value[0]!.originFileObj as File;
+    const response = await commonUploadFile(
+      importPeriodByExcel,
+      file,
+      {
+        updateSupport: unref(checked),
+      },
+    );
+    if (response.code === 200) {
       emit('reload');
-    } else {
-      modal = Modal.error;
     }
     handleCancel();
-    modal({
-      content: h('div', {
-        class: 'max-h-[260px] overflow-y-auto',
-        innerHTML: message, // 后台已经处理xss问题
-      }),
-      title: '提示',
-    });
+    showJobTaskSubmitFeedback(response, router);
   } catch (error) {
-    console.warn(error);
+    showJobTaskSubmitError(error);
     modalApi.close();
   } finally {
     modalApi.modalLoading(false);
@@ -71,7 +72,7 @@ function handleCancel() {
   <BasicModal
     :close-on-click-modal="false"
     :fullscreen-button="false"
-    title="用户导入"
+    title="绩效周期导入"
   >
     <!-- z-index不设置会遮挡模板下载loading -->
     <!-- 手动处理 而不是放入文件就上传 -->
@@ -93,7 +94,7 @@ function handleCancel() {
         <a-button
           type="link"
           @click="
-            commonDownloadExcel(downloadUserExcelTemplate, '用户导入模板')
+            commonDownloadExcel(downloadPeriodExcelTemplate, '绩效周期导入模板')
           "
         >
           <div class="flex items-center gap-[4px]">
@@ -104,7 +105,7 @@ function handleCancel() {
       </div>
       <div class="flex items-center gap-2">
         <span :class="{ 'text-red-500': checked }">
-          是否更新/覆盖已存在的用户数据
+          是否更新/覆盖已存在的数据
         </span>
         <Switch v-model:checked="checked" />
       </div>

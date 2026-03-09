@@ -778,11 +778,15 @@ declare namespace PerfAPI {
     endTime?: Date;
   };
 
-  type ImportResponseDTO = {
-    successCount?: number;
-    failureCount?: number;
-    hasError?: boolean;
-    errorFileUrl?: string;
+  type JobSubmitResponseDTO = {
+    /** 任务ID */
+    taskId?: number;
+    /** workflowId */
+    workflowId?: string;
+    /** runId */
+    runId?: string;
+    /** 任务状态 */
+    status?: string;
   };
 
   type KeyTaskScoreImportRequest = {
@@ -1637,10 +1641,10 @@ declare namespace PerfAPI {
     salesPlanIds: number[];
   };
 
-  type ResponseDTOImportResponseDTO = {
+  type ResponseDTOJobSubmitResponseDTO = {
     code?: number;
     message?: string;
-    data?: ImportResponseDTO;
+    data?: JobSubmitResponseDTO;
   };
 
   type ResponseDTOListPerfAggCustomerMonthlySalesDTO = {

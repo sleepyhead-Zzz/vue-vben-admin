@@ -70,6 +70,18 @@ const localRoutes: RouteRecordStringComponent[] = [
     name: 'RoleAssign',
     path: '/system/role-assign/:roleId',
   },
+  {
+    component: '/system/job-task/detail',
+    meta: {
+      activePath: '/system/job-task',
+      icon: 'ant-design:setting-outlined',
+      title: '任务详情',
+      hideInMenu: true,
+      requireHomeRedirect: true,
+    },
+    name: 'SystemJobTaskDetail',
+    path: '/system/job-task/:taskId',
+  },
   // {
   //   component: '/workflow/components/flow-designer',
   //   meta: {

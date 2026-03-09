@@ -9,6 +9,9 @@ export const DictEnum = {
   SYS_NOTICE_TYPE: 'sys_notice_type', // 通知类型
   SYS_OPER_TYPE: 'sys_oper_type', // 操作类型
   SYS_OSS_ACCESS_POLICY: 'oss_access_policy', // oss权限桶类型
+  SYS_JOB_TASK_STATUS: 'sys_job_task_status', // 任务状态
+  SYS_JOB_LOG_LEVEL: 'sys_job_log_level', // 任务日志级别
+  SYS_JOB_IMPORT_STATUS: 'sys_job_import_status', // 任务导入明细状态
   SYS_SHOW_HIDE: 'sys_show_hide', // 显示状态
   SYS_USER_SEX: 'sys_user_sex', // 性别
   SYS_YES_NO: 'sys_yes_no', // 是否

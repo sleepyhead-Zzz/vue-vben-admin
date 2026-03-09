@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ImportValidationResult } from '../_shared/use-excel-import-flow';
 
-import { computed, h, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { useVbenModal } from '@vben/common-ui';
 import { DictEnum } from '@vben/constants';
@@ -27,8 +28,13 @@ import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
 
 import { useExcelImportFlow } from '../_shared/use-excel-import-flow';
+import {
+  showJobTaskSubmitError,
+  showJobTaskSubmitFeedback,
+} from '../_shared/job-task-submit-feedback';
 
 const emit = defineEmits<{ reload: [] }>();
+const router = useRouter();
 
 const UploadDragger = Upload.Dragger;
 const scoreTypeOptions = getDictOptions(DictEnum.PerfManagementScoreType);
@@ -313,53 +319,6 @@ function beforeUpload(file: File) {
   return false;
 }
 
-function buildResultContent(response: PerfAPI.ResponseDTOImportResponseDTO) {
-  const result = response.data;
-  const messageHtml = response.message || '';
-
-  return h('div', { class: 'space-y-3' }, [
-    h('div', { class: 'rounded-lg border border-[#dbeafe] bg-[#eff6ff] p-3' }, [
-      h('div', { class: 'font-medium text-[#1e3a8a]' }, '导入结果'),
-      h('div', { class: 'mt-2 text-sm text-[#1e293b]' }, [
-        `成功 ${result?.successCount ?? 0} 条，失败 ${result?.failureCount ?? 0} 条`,
-      ]),
-      result?.hasError
-        ? h(
-            'div',
-            { class: 'mt-1 text-xs text-amber-600' },
-            '存在失败记录，请查看错误详情',
-          )
-        : null,
-      result?.errorFileUrl
-        ? h(
-            'a',
-            {
-              class:
-                'mt-2 inline-block rounded border border-[#93c5fd] px-2 py-1 text-xs text-[#1d4ed8]',
-              href: result.errorFileUrl,
-              rel: 'noopener noreferrer',
-              target: '_blank',
-            },
-            '下载错误明细',
-          )
-        : null,
-    ]),
-    messageHtml
-      ? h('details', { class: 'rounded border border-slate-200 p-2 text-sm' }, [
-          h(
-            'summary',
-            { class: 'cursor-pointer text-slate-600' },
-            '查看后端原始消息',
-          ),
-          h('div', {
-            class: 'mt-2 max-h-[220px] overflow-y-auto text-slate-700',
-            innerHTML: messageHtml,
-          }),
-        ])
-      : null,
-  ]);
-}
-
 async function handleSubmit() {
   if (!validation.value.valid) {
     Modal.warning({
@@ -403,24 +362,11 @@ async function handleSubmit() {
     if (response.code === 200) {
       emit('reload');
     }
-
-    let method: 'error' | 'success' | 'warning' = 'error';
-    if (response.code === 200) {
-      method = response.data?.hasError ? 'warning' : 'success';
-    }
-
-    Modal[method]({
-      title: '提示',
-      width: 560,
-      content: buildResultContent(response),
-    });
+    showJobTaskSubmitFeedback(response, router);
 
     handleCancel();
   } catch (error: any) {
-    Modal.error({
-      title: '错误',
-      content: error?.message || '导入失败',
-    });
+    showJobTaskSubmitError(error);
   } finally {
     modalApi.modalLoading(false);
   }
@@ -473,7 +419,7 @@ function handleCancel() {
           2. 字段映射
         </div>
         <div class="step-chip" :class="[{ active: stageStep >= 2 }]">
-          3. 导入配置
+          3. 提交后台任务
         </div>
       </div>
 
@@ -600,7 +546,7 @@ function handleCancel() {
       </section>
 
       <section class="import-card">
-        <div class="section-title">第三步：导入配置与提交</div>
+        <div class="section-title">第三步：提交后台任务</div>
 
         <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
           <div>
@@ -676,7 +622,7 @@ function handleCancel() {
               待完成：{{ item }}
             </li>
             <li v-if="validation.valid" class="text-emerald-600">
-              已满足全部条件，可直接提交导入
+              已满足全部条件，可直接提交后台任务
             </li>
           </ul>
         </div>

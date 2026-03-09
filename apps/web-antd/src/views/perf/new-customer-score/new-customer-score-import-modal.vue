@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { UploadFile } from 'ant-design-vue/es/upload/interface';
 
-import { h, ref, unref } from 'vue';
+import { ref, unref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { useVbenModal } from '@vben/common-ui';
 import { ExcelIcon, InBoxIcon } from '@vben/icons';
@@ -14,8 +15,13 @@ import {
 } from '#/api/perf/factNewCustomerScore';
 import { commonDownloadExcel } from '#/utils/file/download';
 import { commonUploadFile } from '#/utils/file/upload';
+import {
+  showJobTaskSubmitError,
+  showJobTaskSubmitFeedback,
+} from '../_shared/job-task-submit-feedback';
 
 const emit = defineEmits<{ reload: [] }>();
+const router = useRouter();
 
 const UploadDragger = Upload.Dragger;
 
@@ -49,30 +55,14 @@ async function handleSubmit() {
       },
     );
 
-    const { message } = response.data;
-    emit('reload');
-
-    Modal.success({
-      content: h('div', {
-        class: 'max-h-[260px] overflow-y-auto',
-        innerHTML: message,
-      }),
-      title: '提示',
-      onOk: () => {
-        handleCancel();
-      },
-    });
+    if (response.code === 200) {
+      emit('reload');
+    }
+    showJobTaskSubmitFeedback(response, router);
+    handleCancel();
   } catch (error) {
-    Modal.error({
-      content: h('div', {
-        class: 'max-h-[260px] overflow-y-auto',
-        innerHTML: error?.message || '导入失败',
-      }),
-      title: '提示',
-      onOk: () => {
-        handleCancel();
-      },
-    });
+    showJobTaskSubmitError(error);
+    handleCancel();
     modalApi.close();
   } finally {
     modalApi.modalLoading(false);

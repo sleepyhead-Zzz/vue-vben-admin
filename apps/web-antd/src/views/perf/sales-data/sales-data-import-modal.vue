@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ImportValidationResult } from '../_shared/use-excel-import-flow';
 
-import { computed, h, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { useVbenModal } from '@vben/common-ui';
 import { InBoxIcon } from '@vben/icons';
@@ -22,9 +23,14 @@ import { getHeaders, getSheets } from '#/api/tool/excel';
 import { commonUploadFile } from '#/utils/file/upload';
 
 import { useExcelImportFlow } from '../_shared/use-excel-import-flow';
+import {
+  showJobTaskSubmitError,
+  showJobTaskSubmitFeedback,
+} from '../_shared/job-task-submit-feedback';
 
 const emit = defineEmits<{ reload: [] }>();
 const UploadDragger = Upload.Dragger;
+const router = useRouter();
 
 const excelFields = [
   { label: '业务经理姓名', key: 'userName' },
@@ -193,47 +199,6 @@ function beforeUpload(file: File) {
   return false;
 }
 
-function buildResultContent(
-  response: PerfAPI.ResponseDTOImportResponseDTO,
-  fallbackText: string,
-) {
-  const result = response.data;
-  const messageHtml = response.message || fallbackText;
-
-  return h('div', { class: 'space-y-3' }, [
-    h('div', { class: 'rounded-lg border border-[#dbeafe] bg-[#eff6ff] p-3' }, [
-      h('div', { class: 'font-medium text-[#1e3a8a]' }, '导入结果'),
-      h('div', { class: 'mt-2 text-sm text-[#1e293b]' }, [
-        `成功 ${result?.successCount ?? 0} 条，失败 ${result?.failureCount ?? 0} 条`,
-      ]),
-      result?.errorFileUrl
-        ? h(
-            'a',
-            {
-              class:
-                'mt-2 inline-block rounded border border-[#93c5fd] px-2 py-1 text-xs text-[#1d4ed8] hover:bg-[#dbeafe]',
-              href: result.errorFileUrl,
-              rel: 'noopener noreferrer',
-              target: '_blank',
-            },
-            '下载错误明细',
-          )
-        : null,
-    ]),
-    h('details', { class: 'rounded border border-slate-200 p-2 text-sm' }, [
-      h(
-        'summary',
-        { class: 'cursor-pointer text-slate-600' },
-        '查看后端原始消息',
-      ),
-      h('div', {
-        class: 'mt-2 max-h-[220px] overflow-y-auto text-slate-700',
-        innerHTML: messageHtml,
-      }),
-    ]),
-  ]);
-}
-
 async function handleSubmit() {
   if (!validation.value.valid) {
     Modal.warning({
@@ -281,28 +246,11 @@ async function handleSubmit() {
     if (response.code === 200) {
       emit('reload');
     }
-
-    Modal[response.code === 200 ? 'success' : 'error']({
-      title: '提示',
-      width: 560,
-      content: buildResultContent(
-        response,
-        response.code === 200 ? '导入成功' : '导入失败',
-      ),
-    });
+    showJobTaskSubmitFeedback(response, router);
 
     handleCancel();
   } catch (error: any) {
-    const errorMessage = String(error?.message ?? '');
-    const isTimeout =
-      error?.code === 'ECONNABORTED' || /timeout|超时/i.test(errorMessage);
-
-    Modal.error({
-      title: '错误',
-      content: isTimeout
-        ? '导入处理超时，请先拆分文件后重试；如仍超时，请联系后端调大导入处理时长。'
-        : error?.message || '导入失败',
-    });
+    showJobTaskSubmitError(error);
   } finally {
     modalApi.modalLoading(false);
     if (stage.value !== 'idle') {
@@ -341,7 +289,7 @@ function handleCancel() {
           2. Sheet 与映射
         </div>
         <div class="step-chip" :class="[{ active: stageStep >= 2 }]">
-          3. 导入配置
+          3. 提交后台任务
         </div>
       </div>
 
@@ -460,7 +408,7 @@ function handleCancel() {
       </section>
 
       <section class="import-card">
-        <div class="section-title">第三步：导入配置与提交</div>
+        <div class="section-title">第三步：提交后台任务</div>
 
         <div class="mt-3">
           <div class="mb-1 text-xs text-slate-500">产品</div>
@@ -500,7 +448,7 @@ function handleCancel() {
               待完成：{{ item }}
             </li>
             <li v-if="validation.valid" class="text-emerald-600">
-              已满足全部条件，可直接提交导入
+              已满足全部条件，可直接提交后台任务
             </li>
           </ul>
         </div>
