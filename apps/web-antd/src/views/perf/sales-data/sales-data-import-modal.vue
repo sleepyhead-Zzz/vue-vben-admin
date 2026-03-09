@@ -7,15 +7,7 @@ import { useRouter } from 'vue-router';
 import { useVbenModal } from '@vben/common-ui';
 import { InBoxIcon } from '@vben/icons';
 
-import {
-  Alert,
-  Modal,
-  Progress,
-  Select,
-  Switch,
-  Tag,
-  Upload,
-} from 'ant-design-vue';
+import { Alert, Modal, Progress, Select, Tag, Upload } from 'ant-design-vue';
 
 import { optionProductSelect } from '#/api/perf/product';
 import { importSalesDataByExcel } from '#/api/perf/salesdata';
@@ -35,6 +27,8 @@ const router = useRouter();
 const excelFields = [
   { label: '业务经理姓名', key: 'userName' },
   { label: '售达方名称', key: 'customerName' },
+  { label: '交货单号码', key: 'deliveryNo' },
+  { label: '批次', key: 'batchNo' },
   { label: '交货单数量', key: 'quantity' },
   { label: '交货单创建日期', key: 'orderDate' },
 ] as const;
@@ -42,6 +36,8 @@ const excelFields = [
 const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
   userName: ['userName', 'username', '业务经理姓名', '销售经理', '姓名'],
   customerName: ['customerName', '售达方名称', '客户名称', '客户'],
+  deliveryNo: ['deliveryNo', 'delivery_no', '交货单号码', '交货单号', '单号'],
+  batchNo: ['batchNo', 'batch_no', '批次'],
   quantity: ['quantity', '交货单数量', '数量'],
   orderDate: ['orderDate', '交货单创建日期', '订单日期', '下单日期', '日期'],
 };
@@ -50,12 +46,13 @@ const form = ref<Record<string, any>>({
   sheetName: '',
   userName: undefined,
   customerName: undefined,
+  deliveryNo: undefined,
+  batchNo: undefined,
   quantity: undefined,
   orderDate: undefined,
   productId: undefined,
 });
 
-const checked = ref(false);
 const productOptions = ref<{ label: string; value: number }[]>([]);
 const productLoading = ref(false);
 
@@ -217,12 +214,9 @@ async function handleSubmit() {
       columnName: form.value[field.key],
     }));
 
-  // ✅ 和“销量计划导入”一致：真正传给后端的 request（会被生成器打成 JSON part）
-  // 如果你们的类型名不是 SalesDataImportRequest，就把类型改成你们实际的 DTO 类型即可。
   const requestObj = {
     sheetName: form.value.sheetName,
     productId: form.value.productId,
-    updateSupport: checked.value,
     columnMappings,
   } as unknown as PerfAPI.SalesDataImportRequest;
 
@@ -231,7 +225,6 @@ async function handleSubmit() {
     uploadPercent.value = 0;
     modalApi.modalLoading(true);
 
-    // ✅ 关键：用 commonUploadFile 包裹生成器函数（与第一个页面一致）
     const response = await commonUploadFile(
       importSalesDataByExcel,
       file,
@@ -261,12 +254,13 @@ async function handleSubmit() {
 
 function handleCancel() {
   modalApi.close();
-  checked.value = false;
   resetFlow();
   form.value = {
     sheetName: '',
     userName: undefined,
     customerName: undefined,
+    deliveryNo: undefined,
+    batchNo: undefined,
     quantity: undefined,
     orderDate: undefined,
     productId: undefined,
@@ -423,18 +417,6 @@ function handleCancel() {
             placeholder="请选择产品"
             class="w-full"
           />
-        </div>
-
-        <div
-          class="mt-3 flex items-center justify-between rounded-lg px-3 py-2"
-        >
-          <span
-            class="text-sm"
-            :class="[checked ? 'text-red-500' : 'text-slate-600']"
-          >
-            是否更新/覆盖已存在的数据
-          </span>
-          <Switch v-model:checked="checked" />
         </div>
 
         <div class="s mt-4 rounded-lg border p-3">

@@ -37,11 +37,17 @@ export function showJobTaskSubmitFeedback(
   }
 
   const job = normalizeJobSubmitData(response?.data);
+  const taskId = job.taskId;
+  const detailPath =
+    taskId === undefined || taskId === null || taskId === ''
+      ? '/system/job-task'
+      : `/system/job-task/${taskId}`;
 
-  Modal.info({
+  Modal.confirm({
     title: '任务已提交',
-    okText: '去任务管理',
-    onOk: () => router.push('/system/job-task'),
+    okText: '查看任务',
+    cancelText: '取消',
+    onOk: () => router.push(detailPath),
     width: 560,
     content: h('div', { class: 'space-y-2 text-sm' }, [
       h('div', [`任务ID：${job.taskId ?? '-'}`]),

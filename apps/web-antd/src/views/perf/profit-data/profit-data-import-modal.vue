@@ -7,15 +7,7 @@ import { useRouter } from 'vue-router';
 import { useVbenModal } from '@vben/common-ui';
 import { ExcelIcon, InBoxIcon } from '@vben/icons';
 
-import {
-  Alert,
-  Modal,
-  Progress,
-  Select,
-  Switch,
-  Tag,
-  Upload,
-} from 'ant-design-vue';
+import { Alert, Modal, Progress, Select, Tag, Upload } from 'ant-design-vue';
 
 import { optionProductSelect } from '#/api/perf/product';
 import {
@@ -56,7 +48,6 @@ const form = ref<Record<string, any>>({
   orderDate: undefined,
 });
 
-const checked = ref(false);
 const productOptions = ref<{ label: string; value: number }[]>([]);
 const productLoading = ref(false);
 
@@ -220,7 +211,6 @@ async function handleSubmit() {
   const requestObj: PerfAPI.ProfitDataImportRequest = {
     sheetName: form.value.sheetName,
     productId: form.value.productId,
-    updateSupport: checked.value,
     columnMappings,
   };
 
@@ -258,7 +248,6 @@ async function handleSubmit() {
 
 function handleCancel() {
   modalApi.close();
-  checked.value = false;
   resetFlow();
   form.value = {
     sheetName: '',
@@ -437,18 +426,6 @@ function handleCancel() {
               <span>下载模板</span>
             </div>
           </a-button>
-        </div>
-
-        <div
-          class="mt-2 flex items-center justify-between rounded-lg px-3 py-2"
-        >
-          <span
-            class="text-sm"
-            :class="[checked ? 'text-red-500' : 'text-slate-600']"
-          >
-            是否更新/覆盖已存在的数据
-          </span>
-          <Switch v-model:checked="checked" />
         </div>
 
         <div class="mt-4 rounded-lg border p-3">

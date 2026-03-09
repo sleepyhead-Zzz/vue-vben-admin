@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
@@ -11,6 +11,8 @@ import {
   Card,
   Descriptions,
   DescriptionsItem,
+  message,
+  Popconfirm,
   Progress,
   Select,
   Space,
@@ -23,6 +25,7 @@ import {
   getJobProgress,
   pageImportDetails,
   pageJobLogs,
+  undoImport,
 } from '#/api/system/jobTask';
 import { getDictOptions } from '#/utils/dict';
 import { renderDict } from '#/utils/render';
@@ -36,6 +39,8 @@ const router = useRouter();
 
 const activeKey = ref<TabKey>('base');
 const loading = ref(false);
+const undoLoading = ref(false);
+const polling = ref(false);
 
 const task = ref<SystemAPI.JobTaskDTO>({});
 const progress = ref<SystemAPI.JobTaskProgressDTO>({});
@@ -57,8 +62,15 @@ let timer: null | ReturnType<typeof setInterval> = null;
 
 const taskId = computed(() => {
   const id = route.params.taskId;
-  return Array.isArray(id) ? id[0] : id;
+  const taskIdRaw = Array.isArray(id) ? id[0] : id;
+
+  if (!taskIdRaw) return undefined;
+  return taskIdRaw;
 });
+
+const canUndoImport = computed(
+  () => Boolean(taskId.value) && !loading.value && !undoLoading.value,
+);
 
 const logsColumns = [
   {
@@ -144,17 +156,13 @@ function isTerminalStatus(status?: string) {
 
 async function fetchTaskBase() {
   if (!taskId.value) return;
-  const { data } = await getJob({
-    taskId: taskId.value as SystemAPI.getJobParams['taskId'],
-  });
+  const { data } = await getJob({ taskId: taskId.value });
   task.value = data ?? {};
 }
 
 async function fetchProgress() {
   if (!taskId.value) return;
-  const { data } = await getJobProgress({
-    taskId: taskId.value as SystemAPI.getJobProgressParams['taskId'],
-  });
+  const { data } = await getJobProgress({ taskId: taskId.value });
   progress.value = data ?? {};
 }
 
@@ -163,7 +171,7 @@ async function fetchLogs() {
   logsLoading.value = true;
   try {
     const { data } = await pageJobLogs({
-      taskId: taskId.value as SystemAPI.pageJobLogsParams['taskId'],
+      taskId: taskId.value,
       pageNum: logsPageNum.value,
       pageSize: logsPageSize.value,
     });
@@ -179,7 +187,7 @@ async function fetchImportDetails() {
   detailLoading.value = true;
   try {
     const { data } = await pageImportDetails({
-      taskId: taskId.value as SystemAPI.pageImportDetailsParams['taskId'],
+      taskId: taskId.value,
       status: detailStatus.value,
       pageNum: importPageNum.value,
       pageSize: importPageSize.value,
@@ -218,9 +226,15 @@ function startPolling() {
   if (!taskId.value) return;
   stopPolling();
   timer = setInterval(async () => {
-    await Promise.all([fetchProgress(), fetchLogs(), fetchImportDetails()]);
-    if (isTerminalStatus(progress.value.status || task.value.status)) {
-      stopPolling();
+    if (polling.value) return;
+    polling.value = true;
+    try {
+      await Promise.all([fetchProgress(), fetchLogs(), fetchImportDetails()]);
+      if (isTerminalStatus(progress.value.status || task.value.status)) {
+        stopPolling();
+      }
+    } finally {
+      polling.value = false;
     }
   }, POLL_INTERVAL);
 }
@@ -247,27 +261,53 @@ async function handleImportStatusChange(value?: string) {
   await fetchImportDetails();
 }
 
+function getErrorMessage(error: unknown, fallback: string) {
+  const e = error as {
+    message?: string;
+    response?: { data?: { message?: string; msg?: string } };
+  };
+  return (
+    e?.response?.data?.msg ||
+    e?.response?.data?.message ||
+    e?.message ||
+    fallback
+  );
+}
+
+async function handleUndoImport() {
+  if (!taskId.value || undoLoading.value) return;
+  undoLoading.value = true;
+  try {
+    await undoImport({ taskId: taskId.value });
+    message.success('撤销导入成功');
+    await refreshAll();
+    if (!isTerminalStatus(progress.value.status || task.value.status)) {
+      startPolling();
+    }
+  } catch (error) {
+    message.error(getErrorMessage(error, '撤销导入失败，请稍后重试'));
+  } finally {
+    undoLoading.value = false;
+  }
+}
+
 watch(
   () => route.params.taskId,
   async () => {
     stopPolling();
     if (!taskId.value) return;
     logsPageNum.value = 1;
+    detailStatus.value = undefined;
     importPageNum.value = 1;
     await refreshAll();
     if (!isTerminalStatus(progress.value.status || task.value.status)) {
       startPolling();
     }
   },
+  {
+    immediate: true,
+  },
 );
-
-onMounted(async () => {
-  if (!taskId.value) return;
-  await refreshAll();
-  if (!isTerminalStatus(progress.value.status || task.value.status)) {
-    startPolling();
-  }
-});
 
 onBeforeUnmount(() => {
   stopPolling();
@@ -421,8 +461,24 @@ onBeforeUnmount(() => {
               :value="detailStatus"
               allow-clear
               style="width: 180px"
-              @change="handleImportStatusChange"
+              @change="
+                (value) => handleImportStatusChange(value as string | undefined)
+              "
             />
+            <Popconfirm
+              :disabled="!canUndoImport"
+              title="确认撤销本任务对应的导入数据吗？"
+              @confirm="handleUndoImport"
+            >
+              <a-button
+                :disabled="!canUndoImport"
+                :loading="undoLoading"
+                danger
+                v-access:code="['system:job:undo']"
+              >
+                撤销导入
+              </a-button>
+            </Popconfirm>
           </Space>
           <Table
             :columns="detailsColumns"

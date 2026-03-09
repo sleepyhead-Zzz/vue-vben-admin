@@ -538,6 +538,12 @@ declare namespace SystemAPI {
     rowNum?: number;
     /** 行数据 */
     rowData?: string;
+    /** 目标表 */
+    targetTable?: string;
+    /** 目标业务ID */
+    targetBizId?: number;
+    /** 操作类型 */
+    opType?: string;
     /** 状态 */
     status?: string;
     /** 失败原因 */
@@ -1771,6 +1777,10 @@ declare namespace SystemAPI {
   type unallocatedUserListParams = {
     roleId: number;
     query: UnallocatedRoleQuery;
+  };
+
+  type undoImportParams = {
+    taskId: number;
   };
 
   type updateAvatarParams = {

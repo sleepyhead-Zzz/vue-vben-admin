@@ -37,10 +37,14 @@ const gridOptions: VxeGridProps = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
+        const { businessType, status, taskType } =
+          formValues as SystemAPI.pageJobsParams;
         const { data } = await pageJobs({
           pageNum: page.currentPage,
           pageSize: page.pageSize,
-          ...formValues,
+          taskType,
+          businessType,
+          status,
         });
         return data;
       },
@@ -58,6 +62,7 @@ const [BasicTable] = useVbenVxeGrid({
 });
 
 function handleView(row: SystemAPI.JobTaskDTO) {
+  if (!row.taskId) return;
   router.push(`/system/job-task/${row.taskId}`);
 }
 </script>
@@ -72,7 +77,10 @@ function handleView(row: SystemAPI.JobTaskDTO) {
       </template>
 
       <template #progress="{ row }">
-        <Progress :percent="Number(row.progress ?? 0)" size="small" />
+        <Progress
+          :percent="Math.max(0, Math.min(100, Number(row.progress ?? 0)))"
+          size="small"
+        />
       </template>
 
       <template #action="{ row }">

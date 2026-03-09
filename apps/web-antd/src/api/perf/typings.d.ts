@@ -150,6 +150,10 @@ declare namespace PerfAPI {
     customerId?: number;
     /** 售达方名称 */
     customerName?: string;
+    /** 交货单号码 */
+    deliveryNo?: string;
+    /** 批次 */
+    batchNo?: string;
     /** 产品编码 */
     productId?: number;
     /** 交货单数量 */
@@ -1359,6 +1363,10 @@ declare namespace PerfAPI {
     customerId?: number;
     /** 客户ID */
     customerName?: string;
+    /** 交货单号码 */
+    deliveryNo?: string;
+    /** 批次 */
+    batchNo?: string;
     /** 产品编码 */
     productId?: number;
     /** 产品编码 */
@@ -1388,6 +1396,10 @@ declare namespace PerfAPI {
     userId?: number;
     /** 客户ID */
     customerId?: number;
+    /** 交货单号码 */
+    deliveryNo?: string;
+    /** 批次 */
+    batchNo?: string;
     /** 产品编码 */
     productId?: number;
     /** 销售数量 */
@@ -2214,6 +2226,10 @@ declare namespace PerfAPI {
     customerId?: number;
     /** 售达方名称 */
     customerName?: string;
+    /** 交货单号码 */
+    deliveryNo?: string;
+    /** 批次 */
+    batchNo?: string;
     /** 产品编码 */
     productId?: number;
     /** 交货单数量 */

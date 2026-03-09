@@ -55,6 +55,14 @@ export const columns: VxeGridProps['columns'] = [
     field: 'quantity',
   },
   {
+    title: '交货单号码',
+    field: 'deliveryNo',
+  },
+  {
+    title: '批次',
+    field: 'batchNo',
+  },
+  {
     title: '交货单创建日期',
     field: 'orderDate',
   },
@@ -99,6 +107,16 @@ export const modalSchema: FormSchemaGetter = () => [
     fieldName: 'quantity',
     component: 'Input',
     rules: 'required',
+  },
+  {
+    label: '交货单号码',
+    fieldName: 'deliveryNo',
+    component: 'Input',
+  },
+  {
+    label: '批次',
+    fieldName: 'batchNo',
+    component: 'Input',
   },
   {
     label: '交货单创建日期',

@@ -72,11 +72,17 @@ export const columns: VxeGridProps['columns'] = [
     title: '成功行数',
     field: 'successRows',
     width: 100,
+    formatter({ row }) {
+      return row.successRows ?? 0;
+    },
   },
   {
     title: '失败行数',
     field: 'failRows',
     width: 100,
+    formatter({ row }) {
+      return row.failRows ?? 0;
+    },
   },
   {
     title: '创建时间',
