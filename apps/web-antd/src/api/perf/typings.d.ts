@@ -212,6 +212,10 @@ declare namespace PerfAPI {
     planId: number;
   };
 
+  type exportCalcJobParams = {
+    jobId: number;
+  };
+
   type exportDimCustomerByExcelParams = {
     query: PerfDimCustomerQuery;
   };
@@ -1300,6 +1304,14 @@ declare namespace PerfAPI {
     finishedAt?: string;
     /** 信息 */
     message?: string;
+    /** 导出状态 */
+    exportStatus?: string;
+    /** 导出OSS ID */
+    exportOssId?: number;
+    /** 导出文件名 */
+    exportFileName?: string;
+    /** 导出时间 */
+    exportedAt?: string;
   };
 
   type PerformanceCalcJobLogDTO = {
@@ -1336,6 +1348,10 @@ declare namespace PerfAPI {
     status?: string;
     /** 提交时间 */
     submittedAt?: string;
+    /** 导出状态 */
+    exportStatus?: string;
+    /** 导出OSS ID */
+    exportOssId?: number;
   };
 
   type ProfitDataImportRequest = {
@@ -1801,6 +1817,8 @@ declare namespace PerfAPI {
     month: number;
     /** 是否覆盖已存在结果，默认false */
     overwrite?: boolean;
+    /** 是否自动导出并上传OSS，默认true */
+    autoExport?: boolean;
   };
 
   type TriggerRangeCalculationCommand = {
@@ -1812,6 +1830,8 @@ declare namespace PerfAPI {
     toMonth: number;
     /** 是否覆盖已存在结果，默认false */
     overwrite?: boolean;
+    /** 是否自动导出并上传OSS，默认true */
+    autoExport?: boolean;
   };
 
   type UpdatePerfDimCustomerCommand = {

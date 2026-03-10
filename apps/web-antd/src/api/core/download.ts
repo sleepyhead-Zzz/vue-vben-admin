@@ -13,7 +13,7 @@ export async function downloadFile(
   onDownloadProgress?: AxiosRequestConfig['onDownloadProgress'],
 ) {
   return requestClient.get<AxiosResponse<Blob>>(
-    `/system/file/download/${params.ossId}`,
+    `/system/oss/download/${params.ossId}`,
     {
       responseType: 'blob',
       timeout: 30 * 1000,

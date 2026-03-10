@@ -5,12 +5,12 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'userId',
-    label: '',
+    label: '人员ID',
   },
   {
     component: 'Input',
     fieldName: 'periodId',
-    label: '',
+    label: '周期ID',
   },
   {
     component: 'Input',
@@ -57,59 +57,68 @@ export const querySchema: FormSchemaGetter = () => [
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
 // export const columns: () => VxeGridProps['columns'] = () => [
 export const columns: VxeGridProps['columns'] = [
-  { type: 'checkbox', width: 60 },
   {
-    title: '',
+    title: '结果ID',
     field: 'performanceId',
+    minWidth: 180,
   },
   {
-    title: '',
+    title: '人员ID',
     field: 'userId',
+    minWidth: 160,
   },
   {
-    title: '',
+    title: '周期ID',
     field: 'periodId',
+    minWidth: 160,
   },
   {
     title: '销量得分',
     field: 'salesScore',
+    minWidth: 120,
   },
   {
     title: '利润得分',
     field: 'profitScore',
+    minWidth: 120,
   },
   {
     title: '重点工作得分',
     field: 'keyTaskScore',
+    minWidth: 140,
   },
   {
     title: '内部管理得分',
     field: 'managementScore',
+    minWidth: 140,
   },
   {
     title: '新客户得分',
     field: 'newCustomerScore',
+    minWidth: 130,
   },
   {
     title: '最终绩效总分',
     field: 'finalScore',
+    minWidth: 140,
   },
   {
     title: '绩效计算时间',
     field: 'calculatedAt',
+    minWidth: 180,
   },
   {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 180,
+    width: 120,
   },
 ];
 
 export const modalSchema: FormSchemaGetter = () => [
   {
-    label: '',
+    label: '结果ID',
     fieldName: 'performanceId',
     component: 'Input',
     dependencies: {
@@ -118,42 +127,42 @@ export const modalSchema: FormSchemaGetter = () => [
     },
   },
   {
-    label: '',
+    label: '人员ID',
     fieldName: 'userId',
     component: 'Input',
   },
   {
-    label: '',
+    label: '周期ID',
     fieldName: 'periodId',
     component: 'Input',
   },
   {
-    label: '销量得分',
+    label: '销量得分（销量完成情况）',
     fieldName: 'salesScore',
     component: 'Input',
   },
   {
-    label: '利润得分',
+    label: '利润得分（利润完成情况）',
     fieldName: 'profitScore',
     component: 'Input',
   },
   {
-    label: '重点工作得分',
+    label: '重点工作得分（季度重点工作）',
     fieldName: 'keyTaskScore',
     component: 'Input',
   },
   {
-    label: '内部管理得分',
+    label: '内部管理得分（周报/执行力/逾期等）',
     fieldName: 'managementScore',
     component: 'Input',
   },
   {
-    label: '新客户得分',
+    label: '新客户得分（新客开发）',
     fieldName: 'newCustomerScore',
     component: 'Input',
   },
   {
-    label: '最终绩效总分',
+    label: '最终绩效总分（综合）',
     fieldName: 'finalScore',
     component: 'Input',
   },

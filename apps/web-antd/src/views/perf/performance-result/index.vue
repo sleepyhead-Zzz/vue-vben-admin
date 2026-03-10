@@ -3,22 +3,28 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
-import { getVxePopupContainer } from '@vben/utils';
 
-import { Modal, Popconfirm, Space } from 'ant-design-vue';
+import { Space, message } from 'ant-design-vue';
 
-import { useVbenVxeGrid, vxeCheckboxChecked } from '#/adapter/vxe-table';
+import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   exportFactPerformanceResultByExcel,
   getPagedFactPerformanceResult,
-  removeFactPerformanceResult,
 } from '#/api/perf/factPerformanceResult';
 import { commonDownloadExcel } from '#/utils/file/download';
 
 import { columns, querySchema } from './data';
+import calcTriggerModal from './calc-trigger-modal.vue';
 import performanceResultModal from './performance-result-modal.vue';
+
+type CalcTriggerMode = 'monthly' | 'range';
+
+const router = useRouter();
 
 const formOptions: VbenFormProps = {
   commonConfig: {
@@ -41,14 +47,6 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeGridProps = {
-  checkboxConfig: {
-    // 高亮
-    highlight: true,
-    // 翻页时保留选中状态
-    reserve: true,
-    // 点击行选中
-    // trigger: 'row',
-  },
   // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
   // columns: columns(),
   columns,
@@ -82,38 +80,19 @@ const [BasicTable, tableApi] = useVbenVxeGrid({
 const [FactPerformanceResultModal, modalApi] = useVbenModal({
   connectedComponent: performanceResultModal,
 });
+const [CalcTriggerModal, calcTriggerModalApi] = useVbenModal({
+  connectedComponent: calcTriggerModal,
+});
 
-function handleAdd() {
-  modalApi.setData({});
-  modalApi.open();
-}
+const latestCalcJobId = ref<string>();
 
-async function handleEdit(row: API.PerfFactPerformanceResultDTO) {
+async function handleDetail(row: PerfAPI.PerfFactPerformanceResultDTO) {
+  if (!row.performanceId) {
+    message.warning('记录ID缺失，无法查看详情');
+    return;
+  }
   modalApi.setData({ id: row.performanceId });
   modalApi.open();
-}
-
-async function handleDelete(row: API.PerfFactPerformanceResultDTO) {
-  await removeFactPerformanceResult({
-    FactPerformanceResultIds: [row.performanceId],
-  });
-  await tableApi.query();
-}
-
-function handleMultiDelete() {
-  const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map(
-    (row: API.PerfFactPerformanceResultDTO) => row.performanceId,
-  );
-  Modal.confirm({
-    title: '提示',
-    okType: 'danger',
-    content: `确认删除选中的${ids.length}条记录吗？`,
-    onOk: async () => {
-      await removeFactPerformanceResult({ FactPerformanceResultIds: ids });
-      await tableApi.query();
-    },
-  });
 }
 
 function handleDownloadExcel() {
@@ -126,6 +105,51 @@ function handleDownloadExcel() {
     },
   );
 }
+
+function openCalcTriggerModal(mode: CalcTriggerMode) {
+  calcTriggerModalApi.setData({ mode });
+  calcTriggerModalApi.open();
+}
+
+function navigateToCalcTask(jobId?: number | string) {
+  if (jobId !== undefined && jobId !== null && `${jobId}` !== '') {
+    const normalizedJobId = String(jobId);
+    latestCalcJobId.value = normalizedJobId;
+    router.push(`/perf/performance-result/calc-task/${normalizedJobId}`);
+    return;
+  }
+
+  message.warning('暂无最近任务，请先触发计算或手动输入任务ID');
+  router.push('/perf/performance-result/calc-task');
+}
+
+async function handleCalcSubmitted({
+  mode,
+  response,
+}: {
+  mode: CalcTriggerMode;
+  response: PerfAPI.ResponseDTOPerformanceCalcTriggerResponseDTO;
+}) {
+  const actionLabel = mode === 'monthly' ? '月度计算' : '区间计算';
+  const jobId =
+    response.data?.jobId === undefined || response.data?.jobId === null
+      ? undefined
+      : String(response.data.jobId);
+
+  if (response.code === 200) {
+    message.success(`${actionLabel}任务已提交`);
+    navigateToCalcTask(jobId);
+    return;
+  }
+
+  if (response.code === 105) {
+    message.warning(response.message || '已有计算任务正在执行');
+    navigateToCalcTask(jobId);
+    return;
+  }
+
+  message.error(response.message || `${actionLabel}提交失败，请稍后重试`);
+}
 </script>
 
 <template>
@@ -136,54 +160,44 @@ function handleDownloadExcel() {
       <template #toolbar-tools>
         <Space>
           <a-button
+            type="primary"
+            v-access:code="['perf:FactPerformanceResultCalc:triggerMonthly']"
+            @click="openCalcTriggerModal('monthly')"
+          >
+            触发月度计算
+          </a-button>
+          <a-button
+            v-access:code="['perf:FactPerformanceResultCalc:triggerRange']"
+            @click="openCalcTriggerModal('range')"
+          >
+            触发区间计算
+          </a-button>
+          <a-button
+            v-access:code="['perf:FactPerformanceResultCalc:detail']"
+            @click="navigateToCalcTask(latestCalcJobId)"
+          >
+            查看计算任务
+          </a-button>
+          <a-button
             v-access:code="['perf:FactPerformanceResult:export']"
             @click="handleDownloadExcel"
           >
             {{ $t('pages.common.export') }}
-          </a-button>
-          <a-button
-            :disabled="!vxeCheckboxChecked(tableApi)"
-            danger
-            type="primary"
-            v-access:code="['perf:FactPerformanceResult:remove']"
-            @click="handleMultiDelete"
-          >
-            {{ $t('pages.common.delete') }}
-          </a-button>
-          <a-button
-            type="primary"
-            v-access:code="['perf:FactPerformanceResult:add']"
-            @click="handleAdd"
-          >
-            {{ $t('pages.common.add') }}
           </a-button>
         </Space>
       </template>
       <template #action="{ row }">
         <Space>
           <ghost-button
-            v-access:code="['perf:FactPerformanceResult:edit']"
-            @click.stop="handleEdit(row)"
+            v-access:code="['perf:FactPerformanceResult:query']"
+            @click.stop="handleDetail(row)"
           >
-            {{ $t('pages.common.edit') }}
+            详情
           </ghost-button>
-          <Popconfirm
-            :get-popup-container="getVxePopupContainer"
-            placement="left"
-            title="确认删除？"
-            @confirm="handleDelete(row)"
-          >
-            <ghost-button
-              danger
-              v-access:code="['perf:FactPerformanceResult:remove']"
-              @click.stop=""
-            >
-              {{ $t('pages.common.delete') }}
-            </ghost-button>
-          </Popconfirm>
         </Space>
       </template>
     </BasicTable>
-    <FactPerformanceResultModal @reload="tableApi.query()" />
+    <FactPerformanceResultModal />
+    <CalcTriggerModal @submitted="handleCalcSubmitted" />
   </Page>
 </template>
