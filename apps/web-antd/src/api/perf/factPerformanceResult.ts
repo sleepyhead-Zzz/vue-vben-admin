@@ -107,7 +107,7 @@ export async function getCalcJobLogs(
   );
 }
 
-/** 触发月度绩效计算 POST /perf/FactPerformanceResult/calc/monthly/trigger */
+/** 触发月度绩效计算（销量/利润按当年1月1日至目标月末累计） POST /perf/FactPerformanceResult/calc/monthly/trigger */
 export async function triggerMonthlyCalculation(
   body: PerfAPI.TriggerMonthlyCalculationCommand,
   options?: { [key: string]: any }
@@ -125,7 +125,7 @@ export async function triggerMonthlyCalculation(
   );
 }
 
-/** 触发区间绩效计算 POST /perf/FactPerformanceResult/calc/range/trigger */
+/** 触发区间绩效计算（每月按当年1月1日至当月月末累计） POST /perf/FactPerformanceResult/calc/range/trigger */
 export async function triggerRangeCalculation(
   body: PerfAPI.TriggerRangeCalculationCommand,
   options?: { [key: string]: any }
@@ -158,61 +158,6 @@ export async function exportFactPerformanceResultByExcel(
     },
     ...(options || {}),
   });
-}
-
-/** 最终绩效结果锁定：避免历史规则变动导致分数变化导入Excel模板下载 GET /perf/FactPerformanceResult/excelTemplate */
-export async function downloadFactPerformanceResultExcelTemplate(options?: {
-  [key: string]: any;
-}) {
-  return request<any>("/perf/FactPerformanceResult/excelTemplate", {
-    method: "GET",
-    ...(options || {}),
-  });
-}
-
-/** 最终绩效结果锁定：避免历史规则变动导致分数变化列表导入 POST /perf/FactPerformanceResult/importData */
-export async function importFactPerformanceResultByExcel(
-  body: {
-    /** 是否覆盖已存在数据：true-覆盖更新，false-仅新增 */
-    updateSupport?: boolean;
-  },
-  file?: File,
-  options?: { [key: string]: any }
-) {
-  const formData = new FormData();
-
-  if (file) {
-    formData.append("file", file);
-  }
-
-  Object.keys(body).forEach((ele) => {
-    const item = (body as any)[ele];
-
-    if (item !== undefined && item !== null) {
-      if (typeof item === "object" && !(item instanceof File)) {
-        if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ""));
-        } else {
-          formData.append(
-            ele,
-            new Blob([JSON.stringify(item)], { type: "application/json" })
-          );
-        }
-      } else {
-        formData.append(ele, item);
-      }
-    }
-  });
-
-  return request<PerfAPI.ResponseDTOString>(
-    "/perf/FactPerformanceResult/importData",
-    {
-      method: "POST",
-      data: formData,
-      requestType: "form",
-      ...(options || {}),
-    }
-  );
 }
 
 /** 获取最终绩效结果锁定：避免历史规则变动导致分数变化列表 GET /perf/FactPerformanceResult/list */

@@ -14,7 +14,6 @@ import * as factOverdueRecord from "./factOverdueRecord";
 import * as factNewCustomerScore from "./factNewCustomerScore";
 import * as factManagementScore from "./factManagementScore";
 import * as factKeyTaskScore from "./factKeyTaskScore";
-import * as aggCustomerMonthlySales from "./aggCustomerMonthlySales";
 export default {
   salesdata,
   salesPlan,
@@ -28,5 +27,4 @@ export default {
   factNewCustomerScore,
   factManagementScore,
   factKeyTaskScore,
-  aggCustomerMonthlySales,
 };

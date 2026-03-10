@@ -1,9 +1,4 @@
 declare namespace PerfAPI {
-  type AddPerfAggCustomerMonthlySalesCommand = {
-    /** 当月总销量（吨） */
-    totalQuantity?: number;
-  };
-
   type AddPerfDimCustomerCommand = {
     /** 客户编码（ERP编码） */
     customerCode?: string;
@@ -169,10 +164,6 @@ declare namespace PerfAPI {
     columnName?: string;
   };
 
-  type editAggCustomerMonthlySalesParams = {
-    customerId: number;
-  };
-
   type editDimCustomerParams = {
     customerId: number;
   };
@@ -221,10 +212,6 @@ declare namespace PerfAPI {
     planId: number;
   };
 
-  type exportAggCustomerMonthlySalesByExcelParams = {
-    query: PerfAggCustomerMonthlySalesQuery;
-  };
-
   type exportDimCustomerByExcelParams = {
     query: PerfDimCustomerQuery;
   };
@@ -271,24 +258,6 @@ declare namespace PerfAPI {
 
   type exportSalesPlanByExcelParams = {
     query: PerfFactSalesPlanQuery;
-  };
-
-  type getAggCustomerMonthlySalesInfoParams = {
-    /** 记录ID */
-    customerId: number;
-  };
-
-  type getAggCustomerMonthlySalesListParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
   };
 
   type getCalcJobLogsParams = {
@@ -418,21 +387,6 @@ declare namespace PerfAPI {
   };
 
   type getFactProfitPlanListParams = {
-    /** 排序字段 */
-    orderColumn?: string;
-    /** 排序方向 */
-    orderDirection?: string;
-    /** 时间范围字段名 */
-    timeRangeColumn?: string;
-    /** 开始时间 */
-    beginTime?: Date;
-    /** 结束时间 */
-    endTime?: Date;
-  };
-
-  type getPagedAggCustomerMonthlySalesParams = {
-    pageNum?: number;
-    pageSize?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -766,13 +720,6 @@ declare namespace PerfAPI {
     endTime?: Date;
   };
 
-  type PageDTOPerfAggCustomerMonthlySalesDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: PerfAggCustomerMonthlySalesDTO[];
-  };
-
   type PageDTOPerfDimCustomerDTO = {
     /** 总记录数 */
     total?: number;
@@ -862,31 +809,6 @@ declare namespace PerfAPI {
     total?: number;
     /** 列表数据 */
     rows?: PerformanceCalcJobLogDTO[];
-  };
-
-  type PerfAggCustomerMonthlySalesDTO = {
-    customerId?: number;
-    userId?: number;
-    year?: number;
-    month?: number;
-    /** 当月总销量 */
-    totalQuantity?: number;
-  };
-
-  type PerfAggCustomerMonthlySalesQuery = {
-    orderColumn?: string;
-    orderDirection?: string;
-    timeRangeColumn?: string;
-    beginTime?: string;
-    endTime?: string;
-  };
-
-  type PerfAggCustomerMonthlySalesVO = {
-    customerId?: number;
-    userId?: number;
-    year?: number;
-    month?: number;
-    totalQuantity?: number;
   };
 
   type PerfDimCustomerDTO = {
@@ -1434,14 +1356,6 @@ declare namespace PerfAPI {
     year?: number;
   };
 
-  type removeAggCustomerMonthlySalesByIdParams = {
-    customerId: number;
-  };
-
-  type removeAggCustomerMonthlySalesParams = {
-    AggCustomerMonthlySalesIds: number[];
-  };
-
   type removeDimCustomerByIdParams = {
     customerId: number;
   };
@@ -1542,18 +1456,6 @@ declare namespace PerfAPI {
     code?: number;
     message?: string;
     data?: JobSubmitResponseDTO;
-  };
-
-  type ResponseDTOListPerfAggCustomerMonthlySalesDTO = {
-    code?: number;
-    message?: string;
-    data?: PerfAggCustomerMonthlySalesDTO[];
-  };
-
-  type ResponseDTOListPerfAggCustomerMonthlySalesVO = {
-    code?: number;
-    message?: string;
-    data?: PerfAggCustomerMonthlySalesVO[];
   };
 
   type ResponseDTOListPerfDimCustomerDTO = {
@@ -1700,12 +1602,6 @@ declare namespace PerfAPI {
     data?: PerfFactSalesPlanVO[];
   };
 
-  type ResponseDTOPageDTOPerfAggCustomerMonthlySalesDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOPerfAggCustomerMonthlySalesDTO;
-  };
-
   type ResponseDTOPageDTOPerfDimCustomerDTO = {
     code?: number;
     message?: string;
@@ -1782,12 +1678,6 @@ declare namespace PerfAPI {
     code?: number;
     message?: string;
     data?: PageDTOPerformanceCalcJobLogDTO;
-  };
-
-  type ResponseDTOPerfAggCustomerMonthlySalesDTO = {
-    code?: number;
-    message?: string;
-    data?: PerfAggCustomerMonthlySalesDTO;
   };
 
   type ResponseDTOPerfDimCustomerDTO = {
@@ -1907,7 +1797,7 @@ declare namespace PerfAPI {
   type TriggerMonthlyCalculationCommand = {
     /** 年份 */
     year: number;
-    /** 月份 */
+    /** 月份（计算口径：当年1月1日至该月月末累计） */
     month: number;
     /** 是否覆盖已存在结果，默认false */
     overwrite?: boolean;
@@ -1916,18 +1806,12 @@ declare namespace PerfAPI {
   type TriggerRangeCalculationCommand = {
     /** 年份 */
     year: number;
-    /** 起始月份 */
+    /** 起始月份（每月按当年累计口径计算） */
     fromMonth: number;
-    /** 结束月份 */
+    /** 结束月份（每月按当年累计口径计算） */
     toMonth: number;
     /** 是否覆盖已存在结果，默认false */
     overwrite?: boolean;
-  };
-
-  type UpdatePerfAggCustomerMonthlySalesCommand = {
-    /** 当月总销量（吨） */
-    totalQuantity?: number;
-    customerId?: number;
   };
 
   type UpdatePerfDimCustomerCommand = {
