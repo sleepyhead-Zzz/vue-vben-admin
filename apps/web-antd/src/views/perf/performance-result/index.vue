@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router';
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
 
-import { Space, message } from 'ant-design-vue';
+import { message, Space } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
@@ -18,8 +18,8 @@ import {
 } from '#/api/perf/factPerformanceResult';
 import { commonDownloadExcel } from '#/utils/file/download';
 
-import { columns, querySchema } from './data';
 import calcTriggerModal from './calc-trigger-modal.vue';
+import { columns, querySchema } from './data';
 import performanceResultModal from './performance-result-modal.vue';
 
 type CalcTriggerMode = 'monthly' | 'range';

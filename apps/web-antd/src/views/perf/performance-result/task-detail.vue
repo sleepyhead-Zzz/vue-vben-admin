@@ -12,11 +12,11 @@ import {
   DescriptionsItem,
   Empty,
   Input,
+  message,
   Space,
   Table,
   Tabs,
   Tag,
-  message,
 } from 'ant-design-vue';
 
 import {
@@ -158,11 +158,17 @@ function renderLevelTag(level?: string) {
     warn: 'warning',
     warning: 'warning',
   };
-  return h(Tag, { color: colorMap[normalized] ?? 'default' }, () => level || '-');
+  return h(
+    Tag,
+    { color: colorMap[normalized] ?? 'default' },
+    () => level || '-',
+  );
 }
 
 function isTerminalStatus(status?: string) {
-  return TERMINAL_STATUS.has((status ?? '').toLowerCase() as CalcTaskTerminalStatus);
+  return TERMINAL_STATUS.has(
+    (status ?? '').toLowerCase() as CalcTaskTerminalStatus,
+  );
 }
 
 function getErrorMessage(error: unknown, fallback: string) {
@@ -357,7 +363,9 @@ onBeforeUnmount(() => {
             {{ job.jobType || '-' }}
           </DescriptionsItem>
           <DescriptionsItem label="状态">
-            <Tag :color="renderStatusTag(job.status)">{{ job.status || '-' }}</Tag>
+            <Tag :color="renderStatusTag(job.status)">
+              {{ job.status || '-' }}
+            </Tag>
           </DescriptionsItem>
           <DescriptionsItem label="进度">
             {{ job.progressDone ?? 0 }}/{{ job.progressTotal ?? 0 }} ({{
@@ -400,9 +408,9 @@ onBeforeUnmount(() => {
                 {{ job.runId || '-' }}
               </DescriptionsItem>
               <DescriptionsItem label="导出状态">
-                <Tag :color="renderStatusTag(job.exportStatus)">{{
-                  job.exportStatus || '-'
-                }}</Tag>
+                <Tag :color="renderStatusTag(job.exportStatus)">
+                  {{ job.exportStatus || '-' }}
+                </Tag>
               </DescriptionsItem>
               <DescriptionsItem label="导出 OSS ID">
                 {{ job.exportOssId ?? '-' }}
