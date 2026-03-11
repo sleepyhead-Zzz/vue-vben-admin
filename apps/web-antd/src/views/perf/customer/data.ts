@@ -31,6 +31,7 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '客户主键ID',
     field: 'customerId',
+    visible: false,
   },
   {
     title: '客户编码',

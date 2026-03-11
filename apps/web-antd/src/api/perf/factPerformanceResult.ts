@@ -1,6 +1,6 @@
 // @ts-ignore
 /* eslint-disable */
-import request, { rawBusinessRequest } from '#/api/request';
+import request from '#/api/request';
 
 /** 新增最终绩效结果锁定：避免历史规则变动导致分数变化 POST /perf/FactPerformanceResult */
 export async function addFactPerformanceResult(
@@ -142,48 +142,12 @@ export async function triggerMonthlyCalculation(
   );
 }
 
-/** 触发月度绩效计算，保留完整业务响应 POST /perf/FactPerformanceResult/calc/monthly/trigger */
-export async function triggerMonthlyCalculationWithResponse(
-  body: PerfAPI.TriggerMonthlyCalculationCommand,
-  options?: { [key: string]: any },
-) {
-  return rawBusinessRequest<PerfAPI.PerformanceCalcTriggerResponseDTO>(
-    '/perf/FactPerformanceResult/calc/monthly/trigger',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: body,
-      ...(options || {}),
-    },
-  );
-}
-
 /** 触发区间绩效计算（每月按当年1月1日至当月月末累计） POST /perf/FactPerformanceResult/calc/range/trigger */
 export async function triggerRangeCalculation(
   body: PerfAPI.TriggerRangeCalculationCommand,
   options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOPerformanceCalcTriggerResponseDTO>(
-    '/perf/FactPerformanceResult/calc/range/trigger',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      data: body,
-      ...(options || {}),
-    },
-  );
-}
-
-/** 触发区间绩效计算，保留完整业务响应 POST /perf/FactPerformanceResult/calc/range/trigger */
-export async function triggerRangeCalculationWithResponse(
-  body: PerfAPI.TriggerRangeCalculationCommand,
-  options?: { [key: string]: any },
-) {
-  return rawBusinessRequest<PerfAPI.PerformanceCalcTriggerResponseDTO>(
     '/perf/FactPerformanceResult/calc/range/trigger',
     {
       method: 'POST',

@@ -31,18 +31,22 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '周期主键ID',
     field: 'periodId',
+    visible: false,
   },
   {
     title: '年份',
     field: 'year',
+    width: 80,
   },
   {
     title: '月份',
     field: 'month',
+    width: 80,
   },
   {
     title: '季度',
     field: 'quarter',
+    width: 80,
   },
   {
     title: '周期类型',

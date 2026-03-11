@@ -63,6 +63,11 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '上传人',
     field: 'creatorId',
+    visible: false,
+  },
+  {
+    title: '上传人',
+    field: 'creatorName',
   },
   {
     title: '服务商',

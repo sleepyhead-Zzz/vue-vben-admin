@@ -4,53 +4,13 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
-    fieldName: 'userId',
-    label: '人员ID',
+    fieldName: 'userName',
+    label: '人员',
   },
   {
-    component: 'Input',
+    component: 'Select',
     fieldName: 'periodId',
-    label: '周期ID',
-  },
-  {
-    component: 'Input',
-    fieldName: 'salesScore',
-    label: '销量得分',
-  },
-  {
-    component: 'Input',
-    fieldName: 'profitScore',
-    label: '利润得分',
-  },
-  {
-    component: 'Input',
-    fieldName: 'keyTaskScore',
-    label: '重点工作得分',
-  },
-  {
-    component: 'Input',
-    fieldName: 'managementScore',
-    label: '内部管理得分',
-  },
-  {
-    component: 'Input',
-    fieldName: 'newCustomerScore',
-    label: '新客户得分',
-  },
-  {
-    component: 'Input',
-    fieldName: 'finalScore',
-    label: '最终绩效总分',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'calculatedAt',
-    label: '绩效计算时间',
+    label: '周期',
   },
 ];
 
@@ -61,15 +21,28 @@ export const columns: VxeGridProps['columns'] = [
     title: '结果ID',
     field: 'performanceId',
     minWidth: 180,
+    visible: false,
   },
   {
     title: '人员ID',
     field: 'userId',
     minWidth: 160,
+    visible: false,
+  },
+  {
+    title: '人员姓名',
+    field: 'userName',
+    minWidth: 160,
   },
   {
     title: '周期ID',
     field: 'periodId',
+    minWidth: 160,
+    visible: false,
+  },
+  {
+    title: '周期名称',
+    field: 'periodName',
     minWidth: 160,
   },
   {

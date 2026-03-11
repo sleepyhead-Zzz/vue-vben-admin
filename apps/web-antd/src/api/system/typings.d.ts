@@ -1600,6 +1600,7 @@ declare namespace SystemAPI {
     status?: string;
     service?: string;
     creatorId?: number;
+    creatorName?: string;
     createTime?: string;
   };
 

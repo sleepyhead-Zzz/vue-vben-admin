@@ -126,7 +126,7 @@ async function handleDownload(row: SystemAPI.SysOssDTO) {
     duration: 0,
   });
   try {
-    const { data } = await downloadFile({ ossId: row.ossId }, (e) => {
+    const data = await downloadFile({ ossId: row.ossId }, (e) => {
       const percent = Math.floor((e.loaded / e.total!) * 100);
       const current = calculateFileSize(e.loaded);
       const total = calculateFileSize(e.total!);

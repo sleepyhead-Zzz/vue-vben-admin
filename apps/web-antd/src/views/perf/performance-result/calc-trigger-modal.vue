@@ -15,8 +15,8 @@ import {
 } from 'ant-design-vue';
 
 import {
-  triggerMonthlyCalculationWithResponse,
-  triggerRangeCalculationWithResponse,
+  triggerMonthlyCalculation,
+  triggerRangeCalculation,
 } from '#/api/perf/factPerformanceResult';
 
 type CalcTriggerMode = 'monthly' | 'range';
@@ -115,13 +115,13 @@ async function handleConfirm() {
 
     const response =
       currentMode.value === 'monthly'
-        ? await triggerMonthlyCalculationWithResponse({
+        ? await triggerMonthlyCalculation({
             autoExport: formState.autoExport,
             month: formState.month,
             overwrite: formState.overwrite,
             year: formState.year,
           })
-        : await triggerRangeCalculationWithResponse({
+        : await triggerRangeCalculation({
             autoExport: formState.autoExport,
             fromMonth: formState.fromMonth,
             overwrite: formState.overwrite,
