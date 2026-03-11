@@ -31,7 +31,7 @@ import { getDictOptions } from '#/utils/dict';
 // ---------------------------------------------------------------------
 const { closeCurrentTab } = useTabs();
 const route = useRoute();
-const taskId = String(route.params.taskId);
+const taskId = route.params.taskId as string;
 
 const taskInfo = ref<AssetAPI.AssetInspectionTaskDTO | null>(null);
 const deviceInfo = ref<AssetAPI.AssetDeviceDTO | null>(null);
@@ -63,7 +63,7 @@ onMounted(async () => {
   await loadTaskInfo(taskId);
 
   if (taskInfo.value?.deviceId) {
-    await loadInspectionItem(String(taskInfo.value.deviceId));
+    await loadInspectionItem(taskInfo.value.deviceId);
   }
   inspectionForm.startDate = dayjs().format('YYYY-MM-DD HH:mm:ss');
   isReady.value = true;
@@ -87,7 +87,7 @@ async function loadTaskInfo(taskId: string) {
 }
 
 // 获取设备信息 & 巡检项并初始化 results
-async function loadInspectionItem(deviceId: string) {
+async function loadInspectionItem(deviceId: string | number) {
   try {
     const deviceRes = await getDeviceInfo({ deviceId });
     deviceInfo.value = deviceRes.data;
@@ -151,8 +151,14 @@ const goToRepair = () => {
           <ADescriptionsItem label="任务 ID">
             {{ taskId }}
           </ADescriptionsItem>
-          <ADescriptionsItem label="巡检名称">
+        <ADescriptionsItem label="巡检名称">
             {{ taskInfo?.taskName }}
+          </ADescriptionsItem>
+          <ADescriptionsItem label="巡检计划">
+            {{ taskInfo?.planName || '-' }}
+          </ADescriptionsItem>
+          <ADescriptionsItem label="巡检对象">
+            {{ taskInfo?.objectName || '-' }}
           </ADescriptionsItem>
           <ADescriptionsItem label="设备名称">
             {{ deviceInfo?.deviceName }}

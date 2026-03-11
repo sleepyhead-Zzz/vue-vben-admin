@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { AuthenticationLoginExpiredModal } from '@vben/common-ui';
 import { useWatermark } from '@vben/hooks';
@@ -44,10 +45,33 @@ async function handleLogout() {
 }
 
 const notifyStore = useNotifyStore();
-onMounted(() => notifyStore.startListeningMessage());
+const route = useRoute();
+
+onMounted(() => notifyStore.initialize());
 
 function handleViewAll() {
   router.push('/system/user-notifications');
+}
+
+async function handleNotificationRead(item: {
+  isRead?: boolean;
+  noticeId?: number;
+}) {
+  if (item.noticeId && !item.isRead) {
+    await notifyStore.readNotice(item.noticeId);
+  }
+
+  await router.push({
+    path: '/system/user-notifications',
+    query: {
+      ...route.query,
+      noticeId: item.noticeId ? String(item.noticeId) : undefined,
+    },
+  });
+}
+
+async function handleMakeAllRead() {
+  await notifyStore.markAllRead();
 }
 
 watch(
@@ -88,9 +112,9 @@ watch(
       <Notification
         :dot="notifyStore.showDot"
         :notifications="notifyStore.notifications"
-        @clear="notifyStore.clearAllMessage"
-        @make-all="notifyStore.setAllRead"
-        @read="notifyStore.setRead"
+        @clear="handleMakeAllRead"
+        @make-all="handleMakeAllRead"
+        @read="handleNotificationRead"
         @view-all="handleViewAll"
       />
     </template>

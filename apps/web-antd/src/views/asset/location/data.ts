@@ -41,6 +41,10 @@ export const columns: VxeGridProps['columns'] = [
     field: 'locationCode',
   },
   {
+    title: '父级位置',
+    field: 'parentLocationName',
+  },
+  {
     title: '位置类型',
     field: 'locationType',
     slots: {
@@ -77,6 +81,21 @@ export const modalSchema: FormSchemaGetter = () => [
   },
   {
     label: '父位置ID',
+    fieldName: 'parentLocationId',
+    component: 'TreeSelect',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '父级位置',
+    fieldName: 'parentLocationName',
+    component: 'Input',
+    disabled: true,
+  },
+  {
+    label: '父级位置选择',
     fieldName: 'parentLocationId',
     component: 'TreeSelect',
   },

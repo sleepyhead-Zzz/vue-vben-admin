@@ -55,6 +55,14 @@ export const columns: VxeGridProps['columns'] = [
     field: 'deviceName',
   },
   {
+    title: '报修人',
+    field: 'reporterName',
+  },
+  {
+    title: '受理/维修人',
+    field: 'handlerName',
+  },
+  {
     title: '故障类型',
     field: 'faultType',
     slots: {
@@ -130,7 +138,10 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '设备ID',
     fieldName: 'deviceId',
     component: 'Input',
-    disabled: true,
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
   {
     label: '设备名称',
@@ -172,7 +183,10 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '报修人ID',
     fieldName: 'reporterId',
     component: 'Input',
-    disabled: true,
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
   {
     label: '报修人名称',
@@ -184,7 +198,10 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '受理/维修人ID',
     fieldName: 'handlerId',
     component: 'Input',
-    disabled: true,
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
   {
     label: '受理/维修人名称',

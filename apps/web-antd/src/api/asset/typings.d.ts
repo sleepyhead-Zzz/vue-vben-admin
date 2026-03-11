@@ -287,8 +287,12 @@ declare namespace AssetAPI {
     inspectionId?: number;
     /** 关联的巡检计划ID */
     planId?: number;
+    /** 关联的巡检计划名称 */
+    planName?: string;
     /** 巡检状态：         1进行中         2完成         3异常         4中断' */
     taskId?: number;
+    /** 关联的巡检任务名称 */
+    taskName?: string;
     status?: string;
     /** 巡检实际开始时间 */
     startDate?: string;
@@ -302,6 +306,7 @@ declare namespace AssetAPI {
     planId?: number;
     planName?: string;
     deptId?: number;
+    deptName?: string;
     scheduleModel?: number;
     interval?: IntervalView;
     calendar?: CalendarView;
@@ -375,6 +380,8 @@ declare namespace AssetAPI {
     taskId?: number;
     /** 来源巡检计划ID */
     planId?: number;
+    /** 来源巡检计划名称 */
+    planName?: string;
     /** 任务名称 */
     taskName?: string;
     /** 任务状态 0待接收 1处理中 2已完成 3已过期 */
@@ -425,6 +432,8 @@ declare namespace AssetAPI {
     locationName?: string;
     /** 父位置ID */
     parentLocationId?: number;
+    /** 父位置名称 */
+    parentLocationName?: string;
     /** 位置编码 */
     locationCode?: string;
     /** 位置描述 */

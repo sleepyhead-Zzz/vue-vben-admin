@@ -41,7 +41,7 @@ export const columns: VxeGridProps['columns'] = [
   },
   {
     title: '设备规格型号',
-    field: 'specificationId',
+    field: 'specificationName',
   },
   {
     field: 'action',

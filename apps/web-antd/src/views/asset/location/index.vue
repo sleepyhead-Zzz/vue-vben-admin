@@ -14,6 +14,9 @@ import { getLocationList, removeLocation } from '#/api/asset/location';
 import { columns, querySchema } from './data';
 import locationModal from './location-modal.vue';
 
+const ROOT_LOCATION_ID =
+  '0' as unknown as AssetAPI.getLocationListParams['parentLocationId'];
+
 const formOptions: VbenFormProps = {
   commonConfig: {
     labelWidth: 80,
@@ -40,7 +43,7 @@ const gridOptions: VxeGridProps = {
         // 默认只加载根节点
         const resp = await getLocationList({
           ...formValues,
-          parentLocationId: '0',
+          parentLocationId: ROOT_LOCATION_ID,
         });
 
         return { rows: resp.data || [] };
@@ -77,7 +80,9 @@ const gridOptions: VxeGridProps = {
           return resp.data || [];
         } else {
           // 传 0 表示根节点
-          const resp = await getLocationList({ parentLocationId: '0' });
+          const resp = await getLocationList({
+            parentLocationId: ROOT_LOCATION_ID,
+          });
           return resp.data || [];
         }
       } catch (error) {

@@ -1049,7 +1049,11 @@ declare namespace PerfAPI {
   type PerfFactPerformanceResultDTO = {
     performanceId?: number;
     userId?: number;
+    /** 用户名 */
+    userName?: string;
     periodId?: number;
+    /** 绩效周期名称 */
+    periodName?: string;
     /** 销量得分 */
     salesScore?: number;
     /** 利润得分 */

@@ -22,6 +22,8 @@ import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';
 import { modalSchema } from './data';
 
 const emit = defineEmits<{ reload: [] }>();
+const ROOT_LOCATION_ID =
+  '0' as unknown as AssetAPI.getLocationListParams['parentLocationId'];
 
 const isUpdate = ref(false);
 const title = computed(() => {
@@ -45,7 +47,7 @@ const [BasicForm, formApi] = useVbenForm({
 });
 
 async function setupLocationSelect() {
-  const { data } = await getLocationList({});
+  const { data = [] } = await getLocationList({});
 
   const treeData = listToTree(data, {
     id: 'locationId',
@@ -53,7 +55,7 @@ async function setupLocationSelect() {
   });
   const fullTree = [
     {
-      locationId: 0,
+      locationId: ROOT_LOCATION_ID,
       locationName: $t('menu.root'),
       children: treeData,
     },
@@ -68,6 +70,7 @@ async function setupLocationSelect() {
         fieldNames: { label: 'locationName', value: 'locationId' },
         treeDefaultExpandAll: true,
         getPopupContainer,
+        placeholder: '请选择父级位置',
       },
     },
   ]);
@@ -97,8 +100,12 @@ const [BasicModal, modalApi] = useVbenModal({
     isUpdate.value = !!id;
 
     if (isUpdate.value && id) {
-      const record = await getLocationInfo({ locationId: id });
-      await formApi.setValues(record.data);
+      const record = await getLocationInfo({
+        locationId: id as AssetAPI.getLocationInfoParams['locationId'],
+      });
+      if (record.data) {
+        await formApi.setValues(record.data);
+      }
     }
     await setupLocationSelect();
     await markInitialized();

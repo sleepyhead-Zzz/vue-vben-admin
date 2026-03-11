@@ -6,135 +6,186 @@ import { SvgMessageUrl } from '@vben/icons';
 import { $t } from '@vben/locales';
 import { useUserStore } from '@vben/stores';
 
-import { Modal, notification } from 'ant-design-vue';
+import { notification } from 'ant-design-vue';
 import dayjs from 'dayjs';
 import { defineStore } from 'pinia';
 
+import {
+  getPagedUserNotice,
+  getUnreadNoticeCount,
+  markNoticeAsRead,
+  readAllNotice,
+} from '#/api/system/userNotice';
 import { useWebSocketMessage } from '#/utils/message';
 
-export const useNotifyStore = defineStore(
-  'app-notify',
-  () => {
-    /**
-     * return才会被持久化 存储全部消息
-     */
-    const notificationList = ref<NotificationItem[]>([]);
+type NoticeNotificationItem = NotificationItem & {
+  noticeId: number;
+  noticeType?: string;
+};
 
-    const userStore = useUserStore();
-    const userId = computed(() => {
-      return userStore.userInfo?.userId || '0';
-    });
+const RECENT_NOTICE_PAGE_SIZE = 6;
 
-    const notifications = computed(() => {
-      return notificationList.value.filter(
-        (item) => item.userId === userId.value,
-      );
-    });
+function formatNoticeDate(value?: string) {
+  return value ? dayjs(value).format('YYYY-MM-DD HH:mm:ss') : '';
+}
 
-    /**
-     * 开始监听sse消息
-     */
-    function startListeningMessage() {
-      // 默认sse 使用 websocket自行开启注释
-      const websocketReturnData = useWebSocketMessage();
-      if (!websocketReturnData) {
+function mapNoticeToNotificationItem(
+  item: SystemAPI.SysUserNotificationListDTO,
+  userId: number | string,
+): NoticeNotificationItem | null {
+  if (!item.noticeId) {
+    return null;
+  }
+
+  return {
+    avatar: SvgMessageUrl,
+    date: formatNoticeDate(item.createTime),
+    isRead: item.readFlag === '1',
+    message: item.summary || $t('component.notice.title'),
+    noticeId: item.noticeId,
+    noticeType: item.noticeType,
+    title: item.noticeTitle || $t('component.notice.title'),
+    userId,
+  };
+}
+
+export const useNotifyStore = defineStore('app-notify', () => {
+  const userStore = useUserStore();
+
+  const userId = computed(() => userStore.userInfo?.userId || '0');
+  const unreadCount = ref(0);
+  const notifications = ref<NoticeNotificationItem[]>([]);
+  const loading = ref(false);
+  const listeningStarted = ref(false);
+
+  const showDot = computed(() => unreadCount.value > 0);
+
+  async function refreshUnreadCount() {
+    try {
+      const { data } = await getUnreadNoticeCount();
+      unreadCount.value = data ?? 0;
+    } catch (error) {
+      console.error('refreshUnreadCount error:', error);
+    }
+  }
+
+  async function loadRecentNotifications() {
+    if (!userStore.userInfo?.userId) {
+      notifications.value = [];
+      unreadCount.value = 0;
+      return;
+    }
+
+    loading.value = true;
+    try {
+      const { data } = await getPagedUserNotice({
+        pageNum: 1,
+        pageSize: RECENT_NOTICE_PAGE_SIZE,
+      });
+      const records = data?.rows || [];
+      notifications.value = records
+        .map((item) => mapNoticeToNotificationItem(item, userId.value))
+        .filter((item): item is NoticeNotificationItem => item !== null);
+    } catch (error) {
+      console.error('loadRecentNotifications error:', error);
+      notifications.value = [];
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function refresh() {
+    await Promise.all([refreshUnreadCount(), loadRecentNotifications()]);
+  }
+
+  function patchNoticeAsRead(noticeId: number) {
+    const target = notifications.value.find((item) => item.noticeId === noticeId);
+    if (!target || target.isRead) {
+      return;
+    }
+
+    target.isRead = true;
+    unreadCount.value = Math.max(unreadCount.value - 1, 0);
+  }
+
+  async function readNotice(noticeId: number) {
+    await markNoticeAsRead({ noticeId });
+    patchNoticeAsRead(noticeId);
+  }
+
+  async function setRead(item: NoticeNotificationItem) {
+    if (!item.isRead) {
+      await readNotice(item.noticeId);
+    }
+  }
+
+  async function markAllRead() {
+    await readAllNotice();
+    unreadCount.value = 0;
+    notifications.value = notifications.value.map((item) => ({
+      ...item,
+      isRead: true,
+    }));
+  }
+
+  async function clearAllMessage() {
+    await markAllRead();
+  }
+
+  function startListeningMessage() {
+    if (listeningStarted.value) {
+      return;
+    }
+
+    const websocketReturnData = useWebSocketMessage();
+    if (!websocketReturnData) {
+      return;
+    }
+
+    listeningStarted.value = true;
+    const { data } = websocketReturnData;
+
+    watch(data, async (message) => {
+      if (!message) {
         return;
       }
-      const { data } = websocketReturnData;
 
-      // const sseReturnData = useSseMessage();
-      // if (!sseReturnData) {
-      //   return;
-      // }
-      // const { data } = sseReturnData;
-
-      watch(data, (message) => {
-        if (!message) return;
-
-        notification.success({
-          description: message,
-          duration: 3,
-          message: $t('component.notice.received'),
-        });
-
-        notificationList.value.unshift({
-          // avatar: `https://api.multiavatar.com/${random(0, 10_000)}.png`, 随机头像
-          avatar: SvgMessageUrl,
-          date: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-          isRead: false,
-          message,
-          title: $t('component.notice.title'),
-          userId: userId.value,
-        });
-
-        // 需要手动置空 vue3在值相同时不会触发watch
-        data.value = null;
+      notification.success({
+        description: typeof message === 'string' ? message : $t('component.notice.received'),
+        duration: 3,
+        message: $t('component.notice.received'),
       });
-    }
 
-    /**
-     * 设置全部已读
-     */
-    function setAllRead() {
-      notificationList.value
-        .filter((item) => item.userId === userId.value)
-        .forEach((item) => {
-          item.isRead = true;
-        });
-    }
+      await refresh();
+      data.value = null;
+    });
+  }
 
-    /**
-     * 设置单条消息已读
-     * @param item 通知
-     */
-    function setRead(item: NotificationItem) {
-      !item.isRead && (item.isRead = true);
-      // 显示信息
-      Modal.info({
-        title: item.title,
-        content: item.message,
-      });
-    }
+  async function initialize() {
+    await refresh();
+    startListeningMessage();
+  }
 
-    /**
-     * 清空全部消息
-     */
-    function clearAllMessage() {
-      notificationList.value = notificationList.value.filter(
-        (item) => item.userId !== userId.value,
-      );
-    }
+  function $reset() {
+    notifications.value = [];
+    unreadCount.value = 0;
+    loading.value = false;
+  }
 
-    /**
-     * 只需要空实现即可
-     * 否则会在退出登录清空所有
-     */
-    function $reset() {
-      // notificationList.value = [];
-    }
-    /**
-     * 显示小圆点
-     */
-    const showDot = computed(() =>
-      notificationList.value
-        .filter((item) => item.userId === userId.value)
-        .some((item) => !item.isRead),
-    );
-
-    return {
-      $reset,
-      clearAllMessage,
-      notificationList,
-      notifications,
-      setAllRead,
-      setRead,
-      showDot,
-      startListeningMessage,
-    };
-  },
-  {
-    persist: {
-      pick: ['notificationList'],
-    },
-  },
-);
+  return {
+    $reset,
+    clearAllMessage,
+    initialize,
+    loadRecentNotifications,
+    loading,
+    markAllRead,
+    notifications,
+    readNotice,
+    refresh,
+    refreshUnreadCount,
+    setRead,
+    showDot,
+    startListeningMessage,
+    unreadCount,
+  };
+});

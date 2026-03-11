@@ -15,11 +15,33 @@ import {
 
 import { columns, querySchema } from './data';
 
+type LocationId = NonNullable<AssetAPI.AssetLocationDTO['locationId']>;
+type LocationNode = AssetAPI.AssetLocationDTO & {
+  checked: boolean;
+  children: LocationNode[];
+  indeterminate: boolean;
+  parent?: LocationNode;
+};
+
 const route = useRoute();
-const planId = route.params.planId as string;
+const planId = route.params.planId as unknown as AssetAPI.getPlanLocationsParams['planId'];
+const ROOT_LOCATION_ID =
+  '0' as unknown as AssetAPI.getLocationTreeParams['parentLocationId'];
 
 // 已勾选叶子节点集合
-const checkedLocationIdSet = reactive(new Set<string>());
+const checkedLocationIdSet = reactive(new Set<LocationId>());
+
+function isRootLocationId(
+  value: '' | AssetAPI.AssetLocationDTO['parentLocationId'],
+) {
+  return (
+    value === null ||
+    value === undefined ||
+    value === '' ||
+    value === 0 ||
+    value === ROOT_LOCATION_ID
+  );
+}
 
 // 查询表单配置
 const formOptions = {
@@ -29,7 +51,7 @@ const formOptions = {
 };
 
 // 勾选/半选状态更新
-function updateNodeCheckState(row: any, checked: boolean) {
+function updateNodeCheckState(row: LocationNode, checked: boolean) {
   row.checked = checked;
   row.children?.forEach((c) => updateNodeCheckState(c, checked));
   let parent = row.parent;
@@ -47,7 +69,7 @@ function updateNodeCheckState(row: any, checked: boolean) {
 // 表格配置
 const gridOptions = {
   id: 'inspection-plan-location-select',
-  columns: columns.map((col) =>
+  columns: (columns ?? []).map((col) =>
     col.field === 'locationName'
       ? { ...col, slots: { default: 'checkbox-cell' } }
       : col,
@@ -58,13 +80,14 @@ const gridOptions = {
   proxyConfig: {
     ajax: {
       query: async () => {
-        const resp = await getLocationTree({ parentLocationId: '0', planId });
-        const map: Record<string, any> = {};
-        const list = (resp.data || []).map((item) => {
-          const node = {
+        const resp = await getLocationTree({
+          parentLocationId: ROOT_LOCATION_ID,
+          planId,
+        });
+        const map = new Map<LocationId, LocationNode>();
+        const list: LocationNode[] = (resp.data || []).map((item) => {
+          const node: LocationNode = {
             ...item,
-            locationId: String(item.locationId),
-            parentLocationId: String(item.parentLocationId),
             checked: item.checked || false,
             indeterminate: item.hasChild
               ? item.checkedChildCount! > 0 &&
@@ -72,16 +95,21 @@ const gridOptions = {
               : false,
             children: [],
           };
-          map[node.locationId] = node;
+          if (node.locationId !== undefined) {
+            map.set(node.locationId, node);
+          }
           return node;
         });
         list.forEach((node) => {
-          if (node.parentLocationId && map[node.parentLocationId]) {
-            node.parent = map[node.parentLocationId];
-            map[node.parentLocationId].children.push(node);
+          const parent = map.get(node.parentLocationId);
+          if (!isRootLocationId(node.parentLocationId) && parent) {
+            node.parent = parent;
+            parent.children.push(node);
           }
         });
-        return { rows: list.filter((node) => node.parentLocationId === '0') };
+        return {
+          rows: list.filter((node) => isRootLocationId(node.parentLocationId)),
+        };
       },
     },
   },
@@ -91,16 +119,14 @@ const gridOptions = {
     hasChildField: 'hasChild',
     transform: true,
     lazy: true,
-    loadMethod: async ({ row }) => {
+    loadMethod: async ({ row }: { row: LocationNode }) => {
       const resp = await getLocationTree({
         parentLocationId: row.locationId,
         planId,
       });
-      const children = (resp.data || []).map((item) => {
-        const node = {
+      const children: LocationNode[] = (resp.data || []).map((item) => {
+        const node: LocationNode = {
           ...item,
-          locationId: String(item.locationId),
-          parentLocationId: String(item.parentLocationId),
           checked: item.checked || false,
           indeterminate: item.hasChild
             ? item.checkedChildCount! > 0 &&
@@ -134,9 +160,9 @@ const collapseAll = () => tableApi.grid?.setAllTreeExpand(false);
 async function initCheckedLocations() {
   if (!planId) return;
   const resp = await getPlanLocations({ planId });
-  (resp.data.checkedLocationIds || [])
-    .map(String)
-    .forEach((id) => checkedLocationIdSet.add(id));
+  (resp.data?.checkedLocationIds || []).forEach((id) =>
+    checkedLocationIdSet.add(id),
+  );
 }
 
 // 保存
@@ -158,14 +184,15 @@ async function handleSubmit() {
 }
 
 // checkbox change
-function onCheckChange(row: any, e: any) {
+function onCheckChange(row: LocationNode, e: { target: { checked: boolean } }) {
   const checked = e.target.checked;
   updateNodeCheckState(row, checked);
 
-  function updateSet(node: any) {
+  function updateSet(node: LocationNode) {
     if (node.checked && (!node.children || node.children.length === 0))
-      checkedLocationIdSet.add(node.locationId);
-    else if (!node.checked) checkedLocationIdSet.delete(node.locationId);
+      node.locationId !== undefined && checkedLocationIdSet.add(node.locationId);
+    else if (!node.checked && node.locationId !== undefined)
+      checkedLocationIdSet.delete(node.locationId);
     node.children?.forEach(updateSet);
   }
   updateSet(row);

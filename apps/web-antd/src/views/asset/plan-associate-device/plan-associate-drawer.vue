@@ -58,7 +58,7 @@ const gridOptions: VxeGridProps = {
     },
   },
   rowConfig: {
-    keyField: 'planId',
+    keyField: 'deviceId',
   },
 };
 

@@ -37,6 +37,10 @@ export const columns: VxeGridProps['columns'] = [
     visible: false,
   },
   {
+    title: '来源巡检计划',
+    field: 'planName',
+  },
+  {
     title: '任务名称',
     field: 'taskName',
   },
@@ -52,23 +56,17 @@ export const columns: VxeGridProps['columns'] = [
     width: 70,
   },
   {
-    title: '指派给的部门ID',
-    field: 'assignDeptId',
-    visible: false,
+    title: '巡检对象',
+    field: 'objectName',
   },
   {
-    title: '指派给的部门名称',
+    title: '指派部门',
     field: 'assignDeptName',
   },
-  // {
-  //   title: '指派给的负责人ID',
-  //   field: 'assignUserId',
-  //   visible: false,
-  // },
-  // {
-  //   title: '指派给的负责人名称',
-  //   field: 'assignUserName',
-  // },
+  {
+    title: '指派负责人',
+    field: 'assignUserName',
+  },
   {
     title: '任务截止时间',
     field: 'executeDeadline',
@@ -95,7 +93,15 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '来源巡检计划ID',
     fieldName: 'planId',
     component: 'Input',
-    rules: 'required',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '来源巡检计划',
+    fieldName: 'planName',
+    component: 'Input',
     disabled: true,
   },
   {
@@ -112,20 +118,50 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '任务状态',
   },
   {
+    label: '巡检对象ID',
+    fieldName: 'objectId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '巡检对象',
+    fieldName: 'objectName',
+    component: 'Input',
+    disabled: true,
+  },
+  {
     label: '指派给的部门ID',
     fieldName: 'assignDeptId',
     component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
   },
   {
-    label: '指派给的部门名称',
+    label: '指派给的部门',
     fieldName: 'assignDeptName',
     component: 'Input',
+    disabled: true,
   },
-  // {
-  //   label: '指派给的负责人ID',
-  //   fieldName: 'assignUserId',
-  //   component: 'Input',
-  // },
+  {
+    label: '指派给的负责人ID',
+    fieldName: 'assignUserId',
+    component: 'Input',
+    dependencies: {
+      show: () => false,
+      triggerFields: [''],
+    },
+  },
+  {
+    label: '指派给的负责人',
+    fieldName: 'assignUserName',
+    component: 'Input',
+    disabled: true,
+  },
   {
     label: '任务截止时间',
     fieldName: 'executeDeadline',

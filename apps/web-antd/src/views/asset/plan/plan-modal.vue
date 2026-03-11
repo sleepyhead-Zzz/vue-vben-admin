@@ -59,7 +59,7 @@ const defaultForm = (): AssetAPI.AssetInspectionPlanDTO => ({
 const form = ref(defaultForm());
 const deptTree = ref<any[]>([]);
 const isUpdate = ref(false);
-const currentPlanId = ref<null | number>(null);
+const currentPlanId = ref<null | number | string>(null);
 const calendarType = ref<CalendarType>('week');
 
 /* =========================

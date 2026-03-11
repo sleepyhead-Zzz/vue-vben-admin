@@ -36,6 +36,10 @@ export const columns: VxeGridProps['columns'] = [
     title: '计划名称',
     field: 'planName',
   },
+  {
+    title: '负责部门',
+    field: 'deptName',
+  },
 
   {
     title: '调度模式',
