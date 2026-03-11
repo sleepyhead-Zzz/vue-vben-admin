@@ -99,7 +99,9 @@ export const useNotifyStore = defineStore('app-notify', () => {
   }
 
   function patchNoticeAsRead(noticeId: number) {
-    const target = notifications.value.find((item) => item.noticeId === noticeId);
+    const target = notifications.value.find(
+      (item) => item.noticeId === noticeId,
+    );
     if (!target || target.isRead) {
       return;
     }
@@ -151,7 +153,10 @@ export const useNotifyStore = defineStore('app-notify', () => {
       }
 
       notification.success({
-        description: typeof message === 'string' ? message : $t('component.notice.received'),
+        description:
+          typeof message === 'string'
+            ? message
+            : $t('component.notice.received'),
         duration: 3,
         message: $t('component.notice.received'),
       });

@@ -24,7 +24,8 @@ type LocationNode = AssetAPI.AssetLocationDTO & {
 };
 
 const route = useRoute();
-const planId = route.params.planId as unknown as AssetAPI.getPlanLocationsParams['planId'];
+const planId = route.params
+  .planId as unknown as AssetAPI.getPlanLocationsParams['planId'];
 const ROOT_LOCATION_ID =
   '0' as unknown as AssetAPI.getLocationTreeParams['parentLocationId'];
 
@@ -190,7 +191,8 @@ function onCheckChange(row: LocationNode, e: { target: { checked: boolean } }) {
 
   function updateSet(node: LocationNode) {
     if (node.checked && (!node.children || node.children.length === 0))
-      node.locationId !== undefined && checkedLocationIdSet.add(node.locationId);
+      node.locationId !== undefined &&
+        checkedLocationIdSet.add(node.locationId);
     else if (!node.checked && node.locationId !== undefined)
       checkedLocationIdSet.delete(node.locationId);
     node.children?.forEach(updateSet);

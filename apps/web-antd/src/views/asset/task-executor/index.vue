@@ -87,7 +87,7 @@ async function loadTaskInfo(taskId: string) {
 }
 
 // 获取设备信息 & 巡检项并初始化 results
-async function loadInspectionItem(deviceId: string | number) {
+async function loadInspectionItem(deviceId: number | string) {
   try {
     const deviceRes = await getDeviceInfo({ deviceId });
     deviceInfo.value = deviceRes.data;
@@ -151,7 +151,7 @@ const goToRepair = () => {
           <ADescriptionsItem label="任务 ID">
             {{ taskId }}
           </ADescriptionsItem>
-        <ADescriptionsItem label="巡检名称">
+          <ADescriptionsItem label="巡检名称">
             {{ taskInfo?.taskName }}
           </ADescriptionsItem>
           <ADescriptionsItem label="巡检计划">
