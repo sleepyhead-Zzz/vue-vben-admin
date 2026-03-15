@@ -5,14 +5,24 @@ import { DictEnum } from '@vben/constants';
 
 import { getDictOptions } from '#/utils/dict';
 
+import { businessTypeOptions, taskTypeOptions } from './shared';
+
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      options: taskTypeOptions,
+    },
     fieldName: 'taskType',
     label: '任务类型',
   },
   {
-    component: 'Input',
+    component: 'Select',
+    componentProps: {
+      optionFilterProp: 'label',
+      options: businessTypeOptions,
+      showSearch: true,
+    },
     fieldName: 'businessType',
     label: '业务类型',
   },
@@ -30,17 +40,24 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '任务ID',
     field: 'taskId',
-    width: 130,
+    width: 120,
+    visible: false,
   },
   {
     title: '任务类型',
     field: 'taskType',
-    minWidth: 160,
+    minWidth: 140,
+    slots: {
+      default: 'taskType',
+    },
   },
   {
     title: '业务类型',
     field: 'businessType',
-    minWidth: 160,
+    minWidth: 180,
+    slots: {
+      default: 'businessType',
+    },
   },
   {
     title: '状态',
@@ -59,30 +76,24 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   {
-    title: '处理/总数',
-    field: 'processedRows',
-    minWidth: 120,
-    formatter({ row }) {
-      const processedRows = row.processedRows ?? 0;
-      const totalRows = row.totalRows ?? 0;
-      return `${processedRows}/${totalRows}`;
-    },
+    title: '成功数',
+    field: 'successCount',
+    width: 90,
   },
   {
-    title: '成功行数',
-    field: 'successRows',
-    width: 100,
-    formatter({ row }) {
-      return row.successRows ?? 0;
-    },
+    title: '失败数',
+    field: 'failedCount',
+    width: 90,
   },
   {
-    title: '失败行数',
-    field: 'failRows',
-    width: 100,
-    formatter({ row }) {
-      return row.failRows ?? 0;
-    },
+    title: '跳过数',
+    field: 'skippedCount',
+    width: 90,
+  },
+  {
+    title: '错误数',
+    field: 'errorCount',
+    width: 90,
   },
   {
     title: '创建时间',
@@ -90,21 +101,15 @@ export const columns: VxeGridProps['columns'] = [
     minWidth: 170,
   },
   {
-    title: '开始时间',
-    field: 'startTime',
-    minWidth: 170,
-  },
-  {
-    title: '结束时间',
-    field: 'endTime',
-    minWidth: 170,
+    title: '创建人',
+    field: 'creatorName',
+    width: 100,
   },
   {
     field: 'action',
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 120,
-    resizable: false,
+    width: 400,
   },
 ];

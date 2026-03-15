@@ -3,7 +3,6 @@ import type { VbenFormProps } from '@vben/common-ui';
 
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Page, useVbenModal } from '@vben/common-ui';
@@ -17,6 +16,7 @@ import {
   getPagedFactPerformanceResult,
 } from '#/api/perf/factPerformanceResult';
 import { commonDownloadExcel } from '#/utils/file/download';
+import { getJobTaskDetailPageKey } from '#/views/system/job-task/shared';
 
 import calcTriggerModal from './calc-trigger-modal.vue';
 import { columns, querySchema } from './data';
@@ -35,20 +35,9 @@ const formOptions: VbenFormProps = {
   },
   schema: querySchema(),
   wrapperClass: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-  // 处理区间选择器RangePicker时间格式 将一个字段映射为两个字段 搜索/导出会用到
-  // 不需要直接删除
-  // fieldMappingTime: [
-  //  [
-  //    'createTime',
-  //    ['params[beginTime]', 'params[endTime]'],
-  //    ['YYYY-MM-DD 00:00:00', 'YYYY-MM-DD 23:59:59'],
-  //  ],
-  // ],
 };
 
 const gridOptions: VxeGridProps = {
-  // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新
-  // columns: columns(),
   columns,
   height: 'auto',
   keepSource: true,
@@ -68,7 +57,6 @@ const gridOptions: VxeGridProps = {
   rowConfig: {
     keyField: 'performanceId',
   },
-  // 表格全局唯一表示 保存列配置需要用到
   id: 'perf-FactPerformanceResult-index',
 };
 
@@ -83,8 +71,6 @@ const [FactPerformanceResultModal, modalApi] = useVbenModal({
 const [CalcTriggerModal, calcTriggerModalApi] = useVbenModal({
   connectedComponent: calcTriggerModal,
 });
-
-const latestCalcJobId = ref<string>();
 
 async function handleDetail(row: PerfAPI.PerfFactPerformanceResultDTO) {
   if (!row.performanceId) {
@@ -111,16 +97,26 @@ function openCalcTriggerModal(mode: CalcTriggerMode) {
   calcTriggerModalApi.open();
 }
 
-function navigateToCalcTask(jobId?: number | string) {
-  if (jobId !== undefined && jobId !== null && `${jobId}` !== '') {
-    const normalizedJobId = String(jobId);
-    latestCalcJobId.value = normalizedJobId;
-    router.push(`/perf/performance-result/calc-task/${normalizedJobId}`);
-    return;
+// eslint-disable-next-line unicorn/no-object-as-default-parameter
+function openPerfTaskCenter(query = { taskType: 'perf_calc' }) {
+  router.push({
+    path: '/system/job-task',
+    query,
+  });
+}
+
+function navigateToTaskDetail(taskId?: number | string) {
+  if (taskId === undefined || taskId === null || `${taskId}` === '') {
+    return false;
   }
 
-  message.warning('暂无最近任务，请先触发计算或手动输入任务ID');
-  router.push('/perf/performance-result/calc-task');
+  router.push({
+    path: `/system/job-task/${String(taskId)}`,
+    query: {
+      pageKey: getJobTaskDetailPageKey(taskId),
+    },
+  });
+  return true;
 }
 
 async function handleCalcSubmitted({
@@ -131,20 +127,21 @@ async function handleCalcSubmitted({
   response: PerfAPI.ResponseDTOPerformanceCalcTriggerResponseDTO;
 }) {
   const actionLabel = mode === 'monthly' ? '月度计算' : '区间计算';
-  const jobId =
-    response.data?.jobId === undefined || response.data?.jobId === null
-      ? undefined
-      : String(response.data.jobId);
+  const taskId = response.data?.taskId;
 
   if (response.code === 200) {
     message.success(`${actionLabel}任务已提交`);
-    navigateToCalcTask(jobId);
+    if (!navigateToTaskDetail(taskId)) {
+      openPerfTaskCenter();
+    }
     return;
   }
 
   if (response.code === 105) {
     message.warning(response.message || '已有计算任务正在执行');
-    navigateToCalcTask(jobId);
+    if (!navigateToTaskDetail(taskId)) {
+      openPerfTaskCenter({ status: 'running', taskType: 'perf_calc' });
+    }
     return;
   }
 
@@ -174,9 +171,9 @@ async function handleCalcSubmitted({
           </a-button>
           <a-button
             v-access:code="['perf:FactPerformanceResultCalc:detail']"
-            @click="navigateToCalcTask(latestCalcJobId)"
+            @click="openPerfTaskCenter()"
           >
-            查看计算任务
+            查看绩效任务
           </a-button>
           <a-button
             v-access:code="['perf:FactPerformanceResult:export']"

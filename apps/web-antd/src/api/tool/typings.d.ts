@@ -88,9 +88,9 @@ declare namespace ToolAPI {
     htmlType?: string;
     dictType?: string;
     sort?: number;
-    capJavaField?: string;
     increment?: boolean;
     query?: boolean;
+    capJavaField?: string;
     list?: boolean;
     required?: boolean;
     pk?: boolean;
@@ -171,8 +171,8 @@ declare namespace ToolAPI {
     parentMenuId?: number;
     parentMenuName?: string;
     params?: Record<string, any>;
-    crud?: boolean;
     tree?: boolean;
+    crud?: boolean;
   };
 
   type getGenInfoParams = {

@@ -71,59 +71,6 @@ export async function editFactPerformanceResult(
   );
 }
 
-/** 获取绩效计算任务状态 GET /perf/FactPerformanceResult/calc/jobs/${param0} */
-export async function getCalcJob(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: PerfAPI.getCalcJobParams,
-  options?: { [key: string]: any },
-) {
-  const { jobId: param0, ...queryParams } = params;
-  return request<PerfAPI.ResponseDTOPerformanceCalcJobDTO>(
-    `/perf/FactPerformanceResult/calc/jobs/${param0}`,
-    {
-      method: 'GET',
-      params: { ...queryParams },
-      ...(options || {}),
-    },
-  );
-}
-
-/** 手动导出绩效计算结果并上传OSS POST /perf/FactPerformanceResult/calc/jobs/${param0}/export */
-export async function exportCalcJob(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: PerfAPI.exportCalcJobParams,
-  options?: { [key: string]: any },
-) {
-  const { jobId: param0, ...queryParams } = params;
-  return request<PerfAPI.ResponseDTOPerformanceCalcJobDTO>(
-    `/perf/FactPerformanceResult/calc/jobs/${param0}/export`,
-    {
-      method: 'POST',
-      params: { ...queryParams },
-      ...(options || {}),
-    },
-  );
-}
-
-/** 分页获取绩效计算任务日志 GET /perf/FactPerformanceResult/calc/jobs/${param0}/logs */
-export async function getCalcJobLogs(
-  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: PerfAPI.getCalcJobLogsParams,
-  options?: { [key: string]: any },
-) {
-  const { jobId: param0, ...queryParams } = params;
-  return request<PerfAPI.ResponseDTOPageDTOPerformanceCalcJobLogDTO>(
-    `/perf/FactPerformanceResult/calc/jobs/${param0}/logs`,
-    {
-      method: 'GET',
-      params: {
-        ...queryParams,
-      },
-      ...(options || {}),
-    },
-  );
-}
-
 /** 触发月度绩效计算（销量/利润按当年1月1日至目标月末累计） POST /perf/FactPerformanceResult/calc/monthly/trigger */
 export async function triggerMonthlyCalculation(
   body: PerfAPI.TriggerMonthlyCalculationCommand,

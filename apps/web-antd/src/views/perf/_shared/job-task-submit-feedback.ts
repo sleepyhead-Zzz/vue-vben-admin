@@ -4,6 +4,8 @@ import { h } from 'vue';
 
 import { Modal } from 'ant-design-vue';
 
+import { getJobTaskDetailPageKey } from '#/views/system/job-task/shared';
+
 interface JobSubmitLike {
   runId?: string;
   status?: string;
@@ -38,16 +40,21 @@ export function showJobTaskSubmitFeedback(
 
   const job = normalizeJobSubmitData(response?.data);
   const taskId = job.taskId;
-  const detailPath =
+  const detailRoute =
     taskId === undefined || taskId === null || taskId === ''
       ? '/system/job-task'
-      : `/system/job-task/${taskId}`;
+      : {
+          path: `/system/job-task/${taskId}`,
+          query: {
+            pageKey: getJobTaskDetailPageKey(taskId),
+          },
+        };
 
   Modal.confirm({
     title: '任务已提交',
-    okText: '查看任务',
+    okText: '查看任务详情',
     cancelText: '取消',
-    onOk: () => router.push(detailPath),
+    onOk: () => router.push(detailRoute),
     width: 560,
     content: h('div', { class: 'space-y-2 text-sm' }, [
       h('div', [`任务ID：${job.taskId ?? '-'}`]),
@@ -60,7 +67,7 @@ export function showJobTaskSubmitFeedback(
           class:
             'mt-2 rounded border border-blue-200 bg-blue-50 p-2 text-blue-700',
         },
-        '请到 系统管理 > 任务管理 查看执行进度与明细日志',
+        '请到统一任务中心查看执行进度、日志与任务明细。',
       ),
     ]),
   });

@@ -212,10 +212,6 @@ declare namespace PerfAPI {
     planId: number;
   };
 
-  type exportCalcJobParams = {
-    jobId: number;
-  };
-
   type exportDimCustomerByExcelParams = {
     query: PerfDimCustomerQuery;
   };
@@ -262,16 +258,6 @@ declare namespace PerfAPI {
 
   type exportSalesPlanByExcelParams = {
     query: PerfFactSalesPlanQuery;
-  };
-
-  type getCalcJobLogsParams = {
-    jobId: number;
-    pageNum?: number;
-    pageSize?: number;
-  };
-
-  type getCalcJobParams = {
-    jobId: number;
   };
 
   type getDimCustomerInfoParams = {
@@ -808,13 +794,6 @@ declare namespace PerfAPI {
     rows?: PerfFactSalesPlanDTO[];
   };
 
-  type PageDTOPerformanceCalcJobLogDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: PerformanceCalcJobLogDTO[];
-  };
-
   type PerfDimCustomerDTO = {
     /** 客户主键ID */
     customerId?: number;
@@ -1273,82 +1252,14 @@ declare namespace PerfAPI {
     planQuantity?: number;
   };
 
-  type PerformanceCalcJobDTO = {
-    /** 作业ID */
-    id?: number;
-    /** 作业类型 */
-    jobType?: string;
-    /** workflowId */
-    workflowId?: string;
-    /** runId */
-    runId?: string;
-    /** 状态 */
-    status?: string;
-    /** 参数快照JSON */
-    paramsJson?: string;
-    /** 总进度 */
-    progressTotal?: number;
-    /** 已完成进度 */
-    progressDone?: number;
-    /** 成功人数 */
-    successCount?: number;
-    /** 失败人数 */
-    failedCount?: number;
-    /** 跳过人数 */
-    skippedCount?: number;
-    /** 错误条数 */
-    errorCount?: number;
-    /** 触发人 */
-    createdBy?: number;
-    /** 创建时间 */
-    createTime?: string;
-    /** 开始时间 */
-    startedAt?: string;
-    /** 结束时间 */
-    finishedAt?: string;
-    /** 信息 */
-    message?: string;
-    /** 导出状态 */
-    exportStatus?: string;
-    /** 导出OSS ID */
-    exportOssId?: number;
-    /** 导出文件名 */
-    exportFileName?: string;
-    /** 导出时间 */
-    exportedAt?: string;
-  };
-
-  type PerformanceCalcJobLogDTO = {
-    /** 日志ID */
-    id?: number;
-    /** 作业ID */
-    jobId?: number;
-    /** 序号 */
-    seq?: number;
-    /** 日志级别 */
-    level?: string;
-    /** 阶段 */
-    stage?: string;
-    /** 周期键 */
-    periodKey?: string;
-    /** 用户ID */
-    userId?: number;
-    /** 日志内容 */
-    message?: string;
-    /** 明细JSON */
-    detailJson?: string;
-    /** 日志时间 */
-    createdAt?: string;
-  };
-
   type PerformanceCalcTriggerResponseDTO = {
-    /** 作业ID */
-    jobId?: number;
+    /** 任务ID */
+    taskId?: number;
     /** Workflow ID */
     workflowId?: string;
     /** Workflow Run ID */
     runId?: string;
-    /** 作业状态 */
+    /** 任务状态 */
     status?: string;
     /** 提交时间 */
     submittedAt?: string;
@@ -1694,12 +1605,6 @@ declare namespace PerfAPI {
     data?: PageDTOPerfFactSalesPlanDTO;
   };
 
-  type ResponseDTOPageDTOPerformanceCalcJobLogDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOPerformanceCalcJobLogDTO;
-  };
-
   type ResponseDTOPerfDimCustomerDTO = {
     code?: number;
     message?: string;
@@ -1770,12 +1675,6 @@ declare namespace PerfAPI {
     code?: number;
     message?: string;
     data?: PerfFactSalesPlanDTO;
-  };
-
-  type ResponseDTOPerformanceCalcJobDTO = {
-    code?: number;
-    message?: string;
-    data?: PerformanceCalcJobDTO;
   };
 
   type ResponseDTOPerformanceCalcTriggerResponseDTO = {

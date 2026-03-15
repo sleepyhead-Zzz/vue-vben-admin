@@ -82,18 +82,6 @@ const localRoutes: RouteRecordStringComponent[] = [
     name: 'SystemJobTaskDetail',
     path: '/system/job-task/:taskId',
   },
-  {
-    component: '/perf/performance-result/task-detail',
-    meta: {
-      activePath: '/perf/performance-result',
-      icon: 'ant-design:setting-outlined',
-      title: '绩效计算任务详情',
-      hideInMenu: true,
-      requireHomeRedirect: true,
-    },
-    name: 'PerfPerformanceCalcTaskDetail',
-    path: '/perf/performance-result/calc-task/:jobId?',
-  },
   // {
   //   component: '/workflow/components/flow-designer',
   //   meta: {

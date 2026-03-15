@@ -271,6 +271,10 @@ declare namespace SystemAPI {
     query: SysOssConfigQuery;
   };
 
+  type exportPerfCalcParams = {
+    taskId: number;
+  };
+
   type exportPostByExcelParams = {
     query: SysPostQuery;
   };
@@ -527,6 +531,20 @@ declare namespace SystemAPI {
     noticeId: number;
   };
 
+  type ImportSummary = {
+    recordId?: number;
+    ossId?: number;
+    fileName?: string;
+    fileUrl?: string;
+    sheetName?: string;
+    updateSupport?: boolean;
+    startedAt?: string;
+    finishedAt?: string;
+    reverted?: boolean;
+    revertedAt?: string;
+    revertedBy?: number;
+  };
+
   type JobImportDetailDTO = {
     /** 明细ID */
     detailId?: number;
@@ -534,93 +552,22 @@ declare namespace SystemAPI {
     taskId?: number;
     /** 导入记录ID */
     recordId?: number;
-    /** Excel行号 */
+    /** 行号 */
     rowNum?: number;
     /** 行数据 */
     rowData?: string;
+    /** 处理状态 */
+    status?: string;
     /** 目标表 */
     targetTable?: string;
     /** 目标业务ID */
     targetBizId?: number;
     /** 操作类型 */
     opType?: string;
-    /** 状态 */
-    status?: string;
     /** 失败原因 */
     failReason?: string;
     /** 处理时间 */
     processTime?: string;
-  };
-
-  type JobLogDTO = {
-    /** 日志ID */
-    logId?: number;
-    /** 任务ID */
-    taskId?: number;
-    /** 序号 */
-    seq?: number;
-    /** 日志级别 */
-    level?: string;
-    /** 阶段 */
-    stage?: string;
-    /** 日志内容 */
-    message?: string;
-    /** 明细 */
-    detailJson?: string;
-    /** 日志时间 */
-    logTime?: string;
-  };
-
-  type JobTaskDTO = {
-    /** 任务ID */
-    taskId?: number;
-    /** 任务类型 */
-    taskType?: string;
-    /** 业务类型 */
-    businessType?: string;
-    /** 任务状态 */
-    status?: string;
-    /** 进度(0-100) */
-    progress?: number;
-    /** 总行数 */
-    totalRows?: number;
-    /** 已处理行数 */
-    processedRows?: number;
-    /** 成功行数 */
-    successRows?: number;
-    /** 失败行数 */
-    failRows?: number;
-    /** 开始时间 */
-    startTime?: string;
-    /** 结束时间 */
-    endTime?: string;
-    /** 错误信息 */
-    errorMessage?: string;
-    /** workflowId */
-    workflowId?: string;
-    /** runId */
-    runId?: string;
-    /** 创建人 */
-    creatorId?: number;
-    /** 创建时间 */
-    createTime?: string;
-  };
-
-  type JobTaskProgressDTO = {
-    /** 任务ID */
-    taskId?: number;
-    /** 任务状态 */
-    status?: string;
-    /** 进度(0-100) */
-    progress?: number;
-    /** 总行数 */
-    totalRows?: number;
-    /** 已处理行数 */
-    processedRows?: number;
-    /** 成功行数 */
-    successRows?: number;
-    /** 失败行数 */
-    failRows?: number;
   };
 
   type listOssInfoByIdsParams = {
@@ -697,20 +644,6 @@ declare namespace SystemAPI {
     rows?: JobImportDetailDTO[];
   };
 
-  type PageDTOJobLogDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: JobLogDTO[];
-  };
-
-  type PageDTOJobTaskDTO = {
-    /** 总记录数 */
-    total?: number;
-    /** 列表数据 */
-    rows?: JobTaskDTO[];
-  };
-
   type PageDTOSysClientDTO = {
     /** 总记录数 */
     total?: number;
@@ -737,6 +670,20 @@ declare namespace SystemAPI {
     total?: number;
     /** 列表数据 */
     rows?: SysDictTypeDTO[];
+  };
+
+  type PageDTOSysJobLogDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysJobLogDTO[];
+  };
+
+  type PageDTOSysJobTaskDTO = {
+    /** 总记录数 */
+    total?: number;
+    /** 列表数据 */
+    rows?: SysJobTaskDTO[];
   };
 
   type PageDTOSysNoticeAdminListDTO = {
@@ -790,8 +737,10 @@ declare namespace SystemAPI {
 
   type pageImportDetailsParams = {
     taskId: number;
-    /** 状态(success/failed) */
+    /** 处理状态 */
     status?: string;
+    /** 失败原因关键字 */
+    failReason?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -833,6 +782,20 @@ declare namespace SystemAPI {
     beginTime?: Date;
     /** 结束时间 */
     endTime?: Date;
+  };
+
+  type PerfCalcSummary = {
+    jobType?: string;
+    year?: number;
+    month?: number;
+    fromMonth?: number;
+    toMonth?: number;
+    overwrite?: boolean;
+    autoExport?: boolean;
+    exportStatus?: string;
+    exportOssId?: number;
+    exportFileName?: string;
+    exportedAt?: string;
   };
 
   type removeByIdParams = {
@@ -928,18 +891,6 @@ declare namespace SystemAPI {
     data?: number;
   };
 
-  type ResponseDTOJobTaskDTO = {
-    code?: number;
-    message?: string;
-    data?: JobTaskDTO;
-  };
-
-  type ResponseDTOJobTaskProgressDTO = {
-    code?: number;
-    message?: string;
-    data?: JobTaskProgressDTO;
-  };
-
   type ResponseDTOListSysConfigDTO = {
     code?: number;
     message?: string;
@@ -1024,18 +975,6 @@ declare namespace SystemAPI {
     data?: PageDTOJobImportDetailDTO;
   };
 
-  type ResponseDTOPageDTOJobLogDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOJobLogDTO;
-  };
-
-  type ResponseDTOPageDTOJobTaskDTO = {
-    code?: number;
-    message?: string;
-    data?: PageDTOJobTaskDTO;
-  };
-
   type ResponseDTOPageDTOSysClientDTO = {
     code?: number;
     message?: string;
@@ -1058,6 +997,18 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: PageDTOSysDictTypeDTO;
+  };
+
+  type ResponseDTOPageDTOSysJobLogDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOSysJobLogDTO;
+  };
+
+  type ResponseDTOPageDTOSysJobTaskDTO = {
+    code?: number;
+    message?: string;
+    data?: PageDTOSysJobTaskDTO;
   };
 
   type ResponseDTOPageDTOSysNoticeAdminListDTO = {
@@ -1136,6 +1087,18 @@ declare namespace SystemAPI {
     code?: number;
     message?: string;
     data?: SysDictTypeDTO;
+  };
+
+  type ResponseDTOSysJobTaskDTO = {
+    code?: number;
+    message?: string;
+    data?: SysJobTaskDTO;
+  };
+
+  type ResponseDTOSysJobTaskProgressDTO = {
+    code?: number;
+    message?: string;
+    data?: SysJobTaskProgressDTO;
   };
 
   type ResponseDTOSysMenuDTO = {
@@ -1464,6 +1427,97 @@ declare namespace SystemAPI {
     updateTime?: string;
     /** 备注 */
     remark?: string;
+  };
+
+  type SysJobLogDTO = {
+    /** 日志ID */
+    logId?: number;
+    /** 任务ID */
+    taskId?: number;
+    /** 序号 */
+    seq?: number;
+    /** 日志级别 */
+    level?: string;
+    /** 阶段 */
+    stage?: string;
+    /** 上下文键 */
+    contextKey?: string;
+    /** 业务主体ID */
+    subjectId?: number;
+    /** 日志内容 */
+    message?: string;
+    /** 明细 */
+    detailJson?: string;
+    /** 日志时间 */
+    logTime?: string;
+  };
+
+  type SysJobTaskDTO = {
+    /** 任务ID */
+    taskId?: number;
+    /** 任务类型 */
+    taskType?: string;
+    /** 业务类型 */
+    businessType?: string;
+    /** 状态 */
+    status?: string;
+    /** 进度百分比 */
+    progress?: number;
+    /** 总进度 */
+    progressTotal?: number;
+    /** 已完成进度 */
+    progressDone?: number;
+    /** 成功数 */
+    successCount?: number;
+    /** 失败数 */
+    failedCount?: number;
+    /** 跳过数 */
+    skippedCount?: number;
+    /** 错误数 */
+    errorCount?: number;
+    /** 参数快照 */
+    paramsJson?: string;
+    /** 任务消息 */
+    message?: string;
+    /** 开始时间 */
+    startTime?: string;
+    /** 结束时间 */
+    endTime?: string;
+    /** workflowId */
+    workflowId?: string;
+    /** runId */
+    runId?: string;
+    /** 创建人 */
+    creatorId?: number;
+    /** 创建人姓名 */
+    creatorName?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 导入扩展 */
+    importInfo?: ImportSummary;
+    /** 绩效计算扩展 */
+    perfCalc?: PerfCalcSummary;
+  };
+
+  type SysJobTaskProgressDTO = {
+    /** 任务ID */
+    taskId?: number;
+    /** 任务状态 */
+    status?: string;
+    /** 进度百分比 */
+    progress?: number;
+    /** 总进度 */
+    progressTotal?: number;
+    /** 已完成进度 */
+    progressDone?: number;
+    /** 成功数 */
+    successCount?: number;
+    /** 失败数 */
+    failedCount?: number;
+    /** 跳过数 */
+    skippedCount?: number;
+    /** 错误数 */
+    errorCount?: number;
   };
 
   type SysMenuDTO = {

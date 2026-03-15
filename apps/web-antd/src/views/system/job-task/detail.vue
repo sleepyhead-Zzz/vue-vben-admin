@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { JobTaskTabKey } from './shared';
+
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -18,9 +20,12 @@ import {
   Space,
   Table,
   Tabs,
+  Tag,
 } from 'ant-design-vue';
 
+import { downloadFile } from '#/api/core/download';
 import {
+  exportPerfCalc,
   getJob,
   getJobProgress,
   pageImportDetails,
@@ -28,25 +33,35 @@ import {
   undoImport,
 } from '#/api/system/jobTask';
 import { getDictOptions } from '#/utils/dict';
+import { downloadByData } from '#/utils/file/download';
 import { renderDict } from '#/utils/render';
 
-type TabKey = 'base' | 'details' | 'logs' | 'progress';
+import {
+  getBusinessTypeLabel,
+  getTaskTypeLabel,
+  isPerfExportPollingStatus,
+  isTaskPollingStatus,
+  isTaskTerminalStatus,
+  normalizeJobTaskTabKey,
+} from './shared';
 
 const POLL_INTERVAL = 5000;
 
 const route = useRoute();
 const router = useRouter();
 
-const activeKey = ref<TabKey>('base');
+const activeKey = ref<JobTaskTabKey>('base');
 const loading = ref(false);
 const undoLoading = ref(false);
+const exportLoading = ref(false);
 const polling = ref(false);
+const downloadLoading = ref(false);
 
-const task = ref<SystemAPI.JobTaskDTO>({});
-const progress = ref<SystemAPI.JobTaskProgressDTO>({});
+const task = ref<SystemAPI.SysJobTaskDTO>({});
+const progress = ref<SystemAPI.SysJobTaskProgressDTO>({});
 
 const logsLoading = ref(false);
-const logs = ref<SystemAPI.JobLogDTO[]>([]);
+const logs = ref<SystemAPI.SysJobLogDTO[]>([]);
 const logsPageNum = ref(1);
 const logsPageSize = ref(10);
 const logsTotal = ref(0);
@@ -60,16 +75,51 @@ const importTotal = ref(0);
 
 let timer: null | ReturnType<typeof setInterval> = null;
 
-const taskId = computed(() => {
-  const id = route.params.taskId;
-  const taskIdRaw = Array.isArray(id) ? id[0] : id;
+const taskId = computed<string | undefined>(() => {
+  const raw = Array.isArray(route.params.taskId)
+    ? route.params.taskId[0]
+    : route.params.taskId;
 
-  if (!taskIdRaw) return undefined;
-  return taskIdRaw;
+  if (!raw) return undefined;
+  return String(raw);
 });
 
+const isImportTask = computed(() => task.value.taskType === 'excel_import');
+const isPerfTask = computed(() => task.value.taskType === 'perf_calc');
+
+const taskProgress = computed(() => ({
+  errorCount: progress.value.errorCount ?? task.value.errorCount ?? 0,
+  failedCount: progress.value.failedCount ?? task.value.failedCount ?? 0,
+  progress: progress.value.progress ?? task.value.progress ?? 0,
+  progressDone: progress.value.progressDone ?? task.value.progressDone ?? 0,
+  progressTotal: progress.value.progressTotal ?? task.value.progressTotal ?? 0,
+  skippedCount: progress.value.skippedCount ?? task.value.skippedCount ?? 0,
+  status: progress.value.status ?? task.value.status,
+  successCount: progress.value.successCount ?? task.value.successCount ?? 0,
+  taskId: progress.value.taskId ?? task.value.taskId,
+}));
+
 const canUndoImport = computed(
-  () => Boolean(taskId.value) && !loading.value && !undoLoading.value,
+  () =>
+    isImportTask.value &&
+    Boolean(taskId.value) &&
+    task.value.importInfo?.reverted !== true &&
+    !undoLoading.value,
+);
+
+const canManualExport = computed(
+  () =>
+    isPerfTask.value &&
+    Boolean(taskId.value) &&
+    isTaskTerminalStatus(task.value.status) &&
+    !exportLoading.value,
+);
+
+const shouldPollExportStatus = computed(
+  () =>
+    isPerfTask.value &&
+    isTaskTerminalStatus(task.value.status) &&
+    isPerfExportPollingStatus(task.value.perfCalc?.exportStatus),
 );
 
 const logsColumns = [
@@ -89,6 +139,18 @@ const logsColumns = [
     title: '阶段',
     dataIndex: 'stage',
     key: 'stage',
+    width: 120,
+  },
+  {
+    title: '上下文键',
+    dataIndex: 'contextKey',
+    key: 'contextKey',
+    width: 180,
+  },
+  {
+    title: '业务主体ID',
+    dataIndex: 'subjectId',
+    key: 'subjectId',
     width: 120,
   },
   {
@@ -119,6 +181,24 @@ const detailsColumns = [
     width: 120,
   },
   {
+    title: '目标表',
+    dataIndex: 'targetTable',
+    key: 'targetTable',
+    width: 180,
+  },
+  {
+    title: '目标业务ID',
+    dataIndex: 'targetBizId',
+    key: 'targetBizId',
+    width: 140,
+  },
+  {
+    title: '操作类型',
+    dataIndex: 'opType',
+    key: 'opType',
+    width: 120,
+  },
+  {
     title: '失败原因',
     dataIndex: 'failReason',
     key: 'failReason',
@@ -138,78 +218,131 @@ const detailsColumns = [
   },
 ];
 
-function isTerminalStatus(status?: string) {
+function resetTaskState() {
+  task.value = {};
+  progress.value = {};
+  logs.value = [];
+  logsTotal.value = 0;
+  importDetails.value = [];
+  importTotal.value = 0;
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+  const e = error as {
+    message?: string;
+    response?: { data?: { message?: string; msg?: string } };
+  };
+  return (
+    e?.response?.data?.msg ||
+    e?.response?.data?.message ||
+    e?.message ||
+    fallback
+  );
+}
+
+function formatBoolean(value?: boolean) {
+  if (value === undefined) return '-';
+  return value ? '是' : '否';
+}
+
+function renderExportStatusColor(status?: string) {
   const normalized = (status ?? '').toLowerCase();
-  const terminalStatus = new Set([
-    'cancel',
-    'canceled',
-    'cancelled',
-    'completed',
-    'done',
-    'error',
-    'failed',
-    'failure',
-    'success',
-  ]);
-  return terminalStatus.has(normalized);
+  const colorMap: Record<string, string> = {
+    failed: 'error',
+    pending: 'gold',
+    running: 'processing',
+    skipped: 'default',
+    succeeded: 'success',
+  };
+  return colorMap[normalized] ?? 'default';
+}
+
+async function handleDownloadByOss(ossId?: number, fileName?: string) {
+  if (!ossId || downloadLoading.value) return;
+
+  downloadLoading.value = true;
+  const hideLoading = message.loading('下载中，请稍后...', 0);
+
+  try {
+    const data = (await downloadFile({
+      ossId: String(ossId),
+    })) as unknown as BlobPart;
+    downloadByData(data, fileName || `oss_${ossId}`);
+    message.success('下载完成');
+  } catch (error) {
+    message.error(getErrorMessage(error, '下载失败，请稍后再试'));
+  } finally {
+    hideLoading();
+    downloadLoading.value = false;
+  }
 }
 
 async function fetchTaskBase() {
   if (!taskId.value) return;
-  const { data } = await getJob({ taskId: taskId.value });
+
+  const { data } = await getJob({ taskId: taskId.value as never });
   task.value = data ?? {};
+
+  if (!isImportTask.value && activeKey.value === 'details') {
+    activeKey.value = 'base';
+  }
 }
 
 async function fetchProgress() {
   if (!taskId.value) return;
-  const { data } = await getJobProgress({ taskId: taskId.value });
+  const { data } = await getJobProgress({ taskId: taskId.value as never });
   progress.value = data ?? {};
 }
 
 async function fetchLogs() {
   if (!taskId.value) return;
+
   logsLoading.value = true;
   try {
     const { data } = await pageJobLogs({
-      taskId: taskId.value,
       pageNum: logsPageNum.value,
       pageSize: logsPageSize.value,
+      taskId: taskId.value as never,
     });
-    logs.value = data.rows ?? [];
-    logsTotal.value = data.total ?? 0;
+    logs.value = data?.rows ?? [];
+    logsTotal.value = data?.total ?? 0;
   } finally {
     logsLoading.value = false;
   }
 }
 
 async function fetchImportDetails() {
-  if (!taskId.value) return;
+  if (!taskId.value || !isImportTask.value) {
+    importDetails.value = [];
+    importTotal.value = 0;
+    return;
+  }
+
   detailLoading.value = true;
   try {
     const { data } = await pageImportDetails({
-      taskId: taskId.value,
-      status: detailStatus.value,
       pageNum: importPageNum.value,
       pageSize: importPageSize.value,
+      status: detailStatus.value,
+      taskId: taskId.value as never,
     });
-    importDetails.value = data.rows ?? [];
-    importTotal.value = data.total ?? 0;
+    importDetails.value = data?.rows ?? [];
+    importTotal.value = data?.total ?? 0;
   } finally {
     detailLoading.value = false;
   }
 }
 
 async function refreshAll() {
-  if (!taskId.value) return;
+  if (!taskId.value) {
+    resetTaskState();
+    return;
+  }
 
   loading.value = true;
   try {
-    await Promise.all([
-      fetchTaskBase(),
-      fetchProgress(),
-      fetchLogs(),
-      fetchImportDetails(),
-    ]);
+    await Promise.all([fetchTaskBase(), fetchProgress(), fetchLogs()]);
+    await fetchImportDetails();
   } finally {
     loading.value = false;
   }
@@ -222,21 +355,73 @@ function stopPolling() {
   }
 }
 
+async function pollTaskState() {
+  if (isTaskPollingStatus(taskProgress.value.status)) {
+    await fetchProgress();
+
+    if (!isTaskPollingStatus(progress.value.status ?? task.value.status)) {
+      await fetchTaskBase();
+    }
+  }
+
+  if (shouldPollExportStatus.value) {
+    await fetchTaskBase();
+  }
+
+  if (activeKey.value === 'logs') {
+    await fetchLogs();
+  }
+
+  if (activeKey.value === 'details') {
+    await fetchImportDetails();
+  }
+
+  if (
+    !isTaskPollingStatus(taskProgress.value.status) &&
+    !shouldPollExportStatus.value
+  ) {
+    stopPolling();
+  }
+}
+
 function startPolling() {
-  if (!taskId.value) return;
   stopPolling();
+
+  if (
+    !isTaskPollingStatus(taskProgress.value.status) &&
+    !shouldPollExportStatus.value
+  ) {
+    return;
+  }
+
   timer = setInterval(async () => {
     if (polling.value) return;
     polling.value = true;
     try {
-      await Promise.all([fetchProgress(), fetchLogs(), fetchImportDetails()]);
-      if (isTerminalStatus(progress.value.status || task.value.status)) {
-        stopPolling();
-      }
+      await pollTaskState();
     } finally {
       polling.value = false;
     }
   }, POLL_INTERVAL);
+}
+
+function syncTabToRoute(tab: JobTaskTabKey) {
+  const currentTab = normalizeJobTaskTabKey(
+    Array.isArray(route.query.tab) ? route.query.tab[0] : route.query.tab,
+  );
+
+  if (currentTab === tab) {
+    return;
+  }
+
+  const query = { ...route.query };
+  if (tab === 'base') {
+    delete query.tab;
+  } else {
+    query.tab = tab;
+  }
+
+  router.replace({ query });
 }
 
 function handleBack() {
@@ -261,29 +446,15 @@ async function handleImportStatusChange(value?: string) {
   await fetchImportDetails();
 }
 
-function getErrorMessage(error: unknown, fallback: string) {
-  const e = error as {
-    message?: string;
-    response?: { data?: { message?: string; msg?: string } };
-  };
-  return (
-    e?.response?.data?.msg ||
-    e?.response?.data?.message ||
-    e?.message ||
-    fallback
-  );
-}
-
 async function handleUndoImport() {
   if (!taskId.value || undoLoading.value) return;
+
   undoLoading.value = true;
   try {
-    await undoImport({ taskId: taskId.value });
+    await undoImport({ taskId: taskId.value as never });
     message.success('撤销导入成功');
     await refreshAll();
-    if (!isTerminalStatus(progress.value.status || task.value.status)) {
-      startPolling();
-    }
+    startPolling();
   } catch (error) {
     message.error(getErrorMessage(error, '撤销导入失败，请稍后重试'));
   } finally {
@@ -291,22 +462,64 @@ async function handleUndoImport() {
   }
 }
 
+async function handleManualExport() {
+  if (!taskId.value || exportLoading.value) return;
+
+  exportLoading.value = true;
+  try {
+    const { data } = await exportPerfCalc({ taskId: taskId.value as never });
+    if (data) {
+      task.value = data;
+    }
+    message.success('已提交手动导出请求');
+    await fetchTaskBase();
+    startPolling();
+  } catch (error) {
+    message.error(getErrorMessage(error, '手动导出失败，请稍后重试'));
+  } finally {
+    exportLoading.value = false;
+  }
+}
+
+watch(
+  () => route.query.tab,
+  (value) => {
+    activeKey.value = normalizeJobTaskTabKey(
+      Array.isArray(value) ? value[0] : value,
+    );
+  },
+  { immediate: true },
+);
+
+watch(activeKey, async (value) => {
+  syncTabToRoute(value);
+
+  if (value === 'logs') {
+    await fetchLogs();
+  }
+
+  if (value === 'details') {
+    await fetchImportDetails();
+  }
+});
+
 watch(
   () => route.params.taskId,
   async () => {
     stopPolling();
-    if (!taskId.value) return;
     logsPageNum.value = 1;
     detailStatus.value = undefined;
     importPageNum.value = 1;
-    await refreshAll();
-    if (!isTerminalStatus(progress.value.status || task.value.status)) {
-      startPolling();
+
+    if (!taskId.value) {
+      resetTaskState();
+      return;
     }
+
+    await refreshAll();
+    startPolling();
   },
-  {
-    immediate: true,
-  },
+  { immediate: true },
 );
 
 onBeforeUnmount(() => {
@@ -318,18 +531,44 @@ onBeforeUnmount(() => {
   <Page :auto-content-height="true">
     <Card :loading="loading" title="任务详情">
       <template #extra>
-        <Button @click="handleBack">返回列表</Button>
+        <Space wrap>
+          <Popconfirm
+            v-if="isImportTask"
+            :disabled="!canUndoImport"
+            title="确认撤销本任务对应的导入数据吗？"
+            @confirm="handleUndoImport"
+          >
+            <Button
+              :disabled="!canUndoImport"
+              :loading="undoLoading"
+              danger
+              v-access:code="['system:job:undo']"
+            >
+              撤销导入
+            </Button>
+          </Popconfirm>
+          <Button
+            v-if="isPerfTask"
+            :disabled="!canManualExport"
+            :loading="exportLoading"
+            v-access:code="['perf:FactPerformanceResultCalc:export']"
+            @click="handleManualExport"
+          >
+            手动导出
+          </Button>
+          <Button @click="handleBack">返回列表</Button>
+        </Space>
       </template>
 
       <Descriptions :column="3" bordered size="small">
         <DescriptionsItem label="任务ID">
-          {{ task.taskId }}
+          {{ task.taskId ?? '-' }}
         </DescriptionsItem>
         <DescriptionsItem label="任务类型">
-          {{ task.taskType || '-' }}
+          {{ getTaskTypeLabel(task.taskType) }}
         </DescriptionsItem>
         <DescriptionsItem label="业务类型">
-          {{ task.businessType || '-' }}
+          {{ getBusinessTypeLabel(task.businessType) }}
         </DescriptionsItem>
         <DescriptionsItem label="任务状态">
           <component
@@ -337,93 +576,204 @@ onBeforeUnmount(() => {
           />
         </DescriptionsItem>
         <DescriptionsItem label="任务进度" :span="2">
-          <Progress
-            :percent="Number(progress.progress ?? task.progress ?? 0)"
-          />
+          <Progress :percent="Number(taskProgress.progress ?? 0)" />
+          <div class="text-text-secondary mt-2 text-xs">
+            {{ taskProgress.progressDone }}/{{ taskProgress.progressTotal }}
+          </div>
         </DescriptionsItem>
-        <DescriptionsItem label="行数统计" :span="2">
-          {{
-            `${progress.processedRows ?? task.processedRows ?? 0}/${progress.totalRows ?? task.totalRows ?? 0}`
-          }}
-          （成功 {{ progress.successRows ?? task.successRows ?? 0 }}，失败
-          {{ progress.failRows ?? task.failRows ?? 0 }}）
+        <DescriptionsItem label="成功数">
+          {{ taskProgress.successCount }}
+        </DescriptionsItem>
+        <DescriptionsItem label="失败数">
+          {{ taskProgress.failedCount }}
+        </DescriptionsItem>
+        <DescriptionsItem label="跳过数">
+          {{ taskProgress.skippedCount }}
+        </DescriptionsItem>
+        <DescriptionsItem label="错误数">
+          {{ taskProgress.errorCount }}
+        </DescriptionsItem>
+        <DescriptionsItem label="创建人">
+          {{ task.creatorName ?? '-' }}
         </DescriptionsItem>
         <DescriptionsItem label="创建时间">
           {{ task.createTime || '-' }}
         </DescriptionsItem>
+        <DescriptionsItem label="开始时间">
+          {{ task.startTime || '-' }}
+        </DescriptionsItem>
+        <DescriptionsItem label="结束时间">
+          {{ task.endTime || '-' }}
+        </DescriptionsItem>
       </Descriptions>
 
       <Alert
-        v-if="task.errorMessage"
+        v-if="task.message"
         class="mt-4"
-        :message="task.errorMessage"
+        :message="task.message"
         show-icon
-        type="error"
+        type="info"
       />
 
       <Tabs v-model:active-key="activeKey" class="mt-4">
         <Tabs.TabPane key="base" tab="基本信息">
           <Descriptions :column="2" bordered size="small">
-            <DescriptionsItem label="任务ID">
-              {{ task.taskId }}
-            </DescriptionsItem>
-            <DescriptionsItem label="状态">
-              <component
-                :is="
-                  renderDict(task.status || '', DictEnum.SYS_JOB_TASK_STATUS)
-                "
-              />
-            </DescriptionsItem>
             <DescriptionsItem label="workflowId">
               {{ task.workflowId || '-' }}
             </DescriptionsItem>
             <DescriptionsItem label="runId">
               {{ task.runId || '-' }}
             </DescriptionsItem>
-            <DescriptionsItem label="创建人">
-              {{ task.creatorId || '-' }}
-            </DescriptionsItem>
-            <DescriptionsItem label="创建时间">
-              {{ task.createTime || '-' }}
-            </DescriptionsItem>
-            <DescriptionsItem label="开始时间">
-              {{ task.startTime || '-' }}
-            </DescriptionsItem>
-            <DescriptionsItem label="结束时间">
-              {{ task.endTime || '-' }}
+            <DescriptionsItem :span="2" label="参数快照">
+              <pre class="m-0 whitespace-pre-wrap break-all">{{
+                task.paramsJson || '-'
+              }}</pre>
             </DescriptionsItem>
           </Descriptions>
+
+          <template v-if="isImportTask && task.importInfo">
+            <div class="mt-4 text-base font-medium">导入扩展</div>
+            <Descriptions :column="2" bordered class="mt-2" size="small">
+              <DescriptionsItem label="记录ID">
+                {{ task.importInfo.recordId ?? '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="文件名">
+                <Button
+                  v-if="task.importInfo.ossId"
+                  :loading="downloadLoading"
+                  style="padding: 0"
+                  type="link"
+                  @click="
+                    handleDownloadByOss(
+                      task.importInfo.ossId,
+                      task.importInfo.fileName,
+                    )
+                  "
+                >
+                  {{ task.importInfo.fileName || task.importInfo.ossId }}
+                </Button>
+                <span v-else>{{ task.importInfo.fileName || '-' }}</span>
+              </DescriptionsItem>
+              <DescriptionsItem label="OSS ID">
+                {{ task.importInfo.ossId ?? '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="Sheet">
+                {{ task.importInfo.sheetName || '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="允许覆盖">
+                {{ formatBoolean(task.importInfo.updateSupport) }}
+              </DescriptionsItem>
+              <DescriptionsItem label="已撤销">
+                {{ formatBoolean(task.importInfo.reverted) }}
+              </DescriptionsItem>
+              <DescriptionsItem label="开始时间">
+                {{ task.importInfo.startedAt || '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="完成时间">
+                {{ task.importInfo.finishedAt || '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="撤销时间">
+                {{ task.importInfo.revertedAt || '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="撤销人">
+                {{ task.importInfo.revertedBy ?? '-' }}
+              </DescriptionsItem>
+            </Descriptions>
+          </template>
+
+          <template v-if="isPerfTask && task.perfCalc">
+            <div class="mt-4 text-base font-medium">绩效计算扩展</div>
+            <Descriptions :column="2" bordered class="mt-2" size="small">
+              <DescriptionsItem label="任务类型">
+                {{ task.perfCalc.jobType || '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="年份">
+                {{ task.perfCalc.year ?? '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="月份">
+                {{ task.perfCalc.month ?? '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="区间月份">
+                {{ task.perfCalc.fromMonth ?? '-' }} -
+                {{ task.perfCalc.toMonth ?? '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="覆盖已有结果">
+                {{ formatBoolean(task.perfCalc.overwrite) }}
+              </DescriptionsItem>
+              <DescriptionsItem label="自动导出">
+                {{ formatBoolean(task.perfCalc.autoExport) }}
+              </DescriptionsItem>
+              <DescriptionsItem label="导出状态">
+                <Tag
+                  :color="renderExportStatusColor(task.perfCalc.exportStatus)"
+                >
+                  {{ task.perfCalc.exportStatus || '-' }}
+                </Tag>
+              </DescriptionsItem>
+              <DescriptionsItem label="导出文件">
+                <Button
+                  v-if="task.perfCalc.exportOssId"
+                  :loading="downloadLoading"
+                  style="padding: 0"
+                  type="link"
+                  @click="
+                    handleDownloadByOss(
+                      task.perfCalc.exportOssId,
+                      task.perfCalc.exportFileName,
+                    )
+                  "
+                >
+                  {{
+                    task.perfCalc.exportFileName || task.perfCalc.exportOssId
+                  }}
+                </Button>
+                <span v-else>{{ task.perfCalc.exportFileName || '-' }}</span>
+              </DescriptionsItem>
+              <DescriptionsItem label="导出OSS ID">
+                {{ task.perfCalc.exportOssId ?? '-' }}
+              </DescriptionsItem>
+              <DescriptionsItem label="导出时间">
+                {{ task.perfCalc.exportedAt || '-' }}
+              </DescriptionsItem>
+            </Descriptions>
+          </template>
         </Tabs.TabPane>
 
         <Tabs.TabPane key="progress" tab="任务进度">
           <Descriptions :column="2" bordered size="small">
             <DescriptionsItem label="任务ID">
-              {{ progress.taskId || task.taskId || '-' }}
+              {{ taskProgress.taskId ?? '-' }}
             </DescriptionsItem>
             <DescriptionsItem label="状态">
               <component
                 :is="
                   renderDict(
-                    progress.status || task.status || '',
+                    taskProgress.status || '',
                     DictEnum.SYS_JOB_TASK_STATUS,
                   )
                 "
               />
             </DescriptionsItem>
             <DescriptionsItem label="进度" :span="2">
-              <Progress :percent="Number(progress.progress ?? 0)" />
+              <Progress :percent="Number(taskProgress.progress ?? 0)" />
             </DescriptionsItem>
-            <DescriptionsItem label="总行数">
-              {{ progress.totalRows ?? 0 }}
+            <DescriptionsItem label="总进度">
+              {{ taskProgress.progressTotal }}
             </DescriptionsItem>
-            <DescriptionsItem label="已处理行数">
-              {{ progress.processedRows ?? 0 }}
+            <DescriptionsItem label="已完成进度">
+              {{ taskProgress.progressDone }}
             </DescriptionsItem>
-            <DescriptionsItem label="成功行数">
-              {{ progress.successRows ?? 0 }}
+            <DescriptionsItem label="成功数">
+              {{ taskProgress.successCount }}
             </DescriptionsItem>
-            <DescriptionsItem label="失败行数">
-              {{ progress.failRows ?? 0 }}
+            <DescriptionsItem label="失败数">
+              {{ taskProgress.failedCount }}
+            </DescriptionsItem>
+            <DescriptionsItem label="跳过数">
+              {{ taskProgress.skippedCount }}
+            </DescriptionsItem>
+            <DescriptionsItem label="错误数">
+              {{ taskProgress.errorCount }}
             </DescriptionsItem>
           </Descriptions>
         </Tabs.TabPane>
@@ -435,11 +785,14 @@ onBeforeUnmount(() => {
             :loading="logsLoading"
             :pagination="{
               current: logsPageNum,
-              pageSize: logsPageSize,
-              total: logsTotal,
-              showSizeChanger: true,
               onChange: handleLogsPageChange,
+              onShowSizeChange: handleLogsPageChange,
+              pageSize: logsPageSize,
+              showSizeChanger: true,
+              total: logsTotal,
             }"
+            :scroll="{ x: 1200 }"
+            bordered
             row-key="logId"
             size="small"
           >
@@ -453,8 +806,8 @@ onBeforeUnmount(() => {
           </Table>
         </Tabs.TabPane>
 
-        <Tabs.TabPane key="details" tab="导入明细">
-          <Space class="mb-3">
+        <Tabs.TabPane v-if="isImportTask" key="details" tab="导入明细">
+          <Space class="mb-3" wrap>
             <span>状态筛选</span>
             <Select
               :options="getDictOptions(DictEnum.SYS_JOB_IMPORT_STATUS)"
@@ -465,20 +818,6 @@ onBeforeUnmount(() => {
                 (value) => handleImportStatusChange(value as string | undefined)
               "
             />
-            <Popconfirm
-              :disabled="!canUndoImport"
-              title="确认撤销本任务对应的导入数据吗？"
-              @confirm="handleUndoImport"
-            >
-              <a-button
-                :disabled="!canUndoImport"
-                :loading="undoLoading"
-                danger
-                v-access:code="['system:job:undo']"
-              >
-                撤销导入
-              </a-button>
-            </Popconfirm>
           </Space>
           <Table
             :columns="detailsColumns"
@@ -486,11 +825,14 @@ onBeforeUnmount(() => {
             :loading="detailLoading"
             :pagination="{
               current: importPageNum,
-              pageSize: importPageSize,
-              total: importTotal,
-              showSizeChanger: true,
               onChange: handleImportPageChange,
+              onShowSizeChange: handleImportPageChange,
+              pageSize: importPageSize,
+              showSizeChanger: true,
+              total: importTotal,
             }"
+            :scroll="{ x: 1400 }"
+            bordered
             row-key="detailId"
             size="small"
           >

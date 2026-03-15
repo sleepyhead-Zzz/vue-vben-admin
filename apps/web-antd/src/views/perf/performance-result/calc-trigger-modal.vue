@@ -129,11 +129,13 @@ async function handleConfirm() {
             year: formState.year,
           });
 
-    emit('submitted', { mode: currentMode.value, response });
-
     if (response.code === 200 || response.code === 105) {
+      emit('submitted', { mode: currentMode.value, response });
       modalApi.close();
+      return;
     }
+
+    message.error(response.message || '提交计算任务失败，请稍后重试');
   } catch (error) {
     const e = error as {
       message?: string;
