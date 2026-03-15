@@ -1,11 +1,11 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { DictEnum } from '@vben/constants';
-
-import { getDictOptions } from '#/utils/dict';
-
-import { businessTypeOptions, taskTypeOptions } from './shared';
+import {
+  businessTypeOptions,
+  getTaskStatusOptions,
+  taskTypeOptions,
+} from './shared';
 
 export const querySchema: FormSchemaGetter = () => [
   {
@@ -29,7 +29,7 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Select',
     componentProps: {
-      options: getDictOptions(DictEnum.SYS_JOB_TASK_STATUS),
+      options: getTaskStatusOptions(),
     },
     fieldName: 'status',
     label: '任务状态',
@@ -68,7 +68,7 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   {
-    title: '进度',
+    title: '任务进度',
     field: 'progress',
     minWidth: 180,
     slots: {
@@ -76,24 +76,32 @@ export const columns: VxeGridProps['columns'] = [
     },
   },
   {
-    title: '成功数',
+    title: '源数据成功',
     field: 'successCount',
-    width: 90,
+    width: 110,
   },
   {
-    title: '失败数',
+    title: '源数据失败',
     field: 'failedCount',
-    width: 90,
+    width: 110,
   },
   {
-    title: '跳过数',
+    title: '源数据跳过',
     field: 'skippedCount',
-    width: 90,
+    width: 110,
   },
   {
-    title: '错误数',
+    title: '源数据错误',
     field: 'errorCount',
-    width: 90,
+    width: 110,
+  },
+  {
+    title: '数据写入统计',
+    field: 'importInfo',
+    minWidth: 220,
+    slots: {
+      default: 'importWriteStats',
+    },
   },
   {
     title: '创建时间',

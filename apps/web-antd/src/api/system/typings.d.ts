@@ -543,6 +543,11 @@ declare namespace SystemAPI {
     reverted?: boolean;
     revertedAt?: string;
     revertedBy?: number;
+    dataTotalCount?: number;
+    dataSuccessCount?: number;
+    dataFailedCount?: number;
+    dataSkippedCount?: number;
+    dataErrorCount?: number;
   };
 
   type JobImportDetailDTO = {
@@ -1518,6 +1523,8 @@ declare namespace SystemAPI {
     skippedCount?: number;
     /** 错误数 */
     errorCount?: number;
+    /** 导入统计摘要 */
+    importInfo?: ImportSummary;
   };
 
   type SysMenuDTO = {

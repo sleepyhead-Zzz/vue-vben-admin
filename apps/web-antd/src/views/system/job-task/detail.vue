@@ -38,6 +38,11 @@ import { renderDict } from '#/utils/render';
 
 import {
   getBusinessTypeLabel,
+  getImportWriteStats,
+  getTaskCount,
+  getTaskStatusColor,
+  getTaskStatusLabel,
+  getTaskText,
   getTaskTypeLabel,
   isPerfExportPollingStatus,
   isTaskPollingStatus,
@@ -86,16 +91,33 @@ const taskId = computed<string | undefined>(() => {
 
 const isImportTask = computed(() => task.value.taskType === 'excel_import');
 const isPerfTask = computed(() => task.value.taskType === 'perf_calc');
+const taskImportInfo = computed(() => task.value.importInfo ?? {});
+const taskImportWriteStats = computed(() =>
+  getImportWriteStats({
+    ...task.value.importInfo,
+    ...progress.value.importInfo,
+  }),
+);
 
 const taskProgress = computed(() => ({
-  errorCount: progress.value.errorCount ?? task.value.errorCount ?? 0,
-  failedCount: progress.value.failedCount ?? task.value.failedCount ?? 0,
-  progress: progress.value.progress ?? task.value.progress ?? 0,
-  progressDone: progress.value.progressDone ?? task.value.progressDone ?? 0,
-  progressTotal: progress.value.progressTotal ?? task.value.progressTotal ?? 0,
-  skippedCount: progress.value.skippedCount ?? task.value.skippedCount ?? 0,
+  errorCount: getTaskCount(progress.value.errorCount ?? task.value.errorCount),
+  failedCount: getTaskCount(
+    progress.value.failedCount ?? task.value.failedCount,
+  ),
+  progress: getTaskCount(progress.value.progress ?? task.value.progress),
+  progressDone: getTaskCount(
+    progress.value.progressDone ?? task.value.progressDone,
+  ),
+  progressTotal: getTaskCount(
+    progress.value.progressTotal ?? task.value.progressTotal,
+  ),
+  skippedCount: getTaskCount(
+    progress.value.skippedCount ?? task.value.skippedCount,
+  ),
   status: progress.value.status ?? task.value.status,
-  successCount: progress.value.successCount ?? task.value.successCount ?? 0,
+  successCount: getTaskCount(
+    progress.value.successCount ?? task.value.successCount,
+  ),
   taskId: progress.value.taskId ?? task.value.taskId,
 }));
 
@@ -571,26 +593,28 @@ onBeforeUnmount(() => {
           {{ getBusinessTypeLabel(task.businessType) }}
         </DescriptionsItem>
         <DescriptionsItem label="任务状态">
-          <component
-            :is="renderDict(task.status || '', DictEnum.SYS_JOB_TASK_STATUS)"
-          />
+          <Tag :color="getTaskStatusColor(task.status)">
+            {{ getTaskStatusLabel(task.status) }}
+          </Tag>
         </DescriptionsItem>
         <DescriptionsItem label="任务进度" :span="2">
           <Progress :percent="Number(taskProgress.progress ?? 0)" />
           <div class="text-text-secondary mt-2 text-xs">
-            {{ taskProgress.progressDone }}/{{ taskProgress.progressTotal }}
+            任务进度：{{ taskProgress.progressDone }}/{{
+              taskProgress.progressTotal
+            }}
           </div>
         </DescriptionsItem>
-        <DescriptionsItem label="成功数">
+        <DescriptionsItem label="源数据成功">
           {{ taskProgress.successCount }}
         </DescriptionsItem>
-        <DescriptionsItem label="失败数">
+        <DescriptionsItem label="源数据失败">
           {{ taskProgress.failedCount }}
         </DescriptionsItem>
-        <DescriptionsItem label="跳过数">
+        <DescriptionsItem label="源数据跳过">
           {{ taskProgress.skippedCount }}
         </DescriptionsItem>
-        <DescriptionsItem label="错误数">
+        <DescriptionsItem label="源数据错误">
           {{ taskProgress.errorCount }}
         </DescriptionsItem>
         <DescriptionsItem label="创建人">
@@ -631,52 +655,71 @@ onBeforeUnmount(() => {
             </DescriptionsItem>
           </Descriptions>
 
-          <template v-if="isImportTask && task.importInfo">
+          <template v-if="isImportTask">
             <div class="mt-4 text-base font-medium">导入扩展</div>
             <Descriptions :column="2" bordered class="mt-2" size="small">
               <DescriptionsItem label="记录ID">
-                {{ task.importInfo.recordId ?? '-' }}
+                {{ getTaskText(taskImportInfo.recordId) }}
               </DescriptionsItem>
               <DescriptionsItem label="文件名">
                 <Button
-                  v-if="task.importInfo.ossId"
+                  v-if="taskImportInfo.ossId"
                   :loading="downloadLoading"
                   style="padding: 0"
                   type="link"
                   @click="
                     handleDownloadByOss(
-                      task.importInfo.ossId,
-                      task.importInfo.fileName,
+                      taskImportInfo.ossId,
+                      taskImportInfo.fileName,
                     )
                   "
                 >
-                  {{ task.importInfo.fileName || task.importInfo.ossId }}
+                  {{ taskImportInfo.fileName || taskImportInfo.ossId }}
                 </Button>
-                <span v-else>{{ task.importInfo.fileName || '-' }}</span>
+                <span v-else>{{ getTaskText(taskImportInfo.fileName) }}</span>
               </DescriptionsItem>
               <DescriptionsItem label="OSS ID">
-                {{ task.importInfo.ossId ?? '-' }}
+                {{ getTaskText(taskImportInfo.ossId) }}
               </DescriptionsItem>
               <DescriptionsItem label="Sheet">
-                {{ task.importInfo.sheetName || '-' }}
+                {{ getTaskText(taskImportInfo.sheetName) }}
               </DescriptionsItem>
               <DescriptionsItem label="允许覆盖">
-                {{ formatBoolean(task.importInfo.updateSupport) }}
+                {{ formatBoolean(taskImportInfo.updateSupport) }}
               </DescriptionsItem>
               <DescriptionsItem label="已撤销">
-                {{ formatBoolean(task.importInfo.reverted) }}
+                {{ formatBoolean(taskImportInfo.reverted) }}
               </DescriptionsItem>
               <DescriptionsItem label="开始时间">
-                {{ task.importInfo.startedAt || '-' }}
+                {{ getTaskText(taskImportInfo.startedAt) }}
               </DescriptionsItem>
               <DescriptionsItem label="完成时间">
-                {{ task.importInfo.finishedAt || '-' }}
+                {{ getTaskText(taskImportInfo.finishedAt) }}
               </DescriptionsItem>
               <DescriptionsItem label="撤销时间">
-                {{ task.importInfo.revertedAt || '-' }}
+                {{ getTaskText(taskImportInfo.revertedAt) }}
               </DescriptionsItem>
               <DescriptionsItem label="撤销人">
-                {{ task.importInfo.revertedBy ?? '-' }}
+                {{ getTaskText(taskImportInfo.revertedBy) }}
+              </DescriptionsItem>
+            </Descriptions>
+
+            <div class="mt-4 text-base font-medium">实际写入统计</div>
+            <Descriptions :column="2" bordered class="mt-2" size="small">
+              <DescriptionsItem label="实际写入总数">
+                {{ taskImportWriteStats.dataTotalCount }}
+              </DescriptionsItem>
+              <DescriptionsItem label="实际写入成功">
+                {{ taskImportWriteStats.dataSuccessCount }}
+              </DescriptionsItem>
+              <DescriptionsItem label="实际写入失败">
+                {{ taskImportWriteStats.dataFailedCount }}
+              </DescriptionsItem>
+              <DescriptionsItem label="实际写入跳过">
+                {{ taskImportWriteStats.dataSkippedCount }}
+              </DescriptionsItem>
+              <DescriptionsItem label="实际写入错误">
+                {{ taskImportWriteStats.dataErrorCount }}
               </DescriptionsItem>
             </Descriptions>
           </template>
@@ -740,40 +783,73 @@ onBeforeUnmount(() => {
         </Tabs.TabPane>
 
         <Tabs.TabPane key="progress" tab="任务进度">
+          <div class="border-border mb-4 rounded-md border px-4 py-3 text-sm">
+            <div>
+              源数据处理：{{ taskProgress.progressDone }}/{{
+                taskProgress.progressTotal
+              }}
+            </div>
+            <div v-if="isImportTask" class="text-text-secondary mt-2">
+              实际写入：成功 {{ taskImportWriteStats.dataSuccessCount }}，失败
+              {{ taskImportWriteStats.dataFailedCount }}，跳过
+              {{ taskImportWriteStats.dataSkippedCount }}，错误
+              {{ taskImportWriteStats.dataErrorCount }}
+            </div>
+          </div>
+
           <Descriptions :column="2" bordered size="small">
             <DescriptionsItem label="任务ID">
-              {{ taskProgress.taskId ?? '-' }}
+              {{ getTaskText(taskProgress.taskId) }}
             </DescriptionsItem>
             <DescriptionsItem label="状态">
-              <component
-                :is="
-                  renderDict(
-                    taskProgress.status || '',
-                    DictEnum.SYS_JOB_TASK_STATUS,
-                  )
-                "
-              />
+              <Tag :color="getTaskStatusColor(taskProgress.status)">
+                {{ getTaskStatusLabel(taskProgress.status) }}
+              </Tag>
             </DescriptionsItem>
             <DescriptionsItem label="进度" :span="2">
               <Progress :percent="Number(taskProgress.progress ?? 0)" />
             </DescriptionsItem>
-            <DescriptionsItem label="总进度">
+            <DescriptionsItem label="源数据总数">
               {{ taskProgress.progressTotal }}
             </DescriptionsItem>
-            <DescriptionsItem label="已完成进度">
+            <DescriptionsItem label="源数据已处理">
               {{ taskProgress.progressDone }}
             </DescriptionsItem>
-            <DescriptionsItem label="成功数">
+            <DescriptionsItem label="源数据成功">
               {{ taskProgress.successCount }}
             </DescriptionsItem>
-            <DescriptionsItem label="失败数">
+            <DescriptionsItem label="源数据失败">
               {{ taskProgress.failedCount }}
             </DescriptionsItem>
-            <DescriptionsItem label="跳过数">
+            <DescriptionsItem label="源数据跳过">
               {{ taskProgress.skippedCount }}
             </DescriptionsItem>
-            <DescriptionsItem label="错误数">
+            <DescriptionsItem label="源数据错误">
               {{ taskProgress.errorCount }}
+            </DescriptionsItem>
+          </Descriptions>
+
+          <Descriptions
+            v-if="isImportTask"
+            :column="2"
+            bordered
+            class="mt-4"
+            size="small"
+          >
+            <DescriptionsItem label="实际写入总数">
+              {{ taskImportWriteStats.dataTotalCount }}
+            </DescriptionsItem>
+            <DescriptionsItem label="实际写入成功">
+              {{ taskImportWriteStats.dataSuccessCount }}
+            </DescriptionsItem>
+            <DescriptionsItem label="实际写入失败">
+              {{ taskImportWriteStats.dataFailedCount }}
+            </DescriptionsItem>
+            <DescriptionsItem label="实际写入跳过">
+              {{ taskImportWriteStats.dataSkippedCount }}
+            </DescriptionsItem>
+            <DescriptionsItem label="实际写入错误">
+              {{ taskImportWriteStats.dataErrorCount }}
             </DescriptionsItem>
           </Descriptions>
         </Tabs.TabPane>

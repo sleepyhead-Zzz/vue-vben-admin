@@ -7,18 +7,20 @@ import { nextTick, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
-import { DictEnum } from '@vben/constants';
 
-import { message, Popconfirm, Progress, Space } from 'ant-design-vue';
+import { message, Popconfirm, Progress, Space, Tag } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { exportPerfCalc, pageJobs, undoImport } from '#/api/system/jobTask';
-import { renderDict } from '#/utils/render';
 
 import { columns, querySchema } from './data';
 import {
   getBusinessTypeLabel,
+  getImportWriteStats,
   getJobTaskDetailPageKey,
+  getTaskCount,
+  getTaskStatusColor,
+  getTaskStatusLabel,
   getTaskTypeLabel,
   isTaskTerminalStatus,
 } from './shared';
@@ -133,6 +135,10 @@ function isImportTask(row: SystemAPI.SysJobTaskDTO) {
   return row.taskType === 'excel_import';
 }
 
+function getRowImportWriteStats(row: SystemAPI.SysJobTaskDTO) {
+  return getImportWriteStats(row.importInfo);
+}
+
 function isPerfTask(row: SystemAPI.SysJobTaskDTO) {
   return row.taskType === 'perf_calc';
 }
@@ -180,9 +186,9 @@ onMounted(async () => {
       </template>
 
       <template #status="{ row }">
-        <component
-          :is="renderDict(row.status || '', DictEnum.SYS_JOB_TASK_STATUS)"
-        />
+        <Tag :color="getTaskStatusColor(row.status)">
+          {{ getTaskStatusLabel(row.status) }}
+        </Tag>
       </template>
 
       <template #progress="{ row }">
@@ -192,9 +198,26 @@ onMounted(async () => {
             size="small"
           />
           <div class="text-text-secondary text-xs">
-            {{ row.progressDone ?? 0 }}/{{ row.progressTotal ?? 0 }}
+            任务进度：{{ getTaskCount(row.progressDone) }}/{{
+              getTaskCount(row.progressTotal)
+            }}
           </div>
         </div>
+      </template>
+
+      <template #importWriteStats="{ row }">
+        <div v-if="isImportTask(row)" class="min-w-[200px] text-xs leading-6">
+          <div>
+            实际写入总数：{{ getRowImportWriteStats(row).dataTotalCount }}
+          </div>
+          <div>
+            成功 {{ getRowImportWriteStats(row).dataSuccessCount }}，失败
+            {{ getRowImportWriteStats(row).dataFailedCount }}，跳过
+            {{ getRowImportWriteStats(row).dataSkippedCount }}，错误
+            {{ getRowImportWriteStats(row).dataErrorCount }}
+          </div>
+        </div>
+        <span v-else>-</span>
       </template>
 
       <template #action="{ row }">
