@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import {
-  Badge,
   Button,
   Drawer,
+  Empty,
   List,
   message,
   Result,
   Skeleton,
-  Tabs,
+  Spin,
   Tag,
 } from 'ant-design-vue';
 import dayjs from 'dayjs';
@@ -20,82 +21,203 @@ import dayjs from 'dayjs';
 import {
   getPagedUserNotice,
   getUserNoticeDetail,
-  readAllNotice,
 } from '#/api/system/userNotice';
 import { useNotifyStore } from '#/store/notify';
 
 type NoticeTabKey = '1' | '2' | 'all';
-type NoticeId = NonNullable<SystemAPI.SysUserNotificationListDTO['noticeId']>;
+type NoticeId = string;
+type UserNoticePageParams = SystemAPI.getPagedUserNoticeParams & {
+  type?: Exclude<NoticeTabKey, 'all'>;
+};
 
 type NoticeListItemView = SystemAPI.SysUserNotificationListDTO & {
   formattedCreateTime: string;
   isRead: boolean;
   summaryText: string;
+  titleText: string;
   typeText: string;
 };
 
 type NoticeDetailView = SystemAPI.SysUserNotificationDetailDTO & {
+  contentHtml: string;
   formattedCreateTime: string;
   formattedReadTime?: string;
   isRead: boolean;
+  titleText: string;
   typeText: string;
 };
 
+const NOTICE_TABS = [
+  { key: 'all', label: '全部' },
+  { key: '1', label: '通知' },
+  { key: '2', label: '公告' },
+] as const;
 const PAGE_SIZE_OPTIONS = ['10', '20', '50'];
+const EMPTY_NOTICE_HTML = '<p>暂无正文</p>';
+const DETAIL_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
 const route = useRoute();
 const router = useRouter();
 const notifyStore = useNotifyStore();
 
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const isDesktop = breakpoints.greaterOrEqual('lg');
+
 const activeTab = ref<NoticeTabKey>('all');
 const loading = ref(false);
 const detailLoading = ref(false);
 const errorText = ref('');
-
 const pageNum = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
-
 const rawList = ref<SystemAPI.SysUserNotificationListDTO[]>([]);
-const drawerOpen = ref(false);
 const currentDetail = ref<NoticeDetailView | null>(null);
+const mobileDrawerOpen = ref(false);
+
+let detailRequestToken = 0;
 
 const unreadCount = computed(() => notifyStore.unreadCount);
+const selectedNoticeId = computed(() => parseNoticeId(route.query.noticeId));
+const showDetailSkeleton = computed(
+  () => detailLoading.value && !currentDetail.value,
+);
+const showDetailOverlay = computed(
+  () => detailLoading.value && !!currentDetail.value,
+);
 
 const list = computed<NoticeListItemView[]>(() => {
-  const mapped = rawList.value.map((item) => ({
+  return rawList.value.map((item) => mapNoticeListItem(item));
+});
+
+function mapNoticeListItem(
+  item: SystemAPI.SysUserNotificationListDTO,
+): NoticeListItemView {
+  return {
     ...item,
     formattedCreateTime: item.createTime
       ? dayjs(item.createTime).format('YYYY-MM-DD HH:mm')
       : '-',
     isRead: item.readFlag === '1',
-    summaryText: item.summary || '暂无摘要',
+    summaryText: item.summary?.trim() || '暂无摘要',
+    titleText: item.noticeTitle?.trim() || '未命名通知',
     typeText: item.noticeType === '2' ? '公告' : '通知',
-  }));
-
-  if (activeTab.value === 'all') {
-    return mapped;
-  }
-
-  return mapped.filter((item) => item.noticeType === activeTab.value);
-});
-
-function getNoticeIdFromRoute() {
-  const raw = route.query.noticeId;
-  if (!raw) {
-    return undefined;
-  }
-
-  const value = Array.isArray(raw) ? raw[0] : raw;
-  if (!value) {
-    return undefined;
-  }
-
-  return value as unknown as NoticeId;
+  };
 }
 
-async function syncUnreadCount() {
-  await notifyStore.refreshUnreadCount();
+function normalizeNoticeId(noticeId?: null | number | string) {
+  if (noticeId === undefined || noticeId === null || noticeId === '') {
+    return undefined;
+  }
+
+  return String(noticeId);
+}
+
+function mapNoticeDetail(
+  data: SystemAPI.SysUserNotificationDetailDTO,
+): NoticeDetailView {
+  return {
+    ...data,
+    contentHtml: data.noticeContent?.trim() || EMPTY_NOTICE_HTML,
+    formattedCreateTime: data.createTime
+      ? dayjs(data.createTime).format(DETAIL_TIME_FORMAT)
+      : '-',
+    formattedReadTime: data.readTime
+      ? dayjs(data.readTime).format(DETAIL_TIME_FORMAT)
+      : undefined,
+    isRead: data.readFlag === '1',
+    titleText: data.noticeTitle?.trim() || '未命名通知',
+    typeText: data.noticeType === '2' ? '公告' : '通知',
+  };
+}
+
+function parseNoticeId(rawValue: unknown): NoticeId | undefined {
+  const value = Array.isArray(rawValue) ? rawValue[0] : rawValue;
+  return normalizeNoticeId(
+    typeof value === 'string' || typeof value === 'number' ? value : undefined,
+  );
+}
+
+function isSelectedNotice(noticeId?: number | string) {
+  return normalizeNoticeId(noticeId) === selectedNoticeId.value;
+}
+
+function patchListReadState(noticeId: NoticeId) {
+  const normalizedNoticeId = normalizeNoticeId(noticeId);
+  if (!normalizedNoticeId) {
+    return;
+  }
+
+  rawList.value = rawList.value.map((item) =>
+    normalizeNoticeId(item.noticeId) === normalizedNoticeId
+      ? {
+          ...item,
+          readFlag: '1',
+        }
+      : item,
+  );
+}
+
+function patchAllReadState() {
+  rawList.value = rawList.value.map((item) => ({
+    ...item,
+    readFlag: '1',
+  }));
+
+  if (!currentDetail.value) {
+    return;
+  }
+
+  const now = dayjs().format(DETAIL_TIME_FORMAT);
+  currentDetail.value = {
+    ...currentDetail.value,
+    formattedReadTime: currentDetail.value.formattedReadTime || now,
+    isRead: true,
+    readFlag: '1',
+    readTime: currentDetail.value.readTime || now,
+  };
+}
+
+async function replaceNoticeQuery(noticeId?: NoticeId) {
+  const nextQuery = { ...route.query };
+
+  if (noticeId === undefined) {
+    delete nextQuery.noticeId;
+  } else {
+    nextQuery.noticeId = String(noticeId);
+  }
+
+  await router.replace({ query: nextQuery });
+}
+
+async function clearSelectedNotice() {
+  currentDetail.value = null;
+  if (!isDesktop.value) {
+    mobileDrawerOpen.value = false;
+  }
+
+  if (route.query.noticeId) {
+    await replaceNoticeQuery(undefined);
+  }
+}
+
+async function handleNoticeSelect(noticeId?: number | string) {
+  const normalizedNoticeId = normalizeNoticeId(noticeId);
+  if (!normalizedNoticeId) {
+    return;
+  }
+
+  if (selectedNoticeId.value === normalizedNoticeId) {
+    if (!isDesktop.value) {
+      mobileDrawerOpen.value = true;
+    }
+    return;
+  }
+
+  if (!isDesktop.value) {
+    mobileDrawerOpen.value = true;
+  }
+
+  await replaceNoticeQuery(normalizedNoticeId);
 }
 
 async function fetchList(reset = false) {
@@ -107,16 +229,20 @@ async function fetchList(reset = false) {
   errorText.value = '';
 
   try {
-    const params = {
+    const params: UserNoticePageParams = {
       pageNum: pageNum.value,
       pageSize: pageSize.value,
       ...(activeTab.value === 'all' ? {} : { type: activeTab.value }),
-    } as SystemAPI.getPagedUserNoticeParams & { type?: NoticeTabKey };
+    };
 
     const { data } = await getPagedUserNotice(params);
-
     rawList.value = data?.rows || [];
     total.value = data?.total || 0;
+
+    const currentDetailId = normalizeNoticeId(currentDetail.value?.noticeId);
+    if (currentDetailId && currentDetail.value?.readFlag === '1') {
+      patchListReadState(currentDetailId);
+    }
   } catch (error) {
     console.error('fetchList error:', error);
     errorText.value = '加载通知失败，请稍后重试';
@@ -127,75 +253,80 @@ async function fetchList(reset = false) {
   }
 }
 
-function patchListReadState(noticeId: number) {
-  rawList.value = rawList.value.map((item) =>
-    item.noticeId === noticeId
-      ? {
-          ...item,
-          readFlag: '1',
-        }
-      : item,
-  );
+async function markDetailAsRead(
+  noticeId: NoticeId,
+  requestToken: number,
+  detail: NoticeDetailView,
+) {
+  if (detail.readFlag === '1') {
+    patchListReadState(noticeId);
+    return;
+  }
+
+  try {
+    await notifyStore.readNotice(noticeId);
+    if (requestToken !== detailRequestToken) {
+      return;
+    }
+
+    const now = dayjs().format(DETAIL_TIME_FORMAT);
+    patchListReadState(noticeId);
+    currentDetail.value = {
+      ...detail,
+      formattedReadTime: detail.formattedReadTime || now,
+      isRead: true,
+      readFlag: '1',
+      readTime: detail.readTime || now,
+    };
+  } catch (error) {
+    console.error('markDetailAsRead error:', error);
+    message.warning('通知已打开，但已读状态同步失败，请稍后重试');
+  }
 }
 
-async function openDetailById(noticeId: NoticeId, markRead = true) {
+async function loadDetail(noticeId: NoticeId) {
+  const requestToken = ++detailRequestToken;
   detailLoading.value = true;
 
   try {
-    const { data } = await getUserNoticeDetail({ noticeId });
+    const { data } = await getUserNoticeDetail({
+      noticeId,
+    } as SystemAPI.getUserNoticeDetailParams);
     if (!data) {
       throw new Error('detail not found');
     }
 
-    currentDetail.value = {
-      ...data,
-      formattedCreateTime: data.createTime
-        ? dayjs(data.createTime).format('YYYY-MM-DD HH:mm:ss')
-        : '-',
-      formattedReadTime: data.readTime
-        ? dayjs(data.readTime).format('YYYY-MM-DD HH:mm:ss')
-        : undefined,
-      isRead: data.readFlag === '1',
-      typeText: data.noticeType === '2' ? '公告' : '通知',
-    };
-
-    drawerOpen.value = true;
-
-    if (markRead && data.readFlag !== '1') {
-      await notifyStore.readNotice(noticeId);
-      patchListReadState(noticeId);
-      currentDetail.value = {
-        ...currentDetail.value,
-        isRead: true,
-        readFlag: '1',
-        formattedReadTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        readTime: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-      };
+    if (requestToken !== detailRequestToken) {
+      return;
     }
+
+    const detail = mapNoticeDetail(data);
+    currentDetail.value = detail;
+    await markDetailAsRead(noticeId, requestToken, detail);
   } catch (error) {
-    console.error('openDetailById error:', error);
+    if (requestToken !== detailRequestToken) {
+      return;
+    }
+
+    console.error('loadDetail error:', error);
+    currentDetail.value = null;
+    await clearSelectedNotice();
     message.error('该通知不存在、不可访问，或已被关闭');
   } finally {
-    detailLoading.value = false;
+    if (requestToken === detailRequestToken) {
+      detailLoading.value = false;
+    }
   }
-}
-
-async function openDetail(item: NoticeListItemView) {
-  if (!item.noticeId) {
-    return;
-  }
-
-  await openDetailById(item.noticeId, true);
 }
 
 async function handleReadAll() {
+  if (unreadCount.value <= 0) {
+    return;
+  }
+
   try {
-    await readAllNotice();
-    await Promise.all([
-      fetchList(false),
-      syncUnreadCount(),
-      notifyStore.loadRecentNotifications(),
-    ]);
+    await notifyStore.markAllRead();
+    patchAllReadState();
     message.success('已全部标记为已读');
   } catch (error) {
     console.error('handleReadAll error:', error);
@@ -203,396 +334,407 @@ async function handleReadAll() {
   }
 }
 
-async function tryOpenNoticeFromRoute() {
-  const noticeId = getNoticeIdFromRoute();
-  if (!noticeId) {
-    return;
+async function handleTabChange(tabKey: NoticeTabKey) {
+  activeTab.value = tabKey;
+
+  if (tabKey !== 'all' && currentDetail.value?.noticeType !== tabKey) {
+    await clearSelectedNotice();
   }
 
-  await nextTick();
-  await openDetailById(noticeId, true);
+  await fetchList(true);
 }
 
-function handleDrawerClose() {
-  drawerOpen.value = false;
+async function handleRetry() {
+  await fetchList(true);
 }
 
-function handleTabChange(key: number | string) {
-  activeTab.value = String(key) as NoticeTabKey;
-  fetchList(true);
-}
-
-function handleRetry() {
-  fetchList(true);
-}
-
-function handlePageChange(page: number, size: number) {
+async function handlePageChange(page: number, size: number) {
   pageNum.value = page;
   pageSize.value = size;
-  fetchList();
+  await fetchList();
 }
+
+async function handleDrawerClose() {
+  await clearSelectedNotice();
+}
+
+watch(isDesktop, (desktop) => {
+  mobileDrawerOpen.value = desktop
+    ? false
+    : selectedNoticeId.value !== undefined;
+});
 
 watch(
   () => route.query.noticeId,
-  () => {
-    tryOpenNoticeFromRoute();
+  async (rawNoticeId) => {
+    if (!rawNoticeId) {
+      currentDetail.value = null;
+      detailLoading.value = false;
+      mobileDrawerOpen.value = false;
+      return;
+    }
+
+    const noticeId = parseNoticeId(rawNoticeId);
+    if (!noticeId) {
+      currentDetail.value = null;
+      detailLoading.value = false;
+      mobileDrawerOpen.value = false;
+      message.warning('通知链接无效，已为你清理');
+      await replaceNoticeQuery(undefined);
+      return;
+    }
+
+    if (!isDesktop.value) {
+      mobileDrawerOpen.value = true;
+    }
+
+    await loadDetail(noticeId);
+  },
+  {
+    immediate: true,
   },
 );
 
-watch(drawerOpen, async (open) => {
-  if (!open && route.query.noticeId) {
-    const nextQuery = { ...route.query };
-    delete nextQuery.noticeId;
-    await router.replace({ query: nextQuery });
-  }
-});
-
 onMounted(async () => {
-  await Promise.all([fetchList(true), syncUnreadCount()]);
-  await tryOpenNoticeFromRoute();
+  await Promise.all([
+    fetchList(true),
+    notifyStore.refreshUnreadCount(),
+    notifyStore.loadRecentNotifications(),
+  ]);
 });
 </script>
 
 <template>
-  <Page auto-content-height>
-    <div class="user-notice-page mx-auto max-w-5xl px-4 py-6">
-      <section class="hero-card mb-6">
-        <div>
-          <p class="eyebrow">Notification Center</p>
-          <h1 class="hero-title">用户通知</h1>
-          <p class="hero-desc">
-            查看系统通知与公告，阅读状态会与右上角铃铛实时同步。
-          </p>
-        </div>
-        <div class="hero-side">
-          <Badge
-            :count="unreadCount"
-            :number-style="{ backgroundColor: '#14532d' }"
-            show-zero
-          >
-            <div class="stat-card">
-              <div class="stat-label">未读通知</div>
-              <div class="stat-value">{{ unreadCount }}</div>
-            </div>
-          </Badge>
-          <Button type="primary" @click="handleReadAll">全部已读</Button>
-        </div>
-      </section>
+  <Page :auto-content-height="true">
+    <div
+      class="mx-auto flex w-full max-w-[1440px] flex-col gap-4 px-4 py-4 lg:px-6"
+    >
+      <section
+        class="border-border bg-background relative overflow-hidden rounded-[calc(var(--radius)+8px)] border px-4 py-5 shadow-sm sm:px-6"
+      >
+        <div
+          class="bg-primary/12 pointer-events-none absolute -right-12 top-0 h-32 w-32 rounded-full blur-3xl"
+        ></div>
+        <div
+          class="pointer-events-none absolute bottom-0 left-10 h-24 w-24 rounded-full bg-emerald-400/10 blur-2xl dark:bg-emerald-300/10"
+        ></div>
 
-      <section class="list-card">
-        <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
-          <Tabs
-            v-model:active-key="activeTab"
-            class="notice-tabs"
-            @change="handleTabChange"
-          >
-            <Tabs.TabPane key="all" tab="全部" />
-            <Tabs.TabPane key="1" tab="通知" />
-            <Tabs.TabPane key="2" tab="公告" />
-          </Tabs>
-          <div class="count-text text-xs">
-            共 {{ total }} 条，当前显示 {{ list.length }} 条
+        <div
+          class="relative flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between"
+        >
+          <div class="space-y-3">
+            <p
+              class="text-primary/80 text-xs font-semibold uppercase tracking-[0.24em]"
+            >
+              Notification Center
+            </p>
+            <div class="space-y-2">
+              <h1 class="text-foreground text-2xl font-semibold sm:text-3xl">
+                用户通知
+              </h1>
+              <p class="text-muted-foreground max-w-2xl text-sm leading-6">
+                查看系统通知与公告，阅读状态会与右上角铃铛实时同步，桌面端支持双栏快速浏览详情。
+              </p>
+            </div>
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-[minmax(160px,200px),auto]">
+            <div
+              class="border-border bg-accent/50 rounded-2xl border px-4 py-3 shadow-sm"
+            >
+              <div class="text-muted-foreground text-xs font-medium">
+                未读通知
+              </div>
+              <div
+                class="text-foreground mt-2 text-3xl font-semibold leading-none"
+              >
+                {{ unreadCount }}
+              </div>
+            </div>
+            <Button
+              :disabled="unreadCount <= 0"
+              class="h-auto rounded-2xl px-5 py-3"
+              type="primary"
+              @click="handleReadAll"
+            >
+              全部已读
+            </Button>
           </div>
         </div>
-
-        <Result
-          v-if="errorText"
-          status="error"
-          title="通知加载失败"
-          :sub-title="errorText"
-        >
-          <template #extra>
-            <Button type="primary" @click="handleRetry">重新加载</Button>
-          </template>
-        </Result>
-
-        <List
-          v-else
-          :loading="loading"
-          :data-source="list"
-          item-layout="vertical"
-          :locale="{ emptyText: '暂无通知' }"
-          :pagination="{
-            current: pageNum,
-            pageSize,
-            total,
-            showSizeChanger: true,
-            pageSizeOptions: PAGE_SIZE_OPTIONS,
-            onChange: handlePageChange,
-          }"
-        >
-          <template #renderItem="{ item }">
-            <List.Item
-              class="notice-item cursor-pointer"
-              :class="{ unread: !item.isRead }"
-              @click="openDetail(item)"
-            >
-              <div class="flex items-start gap-4">
-                <div class="status-dot-wrap">
-                  <Badge v-if="!item.isRead" status="processing" />
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div class="mb-2 flex flex-wrap items-center gap-2">
-                    <span
-                      class="truncate text-base"
-                      :class="{ 'font-semibold': !item.isRead }"
-                    >
-                      {{ item.noticeTitle || '未命名通知' }}
-                    </span>
-                    <Tag :color="item.noticeType === '2' ? 'blue' : 'green'">
-                      {{ item.typeText }}
-                    </Tag>
-                    <Tag v-if="item.isRead" color="default">已读</Tag>
-                    <Tag v-else color="orange">未读</Tag>
-                  </div>
-                  <div class="summary mb-3">
-                    {{ item.summaryText }}
-                  </div>
-                  <div class="meta-text text-xs">
-                    {{ item.formattedCreateTime }}
-                  </div>
-                </div>
-              </div>
-            </List.Item>
-          </template>
-        </List>
       </section>
 
-      <Drawer
-        v-model:open="drawerOpen"
-        title="通知详情"
-        width="720"
-        :footer="null"
-        @close="handleDrawerClose"
+      <section
+        class="grid gap-4 lg:grid-cols-[minmax(360px,420px),minmax(0,1fr)]"
       >
-        <Skeleton v-if="detailLoading" active :paragraph="{ rows: 8 }" />
-
-        <template v-else-if="currentDetail">
-          <div class="space-y-6">
-            <header class="detail-header border-b pb-5">
-              <div class="mb-3 flex flex-wrap items-center gap-2">
-                <Tag
-                  :color="currentDetail.noticeType === '2' ? 'blue' : 'green'"
-                >
-                  {{ currentDetail.typeText }}
-                </Tag>
-                <Tag v-if="currentDetail.isRead" color="default">已读</Tag>
-                <Tag v-else color="orange">未读</Tag>
-              </div>
-              <h2 class="detail-title mb-3 text-2xl font-semibold">
-                {{ currentDetail.noticeTitle || '未命名通知' }}
-              </h2>
+        <div
+          class="border-border bg-background min-w-0 rounded-[var(--radius)] border shadow-sm"
+        >
+          <div class="border-border border-b px-4 py-4 sm:px-5">
+            <div class="flex flex-col gap-3">
               <div
-                class="detail-meta flex flex-wrap items-center gap-4 text-sm"
+                class="bg-accent inline-flex w-full rounded-full p-1 sm:w-auto"
               >
-                <span>发布时间 {{ currentDetail.formattedCreateTime }}</span>
-                <span v-if="currentDetail.formattedReadTime">
-                  阅读时间 {{ currentDetail.formattedReadTime }}
+                <button
+                  v-for="tab in NOTICE_TABS"
+                  :key="tab.key"
+                  :class="
+                    activeTab === tab.key
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  "
+                  class="flex-1 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 sm:flex-none"
+                  type="button"
+                  @click="handleTabChange(tab.key)"
+                >
+                  {{ tab.label }}
+                </button>
+              </div>
+
+              <div
+                class="text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-1 text-xs"
+              >
+                <span>共 {{ total }} 条</span>
+                <span>当前页 {{ list.length }} 条</span>
+                <span v-if="selectedNoticeId">
+                  已选中通知 #{{ selectedNoticeId }}
                 </span>
               </div>
-            </header>
-
-            <article
-              class="notice-content prose prose-slate dark:prose-invert max-w-none"
-              v-html="currentDetail.noticeContent || '<p>暂无正文</p>'"
-            ></article>
+            </div>
           </div>
-        </template>
-      </Drawer>
+
+          <Result
+            v-if="errorText"
+            status="error"
+            sub-title="请稍后重试，或重新打开通知中心。"
+            title="通知加载失败"
+          >
+            <template #extra>
+              <Button type="primary" @click="handleRetry">重新加载</Button>
+            </template>
+          </Result>
+
+          <List
+            v-else
+            :data-source="list"
+            :loading="loading"
+            :locale="{ emptyText: '暂无通知' }"
+            :pagination="{
+              current: pageNum,
+              pageSize,
+              total,
+              showSizeChanger: true,
+              pageSizeOptions: PAGE_SIZE_OPTIONS,
+              onChange: handlePageChange,
+            }"
+            class="[&_.ant-list-items]:space-y-3 [&_.ant-list-items]:px-3 [&_.ant-list-items]:py-3 sm:[&_.ant-list-items]:px-4 [&_.ant-list-pagination]:px-4 [&_.ant-list-pagination]:pb-4 [&_.ant-list-pagination]:pt-2"
+            item-layout="vertical"
+            :split="false"
+          >
+            <template #renderItem="{ item }">
+              <List.Item class="!border-none !p-0">
+                <button
+                  :class="
+                    isSelectedNotice(item.noticeId)
+                      ? 'border-primary bg-primary/6 shadow-[0_0_0_1px_hsl(var(--primary)/0.18)]'
+                      : item.isRead
+                        ? 'border-border bg-background hover:border-primary/30 hover:bg-accent/60'
+                        : 'border-primary/25 bg-primary/5 hover:border-primary/40 hover:bg-primary/8'
+                  "
+                  class="group flex w-full items-start gap-4 rounded-2xl border p-4 text-left transition-all duration-200"
+                  type="button"
+                  @click="handleNoticeSelect(item.noticeId)"
+                >
+                  <div class="mt-1 flex w-4 shrink-0 justify-center">
+                    <span
+                      v-if="!item.isRead"
+                      class="bg-primary h-2.5 w-2.5 rounded-full shadow-[0_0_0_5px_hsl(var(--primary)/0.12)]"
+                    ></span>
+                    <span
+                      v-else
+                      class="border-border h-2.5 w-2.5 rounded-full border bg-transparent"
+                    ></span>
+                  </div>
+
+                  <div class="min-w-0 flex-1">
+                    <div class="mb-3 flex flex-wrap items-center gap-2">
+                      <span
+                        :class="item.isRead ? 'font-medium' : 'font-semibold'"
+                        class="text-foreground line-clamp-1 text-base"
+                      >
+                        {{ item.titleText }}
+                      </span>
+                      <Tag :color="item.noticeType === '2' ? 'blue' : 'green'">
+                        {{ item.typeText }}
+                      </Tag>
+                      <Tag :color="item.isRead ? 'default' : 'orange'">
+                        {{ item.isRead ? '已读' : '未读' }}
+                      </Tag>
+                    </div>
+
+                    <p
+                      class="text-muted-foreground line-clamp-2 text-sm leading-6"
+                    >
+                      {{ item.summaryText }}
+                    </p>
+
+                    <div
+                      class="text-muted-foreground mt-3 flex flex-wrap items-center gap-3 text-xs"
+                    >
+                      <span>{{ item.formattedCreateTime }}</span>
+                      <span
+                        v-if="isSelectedNotice(item.noticeId)"
+                        class="text-primary font-medium"
+                      >
+                        当前查看
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              </List.Item>
+            </template>
+          </List>
+        </div>
+
+        <div class="hidden lg:block">
+          <section
+            class="border-border bg-background sticky top-4 min-h-[640px] rounded-[var(--radius)] border shadow-sm"
+          >
+            <div class="border-border border-b px-6 py-5">
+              <div
+                class="text-muted-foreground text-xs font-medium uppercase tracking-[0.2em]"
+              >
+                Detail
+              </div>
+              <div class="text-foreground mt-2 text-lg font-semibold">
+                通知详情
+              </div>
+            </div>
+
+            <div class="p-6">
+              <Skeleton
+                v-if="showDetailSkeleton"
+                active
+                :paragraph="{ rows: 12 }"
+              />
+
+              <template v-else-if="currentDetail">
+                <div class="relative space-y-6">
+                  <div
+                    v-if="showDetailOverlay"
+                    class="bg-background/75 absolute inset-0 z-10 flex items-center justify-center rounded-2xl backdrop-blur-[1px]"
+                  >
+                    <Spin />
+                  </div>
+
+                  <div class="flex flex-wrap items-center gap-2">
+                    <Tag
+                      :color="
+                        currentDetail.noticeType === '2' ? 'blue' : 'green'
+                      "
+                    >
+                      {{ currentDetail.typeText }}
+                    </Tag>
+                    <Tag :color="currentDetail.isRead ? 'default' : 'orange'">
+                      {{ currentDetail.isRead ? '已读' : '未读' }}
+                    </Tag>
+                  </div>
+
+                  <div class="space-y-3">
+                    <h2
+                      class="text-foreground text-2xl font-semibold leading-tight"
+                    >
+                      {{ currentDetail.titleText }}
+                    </h2>
+
+                    <div
+                      class="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 text-sm"
+                    >
+                      <span>
+                        发布时间 {{ currentDetail.formattedCreateTime }}
+                      </span>
+                      <span v-if="currentDetail.formattedReadTime">
+                        阅读时间 {{ currentDetail.formattedReadTime }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- eslint-disable vue/no-v-html -->
+                  <!-- 内容来自内部富文本通知链路，后端负责基础净化。 -->
+                  <article
+                    class="prose prose-slate dark:prose-invert prose-headings:text-foreground prose-p:text-foreground/90 prose-strong:text-foreground prose-a:text-primary prose-img:rounded-xl prose-img:shadow-sm prose-pre:bg-accent prose-li:text-foreground/90 [&_blockquote]:border-primary/30 [&_blockquote]:text-muted-foreground [&_td]:border-border [&_th]:border-border [&_th]:bg-accent/70 max-w-none text-sm [&_img]:max-w-full [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:px-3 [&_th]:py-2"
+                    v-html="currentDetail.contentHtml"
+                  ></article>
+                  <!-- eslint-enable vue/no-v-html -->
+                </div>
+              </template>
+
+              <div
+                v-else
+                class="border-border bg-accent/30 flex min-h-[480px] items-center justify-center rounded-2xl border border-dashed"
+              >
+                <Empty description="从左侧选择一条通知查看详情" />
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </div>
+
+    <Drawer
+      v-if="!isDesktop"
+      :footer="null"
+      :open="mobileDrawerOpen"
+      placement="right"
+      title="通知详情"
+      width="100%"
+      @close="handleDrawerClose"
+    >
+      <Skeleton v-if="showDetailSkeleton" active :paragraph="{ rows: 10 }" />
+
+      <template v-else-if="currentDetail">
+        <div class="relative space-y-6">
+          <div
+            v-if="showDetailOverlay"
+            class="bg-background/75 absolute inset-0 z-10 flex items-center justify-center rounded-2xl backdrop-blur-[1px]"
+          >
+            <Spin />
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <Tag :color="currentDetail.noticeType === '2' ? 'blue' : 'green'">
+              {{ currentDetail.typeText }}
+            </Tag>
+            <Tag :color="currentDetail.isRead ? 'default' : 'orange'">
+              {{ currentDetail.isRead ? '已读' : '未读' }}
+            </Tag>
+          </div>
+
+          <div class="space-y-3">
+            <h2 class="text-foreground text-xl font-semibold leading-tight">
+              {{ currentDetail.titleText }}
+            </h2>
+
+            <div
+              class="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 text-sm"
+            >
+              <span>发布时间 {{ currentDetail.formattedCreateTime }}</span>
+              <span v-if="currentDetail.formattedReadTime">
+                阅读时间 {{ currentDetail.formattedReadTime }}
+              </span>
+            </div>
+          </div>
+
+          <!-- eslint-disable vue/no-v-html -->
+          <!-- 内容来自内部富文本通知链路，后端负责基础净化。 -->
+          <article
+            class="prose prose-slate dark:prose-invert prose-headings:text-foreground prose-p:text-foreground/90 prose-strong:text-foreground prose-a:text-primary prose-img:rounded-xl prose-img:shadow-sm prose-pre:bg-accent prose-li:text-foreground/90 [&_blockquote]:border-primary/30 [&_blockquote]:text-muted-foreground [&_td]:border-border [&_th]:border-border [&_th]:bg-accent/70 max-w-none text-sm [&_img]:max-w-full [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:px-3 [&_td]:py-2 [&_th]:border [&_th]:px-3 [&_th]:py-2"
+            v-html="currentDetail.contentHtml"
+          ></article>
+          <!-- eslint-enable vue/no-v-html -->
+        </div>
+      </template>
+
+      <Empty v-else description="请选择一条通知" />
+    </Drawer>
   </Page>
 </template>
-
-<style scoped>
-.user-notice-page {
-  --notice-count-text: #6b7280;
-  --notice-detail-title: #111827;
-  --notice-hero-bg:
-    radial-gradient(
-      circle at top right,
-      rgb(167 243 208 / 90%),
-      transparent 30%
-    ),
-    linear-gradient(135deg, #f0fdf4, #ecfeff 55%, #f8fafc);
-  --notice-hero-border: #d1fae5;
-  --notice-item-hover: #f8fafc;
-  --notice-item-unread: linear-gradient(
-    90deg,
-    rgb(240 253 244 / 95%),
-    rgb(255 255 255 / 95%)
-  );
-  --notice-list-bg: transparent;
-  --notice-list-border: #e5e7eb;
-  --notice-meta-text: #9ca3af;
-  --notice-stat-bg: rgb(240 253 244 / 42%);
-  --notice-stat-label: #6b7280;
-  --notice-stat-value: #14532d;
-  --notice-summary: #4b5563;
-
-  min-height: 100%;
-}
-
-:global(html.dark) .user-notice-page {
-  --notice-count-text: rgb(148 163 184 / 90%);
-  --notice-detail-title: rgb(241 245 249 / 96%);
-  --notice-hero-bg:
-    radial-gradient(circle at top right, rgb(20 83 45 / 50%), transparent 30%),
-    linear-gradient(135deg, rgb(12 18 16), rgb(12 28 28) 55%, rgb(15 23 42));
-  --notice-hero-border: rgb(21 128 61 / 28%);
-  --notice-item-hover: rgb(30 41 59 / 45%);
-  --notice-item-unread: linear-gradient(
-    90deg,
-    rgb(20 83 45 / 22%),
-    rgb(15 23 42 / 12%)
-  );
-  --notice-list-bg: rgb(2 6 23 / 72%);
-  --notice-list-border: rgb(71 85 105 / 35%);
-  --notice-meta-text: rgb(148 163 184 / 72%);
-  --notice-stat-bg: rgb(15 23 42 / 68%);
-  --notice-stat-label: rgb(148 163 184 / 82%);
-  --notice-stat-value: rgb(167 243 208 / 98%);
-  --notice-summary: rgb(203 213 225 / 86%);
-}
-
-.hero-card {
-  display: flex;
-  gap: 24px;
-  justify-content: space-between;
-  padding: 24px;
-  background: var(--notice-hero-bg);
-  border: 1px solid var(--notice-hero-border);
-  border-radius: 20px;
-}
-
-.eyebrow {
-  margin-bottom: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #047857;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-}
-
-.hero-title {
-  margin: 0;
-  font-size: 32px;
-  line-height: 1.1;
-  color: #111827;
-}
-
-.hero-desc {
-  max-width: 560px;
-  margin-top: 10px;
-  color: var(--notice-summary);
-}
-
-.hero-side {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: flex-end;
-  justify-content: space-between;
-}
-
-.stat-card {
-  min-width: 132px;
-  padding: 14px 16px;
-  background: var(--notice-stat-bg);
-  border-radius: 16px;
-  box-shadow: inset 0 0 0 1px var(--notice-list-border);
-}
-
-.stat-label {
-  font-size: 12px;
-  color: var(--notice-stat-label);
-}
-
-.stat-value {
-  margin-top: 6px;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--notice-stat-value);
-}
-
-.list-card {
-  padding: 20px;
-  background: var(--notice-list-bg);
-  border: 1px solid var(--notice-list-border);
-  border-radius: 20px;
-}
-
-.notice-item {
-  padding: 16px;
-  border-radius: 16px;
-  transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.notice-item:hover {
-  background: var(--notice-item-hover);
-  transform: translateY(-1px);
-}
-
-.notice-item.unread {
-  background: var(--notice-item-unread);
-}
-
-.status-dot-wrap {
-  width: 12px;
-  padding-top: 7px;
-}
-
-.summary {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-line-clamp: 2;
-  color: var(--notice-summary);
-  -webkit-box-orient: vertical;
-}
-
-.count-text {
-  color: var(--notice-count-text);
-}
-
-.meta-text,
-.detail-meta {
-  color: var(--notice-meta-text);
-}
-
-.detail-title {
-  color: var(--notice-detail-title);
-}
-
-.detail-header {
-  border-color: var(--notice-list-border);
-}
-
-.notice-content :deep(img) {
-  max-width: 100%;
-  border-radius: 12px;
-}
-
-.notice-content :deep(table) {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.notice-content :deep(td),
-.notice-content :deep(th) {
-  padding: 8px 10px;
-  border: 1px solid #e5e7eb;
-}
-
-@media (max-width: 768px) {
-  .hero-card {
-    flex-direction: column;
-  }
-
-  .hero-side {
-    align-items: stretch;
-  }
-}
-</style>

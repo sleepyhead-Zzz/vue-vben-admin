@@ -32,7 +32,6 @@ withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  clear: [];
   makeAll: [];
   read: [NotificationItem];
   viewAll: [];
@@ -53,12 +52,9 @@ function handleMakeAll() {
   emit('makeAll');
 }
 
-function handleClear() {
-  emit('clear');
-}
-
 function handleClick(item: NotificationItem) {
   emit('read', item);
+  close();
 }
 </script>
 <template>
@@ -91,7 +87,10 @@ function handleClick(item: NotificationItem) {
       </div>
       <VbenScrollbar v-if="notifications.length > 0">
         <ul class="!flex max-h-[360px] w-full flex-col">
-          <template v-for="item in notifications" :key="item.title">
+          <template
+            v-for="item in notifications"
+            :key="item.id ?? `${item.userId}-${item.title}-${item.date}`"
+          >
             <li
               class="hover:bg-accent border-border relative flex w-full cursor-pointer items-start gap-5 border-t px-3 py-3"
               @click="handleClick(item)"
@@ -131,16 +130,8 @@ function handleClick(item: NotificationItem) {
       </template>
 
       <div
-        class="border-border flex items-center justify-between border-t px-4 py-3"
+        class="border-border flex items-center justify-end border-t px-4 py-3"
       >
-        <VbenButton
-          :disabled="notifications.length <= 0"
-          size="sm"
-          variant="ghost"
-          @click="handleClear"
-        >
-          {{ $t('ui.widgets.clearNotifications') }}
-        </VbenButton>
         <VbenButton size="sm" @click="handleViewAll">
           {{ $t('ui.widgets.viewAll') }}
         </VbenButton>

@@ -19,30 +19,47 @@ import {
 import { useWebSocketMessage } from '#/utils/message';
 
 type NoticeNotificationItem = NotificationItem & {
-  noticeId: number;
+  noticeId: number | string;
   noticeType?: string;
 };
 
 const RECENT_NOTICE_PAGE_SIZE = 6;
+const PUSH_REFRESH_DELAYS = [0, 400, 1200];
 
 function formatNoticeDate(value?: string) {
   return value ? dayjs(value).format('YYYY-MM-DD HH:mm:ss') : '';
+}
+
+function normalizeNoticeId(noticeId?: number | string) {
+  if (noticeId === undefined || noticeId === null || noticeId === '') {
+    return undefined;
+  }
+
+  return String(noticeId);
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 function mapNoticeToNotificationItem(
   item: SystemAPI.SysUserNotificationListDTO,
   userId: number | string,
 ): NoticeNotificationItem | null {
-  if (!item.noticeId) {
+  const normalizedNoticeId = normalizeNoticeId(item.noticeId);
+  if (!normalizedNoticeId) {
     return null;
   }
 
   return {
     avatar: SvgMessageUrl,
     date: formatNoticeDate(item.createTime),
+    id: normalizedNoticeId,
     isRead: item.readFlag === '1',
     message: item.summary || $t('component.notice.title'),
-    noticeId: item.noticeId,
+    noticeId: normalizedNoticeId,
     noticeType: item.noticeType,
     title: item.noticeTitle || $t('component.notice.title'),
     userId,
@@ -57,6 +74,7 @@ export const useNotifyStore = defineStore('app-notify', () => {
   const notifications = ref<NoticeNotificationItem[]>([]);
   const loading = ref(false);
   const listeningStarted = ref(false);
+  const pushRefreshTask = ref<null | Promise<void>>(null);
 
   const showDot = computed(() => unreadCount.value > 0);
 
@@ -98,9 +116,56 @@ export const useNotifyStore = defineStore('app-notify', () => {
     await Promise.all([refreshUnreadCount(), loadRecentNotifications()]);
   }
 
-  function patchNoticeAsRead(noticeId: number) {
+  function getNotificationsSignature(items: NoticeNotificationItem[]) {
+    return items
+      .map((item) => `${item.noticeId}:${item.isRead ? 1 : 0}`)
+      .join('|');
+  }
+
+  async function refreshFromPush() {
+    const previousUnreadCount = unreadCount.value;
+    const previousSignature = getNotificationsSignature(notifications.value);
+
+    for (const delay of PUSH_REFRESH_DELAYS) {
+      if (delay > 0) {
+        await sleep(delay);
+      }
+
+      await refresh();
+
+      const nextSignature = getNotificationsSignature(notifications.value);
+      if (
+        unreadCount.value !== previousUnreadCount ||
+        nextSignature !== previousSignature
+      ) {
+        return;
+      }
+    }
+  }
+
+  async function scheduleRefreshFromPush() {
+    if (pushRefreshTask.value) {
+      await pushRefreshTask.value;
+      return;
+    }
+
+    const task = refreshFromPush().finally(() => {
+      if (pushRefreshTask.value === task) {
+        pushRefreshTask.value = null;
+      }
+    });
+    pushRefreshTask.value = task;
+    await task;
+  }
+
+  function patchNoticeAsRead(noticeId: number | string) {
+    const normalizedNoticeId = normalizeNoticeId(noticeId);
+    if (!normalizedNoticeId) {
+      return;
+    }
+
     const target = notifications.value.find(
-      (item) => item.noticeId === noticeId,
+      (item) => normalizeNoticeId(item.noticeId) === normalizedNoticeId,
     );
     if (!target || target.isRead) {
       return;
@@ -110,8 +175,8 @@ export const useNotifyStore = defineStore('app-notify', () => {
     unreadCount.value = Math.max(unreadCount.value - 1, 0);
   }
 
-  async function readNotice(noticeId: number) {
-    await markNoticeAsRead({ noticeId });
+  async function readNotice(noticeId: number | string) {
+    await markNoticeAsRead({ noticeId } as SystemAPI.markNoticeAsReadParams);
     patchNoticeAsRead(noticeId);
   }
 
@@ -161,7 +226,7 @@ export const useNotifyStore = defineStore('app-notify', () => {
         message: $t('component.notice.received'),
       });
 
-      await refresh();
+      await scheduleRefreshFromPush();
       data.value = null;
     });
   }
@@ -187,6 +252,7 @@ export const useNotifyStore = defineStore('app-notify', () => {
     notifications,
     readNotice,
     refresh,
+    refreshFromPush,
     refreshUnreadCount,
     setRead,
     showDot,

@@ -38,6 +38,7 @@ const localRoutes: RouteRecordStringComponent[] = [
     component: '/system/user-notifications/index',
     meta: {
       activePath: '/system/user-notifications',
+      fullPathKey: false,
       icon: 'ant-design:setting-outlined',
       title: '用户通知',
       hideInMenu: true,

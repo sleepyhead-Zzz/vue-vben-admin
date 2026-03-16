@@ -236,14 +236,6 @@ onMounted(async () => {
           >
             日志
           </a-button>
-          <a-button
-            v-if="isImportTask(row)"
-            type="link"
-            v-access:code="['system:job:query']"
-            @click.stop="navigateToTask(row, 'details')"
-          >
-            导入明细
-          </a-button>
           <Popconfirm
             v-if="isImportTask(row)"
             title="确认撤销本任务对应的导入数据吗？"
