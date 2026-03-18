@@ -1,36 +1,11 @@
 import type { FormSchemaGetter } from '#/adapter/form';
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { getPopupContainer } from '@vben/utils';
-
 export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'productName',
     label: '产品名称',
-  },
-  {
-    component: 'Input',
-    fieldName: 'category',
-    label: '产品分类',
-  },
-  {
-    component: 'Select',
-    fieldName: 'isActive',
-    label: '是否启用',
-    componentProps: {
-      getPopupContainer,
-      options: [
-        {
-          label: '启用',
-          value: true,
-        },
-        {
-          label: '停用',
-          value: false,
-        },
-      ],
-    },
   },
 ];
 
@@ -51,10 +26,7 @@ export const columns: VxeGridProps['columns'] = [
     title: '产品分类',
     field: 'category',
   },
-  {
-    title: '是否启用',
-    field: 'isActive',
-  },
+
   {
     field: 'action',
     fixed: 'right',
@@ -84,23 +56,5 @@ export const modalSchema: FormSchemaGetter = () => [
     label: '产品分类',
     fieldName: 'category',
     component: 'Input',
-  },
-  {
-    component: 'Select',
-    fieldName: 'isActive',
-    label: '是否启用',
-    componentProps: {
-      getPopupContainer,
-      options: [
-        {
-          label: '启用',
-          value: true,
-        },
-        {
-          label: '停用',
-          value: false,
-        },
-      ],
-    },
   },
 ];

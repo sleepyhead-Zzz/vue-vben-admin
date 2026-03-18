@@ -390,6 +390,8 @@ declare namespace PerfAPI {
   };
 
   type getPagedDimCustomerParams = {
+    customerName?: string;
+    customerCode?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -405,6 +407,8 @@ declare namespace PerfAPI {
   };
 
   type getPagedFactKeyTaskScoreParams = {
+    userId?: number;
+    periodId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -438,6 +442,10 @@ declare namespace PerfAPI {
   };
 
   type getPagedFactNewCustomerScoreParams = {
+    userId?: number;
+    customerId?: number;
+    periodId?: number;
+    scoreValue?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -453,6 +461,9 @@ declare namespace PerfAPI {
   };
 
   type getPagedFactOverdueRecordParams = {
+    periodId?: number;
+    userId?: number;
+    overdueLevel?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -468,6 +479,8 @@ declare namespace PerfAPI {
   };
 
   type getPagedFactPerformanceResultParams = {
+    userId?: number;
+    periodId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -483,6 +496,9 @@ declare namespace PerfAPI {
   };
 
   type getPagedFactProfitPlanParams = {
+    userId?: number;
+    productId?: number;
+    periodId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -498,6 +514,7 @@ declare namespace PerfAPI {
   };
 
   type getPagedPeriodParams = {
+    year?: number;
     /** 周期类型：1-年度，2-月度，3-季度 */
     periodType?: string;
     pageNum?: number;
@@ -515,6 +532,7 @@ declare namespace PerfAPI {
   };
 
   type getPagedProductParams = {
+    productName?: string;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -530,6 +548,9 @@ declare namespace PerfAPI {
   };
 
   type getPagedProfitDataParams = {
+    userId?: number;
+    productId?: number;
+    periodId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -545,6 +566,9 @@ declare namespace PerfAPI {
   };
 
   type getPagedSalesDataParams = {
+    productId?: number;
+    userId?: number;
+    periodId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -560,6 +584,9 @@ declare namespace PerfAPI {
   };
 
   type getPagedSalesPlanParams = {
+    userId?: number;
+    productId?: number;
+    periodId?: number;
     pageNum?: number;
     pageSize?: number;
     /** 排序字段 */
@@ -811,6 +838,8 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    customerCode?: string;
+    customerName?: string;
   };
 
   type PerfDimCustomerVO = {
@@ -847,6 +876,7 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    year?: number;
     /** 周期类型：1-年度，2-月度，3-季度 */
     periodType?: string;
   };
@@ -885,6 +915,7 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    productName?: string;
   };
 
   type PerfDimProductVO = {
@@ -918,6 +949,8 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    userId?: number;
+    periodId?: number;
   };
 
   type PerfFactKeyTaskScoreVO = {
@@ -984,6 +1017,10 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    userId?: number;
+    customerId?: number;
+    periodId?: number;
+    scoreValue?: number;
   };
 
   type PerfFactNewCustomerScoreVO = {
@@ -1014,6 +1051,9 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    userId?: number;
+    periodId?: number;
+    overdueLevel?: string;
   };
 
   type PerfFactOverdueRecordVO = {
@@ -1055,6 +1095,8 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    userId?: number;
+    periodId?: number;
   };
 
   type PerfFactPerformanceResultVO = {
@@ -1097,6 +1139,9 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    userId?: number;
+    productId?: number;
+    periodId?: number;
   };
 
   type PerfFactProfitDataVO = {
@@ -1139,6 +1184,9 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    userId?: number;
+    productId?: number;
+    periodId?: number;
   };
 
   type PerfFactProfitPlanVO = {
@@ -1189,6 +1237,9 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    productId?: number;
+    userId?: number;
+    periodId?: number;
   };
 
   type PerfFactSalesDataVO = {
@@ -1237,6 +1288,9 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
+    userId?: number;
+    productId?: number;
+    periodId?: number;
   };
 
   type PerfFactSalesPlanVO = {

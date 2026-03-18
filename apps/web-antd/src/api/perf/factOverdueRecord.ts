@@ -85,61 +85,6 @@ export async function exportFactOverdueRecordByExcel(
   });
 }
 
-/** 逾期扣分记录：按客户记录最终扣分值导入Excel模板下载 GET /perf/FactOverdueRecord/excelTemplate */
-export async function downloadFactOverdueRecordExcelTemplate(options?: {
-  [key: string]: any;
-}) {
-  return request<any>('/perf/FactOverdueRecord/excelTemplate', {
-    method: 'GET',
-    ...(options || {}),
-  });
-}
-
-/** 逾期扣分记录：按客户记录最终扣分值列表导入 POST /perf/FactOverdueRecord/importData */
-export async function importFactOverdueRecordByExcel(
-  body: {
-    /** 是否覆盖已存在数据：true-覆盖更新，false-仅新增 */
-    updateSupport?: boolean;
-  },
-  file?: File,
-  options?: { [key: string]: any },
-) {
-  const formData = new FormData();
-
-  if (file) {
-    formData.append('file', file);
-  }
-
-  Object.keys(body).forEach((ele) => {
-    const item = (body as any)[ele];
-
-    if (item !== undefined && item !== null) {
-      if (typeof item === 'object' && !(item instanceof File)) {
-        if (item instanceof Array) {
-          item.forEach((f) => formData.append(ele, f || ''));
-        } else {
-          formData.append(
-            ele,
-            new Blob([JSON.stringify(item)], { type: 'application/json' }),
-          );
-        }
-      } else {
-        formData.append(ele, item);
-      }
-    }
-  });
-
-  return request<PerfAPI.ResponseDTOString>(
-    '/perf/FactOverdueRecord/importData',
-    {
-      method: 'POST',
-      data: formData,
-      requestType: 'form',
-      ...(options || {}),
-    },
-  );
-}
-
 /** 获取逾期扣分记录：按客户记录最终扣分值列表 GET /perf/FactOverdueRecord/list */
 export async function getFactOverdueRecordList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

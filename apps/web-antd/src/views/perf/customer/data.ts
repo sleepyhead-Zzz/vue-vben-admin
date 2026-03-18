@@ -12,16 +12,6 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'customerName',
     label: '客户名称',
   },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'firstOrderDate',
-    label: '客户首次成交日期',
-  },
 ];
 
 // 需要使用i18n注意这里要改成getter形式 否则切换语言不会刷新

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { VbenFormProps } from '@vben/common-ui';
 
+import type { PerfQuerySelectOption } from '../_shared/query-form-options';
+
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
-import { onMounted } from 'vue';
+import { onMounted, reactive } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -17,9 +19,15 @@ import {
   getPagedFactManagementScore,
   removeFactManagementScore,
 } from '#/api/perf/factManagementScore';
-import { optionPeriodSelect } from '#/api/perf/period';
 import { commonDownloadExcel } from '#/utils/file/download';
 
+import {
+  createPerfRemoteUserQuerySelectProps,
+  createPerfStaticQuerySelectProps,
+  fetchPerfPeriodQueryOptions,
+  fetchPerfUserQueryOptions,
+  replacePerfQuerySelectOptions,
+} from '../_shared/query-form-options';
 import { columns, querySchema } from './data';
 import managementScoreImportModal from './management-score-import-modal.vue';
 import factManagementScoreModal from './management-score-modal.vue';
@@ -90,31 +98,33 @@ const [FactManagementScoreImportModal, importModalApi] = useVbenModal({
   connectedComponent: managementScoreImportModal,
 });
 
-function getPeriodLabel(
-  period: PerfAPI.PerfDimPeriodDTO | PerfAPI.PerfDimPeriodVO,
-) {
-  if (period.month) {
-    return `${period.year}年${period.month}月`;
-  }
-  if (period.quarter) {
-    return `${period.year}年第${period.quarter}季度`;
-  }
-  return `${period.year}年`;
+const userOptions = reactive<PerfQuerySelectOption[]>([]);
+const periodOptions = reactive<PerfQuerySelectOption[]>([]);
+
+async function handleUserSearch(keyword: string) {
+  replacePerfQuerySelectOptions(
+    userOptions,
+    await fetchPerfUserQueryOptions(keyword),
+  );
 }
 
 async function setupQueryOptions() {
-  const periodRes = await optionPeriodSelect();
-  const periodOptions = (periodRes.data ?? []).map((period) => ({
-    label: getPeriodLabel(period),
-    value: period.periodId,
-  }));
+  replacePerfQuerySelectOptions(
+    periodOptions,
+    await fetchPerfPeriodQueryOptions(),
+  );
 
   tableApi.formApi.updateSchema([
     {
+      fieldName: 'userId',
+      componentProps: createPerfRemoteUserQuerySelectProps(
+        userOptions,
+        handleUserSearch,
+      ),
+    },
+    {
       fieldName: 'periodId',
-      componentProps: {
-        options: periodOptions,
-      },
+      componentProps: createPerfStaticQuerySelectProps(periodOptions),
     },
   ]);
 }
@@ -129,12 +139,15 @@ function handleImport() {
   importModalApi.open();
 }
 
-async function handleEdit(row: API.PerfFactManagementScoreDTO) {
+async function handleEdit(row: PerfAPI.PerfFactManagementScoreDTO) {
   modalApi.setData({ id: row.managementId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.PerfFactManagementScoreDTO) {
+async function handleDelete(row: PerfAPI.PerfFactManagementScoreDTO) {
+  if (typeof row.managementId !== 'number') {
+    return;
+  }
   await removeFactManagementScore({
     FactManagementScoreIds: [row.managementId],
   });
@@ -143,9 +156,12 @@ async function handleDelete(row: API.PerfFactManagementScoreDTO) {
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map(
-    (row: API.PerfFactManagementScoreDTO) => row.managementId,
-  );
+  const ids = rows
+    .map((row: PerfAPI.PerfFactManagementScoreDTO) => row.managementId)
+    .filter((id): id is number => typeof id === 'number');
+  if (ids.length === 0) {
+    return;
+  }
   Modal.confirm({
     title: '提示',
     okType: 'danger',

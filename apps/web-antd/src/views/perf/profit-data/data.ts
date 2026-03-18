@@ -4,11 +4,13 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 import { getPopupContainer } from '@vben/utils';
 
 export const querySchema: FormSchemaGetter = () => [
+  // 变成远程搜索
   {
-    component: 'Input',
-    fieldName: 'userName',
+    component: 'Select',
+    fieldName: 'userId',
     label: '销售人员',
   },
+  // 变成远程搜索
   {
     component: 'Select',
     componentProps: {
@@ -21,6 +23,7 @@ export const querySchema: FormSchemaGetter = () => [
     fieldName: 'productId',
     label: '产品',
   },
+  // 变成远程搜索
   {
     component: 'Select',
     componentProps: {
@@ -32,21 +35,6 @@ export const querySchema: FormSchemaGetter = () => [
     },
     fieldName: 'periodId',
     label: '绩效周期',
-  },
-  {
-    component: 'Input',
-    fieldName: 'netProfit',
-    label: '净利润金额',
-  },
-  {
-    component: 'DatePicker',
-    componentProps: {
-      showTime: true,
-      format: 'YYYY-MM-DD HH:mm:ss',
-      valueFormat: 'YYYY-MM-DD HH:mm:ss',
-    },
-    fieldName: 'orderDate',
-    label: '订单日期',
   },
 ];
 

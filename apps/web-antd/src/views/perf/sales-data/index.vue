@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import type { VbenFormProps } from '@vben/common-ui';
 
+import type { PerfQuerySelectOption } from '../_shared/query-form-options';
+
 import type { VxeGridProps } from '#/adapter/vxe-table';
+
+import { onMounted, reactive } from 'vue';
 
 import { Page, useVbenModal } from '@vben/common-ui';
 import { $t } from '@vben/locales';
@@ -17,6 +21,14 @@ import {
 } from '#/api/perf/salesdata';
 import { commonDownloadExcel } from '#/utils/file/download';
 
+import {
+  createPerfRemoteUserQuerySelectProps,
+  createPerfStaticQuerySelectProps,
+  fetchPerfPeriodQueryOptions,
+  fetchPerfProductQueryOptions,
+  fetchPerfUserQueryOptions,
+  replacePerfQuerySelectOptions,
+} from '../_shared/query-form-options';
 import { columns, querySchema } from './data';
 import saleDataImportModal from './sales-data-import-modal.vue';
 import salesDataModal from './sales-data-modal.vue';
@@ -86,6 +98,46 @@ const [SalesDataModal, modalApi] = useVbenModal({
 const [SaleDataImportModal, saleDataImportModalApi] = useVbenModal({
   connectedComponent: saleDataImportModal,
 });
+
+const userOptions = reactive<PerfQuerySelectOption[]>([]);
+const productOptions = reactive<PerfQuerySelectOption[]>([]);
+const periodOptions = reactive<PerfQuerySelectOption[]>([]);
+
+async function handleUserSearch(keyword: string) {
+  replacePerfQuerySelectOptions(
+    userOptions,
+    await fetchPerfUserQueryOptions(keyword),
+  );
+}
+
+async function setupQueryOptions() {
+  const [products, periods] = await Promise.all([
+    fetchPerfProductQueryOptions(),
+    fetchPerfPeriodQueryOptions(),
+  ]);
+
+  replacePerfQuerySelectOptions(productOptions, products);
+  replacePerfQuerySelectOptions(periodOptions, periods);
+
+  tableApi.formApi.updateSchema([
+    {
+      fieldName: 'productId',
+      componentProps: createPerfStaticQuerySelectProps(productOptions),
+    },
+    {
+      fieldName: 'userId',
+      componentProps: createPerfRemoteUserQuerySelectProps(
+        userOptions,
+        handleUserSearch,
+      ),
+    },
+    {
+      fieldName: 'periodId',
+      componentProps: createPerfStaticQuerySelectProps(periodOptions),
+    },
+  ]);
+}
+
 function handleAdd() {
   modalApi.setData({});
   modalApi.open();
@@ -93,19 +145,27 @@ function handleAdd() {
 function handleImport() {
   saleDataImportModalApi.open();
 }
-async function handleEdit(row: API.PerfFactSalesDTO) {
+async function handleEdit(row: PerfAPI.PerfFactSalesDataDTO) {
   modalApi.setData({ id: row.saleId });
   modalApi.open();
 }
 
-async function handleDelete(row: API.PerfFactSalesDTO) {
+async function handleDelete(row: PerfAPI.PerfFactSalesDataDTO) {
+  if (typeof row.saleId !== 'number') {
+    return;
+  }
   await removeSalesData({ salesIds: [row.saleId] });
   await tableApi.query();
 }
 
 function handleMultiDelete() {
   const rows = tableApi.grid.getCheckboxRecords();
-  const ids = rows.map((row: API.PerfFactSalesDTO) => row.saleId);
+  const ids = rows
+    .map((row: PerfAPI.PerfFactSalesDataDTO) => row.saleId)
+    .filter((id): id is number => typeof id === 'number');
+  if (ids.length === 0) {
+    return;
+  }
   Modal.confirm({
     title: '提示',
     okType: 'danger',
@@ -127,6 +187,14 @@ function handleDownloadExcel() {
     },
   );
 }
+
+onMounted(async () => {
+  try {
+    await setupQueryOptions();
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>

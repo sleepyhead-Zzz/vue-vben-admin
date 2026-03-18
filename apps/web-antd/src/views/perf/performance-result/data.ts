@@ -3,8 +3,8 @@ import type { VxeGridProps } from '#/adapter/vxe-table';
 
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
-    fieldName: 'userName',
+    component: 'Select',
+    fieldName: 'userId',
     label: '人员',
   },
   {

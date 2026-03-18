@@ -5,8 +5,8 @@ import { getPopupContainer } from '@vben/utils';
 
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
-    fieldName: 'userName',
+    component: 'Select',
+    fieldName: 'userId',
     label: '销售人员',
   },
   {
@@ -20,11 +20,6 @@ export const querySchema: FormSchemaGetter = () => [
     },
     fieldName: 'periodId',
     label: '绩效周期',
-  },
-  {
-    component: 'Input',
-    fieldName: 'scoreValue',
-    label: '重点工作平均得分',
   },
 ];
 

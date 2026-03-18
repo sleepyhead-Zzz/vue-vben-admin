@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { VbenFormProps } from '@vben/common-ui';
 
+import type { PerfQuerySelectOption } from '../_shared/query-form-options';
+
 import type { VxeGridProps } from '#/adapter/vxe-table';
 
+import { onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Page, useVbenModal } from '@vben/common-ui';
@@ -18,6 +21,13 @@ import {
 import { commonDownloadExcel } from '#/utils/file/download';
 import { getJobTaskDetailPageKey } from '#/views/system/job-task/shared';
 
+import {
+  createPerfRemoteUserQuerySelectProps,
+  createPerfStaticQuerySelectProps,
+  fetchPerfPeriodQueryOptions,
+  fetchPerfUserQueryOptions,
+  replacePerfQuerySelectOptions,
+} from '../_shared/query-form-options';
 import calcTriggerModal from './calc-trigger-modal.vue';
 import { columns, querySchema } from './data';
 import performanceResultModal from './performance-result-modal.vue';
@@ -72,6 +82,37 @@ const [CalcTriggerModal, calcTriggerModalApi] = useVbenModal({
   connectedComponent: calcTriggerModal,
 });
 
+const userOptions = reactive<PerfQuerySelectOption[]>([]);
+const periodOptions = reactive<PerfQuerySelectOption[]>([]);
+
+async function handleUserSearch(keyword: string) {
+  replacePerfQuerySelectOptions(
+    userOptions,
+    await fetchPerfUserQueryOptions(keyword),
+  );
+}
+
+async function setupQueryOptions() {
+  replacePerfQuerySelectOptions(
+    periodOptions,
+    await fetchPerfPeriodQueryOptions(),
+  );
+
+  tableApi.formApi.updateSchema([
+    {
+      fieldName: 'userId',
+      componentProps: createPerfRemoteUserQuerySelectProps(
+        userOptions,
+        handleUserSearch,
+      ),
+    },
+    {
+      fieldName: 'periodId',
+      componentProps: createPerfStaticQuerySelectProps(periodOptions),
+    },
+  ]);
+}
+
 async function handleDetail(row: PerfAPI.PerfFactPerformanceResultDTO) {
   if (!row.performanceId) {
     message.warning('记录ID缺失，无法查看详情');
@@ -97,8 +138,10 @@ function openCalcTriggerModal(mode: CalcTriggerMode) {
   calcTriggerModalApi.open();
 }
 
-// eslint-disable-next-line unicorn/no-object-as-default-parameter
-function openPerfTaskCenter(query = { taskType: 'perf_calc' }) {
+function openPerfTaskCenter(
+  // eslint-disable-next-line unicorn/no-object-as-default-parameter
+  query: Record<string, string> = { taskType: 'perf_calc' },
+) {
   router.push({
     path: '/system/job-task',
     query,
@@ -147,6 +190,14 @@ async function handleCalcSubmitted({
 
   message.error(response.message || `${actionLabel}提交失败，请稍后重试`);
 }
+
+onMounted(async () => {
+  try {
+    await setupQueryOptions();
+  } catch (error) {
+    console.error(error);
+  }
+});
 </script>
 
 <template>

@@ -9,8 +9,8 @@ import { renderDict } from '#/utils/render';
 
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
-    fieldName: 'userName',
+    component: 'Select',
+    fieldName: 'userId',
     label: '销售人员',
   },
   {
@@ -33,14 +33,6 @@ export const querySchema: FormSchemaGetter = () => [
     },
     fieldName: 'scoreType',
     label: '评分类型',
-  },
-  {
-    component: 'InputNumber',
-    componentProps: {
-      precision: 2,
-    },
-    fieldName: 'scoreValue',
-    label: '得分',
   },
 ];
 

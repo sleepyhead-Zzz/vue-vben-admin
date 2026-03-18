@@ -13,14 +13,9 @@ const overdueLevelOptions = [
 
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
-    fieldName: 'userName',
+    component: 'Select',
+    fieldName: 'userId',
     label: '销售人员',
-  },
-  {
-    component: 'Input',
-    fieldName: 'customerName',
-    label: '客户',
   },
   {
     component: 'Select',
@@ -45,14 +40,6 @@ export const querySchema: FormSchemaGetter = () => [
     },
     fieldName: 'overdueLevel',
     label: '逾期区间',
-  },
-  {
-    component: 'InputNumber',
-    componentProps: {
-      precision: 2,
-    },
-    fieldName: 'scoreValue',
-    label: '最终扣分值',
   },
 ];
 

@@ -5,14 +5,26 @@ import { getPopupContainer } from '@vben/utils';
 
 export const querySchema: FormSchemaGetter = () => [
   {
-    component: 'Input',
+    component: 'Select',
     fieldName: 'productId',
     label: '产品编码',
   },
   {
-    component: 'Input',
-    fieldName: 'quantity',
-    label: '销售数量',
+    component: 'Select',
+    fieldName: 'userId',
+    label: '销售业务经理',
+  },
+  {
+    label: '归属绩效周期',
+    fieldName: 'periodId',
+    component: 'Select',
+    componentProps: {
+      getPopupContainer,
+      options: [],
+      optionFilterProp: 'label',
+      optionLabelProp: 'label',
+      showSearch: true,
+    },
   },
 ];
 
