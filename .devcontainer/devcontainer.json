@@ -18,7 +18,8 @@
         "vunguyentuan.vscode-css-variables",
         "antfu.pnpm-catalog-lens",
         "formulahendry.auto-close-tag",
-        "christian-kohler.path-intellisense"
+        "christian-kohler.path-intellisense",
+        "openai.chatgpt"
       ],
       "settings": {
         "editor.stickyScroll.scrollWithEditor": true,
@@ -37,5 +38,9 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/init.sh",
-  "remoteUser": "root"
+  "remoteUser": "node",
+  "remoteEnv": {
+    "PATH": "/home/node/.local/bin:${containerEnv:PATH}",
+    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
+  }
 }

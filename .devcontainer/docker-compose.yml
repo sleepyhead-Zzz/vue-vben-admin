@@ -1,10 +1,10 @@
 services:
   vue-template:
     image: mcr.microsoft.com/devcontainers/typescript-node:${NODE_VERSION}-bookworm
+    user: '1000:1000'
     volumes:
-      - ${PNPM_STORE_PATH}/.cache/pnpm-store:/root/.pnpm-store:cached
+      - ${PNPM_STORE_PATH}/.cache/pnpm-store:/home/node/.pnpm-store:cached
       - ../:/workspace
-      - /home/sleepyhead/Code/:/Code
     env_file:
       - .env
     network_mode: host
