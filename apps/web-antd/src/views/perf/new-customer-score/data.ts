@@ -5,25 +5,17 @@ export const querySchema: FormSchemaGetter = () => [
   {
     component: 'Input',
     fieldName: 'userId',
-    label: '销售人员ID',
+    label: '销售人员',
   },
   {
     component: 'Input',
     fieldName: 'customerId',
-    label: '客户ID',
+    label: '客户',
   },
   {
     component: 'Input',
     fieldName: 'periodId',
-    label: '绩效周期ID',
-  },
-  {
-    component: 'InputNumber',
-    componentProps: {
-      precision: 2,
-    },
-    fieldName: 'scoreValue',
-    label: '新客户得分',
+    label: '绩效周期',
   },
 ];
 
@@ -39,14 +31,29 @@ export const columns: VxeGridProps['columns'] = [
   {
     title: '销售人员ID',
     field: 'userId',
+    visible: false,
+  },
+  {
+    title: '销售人员',
+    field: 'userName',
+  },
+  {
+    title: '客户',
+    field: 'customerName',
   },
   {
     title: '客户ID',
     field: 'customerId',
+    visible: false,
   },
   {
     title: '绩效周期ID',
     field: 'periodId',
+    visible: false,
+  },
+  {
+    title: '绩效周期',
+    field: 'periodName',
   },
   {
     title: '新客户得分',

@@ -102,7 +102,7 @@ async function loadPeriodOptions() {
   }
   periodState.fetching = true;
   try {
-    const res = await optionPeriodSelect();
+    const res = await optionPeriodSelect({});
     periodState.options = (res.data ?? []).map((period) => ({
       label: getPeriodLabel(period),
       value: period.periodId,
