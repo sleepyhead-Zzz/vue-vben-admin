@@ -56,17 +56,6 @@ declare namespace PerfAPI {
     scoreValue?: number;
   };
 
-  type AddPerfFactNewCustomerScoreCommand = {
-    /** ${column.columnComment} */
-    userId?: number;
-    /** ${column.columnComment} */
-    customerId?: number;
-    /** ${column.columnComment} */
-    periodId?: number;
-    /** ${column.columnComment} */
-    scoreValue?: number;
-  };
-
   type AddPerfFactOverdueRecordCommand = {
     /** ${column.columnComment} */
     userId?: number;
@@ -176,10 +165,6 @@ declare namespace PerfAPI {
     managementId: number;
   };
 
-  type editFactNewCustomerScoreParams = {
-    newCustomerId: number;
-  };
-
   type editFactOverdueRecordParams = {
     overdueId: number;
   };
@@ -266,6 +251,8 @@ declare namespace PerfAPI {
   };
 
   type getDimCustomerListParams = {
+    customerName?: string;
+    customerCode?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -284,6 +271,8 @@ declare namespace PerfAPI {
   };
 
   type getFactKeyTaskScoreListParams = {
+    userId?: number;
+    periodId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -323,6 +312,10 @@ declare namespace PerfAPI {
   };
 
   type getFactNewCustomerScoreListParams = {
+    userId?: number;
+    customerId?: number;
+    periodId?: number;
+    scoreValue?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -341,6 +334,9 @@ declare namespace PerfAPI {
   };
 
   type getFactOverdueRecordListParams = {
+    periodId?: number;
+    userId?: number;
+    overdueLevel?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -359,6 +355,8 @@ declare namespace PerfAPI {
   };
 
   type getFactPerformanceResultListParams = {
+    userId?: number;
+    periodId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -377,6 +375,9 @@ declare namespace PerfAPI {
   };
 
   type getFactProfitPlanListParams = {
+    userId?: number;
+    productId?: number;
+    periodId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -607,6 +608,7 @@ declare namespace PerfAPI {
   };
 
   type getPeriodListParams = {
+    year?: number;
     /** 周期类型：1-年度，2-月度，3-季度 */
     periodType?: string;
     /** 排序字段 */
@@ -627,6 +629,7 @@ declare namespace PerfAPI {
   };
 
   type getProductListParams = {
+    productName?: string;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -645,6 +648,9 @@ declare namespace PerfAPI {
   };
 
   type getProfitDataListParams = {
+    userId?: number;
+    productId?: number;
+    periodId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -663,6 +669,9 @@ declare namespace PerfAPI {
   };
 
   type getSalesDataListParams = {
+    productId?: number;
+    userId?: number;
+    periodId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -681,6 +690,9 @@ declare namespace PerfAPI {
   };
 
   type getSalesPlanListParams = {
+    userId?: number;
+    productId?: number;
+    periodId?: number;
     /** 排序字段 */
     orderColumn?: string;
     /** 排序方向 */
@@ -723,6 +735,7 @@ declare namespace PerfAPI {
   };
 
   type optionPeriodSelectParams = {
+    year?: number;
     /** 周期类型：1-年度，2-月度，3-季度 */
     periodType?: string;
     /** 排序字段 */
@@ -838,8 +851,8 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
-    customerCode?: string;
     customerName?: string;
+    customerCode?: string;
   };
 
   type PerfDimCustomerVO = {
@@ -1006,8 +1019,15 @@ declare namespace PerfAPI {
   type PerfFactNewCustomerScoreDTO = {
     newCustomerId?: number;
     userId?: number;
+    /** 销售人员名称 */
+    userName?: string;
     customerId?: number;
+    /** 客户名称 */
+    customerName?: string;
     periodId?: number;
+    /** 绩效周期名称 */
+    periodName?: string;
+    /** 新客户得分 */
     scoreValue?: number;
   };
 
@@ -1051,8 +1071,8 @@ declare namespace PerfAPI {
     timeRangeColumn?: string;
     beginTime?: string;
     endTime?: string;
-    userId?: number;
     periodId?: number;
+    userId?: number;
     overdueLevel?: string;
   };
 
@@ -1071,7 +1091,7 @@ declare namespace PerfAPI {
     /** 用户名 */
     userName?: string;
     periodId?: number;
-    /** 绩效周期名称 */
+    /** 绩效累计计算区间名称 */
     periodName?: string;
     /** 销量得分 */
     salesScore?: number;
@@ -1363,14 +1383,6 @@ declare namespace PerfAPI {
 
   type removeFactManagementScoreParams = {
     FactManagementScoreIds: number[];
-  };
-
-  type removeFactNewCustomerScoreByIdParams = {
-    newCustomerId: number;
-  };
-
-  type removeFactNewCustomerScoreParams = {
-    FactNewCustomerScoreIds: number[];
   };
 
   type removeFactOverdueRecordByIdParams = {
@@ -1851,18 +1863,6 @@ declare namespace PerfAPI {
     /** 得分（可正可负） */
     scoreValue?: number;
     managementId?: number;
-  };
-
-  type UpdatePerfFactNewCustomerScoreCommand = {
-    /** ${column.columnComment} */
-    userId?: number;
-    /** ${column.columnComment} */
-    customerId?: number;
-    /** ${column.columnComment} */
-    periodId?: number;
-    /** ${column.columnComment} */
-    scoreValue?: number;
-    newCustomerId?: number;
   };
 
   type UpdatePerfFactOverdueRecordCommand = {

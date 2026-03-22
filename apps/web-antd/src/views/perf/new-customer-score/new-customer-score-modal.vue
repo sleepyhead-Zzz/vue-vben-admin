@@ -14,11 +14,7 @@ import {
   getDimCustomerInfo,
   getPagedDimCustomer,
 } from '#/api/perf/dimCustomer';
-import {
-  addFactNewCustomerScore,
-  editFactNewCustomerScore,
-  getFactNewCustomerScoreInfo,
-} from '#/api/perf/factNewCustomerScore';
+import { getFactNewCustomerScoreInfo } from '#/api/perf/factNewCustomerScore';
 import { getPeriodInfo, optionPeriodSelect } from '#/api/perf/period';
 import { getPagedUser } from '#/api/system/user';
 import { defaultFormValueGetter, useBeforeCloseDiff } from '#/utils/popup';

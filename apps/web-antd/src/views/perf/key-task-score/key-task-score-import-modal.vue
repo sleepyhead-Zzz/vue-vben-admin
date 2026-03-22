@@ -45,8 +45,15 @@ const excelFields = [
 ] as const;
 
 const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
-  userName: ['userName', 'username', '销售人员姓名', '业务经理姓名', '姓名'],
-  scoreValue: ['scoreValue', '重点工作平均得分', '平均得分'],
+  userName: [
+    'userName',
+    'username',
+    '销售人员姓名',
+    '业务经理姓名',
+    '姓名',
+    '重点工作',
+  ],
+  scoreValue: ['scoreValue', '重点工作平均得分', '平均得分', '平均'],
   q1Score: ['q1Score', 'Q1', 'Q1得分'],
   q2Score: ['q2Score', 'Q2', 'Q2得分'],
   q3Score: ['q3Score', 'Q3', 'Q3得分'],

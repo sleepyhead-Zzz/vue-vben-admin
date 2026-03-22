@@ -37,7 +37,7 @@ const excelFields = [
 const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
   userName: ['userName', 'username', '业务经理姓名', '销售经理'],
   netProfit: ['netProfit', '净利润金额', '净利润', '利润金额'],
-  orderDate: ['orderDate', '订单日期', '下单日期', '日期'],
+  orderDate: ['orderDate', '订单日期', '下单日期', '日期', '期间/年度'],
 };
 
 const form = ref<Record<string, any>>({

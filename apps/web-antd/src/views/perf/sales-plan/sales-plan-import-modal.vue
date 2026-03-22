@@ -45,7 +45,15 @@ const excelFields = [
 ] as const;
 
 const fieldAliases: Record<(typeof excelFields)[number]['key'], string[]> = {
-  userName: ['userName', 'username', '销售人员姓名', '业务经理姓名', '姓名'],
+  userName: [
+    'userName',
+    'username',
+    '销售人员姓名',
+    '业务经理姓名',
+    '姓名',
+    'PMMA计划销量',
+    'MS计划销量',
+  ],
   month1: ['month1', '1月', '1月销量', '一月'],
   month2: ['month2', '2月', '2月销量', '二月'],
   month3: ['month3', '3月', '3月销量', '三月'],
