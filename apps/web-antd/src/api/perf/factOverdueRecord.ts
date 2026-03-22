@@ -1,16 +1,16 @@
 // @ts-ignore
 /* eslint-disable */
-import request from "#/api/request";
+import request from '#/api/request';
 
 /** 新增逾期扣分记录：按客户记录最终扣分值 POST /perf/FactOverdueRecord */
 export async function addFactOverdueRecord(
   body: PerfAPI.AddPerfFactOverdueRecordCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/FactOverdueRecord", {
-    method: "POST",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/FactOverdueRecord', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     data: body,
     ...(options || {}),
@@ -21,10 +21,10 @@ export async function addFactOverdueRecord(
 export async function removeFactOverdueRecord(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactOverdueRecordParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<PerfAPI.ResponseDTOVoid>("/perf/FactOverdueRecord", {
-    method: "DELETE",
+  return request<PerfAPI.ResponseDTOVoid>('/perf/FactOverdueRecord', {
+    method: 'DELETE',
     params: {
       ...params,
     },
@@ -36,16 +36,16 @@ export async function removeFactOverdueRecord(
 export async function getFactOverdueRecordInfo(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactOverdueRecordInfoParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { overdueId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOPerfFactOverdueRecordDTO>(
     `/perf/FactOverdueRecord/${param0}`,
     {
-      method: "GET",
+      method: 'GET',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -54,13 +54,13 @@ export async function editFactOverdueRecord(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.editFactOverdueRecordParams,
   body: PerfAPI.UpdatePerfFactOverdueRecordCommand,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { overdueId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(`/perf/FactOverdueRecord/${param0}`, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     params: { ...queryParams },
     data: body,
@@ -72,14 +72,14 @@ export async function editFactOverdueRecord(
 export async function exportFactOverdueRecordByExcel(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.exportFactOverdueRecordByExcelParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
-  return request<any>("/perf/FactOverdueRecord/excel", {
-    method: "GET",
+  return request<any>('/perf/FactOverdueRecord/excel', {
+    method: 'GET',
     params: {
       ...params,
       query: undefined,
-      ...params["query"],
+      ...params['query'],
     },
     ...(options || {}),
   });
@@ -89,17 +89,17 @@ export async function exportFactOverdueRecordByExcel(
 export async function getFactOverdueRecordList(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getFactOverdueRecordListParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOListPerfFactOverdueRecordDTO>(
-    "/perf/FactOverdueRecord/list",
+    '/perf/FactOverdueRecord/list',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -108,11 +108,11 @@ export async function optionFactOverdueRecordSelect(options?: {
   [key: string]: any;
 }) {
   return request<PerfAPI.ResponseDTOListPerfFactOverdueRecordVO>(
-    "/perf/FactOverdueRecord/option-select",
+    '/perf/FactOverdueRecord/option-select',
     {
-      method: "GET",
+      method: 'GET',
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -120,17 +120,17 @@ export async function optionFactOverdueRecordSelect(options?: {
 export async function getPagedFactOverdueRecord(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.getPagedFactOverdueRecordParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<PerfAPI.ResponseDTOPageDTOPerfFactOverdueRecordDTO>(
-    "/perf/FactOverdueRecord/page",
+    '/perf/FactOverdueRecord/page',
     {
-      method: "GET",
+      method: 'GET',
       params: {
         ...params,
       },
       ...(options || {}),
-    }
+    },
   );
 }
 
@@ -138,15 +138,15 @@ export async function getPagedFactOverdueRecord(
 export async function removeFactOverdueRecordById(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: PerfAPI.removeFactOverdueRecordByIdParams,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   const { overdueId: param0, ...queryParams } = params;
   return request<PerfAPI.ResponseDTOVoid>(
     `/perf/FactOverdueRecord/remove/${param0}`,
     {
-      method: "DELETE",
+      method: 'DELETE',
       params: { ...queryParams },
       ...(options || {}),
-    }
+    },
   );
 }

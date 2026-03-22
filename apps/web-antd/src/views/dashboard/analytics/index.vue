@@ -133,10 +133,14 @@ function navigateTo(path: string) {
 
 .hero-card {
   overflow: hidden;
-  border-radius: 24px;
   background:
-    radial-gradient(circle at top right, rgb(217 236 255 / 90%), transparent 32%),
-    linear-gradient(135deg, #f7fbff 0%, #eef5ff 52%, #ffffff 100%);
+    radial-gradient(
+      circle at top right,
+      rgb(217 236 255 / 90%),
+      transparent 32%
+    ),
+    linear-gradient(135deg, #f7fbff 0%, #eef5ff 52%, #fff 100%);
+  border-radius: 24px;
   box-shadow: 0 18px 40px rgb(15 23 42 / 8%);
 }
 
@@ -146,25 +150,25 @@ function navigateTo(path: string) {
 }
 
 .eyebrow {
-  color: #2b5aac;
   font-size: 12px;
   font-weight: 700;
+  color: #2b5aac;
   letter-spacing: 0.16em;
 }
 
 .hero-title {
-  color: #132238;
   font-size: 30px;
   font-weight: 700;
   line-height: 1.3;
+  color: #132238;
 }
 
 .hero-desc,
 .hero-subdesc {
   max-width: 720px;
-  color: #526174;
   font-size: 15px;
   line-height: 1.8;
+  color: #526174;
 }
 
 .summary-panel {
@@ -174,30 +178,30 @@ function navigateTo(path: string) {
 }
 
 .summary-item {
-  border: 1px solid rgb(43 90 172 / 10%);
-  border-radius: 18px;
   padding: 16px 18px;
   background: rgb(255 255 255 / 72%);
+  border: 1px solid rgb(43 90 172 / 10%);
+  border-radius: 18px;
   backdrop-filter: blur(6px);
 }
 
 .summary-label {
   margin-bottom: 6px;
-  color: #6b7a90;
   font-size: 13px;
+  color: #6b7a90;
 }
 
 .summary-value {
-  color: #132238;
   font-size: 16px;
   font-weight: 600;
   line-height: 1.6;
+  color: #132238;
 }
 
 .section-title {
-  color: #132238;
   font-size: 20px;
   font-weight: 600;
+  color: #132238;
 }
 
 .entry-grid {
@@ -208,56 +212,60 @@ function navigateTo(path: string) {
 
 .entry-card {
   height: 100%;
+  cursor: pointer;
+  background: linear-gradient(180deg, #fff 0%, #f8fbff 100%);
   border-radius: 20px;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
   box-shadow: 0 12px 28px rgb(15 23 42 / 5%);
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease;
-  cursor: pointer;
 }
 
 .entry-card:hover {
-  transform: translateY(-3px);
   box-shadow: 0 18px 32px rgb(15 23 42 / 10%);
+  transform: translateY(-3px);
 }
 
 .entry-tag {
   display: inline-flex;
   align-items: center;
-  margin-bottom: 14px;
-  border-radius: 9999px;
   padding: 4px 10px;
-  color: #2b5aac;
-  background: #edf4ff;
+  margin-bottom: 14px;
   font-size: 12px;
   font-weight: 600;
+  color: #2b5aac;
+  background: #edf4ff;
+  border-radius: 9999px;
 }
 
 .entry-title {
   margin-bottom: 10px;
-  color: #132238;
   font-size: 18px;
   font-weight: 600;
+  color: #132238;
 }
 
 .entry-desc {
   min-height: 48px;
-  color: #5b6879;
   font-size: 14px;
   line-height: 1.7;
+  color: #5b6879;
 }
 
 .entry-action {
   margin-top: 16px;
-  color: #2b5aac;
   font-size: 14px;
   font-weight: 600;
+  color: #2b5aac;
 }
 
 html.dark .hero-card {
   background:
-    radial-gradient(circle at top right, rgb(74 144 226 / 18%), transparent 36%),
+    radial-gradient(
+      circle at top right,
+      rgb(74 144 226 / 18%),
+      transparent 36%
+    ),
     linear-gradient(135deg, #0f1726 0%, #152235 52%, #1b2b42 100%);
   box-shadow: 0 22px 48px rgb(2 6 23 / 35%);
 }
@@ -280,8 +288,8 @@ html.dark .entry-desc {
 }
 
 html.dark .summary-item {
-  border-color: rgb(141 187 255 / 16%);
   background: rgb(15 23 38 / 72%);
+  border-color: rgb(141 187 255 / 16%);
 }
 
 html.dark .summary-label {
